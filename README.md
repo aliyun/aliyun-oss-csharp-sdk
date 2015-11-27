@@ -1,6 +1,6 @@
-﻿# Aliyun OSS SDK for .NET
+﻿# Aliyun OSS SDK for C#
 ## 关于
-> - 此.NET SDK基于[阿里云对象存储服务](http://www.aliyun.com/product/oss/)官方API构建。
+> - 此C# SDK基于[阿里云对象存储服务](http://www.aliyun.com/product/oss/) API构建。
 > - 阿里云对象存储（Object Storage Service，简称OSS），是阿里云对外提供的海量，安全，低成本，高可靠的云存储服务。
 > - OSS适合存放任意文件类型，适合各种网站、开发企业及开发者使用。
 > - 使用此SDK，用户可以方便地在任何应用、任何时间、任何地点上传，下载和管理数据。
@@ -19,7 +19,7 @@
 > - 搜索`aliyun.oss.sdk`，在结果中找到`Aliyun.OSS.SDK`，选择最新版本，点击安装，成功后添加到项目应用中。
 
 ### DLL引用方式安装
-> - 从阿里云官网下载SDK包，解压后bin目录包括了Aliyun.OSS.dll文件。
+> - 从阿里云OSS官网下载SDK包，解压后bin目录包括了Aliyun.OSS.dll文件。
 > - 在Visual Studio的`<解决方案资源管理器>`中选择您的项目，然后右键`<项目名称>`-`<引用>`，在弹出的菜单中选择`<添加引用>`.
 在弹出`<添加引用>`对话框后，选择`<浏览>`，找到sdk包解压的目录，在bin目录下选中`<Aliyun.OSS.dll>`文件,点击确定即可
 
