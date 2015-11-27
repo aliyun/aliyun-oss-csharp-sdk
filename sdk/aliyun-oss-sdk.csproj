@@ -1,0 +1,384 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectGuid>{67BDC800-084C-4F84-8A80-661B5AFE499A}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Aliyun.OSS</RootNamespace>
+    <AssemblyName>Aliyun.OSS</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SourceAnalysisOverrideSettingsFile>C:\Users\Ethan\AppData\Roaming\ICSharpCode/SharpDevelop4\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>False</DelaySign>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RunCodeAnalysis>False</RunCodeAnalysis>
+    <RunSourceAnalysis>False</RunSourceAnalysis>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <StartAction>Project</StartAction>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>
+    </DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>aliyun_sdk_net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\ClientConfiguration.cs" />
+    <Compile Include="Commands\HeadObjectCommand.cs" />
+    <Compile Include="Commands\DeleteObjectsCommand.cs" />
+    <Compile Include="Commands\GetBucketLifecycleCommand.cs" />
+    <Compile Include="Commands\SetBucketRefererCommand.cs" />
+    <Compile Include="Commands\SetBucketLifecycleCommand.cs" />
+    <Compile Include="Commands\GetBucketRefererCommand.cs" />
+    <Compile Include="Commands\UploadPartCopyCommand.cs" />
+    <Compile Include="Common\Authentication\DefaultCredentials.cs" />
+    <Compile Include="Common\Authentication\DefaultCredentialsProvider.cs" />
+    <Compile Include="Common\Authentication\ICredentialsProvider.cs" />
+    <Compile Include="Common\Authentication\ICredentials.cs" />
+    <Compile Include="Common\Authentication\HmacSHA1Signature.cs" />
+    <Compile Include="Common\Authentication\IRequestSigner.cs" />
+    <Compile Include="Common\Authentication\ServiceSignature.cs" />
+    <Compile Include="Common\Communication\ExecutionContext.cs" />
+    <Compile Include="Common\Communication\ServiceMessage.cs" />
+    <Compile Include="Common\Communication\HttpMethod.cs" />
+    <Compile Include="Common\Communication\IServiceClient.cs" />
+    <Compile Include="Common\Communication\ServiceRequest.cs" />
+    <Compile Include="Common\Communication\ServiceResponse.cs" />
+    <Compile Include="Common\Communication\RetryableServiceClient.cs" />
+    <Compile Include="Common\Communication\ServiceClientImpl.cs" />
+    <Compile Include="Common\Communication\ServiceClient.cs" />
+    <Compile Include="Common\Handlers\IResponseHandler.cs" />
+    <Compile Include="Common\Handlers\ResponseHandler.cs" />
+    <Compile Include="Transform\IDeserializer.cs" />
+    <Compile Include="Transform\ISerializer.cs" />
+    <Compile Include="Transform\RequestSerializationException.cs" />
+    <Compile Include="Transform\ResponseDeserializationException.cs" />
+    <Compile Include="Transform\XmlStreamSerializer.cs" />
+    <Compile Include="Transform\XmlStreamDeserializer.cs" />
+    <Compile Include="Util\AsyncResult.cs" />
+    <Compile Include="Util\DateUtils.cs" />
+    <Compile Include="Util\EnumUtils.cs" />
+    <Compile Include="Util\HttpHeaders.cs" />
+    <Compile Include="Util\HttpUtils.cs" />
+    <Compile Include="Util\IOUtils.cs" />
+    <Compile Include="Util\StringValueAttribute.cs" />
+    <Compile Include="Domain\LifecycleRule.cs" />
+    <Compile Include="Domain\ListBucketsResult.cs" />
+    <Compile Include="Domain\ListBucketsRequest.cs" />
+    <Compile Include="Domain\PolicyConditions.cs" />
+    <Compile Include="Domain\SetBucketLifecycleRequest.cs" />
+    <Compile Include="Enums\Protocol.cs" />
+    <Compile Include="Model\LifecycleConfiguration.cs" />
+    <Compile Include="Common\OssErrorCode.cs" />
+    <Compile Include="Domain\SetBucketRefererRequest.cs" />
+    <Compile Include="Domain\DeleteObjectsRequest.cs" />
+    <Compile Include="Domain\DeleteObjectsResult.cs" />
+    <Compile Include="Domain\SetBucketAclRequest.cs" />
+    <Compile Include="Domain\UploadPartCopyRequest.cs" />
+    <Compile Include="Domain\UploadPartCopyResult.cs" />
+    <Compile Include="Domain\AbortMultipartUploadRequest.cs" />
+    <Compile Include="Domain\AccessControlList.cs" />
+    <Compile Include="Domain\Bucket.cs" />
+    <Compile Include="Domain\BucketLoggingResult.cs" />
+    <Compile Include="Domain\BucketWebsiteResult.cs" />
+    <Compile Include="Enums\CannedAccessControlList.cs" />
+    <Compile Include="Commands\AbortMultipartUploadCommand.cs" />
+    <Compile Include="Commands\DeleteBucketCorsCommand.cs" />
+    <Compile Include="Commands\DeleteBucketLoggingCommand.cs" />
+    <Compile Include="Commands\DeleteBucketWebsiteCommand.cs" />
+    <Compile Include="Commands\GetBucketCorsCommand.cs" />
+    <Compile Include="Commands\GetBucketLoggingCommand.cs" />
+    <Compile Include="Commands\GetBucketWebsiteCommand.cs" />
+    <Compile Include="Commands\SetBucketCorsCommand.cs" />
+    <Compile Include="Commands\SetBucketLoggingCommand.cs" />
+    <Compile Include="Commands\CompleteMultipartUploadCommand.cs" />
+    <Compile Include="Commands\CopyObjectCommand.cs" />
+    <Compile Include="Commands\CreateBucketCommand.cs" />
+    <Compile Include="Commands\DeleteBucketCommand.cs" />
+    <Compile Include="Commands\DeleteObjectCommand.cs" />
+    <Compile Include="Commands\GetBucketAclCommand.cs" />
+    <Compile Include="Commands\GetObjectCommand.cs" />
+    <Compile Include="Commands\GetObjectMetadataCommand.cs" />
+    <Compile Include="Commands\InitiateMultipartUploadCommand.cs" />
+    <Compile Include="Commands\ListBucketsCommand.cs" />
+    <Compile Include="Commands\ListMultipartUploadsCommand.cs" />
+    <Compile Include="Commands\ListObjectsCommand.cs" />
+    <Compile Include="Commands\ListPartsCommand.cs" />
+    <Compile Include="Commands\OssCommand.cs" />
+    <Compile Include="Commands\PutObjectCommand.cs" />
+    <Compile Include="Commands\SetBucketAclCommand.cs" />
+    <Compile Include="Commands\SetBucketWebsiteCommand.cs" />
+    <Compile Include="Commands\UploadPartCommand.cs" />
+    <Compile Include="Domain\CompleteMultipartUploadRequest.cs" />
+    <Compile Include="Domain\CompleteMultipartUploadResult.cs" />
+    <Compile Include="Domain\CopyObjectRequest.cs" />
+    <Compile Include="Domain\CopyObjectResult.cs" />
+    <Compile Include="Domain\CORSRule.cs" />
+    <Compile Include="Domain\GeneratePresignedUriRequest.cs" />
+    <Compile Include="Domain\GetObjectRequest.cs" />
+    <Compile Include="Domain\Grant.cs" />
+    <Compile Include="Domain\GroupGrantee.cs" />
+    <Compile Include="Domain\IGrantee.cs" />
+    <Compile Include="Domain\InitiateMultipartUploadRequest.cs" />
+    <Compile Include="Domain\InitiateMultipartUploadResult.cs" />
+    <Compile Include="IOss.cs" />
+    <Compile Include="Domain\ListMultipartUploadsRequest.cs" />
+    <Compile Include="Domain\ListObjectsRequest.cs" />
+    <Compile Include="Domain\ListPartsRequest.cs" />
+    <Compile Include="Model\AccessControlPolicy.cs" />
+    <Compile Include="Model\CompleteMultipartUploadRequestModel.cs" />
+    <Compile Include="Model\CompleteMultipartUploadResultModel.cs" />
+    <Compile Include="Model\CopyObjectResultModel.cs" />
+    <Compile Include="Model\DeleteObjectsRequestModel.cs" />
+    <Compile Include="Model\ErrorResult.cs" />
+    <Compile Include="Model\InitiateMultipartResult.cs" />
+    <Compile Include="Model\ListAllMyBucketsResult.cs" />
+    <Compile Include="Model\ListBucketResult.cs" />
+    <Compile Include="Model\ListMultipartUploadsResult.cs" />
+    <Compile Include="Model\ListPartsResult.cs" />
+    <Compile Include="Model\SetBucketCorsRequestModel.cs" />
+    <Compile Include="Domain\RefererConfiguration.cs" />
+    <Compile Include="Model\SetBucketLoggingRequestModel.cs" />
+    <Compile Include="Model\SetBucketWebsiteRequestModel.cs" />
+    <Compile Include="Domain\MultipartUpload.cs" />
+    <Compile Include="Domain\MultipartUploadListing.cs" />
+    <Compile Include="Domain\ObjectListing.cs" />
+    <Compile Include="Domain\ObjectMetadata.cs" />
+    <Compile Include="Model\UploadPartCopyRequestModel.cs" />
+    <Compile Include="OssClient.cs" />
+    <Compile Include="Common\OssException.cs" />
+    <Compile Include="Domain\OssObject.cs" />
+    <Compile Include="Domain\OssObjectSummary.cs" />
+    <Compile Include="Domain\OssResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OssResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Domain\Owner.cs" />
+    <Compile Include="Domain\Part.cs" />
+    <Compile Include="Domain\PartEtag.cs" />
+    <Compile Include="Domain\PartListing.cs" />
+    <Compile Include="Enums\Permission.cs" />
+    <Compile Include="Domain\PutObjectResult.cs" />
+    <Compile Include="Domain\ResponseHeaderOverrides.cs" />
+    <Compile Include="Domain\SetBucketCorsRequest.cs" />
+    <Compile Include="Domain\SetBucketLoggingRequest.cs" />
+    <Compile Include="Domain\SetBucketWebsiteRequest.cs" />
+    <Compile Include="Enums\SignHttpMethod.cs" />
+    <Compile Include="Transform\CompleteMultipartUploadRequestSerializer.cs" />
+    <Compile Include="Transform\CompleteMultipartUploadResultDeserializer.cs" />
+    <Compile Include="Transform\CopyObjectResultDeserializer.cs" />
+    <Compile Include="Transform\DeleteObjectsRequestSerializer.cs" />
+    <Compile Include="Transform\DeleteObjectsResultDeserializer.cs" />
+    <Compile Include="Transform\DeserializerFactory.cs" />
+    <Compile Include="Transform\GetAclResponseDeserializer.cs" />
+    <Compile Include="Transform\GetBucketLoggingResultDeserializer.cs" />
+    <Compile Include="Transform\GetBucketLifecycleDeserializer.cs" />
+    <Compile Include="Transform\GetBucketWebSiteResultDeserializer.cs" />
+    <Compile Include="Transform\GetCorsResponseDeserializer.cs" />
+    <Compile Include="Transform\GetObjectMetadataResponseDeserializer.cs" />
+    <Compile Include="Transform\GetObjectResponseDeserializer.cs" />
+    <Compile Include="Transform\InitiateMultipartUploadResultDeserializer.cs" />
+    <Compile Include="Transform\ListBucketsResultDeserializer.cs" />
+    <Compile Include="Transform\ListMultipartUploadsResponseDeserializer.cs" />
+    <Compile Include="Transform\ListObjectsResponseDeserializer.cs" />
+    <Compile Include="Transform\ListPartsResultDeserializer.cs" />
+    <Compile Include="Transform\PutObjectResponseDeserializer.cs" />
+    <Compile Include="Transform\RequestSerializer.cs" />
+    <Compile Include="Transform\ResponseDeserializer.cs" />
+    <Compile Include="Transform\SerializerFactory.cs" />
+    <Compile Include="Transform\SetBucketLifecycleRequestSerializer.cs" />
+    <Compile Include="Transform\SetBucketRefererRequestSerializer.cs" />
+    <Compile Include="Transform\SetBucketCorsRequestSerializer.cs" />
+    <Compile Include="Transform\SetBucketLoggingRequestSerializer.cs" />
+    <Compile Include="Transform\SetBucketWebsiteRequestSerializer.cs" />
+    <Compile Include="Transform\SimpleResponseDeserializer.cs" />
+    <Compile Include="Transform\UploadPartCopyResponseDeserializer.cs" />
+    <Compile Include="Transform\UploadPartResponseDeserializer.cs" />
+    <Compile Include="Domain\UploadPartRequest.cs" />
+    <Compile Include="Domain\UploadPartResult.cs" />
+    <Compile Include="Util\ErrorResponseHandler.cs" />
+    <Compile Include="Util\ExceptionFactory.cs" />
+    <Compile Include="Util\ExecutionContextBuilder.cs" />
+    <Compile Include="Util\OssHeaders.cs" />
+    <Compile Include="Util\OssRequestSigner.cs" />
+    <Compile Include="Util\OssUtils.cs" />
+    <Compile Include="Util\RequestParameters.cs" />
+    <Compile Include="Util\ServiceClientFactory.cs" />
+    <Compile Include="Util\SignUtils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ServiceException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="aliyun_sdk_net.snk" />
+    <None Include="oss_comments_include.xml">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Domain\OssResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>OssResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MimeData.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+</Project>

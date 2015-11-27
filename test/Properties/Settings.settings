@@ -1,0 +1,42 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Aliyun.OSS.Test.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Endpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)">your end point</Value>
+    </Setting>
+    <Setting Name="AccessKeyId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">your access key id</Value>
+    </Setting>
+    <Setting Name="ProxyHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ProxyPort" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DisabledAccessKeyId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DisabledAccessKeyId</Value>
+    </Setting>
+    <Setting Name="UploadSampleFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\temp\UploadFiles\testupload.zip</Value>
+    </Setting>
+    <Setting Name="DownloadFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\temp\DownloadFiles</Value>
+    </Setting>
+    <Setting Name="MultiUploadSampleFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\temp\UploadFiles\testmultipartupload.zip</Value>
+    </Setting>
+    <Setting Name="DisabledAccessKeySecret" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DisabledAccessKeySecret</Value>
+    </Setting>
+    <Setting Name="SecondEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://oss-cn-hangzhou.aliyuncs.com</Value>
+    </Setting>
+    <Setting Name="UploadSampleFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\temp\UploadFiles</Value>
+    </Setting>
+    <Setting Name="AccessKeySecret" Type="System.String" Scope="User">
+      <Value Profile="(Default)">your access key secret</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -31,7 +31,7 @@
 ## 快速使用
 #### 获取存储空间列表（List Bucket）
 ```csharp
-    OssClient client = new OssClient(endpoint, accessId, accessKey);    
+    OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);    
 	var buckets = client.ListBuckets();
 	
     foreach (var bucket in buckets)
@@ -42,31 +42,31 @@
     
 #### 创建存储空间（Create Bucket）
 ```csharp
-	OssClient client = new OssClient(endpoint, accessId, accessKey);
+	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 	client.CreateBucket(bucketName);
 ```
 	
 #### 删除存储空间（Delete Bucket）
 ```csharp
-	OssClient client = new OssClient(endpoint, accessId, accessKey); 
+	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret); 
 	client.DeleteBucket(bucketName);
 ```
 
 #### 上传文件（Put Object）
 ```csharp
-	OssClient client = new OssClient(endpoint, accessId, accessKey); 
+	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret); 
 	client.PutObject(bucketName, key, filePathToUpload);
 ```
 
 #### 下载文件 (Get Object)
 ```csharp
-	OssClient client = new OssClient(endpoint, accessId, accessKey); 
+	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret); 
 	var object = ossClient.GetObject(bucketName, key);	
 ```
 
 #### 获取文件列表（List Objects）
 ```csharp
-	OssClient client = new OssClient(endpoint, accessId, accessKey);
+	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 	var listResult = client.ListObjects(bucketName);
 	foreach (var summary in listResult.ObjectSummaries)
 	{   
@@ -76,11 +76,12 @@
 	
 #### 删除文件(Delete Object)
 ```csharp
-	OssClient client = new OssClient(endpoint, accessId, accessKey);
+	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 	client.DeleteObject(bucketName, key)
 ```
 
 #### 其他
+    上面的例子中，如果没有抛出异常则说明执行成功，否则失败
     更详细的例子可以在aliyun-oss-sample项目中查看并运行
 	
 ## 注意事项

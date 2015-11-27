@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TestConfigs>
+  <UniqueOssClientConcurrency>
+    <Name>UniqueTest10Concurrency</Name>
+    <ConcurrencyNumber>10</ConcurrencyNumber>
+    <!--40MB, unit is 1KB-->
+    <FileSize>40960</FileSize>
+  </UniqueOssClientConcurrency>
+  <!--<UniqueOssClientConcurrency>
+    <Name>UniqueTest10ConcurrencySmall</Name>
+    <ConcurrencyNumber>10</ConcurrencyNumber>
+    --><!--4MB, unit is 1KB--><!--
+    <FileSize>4096</FileSize>
+  </UniqueOssClientConcurrency>-->
+  <DifferentOssClientConcurrency>
+    <Name>DifferentTest10Concurrency</Name>
+    <ConcurrencyNumber>10</ConcurrencyNumber>
+    <!--40MB, unit is 1KB-->
+    <FileSize>40960</FileSize>
+  </DifferentOssClientConcurrency>
+</TestConfigs>

@@ -1,0 +1,6 @@
+*.swp
+*.suo
+Backup*
+
+bin
+obj

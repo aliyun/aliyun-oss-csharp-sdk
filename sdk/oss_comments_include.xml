@@ -1,0 +1,406 @@
+﻿<?xml version="1.0"?>
+<Comments>
+    <Member name="Aliyun.OSS.Samples.CreateBucketSample">
+        <example>
+            下面的示例代码演示了如何在OSS中创建一个Bucket，以及如何在进行OSS操作时处理特定的异常消息。
+            <code>
+              <![CDATA[
+using System;
+
+namespace Aliyun.OSS.Samples
+{
+    /// <summary>
+    /// Sample for creating bucket.
+    /// </summary>
+    public static class CreateBucketSample
+    {
+        public static void CreateBucket(string bucketName)
+        {
+            const string accessKeyId = "<your access key id>";
+            const string accessKeySecret = "<your access key secret>";
+            const string endpoint = "<valid endpoint>";
+
+            var client = new OssClient(endpoint, accessKeyId, accessKeySecret);
+
+            var created = false;
+            try
+            {
+                client.CreateBucket(bucketName);
+                created = true;
+                Console.WriteLine("Created bucket name: " + bucketName);
+            }
+            catch (OssException ex)
+            {
+                if (ex.ErrorCode == OssErrorCode.BucketAlreadyExists)
+                {
+                    Console.WriteLine("Bucket '{0}' already exists, please modify and recreate it.", bucketName);
+                }
+                else
+                {
+                    Console.WriteLine("Failed with error info: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}", 
+                        ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+                }
+            }
+            finally
+            {
+                if (created)
+                {
+                    client.DeleteBucket(bucketName);       
+                }
+            }
+        }
+    }
+}
+]]>
+            </code>
+        </example>
+    </Member>
+    <Member name="Aliyun.OSS.Samples.SetBucketAclSample">
+        <example>
+            下面的示例代码演示了如何将一个Bucket的设置为所有人可以读取。
+            <code>
+              <![CDATA[
+using System;
+
+namespace Aliyun.OSS.Samples
+{
+    /// <summary>
+    /// Sample for setting bucket acl.
+    /// </summary>
+    public static class SetBucketAclSample
+    {
+        public static void SetBucketAcl()
+        {
+            const string accessKeyId = "<your access key id>";
+            const string accessKeySecret = "<your access key secret>";
+            const string endpoint = "<valid endpoint>";
+
+            const string bucketName = "<bucket name>";
+
+            OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
+
+            try
+            {
+                client.SetBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+                //client.SetBucketAcl(new SetBucketAclRequest(bucketName, CannedAccessControlList.PublicRead));
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}", 
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
+        }
+    }
+}
+]]>
+            </code>
+        </example>
+    </Member>
+    <Member name="Aliyun.OSS.Samples.PutObjectSample">
+        <example>
+            下面的示例代码演示了如何将一个Bucket的设置为所有人可以读取。
+            <code>
+              <![CDATA[
+using System;
+using System.IO;
+
+namespace Aliyun.OSS.Samples
+{
+    /// <summary>
+    /// Sample for putting object.
+    /// </summary>
+    public static class PutObjectSample
+    {
+        public static void PutObject()
+        {
+            const string accessKeyId = "<your access key id>";
+            const string accessKeySecret = "<your access key secret>";
+            const string endpoint = "<valid endpoint>";
+
+            OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
+
+            const string bucketName = "<bucket name>";
+            const string key = "<object name>";
+            const string fileToUpload = "<file to upload>";
+
+            try
+            {
+                // 1. put object to specified output stream
+                using (var fs = File.Open(fileToUpload, FileMode.Open))
+                {
+                    var metadata = new ObjectMetadata();
+                    metadata.UserMetadata.Add("mykey1", "myval1");
+                    metadata.UserMetadata.Add("mykey2", "myval2");
+                    metadata.CacheControl = "No-Cache";
+                    metadata.ContentType = "text/html";
+                    client.PutObject(bucketName, key, fs, metadata);
+
+                    metadata = client.GetObjectMetadata(bucketName, key);
+                }
+
+                // 2. put object to specified file
+                //client.PutObject(bucketName, key, fileToUpload);
+
+                // 3. put object from specified object with multi-level virtual directory
+                //key = "folder/sub_folder/key0";
+                //client.PutObject(bucketName, key, fileToUpload);
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}", 
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
+        }
+    }
+}
+]]>
+            </code>
+        </example>
+    </Member>
+    <Member name="Aliyun.OSS.Samples.MultipartUploadSample">
+    <example>
+      下面的示例代码演示了如何分块上传文件。
+      <code>
+        <![CDATA[
+namespace Aliyun.OSS.Samples
+{
+    public class MultipartUploadSample
+    {
+        private const string _accessKeyId = "<your access key id>";
+        private const string _accessKeySecret = "<your access key secret>";
+        private const string _endpoint = "<your end point>";
+
+        private static readonly OssClient _ossClient = new OssClient(_endpoint, _accessKeyId, _accessKeySecret);
+
+        /// <summary>
+        /// 分片上传。
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket"/></param>
+        /// <param name="objectName"><see cref="OssObject"/></param>
+        /// <param name="fileToUpload">指定分片上传文件路径</param>
+        /// <param name="partSize">分片大小（单位：字节）</param>
+        public static void UploadMultipart(String bucketName, String objectName, String fileToUpload, int partSize)
+        {
+            var uploadId = InitiateMultipartUpload(bucketName, objectName);
+            var partETags = BeginUploadPart(bucketName, objectName, fileToUpload, uploadId, partSize);
+            var completeResult = CompleteUploadPart(bucketName, objectName, uploadId, partETags);
+            Console.WriteLine("Upload multipart result : " + completeResult.Location);
+        }
+
+        /// <summary>
+        /// 分片拷贝。
+        /// </summary>
+        /// <param name="targetBucket">目标<see cref="Bucket"/></param>
+        /// <param name="targetKey">目标<see cref="OssObject"/></param>
+        /// <param name="sourceBucket">源<see cref="Bucket"/></param>
+        /// <param name="sourceKey">源<see cref="OssObject"/></param>
+        /// <param name="partSize">分片大小（单位：字节）</param>
+        public static void UploadMultipartCopy(String targetBucket, String targetKey, String sourceBucket, String sourceKey,  int partSize)
+        {
+            var uploadId = InitiateMultipartUpload(targetBucket, targetKey);
+            var partETags = BeginUploadPartCopy(targetBucket, targetKey, sourceBucket, sourceKey, uploadId, partSize);
+            var completeResult = CompleteUploadPart(targetBucket, targetKey, uploadId, partETags);
+
+            Console.WriteLine("Upload multipart copy result : ");
+            Console.WriteLine(completeResult.Location);
+        }
+
+        private static string InitiateMultipartUpload(String bucketName, String objectName)
+        {
+            var request = new InitiateMultipartUploadRequest(bucketName, objectName);
+            var result = _ossClient.InitiateMultipartUpload(request);
+            return result.UploadId;
+        }
+
+        private static List<PartETag> BeginUploadPart(String bucketName, String objectName, String fileToUpload,
+            String uploadId, int partSize)
+        {
+            var fileSize = -1;
+            using (var fs = File.Open(fileToUpload, FileMode.Open))
+            {
+                fileSize = (int)fs.Length;
+            }
+
+            var partCount = fileSize / partSize;
+            if (fileSize % partSize != 0)
+            {
+                partCount++;
+            }
+
+            var partETags = new List<PartETag>();
+            for (var i = 0; i < partCount; i++)
+            {
+                using (FileStream fs = File.Open(fileToUpload, FileMode.Open))
+                {
+                    var skipBytes = (long)partSize * i;
+                    fs.Seek(skipBytes, 0);
+                    var size = (partSize < fileSize - skipBytes) ? partSize : (fileSize - skipBytes);
+                    var request = new UploadPartRequest(bucketName, objectName, uploadId);
+                    request.InputStream = fs;
+                    request.PartSize = size;
+                    request.PartNumber = i + 1;
+                    var result = _ossClient.UploadPart(request);
+                    partETags.Add(result.PartETag);
+                }
+            }
+            return partETags;
+        }
+
+        private static List<PartETag> BeginUploadPartCopy(String targetBucket, String targetKey, String sourceBucket, String sourceKey,
+            String uploadId, int partSize)
+        {
+            var metadata = _ossClient.GetObjectMetadata(sourceBucket, sourceKey);
+            var fileSize = metadata.ContentLength;
+
+            var partCount = (int)fileSize / partSize;
+            if (fileSize % partSize != 0)
+            {
+                partCount++;
+            }
+
+            var partETags = new List<PartETag>();
+            for (var i = 0; i < partCount; i++)
+            {
+                var skipBytes = (long)partSize * i;
+                var size = (partSize < fileSize - skipBytes) ? partSize : (fileSize - skipBytes);
+                var request = 
+                    new UploadPartCopyRequest(targetBucket, targetKey, sourceBucket, sourceKey, uploadId);
+                request.PartSize = size;
+                request.PartNumber = i + 1;
+                request.BeginIndex = skipBytes;
+                var result = _ossClient.UploadPartCopy(request);
+                partETags.Add(result.PartETag);
+            }
+            return partETags;
+        }
+
+        private static CompleteMultipartUploadResult CompleteUploadPart(String bucketName, String objectName,
+            String uploadId, List<PartETag> partETags)
+        {
+            var completeMultipartUploadRequest =
+                new CompleteMultipartUploadRequest(bucketName, objectName, uploadId);
+            foreach (var partETag in partETags)
+            {
+                completeMultipartUploadRequest.PartETags.Add(partETag);
+            }
+
+            return _ossClient.CompleteMultipartUpload(completeMultipartUploadRequest);
+        }
+    }
+ }
+]]>
+      </code>
+    </example>
+  </Member>
+  <Member name="Aliyun.OSS.Samples.GetObjectByRangeSample">
+    <example>
+      下面的示例代码演示了如何分块下载文件。
+      <code>
+        <![CDATA[
+using System;
+using System.IO;
+
+namespace Aliyun.OSS.Samples
+{
+    /// <summary>
+    /// Sample for getting object by range.
+    /// </summary>
+    public static class GetObjectByRangeSample
+    {
+        private static OssClient _client = null;
+
+        public static void GetObjectPartly()
+        {
+            const string localFilePath = "<your localFilePath>";
+            const string bucketName = "<your bucketName>";
+            const string fileKey = "<your fileKey>";
+            const string accessKeyId = "<your access key id>";
+            const string  accessKeySecret = "<your access key secret>";
+
+            _client = new OssClient(accessKeyId, accessKeySecret);
+
+            using (var fileStream = new FileStream(localFilePath, FileMode.OpenOrCreate))
+            {
+                var bufferedStream = new BufferedStream(fileStream);
+                var objectMetadata = _client.GetObjectMetadata(bucketName, fileKey);
+                var fileLength = objectMetadata.ContentLength;
+                const int partSize = 1024 * 1024 * 10;
+
+                var partCount = CalPartCount(fileLength, partSize);
+
+                for (var i = 0; i < partCount; i++)
+                {
+                    var startPos = partSize * i;
+                    var endPos = partSize * i + (partSize < (fileLength - startPos) ? partSize : (fileLength - startPos)) - 1;
+                    Download(bufferedStream, startPos, endPos, localFilePath, bucketName, fileKey);
+                }
+                bufferedStream.Flush();
+            }
+        }
+
+        /// <summary>
+        /// 计算下载的块数
+        /// </summary>
+        /// <param name="fileLength"></param>
+        /// <param name="partSize"></param>
+        /// <returns></returns>
+        private static int CalPartCount(long fileLength, long partSize)
+        {
+            var partCount = (int)(fileLength / partSize);
+            if (fileLength % partSize != 0)
+            {
+                partCount++;
+            }
+            return partCount;
+        }
+
+        /// <summary>
+        /// 分块下载
+        /// </summary>
+        /// <param name="bufferedStream"></param>
+        /// <param name="startPos"></param>
+        /// <param name="endPos"></param>
+        /// <param name="localFilePath"></param>
+        /// <param name="bucketName"></param>
+        /// <param name="fileKey"></param>
+        private static void Download(BufferedStream bufferedStream, long startPos, long endPos, String localFilePath, String bucketName, String fileKey)
+        {
+            Stream contentStream = null;
+            try
+            {
+                var getObjectRequest = new GetObjectRequest(bucketName, fileKey);
+                getObjectRequest.SetRange(startPos, endPos);
+                var ossObject = _client.GetObject(getObjectRequest);
+                byte[] buffer = new byte[1024 * 1024];
+                var bytesRead = 0;
+                bufferedStream.Seek(startPos, SeekOrigin.Begin);
+                contentStream = ossObject.Content;
+                while ((bytesRead = contentStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    bufferedStream.Write(buffer, 0, bytesRead);
+                }
+            }
+            finally
+            {
+                if (contentStream != null)
+                {
+                    contentStream.Dispose();
+                }
+            }
+        }
+
+    }
+}
+]]>
+      </code>
+    </example>
+  </Member>
+</Comments>
