@@ -1,4 +1,4 @@
-﻿# Aliyun OSS SDK for C#
+﻿# Aliyun OSS SDK for C# 
 ## 关于
 > - 此C# SDK基于[阿里云对象存储服务](http://www.aliyun.com/product/oss/) API构建。
 > - 阿里云对象存储（Object Storage Service，简称OSS），是阿里云对外提供的海量，安全，低成本，高可靠的云存储服务。
