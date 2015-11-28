@@ -532,7 +532,7 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
         /// <param name="key"><see cref="OssObject.Key" />。</param>
-        /// <param name="meta">修改后的文件元数据</param>
+        /// <param name="newMeta">修改后的文件元数据</param>
         void ModifyObjectMeta(string bucketName, string key, ObjectMetadata newMeta);
 
         /// <summary>
@@ -550,7 +550,7 @@ namespace Aliyun.OSS
         /// <summary>
         /// 生成一个签名的Uri。
         /// </summary>
-        /// <param name="request">请求参数</param>
+        /// <param name="generatePresignedUriRequest">请求参数</param>
         /// <returns>访问<see cref="OssObject" />的Uri。</returns>
         Uri GeneratePresignedUri(GeneratePresignedUriRequest generatePresignedUriRequest);
         
