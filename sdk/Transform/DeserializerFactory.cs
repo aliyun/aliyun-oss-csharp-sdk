@@ -71,6 +71,12 @@ namespace Aliyun.OSS.Transform
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public IDeserializer<ServiceResponse, AppendObjectResult> CreateAppendObjectReusltDeserializer()
+        {
+            return new AppendObjectResponseDeserializer();
+        }
+
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public IDeserializer<ServiceResponse, OssObject> CreateGetObjectResultDeserializer(GetObjectRequest request)
         {
             return new GetObjectResponseDeserializer(request);

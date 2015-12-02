@@ -4,9 +4,13 @@ using System.IO;
 using System.Linq;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
+using Aliyun.OSS.Util;
 using Aliyun.OSS.Test.Util;
 
 using NUnit.Framework;
+using System.Text;
+using System.Net;
+using System.Threading;
 
 namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 {
@@ -18,6 +22,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _bucketName;
         private static string _objectKey;
         private static string _objectETag;
+        private static AutoResetEvent _event;
 
         [TestFixtureSetUp]
         public static void ClassInitialize()
@@ -35,6 +40,8 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
                 Config.UploadSampleFile, new ObjectMetadata());
             _objectETag = poResult.ETag;
+
+            _event = new AutoResetEvent(false);
         }
 
         [TestFixtureTearDown]
@@ -1129,6 +1136,328 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
         #endregion
 
+        #region append object
+
+        [Test]
+        public void AppendObject()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                long position = 0;
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = position
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+                    position = result.NextAppendPosition;
+                }
+
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = position
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength * 2, result.NextAppendPosition);
+                    Assert.IsTrue(result.HashCrc64Ecma != 0);
+                }
+
+                var meta = _ossClient.GetObjectMetadata(_bucketName, key);
+                Assert.AreEqual("Appendable", meta.ObjectType);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void AppendObjectWithHeader()
+        {
+            const string contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                long position = 0;
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = position
+                    };
+                    request.ObjectMetadata.ContentType = contentType;
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+                    position = result.NextAppendPosition;
+                }
+
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = position
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength * 2, result.NextAppendPosition);
+                    Assert.IsTrue(result.HashCrc64Ecma != 0);
+                }
+
+                var meta = _ossClient.GetObjectMetadata(_bucketName, key);
+                Assert.AreEqual(contentType, meta.ContentType);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void AppendObjectWithAppendPositionMoreThanCurrentPosition()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = 100
+                    };
+
+                    _ossClient.AppendObject(request);
+                    Assert.IsFalse(true);
+                }
+            }
+            catch (OssException ex)
+            {
+                Assert.AreEqual("PositionNotEqualToLength", ex.ErrorCode);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void AppendObjectWithAppendPositionLessThanCurrentPosition()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = 0
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+
+                    request.Position = result.NextAppendPosition - 1;
+                    _ossClient.AppendObject(request);
+
+                    Assert.IsFalse(true);
+                }
+            }
+            catch (OssException ex)
+            {
+                Assert.AreEqual("PositionNotEqualToLength", ex.ErrorCode);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void AppendObjectWithHasNormalObjectExist()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile);
+
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = 0
+                    };
+
+                    _ossClient.AppendObject(request);
+                    Assert.IsFalse(true);
+                }
+            }
+            catch (OssException ex)
+            {
+                Assert.AreEqual("ObjectNotAppendable", ex.ErrorCode);
+            }
+            finally
+            {
+                System.Threading.Thread.Sleep(5 * 1000);
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void AppendObjectWithAppendEmptyObject()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                long position = 0;
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = position
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+                    position = result.NextAppendPosition;
+                }
+
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                     var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = position
+                    };
+                    request.Content = new MemoryStream(Encoding.UTF8.GetBytes(""));
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+                }
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+
+        [Test]
+        public void AsyncAppendObject()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var request = new AppendObjectRequest(_bucketName, _objectKey)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = 0
+                    };
+
+                    _ossClient.BeginAppendObject(request, AppendObjectCallback, new string('a', 5));
+                    _event.WaitOne();
+                }
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadObjectWithHasAppendObjectExist()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = 0
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+                }
+
+                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        #endregion
+
         #region private
         private static List<string> CreateMultiObjects(int objectsCount)
         {
@@ -1142,6 +1471,23 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 System.Threading.Thread.Sleep(100);
             }
             return sampleObjects;
+        }
+
+        private static void AppendObjectCallback(IAsyncResult ar)
+        {
+            try
+            {
+                var result = _ossClient.EndAppendObject(ar);
+                Console.WriteLine("Append object succeeded, next append position:{0}", result.NextAppendPosition);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                _event.Set();
+            }
         }
         #endregion
     };

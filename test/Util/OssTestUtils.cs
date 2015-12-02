@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Aliyun.OSS;
+using Aliyun.OSS.Common;
 
 namespace Aliyun.OSS.Test.Util
 {

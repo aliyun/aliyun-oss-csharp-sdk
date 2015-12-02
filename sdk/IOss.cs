@@ -413,6 +413,31 @@ namespace Aliyun.OSS
         PutObjectResult PutObject(Uri signedUrl, Stream content, ObjectMetadata metadata = null);
 
         /// <summary>
+        /// 追加指定的内容到指定的OSS<see cref="OssObject" />。
+        /// </summary>
+        /// <param name="request"><see cref="AppendObjectRequest" />的实例</param>
+        /// <returns><see cref="AppendObjectResult" />实例</returns>
+        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.AppendObjectSample"]/*'/>
+        AppendObjectResult AppendObject(AppendObjectRequest request);
+
+        /// <summary>
+        /// 追加指定的内容到指定的OSS<see cref="OssObject" />。
+        /// </summary>
+        /// <param name="request"><see cref="AppendObjectRequest" />的实例</param>
+        /// <param name="callback">用户自定义委托对象。</param>
+        /// <param name="state">用户自定义状态对象。</param>
+        /// <returns>异步请求的对象引用。</returns>
+        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.AppendObjectSample"]/*'/>
+        IAsyncResult BeginAppendObject(AppendObjectRequest request, AsyncCallback callback, Object state);
+
+        /// <summary>
+        /// 等待挂起的异步追加<see cref="OssObject" />操作的完成。
+        /// </summary>
+        /// <param name="asyncResult">对所等待的挂起异步请求的引用。</param>
+        /// <returns><see cref="AppendObjectResult"/>对象。</returns>
+        AppendObjectResult EndAppendObject(IAsyncResult asyncResult);
+
+        /// <summary>
         /// 从指定的OSS<see cref="Bucket" />中获取指定的<see cref="OssObject" />。
         /// </summary>
         /// <param name="bucketName">要获取的<see cref="OssObject"/>所在的<see cref="Bucket" />的名称。</param>

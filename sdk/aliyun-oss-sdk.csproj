@@ -148,6 +148,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\AppendObjectCommand.cs" />
     <Compile Include="Common\ClientConfiguration.cs" />
     <Compile Include="Commands\HeadObjectCommand.cs" />
     <Compile Include="Commands\DeleteObjectsCommand.cs" />
@@ -174,6 +175,9 @@
     <Compile Include="Common\Communication\ServiceClient.cs" />
     <Compile Include="Common\Handlers\IResponseHandler.cs" />
     <Compile Include="Common\Handlers\ResponseHandler.cs" />
+    <Compile Include="Domain\AppendObjectRequest.cs" />
+    <Compile Include="Domain\AppendObjectResult.cs" />
+    <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\IDeserializer.cs" />
     <Compile Include="Transform\ISerializer.cs" />
     <Compile Include="Transform\RequestSerializationException.cs" />
@@ -375,10 +379,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\MimeData.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

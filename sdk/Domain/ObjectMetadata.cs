@@ -194,6 +194,18 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
+        /// 获取文件类型[Normal/Appendable]
+        /// </summary>
+        public string ObjectType
+        {
+            get
+            {
+                return _metadata.ContainsKey(HttpHeaders.ObjectType)
+                    ? _metadata[HttpHeaders.ObjectType] as string : null;
+            }
+        }
+
+        /// <summary>
         /// 初始化一个新的<see cref="ObjectMetadata" />实例。
         /// </summary>
         public ObjectMetadata()

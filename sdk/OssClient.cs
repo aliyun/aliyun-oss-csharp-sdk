@@ -619,6 +619,34 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
+        public AppendObjectResult AppendObject(AppendObjectRequest request)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = AppendObjectCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Post, request.BucketName, request.Key),
+                                                 request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public IAsyncResult BeginAppendObject(AppendObjectRequest request, AsyncCallback callback, Object state)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = AppendObjectCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Post, request.BucketName, request.Key),
+                                                 request);
+            return OssUtils.BeginOperationHelper(cmd, callback, state);
+        }
+
+        /// <inheritdoc/>
+        public AppendObjectResult EndAppendObject(IAsyncResult asyncResult)
+        {
+            return OssUtils.EndOperationHelper<AppendObjectResult>(_serviceClient, asyncResult);
+        }
+
+        /// <inheritdoc/>
         public PutObjectResult PutBigObject(string bucketName, string key, Stream content, ObjectMetadata metadata, long? partSize = null)
         {
             // 计算content-type

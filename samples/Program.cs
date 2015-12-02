@@ -36,24 +36,30 @@ namespace Aliyun.OSS.Samples
                 // 7.2 Async put object sample
                 //PutObjectSample.AsyncPutObject();
 
-                // 8. Delete objects sample
+                // 8.1 Append object sample
+                // AppendObjectSample.AppendObject();
+
+                // 8.2 Async append object sample 
+                // AppendObjectSample.AsyncAppendObject();
+
+                // 9. Delete objects sample
                 // DeleteObjectsSample.DeleteObjects();
 
-                // 9.1 Upload multipart sample
+                // 10.1 Upload multipart sample
                 //const string bucketName = "<bucket name>";
                 //const string objectName = "<object key>";
                 //const string fileToUpload = "<local file to upload>";
                 //const int partSize = 5 * 1024 * 1024; // 5MB
                 //MultipartUploadSample.UploadMultipart(bucketName, objectName, fileToUpload, partSize);
 
-                // 9.2 Async upload multipart sample
+                // 10.2 Async upload multipart sample
                 //const string bucketName = "<bucket name>";
                 //const string objectName = "<object name>";
                 //const string fileToUpload = "<file to upload>";
                 //const int partSize = 5 * 1024 * 1024; // 5MB
                 //MultipartUploadSample.AsyncUploadMultipart(bucketName, objectName, fileToUpload, partSize);
 
-                // 10.1 Upload multipart copy sample 
+                // 11.1 Upload multipart copy sample 
                 //const string targetName = "<target bucket>";
                 //const string targetKey = "<target key>";
                 //const string sourceBucket = "<source bucket>";
@@ -61,7 +67,7 @@ namespace Aliyun.OSS.Samples
                 //const int partSize = 5 * 1024 * 1024; // 5MB
                 //MultipartUploadSample.UploadMultipartCopy(targetName, targetKey, sourceBucket, sourceKey, partSize);
 
-                // 10.2 Async upload multipart copy sample 
+                // 11.2 Async upload multipart copy sample 
                 //const string targetName = "<target bucket>";
                 //const string targetKey = "<target key>";
                 //const string sourceBucket = "<source bucket>";
@@ -69,53 +75,53 @@ namespace Aliyun.OSS.Samples
                 //const int partSize = 5 * 1024 * 1024; // 5MB
                 //MultipartUploadSample.AsyncUploadMultipartCopy(targetName, targetKey, sourceBucket, sourceKey, partSize);
 
-                // 10.3 Upload multipart copy sample 
+                // 11.3 Upload multipart copy sample 
                 //const string bucketName = "shaoqiang";
                 //MultipartUploadSample.ListMultipartUploads(bucketName);
 
-                // 11. Get object by range sample
+                // 12. Get object by range sample
                 //GetObjectByRangeSample.GetObjectPartly();
 
-                // 12.1 Get object once sample.
+                // 13.1 Get object once sample.
                 //GetObjectSample.GetObject();
 
-                // 12.2 Async get object once sample.
+                // 13.2 Async get object once sample.
                 //GetObjectSample.AsyncGetObject();
 
-                // 13. Get object by using url signature.
+                // 14. Get object by using url signature.
                 //UrlSignatureSample.GetObjectBySignedUrl();
 
-                // 14. Put object by using url signature.
+                // 15. Put object by using url signature.
                 //UrlSignatureSample.PutObjectBySignedUrl();
 
-                // 15.1 Copy object sample
+                // 16.1 Copy object sample
                 //CopyObjectSample.CopyObject();
 
-                // 15.2 Async copy object sample
+                // 16.2 Async copy object sample
                 //CopyObjectSample.AsyncCopyObject();
 
-                // 16. Create empty folder
+                // 17. Create empty folder
                 //CreateEmptyFolderSample.CreateEmptyFolder();
 
-                // 17.1 List objects
+                // 18.1 List objects
                 //ListObjectsSample.ListObjects();
 
-                // 17.2 Async list objects
+                // 18.2 Async list objects
                 //ListObjectsSample.AsyncListObjects();
 
-                // 18. Generate post policy
+                // 19. Generate post policy
                 //PostPolicySample.GenPostPolicy();
 
-                // 19. Set bucket lifecycle
+                // 20. Set bucket lifecycle
                 //BucketLifecycleSample.SetBucketLifecycle();
 
-                // 20. Get bucket lifecycle
+                // 21. Get bucket lifecycle
                 //BucketLifecycleSample.GetBucketLifecycle();
 
-                // 21. Determine bucket exist
+                // 22. Determine bucket exist
                 //DoesBucketExistSample.DoesBucketExist("oss");
 
-                // 22. Determine object exist
+                // 23. Determine object exist
                 //DoesObjectExistSample.DoesObjectExist("oss-test", "conf.ini2");
             }
             catch (OssException ex)
