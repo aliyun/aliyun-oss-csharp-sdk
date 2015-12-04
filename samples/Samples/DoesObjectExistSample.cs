@@ -15,14 +15,14 @@ namespace Aliyun.OSS.Samples
     /// </summary>
     public static class DoesObjectExistSample
     {
-        public static void DoesObjectExist(string bucketName, string key)
+        static string accessKeyId = Config.AccessKeyId;
+        static string accessKeySecret = Config.AccessKeySecret;
+        static string endpoint = Config.Endpoint;
+        static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
+
+        public static void DoesObjectExist(string bucketName)
         {
-            const string accessKeyId = "<your access key id>";
-            const string accessKeySecret = "<your access key secret>";
-            const string endpoint = "<valid host name>";
-
-            var client = new OssClient(endpoint, accessKeyId, accessKeySecret);
-
+            const string key = "key1";
             try
             {
                 var exist = client.DoesObjectExist(bucketName, key);

@@ -565,33 +565,26 @@ namespace Aliyun.OSS
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
                 throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
 
-            var metadata = new ObjectMetadata();
-            SetContentTypeIfNull(null, fileToUpload, ref metadata);
-
             PutObjectResult result;
             using (Stream content = File.OpenRead(fileToUpload))
             {
-                result = PutObject(signedUrl, content, metadata);
+                result = PutObject(signedUrl, content);
             }
             return result;
         }
 
         /// <inheritdoc/>
-        public PutObjectResult PutObject(Uri signedUrl, Stream content, ObjectMetadata metadata = null)
+        public PutObjectResult PutObject(Uri signedUrl, Stream content)
         {
             var webRequest = (HttpWebRequest)WebRequest.Create(signedUrl);
             webRequest.Timeout = Timeout.Infinite;  // A temporary solution. 
             webRequest.Method = HttpMethod.Put.ToString().ToUpperInvariant();
             webRequest.ContentLength = content.Length;
-
-            if (metadata != null && metadata.ContentType != null) {
-                webRequest.ContentType = metadata.ContentType;
-            }
            
             using (var requestStream = webRequest.GetRequestStream())
             {
                 IoUtils.WriteTo(content, requestStream);
-            }
+            } 
 
             var response = webRequest.GetResponse() as HttpWebResponse;
             PutObjectResult result = null;

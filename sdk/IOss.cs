@@ -408,9 +408,8 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="signedUrl">PUT请求类型的URL签名。</param>
         /// <param name="content">请求输入流。</param>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        PutObjectResult PutObject(Uri signedUrl, Stream content, ObjectMetadata metadata = null);
+        PutObjectResult PutObject(Uri signedUrl, Stream content);
 
         /// <summary>
         /// 追加指定的内容到指定的OSS<see cref="OssObject" />。

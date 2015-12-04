@@ -16,13 +16,12 @@ namespace Aliyun.OSS.Samples
     /// </summary>
     public static class CNameSample
     {
-        const string accessKeyId = "<your access key id>";
-        const string accessKeySecret= "<your access key secret>";
-        const string endpoint = "<valid host name>";
+        static string accessKeyId = "your access key id for CNAME";
+        static string accessKeySecret = "your access key secret for CNAME";
+        static string endpoint = "<your endpoint for CNAME>";
 
-        const string bucketName = "<your bucket name>";
-        const string key = "<your key>";
-        const string fileToUpload = "<your local file path>";
+        static string key = "key-name";
+        static string fileToUpload = Config.FileToUpload;
 
         static ClientConfiguration clientConfig = new ClientConfiguration();
         static OssClient client = null;
@@ -33,26 +32,68 @@ namespace Aliyun.OSS.Samples
             client = new OssClient(new Uri(endpoint), accessKeyId, accessKeySecret, clientConfig);
         }
 
-        public static void CNameOperation()
+        public static void CNameOperation(string bucketName)
         {
-            PutObject();
-            DeleteObject();
-            SetBucketAcl();
+            PutObject(bucketName);
+            DeleteObject(bucketName);
+            SetBucketAcl(bucketName);
         }
 
-        public static void PutObject() 
+        public static void PutObject(string bucketName) 
         {
-            client.PutObject(bucketName, key, fileToUpload);
+            try
+            {
+                client.PutObject(bucketName, key, fileToUpload);
+
+                Console.WriteLine("Put object with CNAME succeeded");
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
         }
 
-        public static void DeleteObject()
+        public static void DeleteObject(string bucketName)
         {
-            client.DeleteObject(bucketName, key);
+            try
+            {
+                client.DeleteObject(bucketName, key);
+
+                Console.WriteLine("Delete object with CNAME succeeded");
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
         }
 
-        public static void SetBucketAcl()
+        public static void SetBucketAcl(string bucketName)
         {
-            client.SetBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+            try
+            {
+                client.SetBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+
+                Console.WriteLine("Set bucket acl with CNAME succeeded");
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
         }
     }
 }

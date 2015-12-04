@@ -16,20 +16,14 @@ namespace Aliyun.OSS.Samples
     /// </summary>
     public static class CopyObjectSample
     {
-        const string accessKeyId = "<your access key id>";
-        const string accessKeySecret= "<your access key secret>";
-        const string endpoint = "<valid host name>";
-
+        static string accessKeyId = Config.AccessKeyId;
+        static string accessKeySecret = Config.AccessKeySecret;
+        static string endpoint = Config.Endpoint;
         static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
-
-        const string sourceBucket = "<source bucket name>";
-        const string sourceKey = "<source object name>";
-        const string targetBucket = "<target bucket name>";
-        const string targetKey = "<target object name>";
 
         static AutoResetEvent _event = new AutoResetEvent(false);
 
-        public static void CopyObject()
+        public static void CopyObject(string sourceBucket, string sourceKey, string targetBucket, string targetKey)
         {
             try
             {
@@ -40,8 +34,9 @@ namespace Aliyun.OSS.Samples
                 {
                     NewObjectMetadata = metadata
                 };
-                var ret = client.CopyObject(req);
-                Console.WriteLine("target key's etag: " + ret.ETag);
+                client.CopyObject(req);
+
+                Console.WriteLine("Copy object succeeded");
             }
             catch (OssException ex)
             {
@@ -54,7 +49,7 @@ namespace Aliyun.OSS.Samples
             }
         }
 
-        public static void AsyncCopyObject()
+        public static void AsyncCopyObject(string sourceBucket, string sourceKey, string targetBucket, string targetKey)
         {
             try
             {
@@ -84,8 +79,8 @@ namespace Aliyun.OSS.Samples
         {
             try
             {
-                var result = client.EndCopyResult(ar);
-                Console.WriteLine(result.ETag);
+                client.EndCopyResult(ar);
+                Console.WriteLine("Copy object succeeded");
             }
             catch (Exception ex)
             {

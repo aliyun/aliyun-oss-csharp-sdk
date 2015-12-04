@@ -84,8 +84,22 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Samples\BucketLifecycleSample.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Samples\DeleteBucketSample.cs" />
+    <Compile Include="Samples\ModifyObjectMetaSample.cs" />
+    <Compile Include="Samples\SetBucketLifecycleSample.cs" />
     <Compile Include="Samples\AppendObjectSample.cs" />
+    <Compile Include="Samples\GetBucketLifecycleSample.cs" />
+    <Compile Include="Samples\GetBucketRefererSample.cs" />
+    <Compile Include="Samples\GetBucketWetbsiteSample.cs" />
+    <Compile Include="Samples\DeleteBucketWetbsiteSample.cs" />
+    <Compile Include="Samples\SetBucketWetbsiteSample.cs" />
+    <Compile Include="Samples\DeleteBucketLoggingSample.cs" />
+    <Compile Include="Samples\GetBucketLoggingSample.cs" />
+    <Compile Include="Samples\SetBucketLoggingSample.cs" />
+    <Compile Include="Samples\DeleteBucketCorsSample.cs" />
+    <Compile Include="Samples\GetBucketCorsSample.cs" />
+    <Compile Include="Samples\GetBucketAclSample.cs" />
     <Compile Include="Samples\DoesBucketExistSample.cs" />
     <Compile Include="Samples\DoesObjectExistSample.cs" />
     <Compile Include="Samples\PostPolicySample.cs" />

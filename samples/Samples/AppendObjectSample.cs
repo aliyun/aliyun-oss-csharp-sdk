@@ -17,23 +17,27 @@ namespace Aliyun.OSS.Samples
     /// </summary>
     public static class AppendObjectSample
     {
-        const string accessKeyId = "<your access key id>";
-        const string accessKeySecret = "<your access key secret>";
-        const string endpoint = "<valid host name>";
-
-        const string bucketName = "<your bucket name>";
-        const string key = "<your key>";
-        const string fileToUpload = "<your local file path>";
-
+        static string accessKeyId = Config.AccessKeyId;
+        static string accessKeySecret = Config.AccessKeySecret;
+        static string endpoint = Config.Endpoint;
         static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
+
+        static string fileToUpload = Config.FileToUpload;
 
         static AutoResetEvent _event = new AutoResetEvent(false);
 
         /// <summary>
         /// sample for append object to oss
         /// </summary>
-        public static void AppendObject()
+        public static void AppendObject(string bucketName)
         {
+            SyncAppendObject(bucketName);
+            AsyncAppendObject(bucketName);
+        }
+
+        public static void SyncAppendObject(string bucketName)
+        {
+            const string key = "AppendObject";
             long position = 0;
             try
             {
@@ -54,7 +58,25 @@ namespace Aliyun.OSS.Samples
                     };
 
                     var result = client.AppendObject(request);
-                    Console.WriteLine("Append object succeeded, next append position:{0}", result.NextAppendPosition);
+                    position = result.NextAppendPosition;
+
+                    Console.WriteLine("Append object succeeded, next append position:{0}", position);
+                }
+
+                // append object by using NextAppendPosition
+                using (var fs = File.Open(fileToUpload, FileMode.Open))
+                {
+                    var request = new AppendObjectRequest(bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = fs,
+                        Position = position
+                    };
+
+                    var result = client.AppendObject(request);
+                    position = result.NextAppendPosition;
+
+                    Console.WriteLine("Append object succeeded too, next append position:{0}", position);
                 }
             }
             catch (OssException ex)
@@ -68,8 +90,9 @@ namespace Aliyun.OSS.Samples
             }
         }
 
-        public static void AsyncAppendObject()
+        public static void AsyncAppendObject(string bucketName)
         {
+            const string key = "AsyncAppendObject";
             long position = 0;
             try
             {
@@ -89,7 +112,10 @@ namespace Aliyun.OSS.Samples
                         Position = position
                     };
 
-                    client.BeginAppendObject(request, AppendObjectCallback, new string('a', 5));
+
+                    const string notice = "Append object succeeded";
+                    client.BeginAppendObject(request, AppendObjectCallback, notice.Clone());
+
                     _event.WaitOne();
                 }
             }
@@ -110,6 +136,7 @@ namespace Aliyun.OSS.Samples
             {
                 var result = client.EndAppendObject(ar);
                 Console.WriteLine("Append object succeeded, next append position:{0}", result.NextAppendPosition);
+                Console.WriteLine(ar.AsyncState as string);
             }
             catch (Exception ex)
             {

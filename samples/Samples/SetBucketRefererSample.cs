@@ -16,16 +16,13 @@ namespace Aliyun.OSS.Samples
     /// </summary>
     public static class SetBucketRefererSample
     {
-        public static void SetBucketReferer()
+        static string accessKeyId = Config.AccessKeyId;
+        static string accessKeySecret = Config.AccessKeySecret;
+        static string endpoint = Config.Endpoint;
+        static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
+
+        public static void SetBucketReferer(string bucketName)
         {
-            const string accessKeyId = "<your access key id>";
-            const string accessKeySecret = "<your access key secret>";
-            const string endpoint = "<valid host name>";
-
-            const string bucketName = "<bucket name>";
-
-            OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
-
             try
             {
                 var refererList = new List<string>();
@@ -33,20 +30,9 @@ namespace Aliyun.OSS.Samples
                 refererList.Add(" http://www.*.com");
                 refererList.Add(" http://www.?.aliyuncs.com");
                 var srq = new SetBucketRefererRequest(bucketName, refererList);
-                //srq.ClearRefererList();
                 client.SetBucketReferer(srq);
 
-                var rc = client.GetBucketReferer(bucketName);
-                Console.WriteLine("allow？" + (rc.AllowEmptyReferer ? "yes" : "no"));
-                if (rc.RefererList.Referers != null)
-                {
-                    for (var i = 0; i < rc.RefererList.Referers.Length; i++)
-                        Console.WriteLine(rc.RefererList.Referers[i]);
-                }
-                else
-                {
-                    Console.WriteLine("Empty Referer List");
-                }
+                Console.WriteLine("Set bucket:{0} Referer succeeded ", bucketName);
             }
             catch (OssException ex)
             {
@@ -56,10 +42,6 @@ namespace Aliyun.OSS.Samples
             catch (Exception ex)
             {
                 Console.WriteLine("Failed with error info: {0}", ex.Message);
-            }
-            finally
-            {
-                client.SetBucketReferer(new SetBucketRefererRequest(bucketName));
             }
         }
     }

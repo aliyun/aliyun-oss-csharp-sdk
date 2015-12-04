@@ -14,11 +14,15 @@ namespace Aliyun.OSS.Samples
 {
     public class MultipartUploadSample
     {
-        const string _accessKeyId = "<your access key id>";
-        const string _accessKeySecret = "<your access key secret>"; 
-        const string _endpoint = "<valid host name>";
+        static string accessKeyId = Config.AccessKeyId;
+        static string accessKeySecret = Config.AccessKeySecret;
+        static string endpoint = Config.Endpoint;
+        static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 
-        private static readonly OssClient _ossClient = new OssClient(_endpoint, _accessKeyId, _accessKeySecret);
+        static string key = "key-1";
+        static string fileToUpload = Config.BigFileToUpload;
+
+        static int partSize = 10 * 1024 * 1024;
 
         public class UploadPartContext
         {
@@ -77,40 +81,28 @@ namespace Aliyun.OSS.Samples
         /// <summary>
         /// 分片上传。
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket"/></param>
-        /// <param name="objectName"><see cref="OssObject"/></param>
-        /// <param name="fileToUpload">指定分片上传文件路径</param>
-        /// <param name="partSize">分片大小（单位：字节）</param>
-        public static void UploadMultipart(String bucketName, String objectName, String fileToUpload, int partSize)
+        public static void UploadMultipart(String bucketName)
         {
-            var uploadId = InitiateMultipartUpload(bucketName, objectName);
-            var partETags = UploadParts(bucketName, objectName, fileToUpload, uploadId, partSize);
-            var completeResult = CompleteUploadPart(bucketName, objectName, uploadId, partETags);
-            Console.WriteLine(@"Upload multipart result : " + completeResult.Location);
+            var uploadId = InitiateMultipartUpload(bucketName, key);
+            var partETags = UploadParts(bucketName, key, fileToUpload, uploadId, partSize);
+            var completeResult = CompleteUploadPart(bucketName, key, uploadId, partETags);
+
+            Console.WriteLine("Multipart put object:{0} succeeded", key);
         }
 
         /// <summary>
         /// 异步分片上传。
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket"/></param>
-        /// <param name="objectName"><see cref="OssObject"/></param>
-        /// <param name="fileToUpload">指定分片上传文件路径</param>
-        /// <param name="partSize">分片大小（单位：字节）</param>
-        public static void AsyncUploadMultipart(String bucketName, String objectName, String fileToUpload, int partSize)
+        public static void AsyncUploadMultipart(String bucketName)
         {
-            var uploadId = InitiateMultipartUpload(bucketName, objectName);
-           AsyncUploadParts(bucketName, objectName, fileToUpload, uploadId, partSize);
+            var uploadId = InitiateMultipartUpload(bucketName, key);
+            AsyncUploadParts(bucketName, key, fileToUpload, uploadId, partSize);
         }
 
         /// <summary>
         /// 分片拷贝。
         /// </summary>
-        /// <param name="targetBucket">目标<see cref="Bucket"/></param>
-        /// <param name="targetObject">目标<see cref="OssObject"/></param>
-        /// <param name="sourceBucket">源<see cref="Bucket"/></param>
-        /// <param name="sourceObject">源<see cref="OssObject"/></param>
-        /// <param name="partSize">分片大小（单位：字节）</param>
-        public static void UploadMultipartCopy(String targetBucket, String targetObject, String sourceBucket, String sourceObject,  int partSize)
+        public static void UploadMultipartCopy(String targetBucket, String targetObject, String sourceBucket, String sourceObject)
         {
             var uploadId = InitiateMultipartUpload(targetBucket, targetObject);
             var partETags = UploadPartCopys(targetBucket, targetObject, sourceBucket, sourceObject, uploadId, partSize);
@@ -123,12 +115,7 @@ namespace Aliyun.OSS.Samples
         /// <summary>
         /// 异步分片拷贝。
         /// </summary>
-        /// <param name="targetBucket">目标<see cref="Bucket"/></param>
-        /// <param name="targetObject">目标<see cref="OssObject"/></param>
-        /// <param name="sourceBucket">源<see cref="Bucket"/></param>
-        /// <param name="sourceObject">源<see cref="OssObject"/></param>
-        /// <param name="partSize">分片大小（单位：字节）</param>
-        public static void AsyncUploadMultipartCopy(String targetBucket, String targetObject, String sourceBucket, String sourceObject, int partSize)
+        public static void AsyncUploadMultipartCopy(String targetBucket, String targetObject, String sourceBucket, String sourceObject)
         {
             var uploadId = InitiateMultipartUpload(targetBucket, targetObject);
             AsyncUploadPartCopys(targetBucket, targetObject, sourceBucket, sourceObject, uploadId, partSize);
@@ -140,7 +127,7 @@ namespace Aliyun.OSS.Samples
         public static void ListMultipartUploads(String bucketName)
         {
             var listMultipartUploadsRequest = new ListMultipartUploadsRequest(bucketName);
-            var result = _ossClient.ListMultipartUploads(listMultipartUploadsRequest);
+            var result = client.ListMultipartUploads(listMultipartUploadsRequest);
             Console.WriteLine("Bucket name:" + result.BucketName);
             Console.WriteLine("Key marker:" + result.KeyMarker);
             Console.WriteLine("Delimiter:" + result.Delimiter);
@@ -156,7 +143,7 @@ namespace Aliyun.OSS.Samples
         private static string InitiateMultipartUpload(String bucketName, String objectName)
         {
             var request = new InitiateMultipartUploadRequest(bucketName, objectName);
-            var result = _ossClient.InitiateMultipartUpload(request);
+            var result = client.InitiateMultipartUpload(request);
             return result.UploadId;
         }
 
@@ -186,8 +173,8 @@ namespace Aliyun.OSS.Samples
                         PartNumber = i + 1
                     };
                    
-                    var result = _ossClient.UploadPart(request);
-                    Console.WriteLine("oss:"+ result.PartETag);
+                    var result = client.UploadPart(request);
+                    Console.WriteLine("oss etag:{0}", result.PartETag.ETag);
 
                     partETags.Add(result.PartETag);
                 }
@@ -230,7 +217,7 @@ namespace Aliyun.OSS.Samples
                     PartSize = size,
                     PartNumber = i + 1
                 };
-                _ossClient.BeginUploadPart(request, UploadPartCallback, new UploadPartContextWrapper(ctx, fs, i + 1));
+                client.BeginUploadPart(request, UploadPartCallback, new UploadPartContextWrapper(ctx, fs, i + 1));
             }
 
             ctx.WaitEvent.WaitOne();
@@ -238,7 +225,7 @@ namespace Aliyun.OSS.Samples
 
         private static void UploadPartCallback(IAsyncResult ar)
         {
-            var result = _ossClient.EndUploadPart(ar);
+            var result = client.EndUploadPart(ar);
             var wrappedContext = (UploadPartContextWrapper)ar.AsyncState;
             wrappedContext.PartStream.Close();
 
@@ -259,7 +246,7 @@ namespace Aliyun.OSS.Samples
                         completeMultipartUploadRequest.PartETags.Add(partETag);
                     }
 
-                    var completeMultipartUploadResult = _ossClient.CompleteMultipartUpload(completeMultipartUploadRequest);
+                    var completeMultipartUploadResult = client.CompleteMultipartUpload(completeMultipartUploadRequest);
                     Console.WriteLine(@"Async upload multipart result : " + completeMultipartUploadResult.Location);
 
                     ctx.WaitEvent.Set();
@@ -270,7 +257,7 @@ namespace Aliyun.OSS.Samples
         private static List<PartETag> UploadPartCopys(String targetBucket, String targetObject, String sourceBucket, String sourceObject,
             String uploadId, int partSize)
         {
-            var metadata = _ossClient.GetObjectMetadata(sourceBucket, sourceObject);
+            var metadata = client.GetObjectMetadata(sourceBucket, sourceObject);
             var fileSize = metadata.ContentLength;
 
             var partCount = (int)fileSize / partSize;
@@ -291,7 +278,7 @@ namespace Aliyun.OSS.Samples
                         PartNumber = i + 1,
                         BeginIndex = skipBytes
                     };
-                var result = _ossClient.UploadPartCopy(request);
+                var result = client.UploadPartCopy(request);
                 partETags.Add(result.PartETag);
             }
 
@@ -301,7 +288,7 @@ namespace Aliyun.OSS.Samples
         private static void AsyncUploadPartCopys(String targetBucket, String targetObject, String sourceBucket, String sourceObject,
             String uploadId, int partSize)
         {
-            var metadata = _ossClient.GetObjectMetadata(sourceBucket, sourceObject);
+            var metadata = client.GetObjectMetadata(sourceBucket, sourceObject);
             var fileSize = metadata.ContentLength;
 
             var partCount = (int)fileSize / partSize;
@@ -333,7 +320,7 @@ namespace Aliyun.OSS.Samples
                         PartNumber = i + 1,
                         BeginIndex = skipBytes
                     };
-                _ossClient.BeginUploadPartCopy(request, UploadPartCopyCallback, new UploadPartCopyContextWrapper(ctx, i + 1));
+                client.BeginUploadPartCopy(request, UploadPartCopyCallback, new UploadPartCopyContextWrapper(ctx, i + 1));
             }
 
             ctx.WaitEvent.WaitOne();
@@ -341,7 +328,7 @@ namespace Aliyun.OSS.Samples
 
         private static void UploadPartCopyCallback(IAsyncResult ar)
         {
-            var result = _ossClient.EndUploadPartCopy(ar);
+            var result = client.EndUploadPartCopy(ar);
             var wrappedContext = (UploadPartCopyContextWrapper)ar.AsyncState;
 
             var ctx = wrappedContext.Context;
@@ -361,7 +348,7 @@ namespace Aliyun.OSS.Samples
                         completeMultipartUploadRequest.PartETags.Add(partETag);
                     }
 
-                    var completeMultipartUploadResult = _ossClient.CompleteMultipartUpload(completeMultipartUploadRequest);
+                    var completeMultipartUploadResult = client.CompleteMultipartUpload(completeMultipartUploadRequest);
                     Console.WriteLine(@"Async upload multipart copy result : " + completeMultipartUploadResult.Location);
 
                     ctx.WaitEvent.Set();
@@ -379,7 +366,7 @@ namespace Aliyun.OSS.Samples
                 completeMultipartUploadRequest.PartETags.Add(partETag);
             }
 
-            return _ossClient.CompleteMultipartUpload(completeMultipartUploadRequest);
+            return client.CompleteMultipartUpload(completeMultipartUploadRequest);
         }
     }
  }

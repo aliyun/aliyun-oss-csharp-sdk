@@ -1266,6 +1266,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
             finally
             {
+                System.Threading.Thread.Sleep(5000);
                 if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
                 {
                     _ossClient.DeleteObject(_bucketName, key);
@@ -1417,6 +1418,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
             finally
             {
+                System.Threading.Thread.Sleep(5 * 1000);
                 if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
                 {
                     _ossClient.DeleteObject(_bucketName, key);
@@ -1477,8 +1479,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         {
             try
             {
-                var result = _ossClient.EndAppendObject(ar);
-                Console.WriteLine("Append object succeeded, next append position:{0}", result.NextAppendPosition);
+                _ossClient.EndAppendObject(ar);
             }
             catch (Exception ex)
             {
