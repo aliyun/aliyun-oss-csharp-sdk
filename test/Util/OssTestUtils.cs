@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
@@ -158,7 +157,7 @@ namespace Aliyun.OSS.Test.Util
 
         public static bool ObjectExists(IOss ossClient, string bucketName, string objectKeyName)
         {
-            return ossClient.ListObjects(bucketName).ObjectSummaries.Select( e => e.Key).Contains(objectKeyName);
+            return ossClient.DoesObjectExist(bucketName, objectKeyName);
         }
 
         public static void DownloadObject(IOss ossClient, string bucketName, string objectKeyName, string targetFile)
@@ -232,6 +231,16 @@ namespace Aliyun.OSS.Test.Util
                 partCount++;
             }
             return partCount;
+        }
+
+        public static List<T> ToArray<T>(IEnumerable<T> source)
+        {
+            var list = new List<T>();
+            foreach (var entry in source)
+            {
+                list.Add(entry);
+            }
+            return list;
         }
     }
 }

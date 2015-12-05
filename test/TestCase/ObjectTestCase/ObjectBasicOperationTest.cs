@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Util;
@@ -368,13 +367,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 {
                     Assert.IsTrue(true);
                 }
-                finally
-                {
-                    if (OssTestUtils.ObjectExists(_ossClient, _bucketName, invalidKeyName))
-                    {
-                        _ossClient.DeleteObject(_bucketName, invalidKeyName);
-                    }
-                }
             }
         }
 
@@ -468,14 +460,14 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var allObjects = _ossClient.ListObjects(_bucketName);
                 //default value is 100
                 Assert.AreEqual(100, allObjects.MaxKeys);
-                var allObjectsSumm = allObjects.ObjectSummaries.ToList();
+                var allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
                 //there is already one sample object
                 Assert.AreEqual(2, allObjectsSumm.Count);
 
                 //list objects by specifying folder as prefix
                 allObjects = _ossClient.ListObjects(_bucketName, folderName);
                 Assert.AreEqual(folderName, allObjects.Prefix);
-                allObjectsSumm = allObjects.ObjectSummaries.ToList();
+                allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
                 Assert.AreEqual(1, allObjectsSumm.Count);
 
                 var loRequest = new ListObjectsRequest(_bucketName);
@@ -615,7 +607,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var doRequest = new DeleteObjectsRequest(_bucketName, objectkeys, false);
             var doResponse = _ossClient.DeleteObjects(doRequest);
             //verbose mode would return all object keys
-            Assert.AreEqual(count, doResponse.Keys.Count());
+            Assert.AreEqual(count, doResponse.Keys.Length);
         }
 
         [Test]

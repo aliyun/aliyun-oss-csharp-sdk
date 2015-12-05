@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Test.Util;
@@ -58,19 +57,19 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         [Test]
         public void SetBucketWebsiteInvalidInputTest()
         {
-            Parallel.ForEach(OssTestUtils.InvalidPageNamesList, invalidPageName =>
+            foreach (var invalidPageName in OssTestUtils.InvalidPageNamesList)
+            {
+                try
                 {
-                    try
-                    {
-                        var sbwRequest = new SetBucketWebsiteRequest(_bucketName, invalidPageName, invalidPageName);
-                        _ossClient.SetBucketWebsite(sbwRequest);
-                        Assert.Fail("Set Bucket website should fail with invalid page names");
-                    }
-                    catch (ArgumentException)
-                    {
-                        Assert.IsTrue(true);
-                    }
-                });
+                    var sbwRequest = new SetBucketWebsiteRequest(_bucketName, invalidPageName, invalidPageName);
+                    _ossClient.SetBucketWebsite(sbwRequest);
+                    Assert.Fail("Set Bucket website should fail with invalid page names");
+                }
+                catch (ArgumentException)
+                {
+                    Assert.IsTrue(true);
+                }
+            }
         }
     }
 }

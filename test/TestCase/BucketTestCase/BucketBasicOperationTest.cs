@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Test.Util;
@@ -32,9 +30,18 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         {
             //Bucket is limited resources, so double check to clean up all remain
             //buckets created by current test class
-            var testBuckets = _ossClient.ListBuckets()
-                .Where(t => t.Name.StartsWith(_className))
-                .Select(t => t.Name);
+
+            var testBuckets = new List<string>();
+
+            var listBuckets = _ossClient.ListBuckets();
+            foreach (var bucket in listBuckets)
+            {
+                if (bucket.Name.StartsWith(_className))
+                {
+                    testBuckets.Add(bucket.Name);
+                }
+            }
+
             foreach(var bucket in testBuckets)
             {
                 OssTestUtils.CleanBucket(_ossClient, bucket);
@@ -121,7 +128,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         [Test]
         public void CreateBucketInvalidNameTest()
         {
-            Parallel.ForEach(OssTestUtils.InvalidBucketNamesList, invalidBucketName =>
+            foreach (var invalidBucketName in OssTestUtils.InvalidBucketNamesList)
             {
                 try
                 {
@@ -132,7 +139,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 {
                     Assert.IsTrue(true);
                 }
-            });
+            }
         }
 
         [Ignore]
@@ -181,7 +188,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             try
             {
                 //get number of existing buckets
-                var existingBucket = _ossClient.ListBuckets().ToList().Count;
+                var existingBucket = OssTestUtils.ToArray<Bucket>(_ossClient.ListBuckets()).Count;
                 var remainCount = MaxAllowedBucketNumber - existingBucket;
 
                 for (var i = 0; i < remainCount; i++)
@@ -192,7 +199,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 }
 
                 //create buckets in parallel, so that the total number reaches 10
-                Parallel.ForEach(bucketNames, singleBucketName => _ossClient.CreateBucket(singleBucketName));
+                //Parallel.ForEach(bucketNames, singleBucketName => _ossClient.CreateBucket(singleBucketName));
 
                 try
                 {
@@ -207,13 +214,14 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             }
             finally
             {
-                Parallel.ForEach(bucketNames, singleBucketName =>
+                //Parallel.ForEach(bucketNames, singleBucketName =>
+                foreach (var singleBucketName in bucketNames)
+                {
+                    if (OssTestUtils.BucketExists(_ossClient, singleBucketName))
                     {
-                        if (OssTestUtils.BucketExists(_ossClient, singleBucketName))
-                        {
-                            _ossClient.DeleteBucket(singleBucketName);
-                        }
-                    });
+                        _ossClient.DeleteBucket(singleBucketName);
+                    }
+                }
 
                 if (OssTestUtils.BucketExists(_ossClient, bucketName))
                 {
@@ -248,7 +256,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         [Test]
         public void DeleteBucketInvalidNameTest()
         {
-            Parallel.ForEach(OssTestUtils.InvalidBucketNamesList, invalidBucketName =>
+            //Parallel.ForEach(OssTestUtils.InvalidBucketNamesList, invalidBucketName =>
+            foreach (var invalidBucketName in OssTestUtils.InvalidBucketNamesList)
             {
                 try
                 {
@@ -259,7 +268,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 {
                     Assert.IsTrue(true);
                 }
-            });
+            }
         }
         #endregion
 

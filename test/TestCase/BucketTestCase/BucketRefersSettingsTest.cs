@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 using Aliyun.OSS;
 using Aliyun.OSS.Test.Util;
@@ -43,7 +42,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _ossClient.SetBucketReferer(sbrRequest);
             OssTestUtils.WaitForCacheExpire();
             var referConfig = _ossClient.GetBucketReferer(_bucketName);
-            Assert.AreEqual(2, referConfig.RefererList.Referers.Count());
+            Assert.AreEqual(2, referConfig.RefererList.Referers.Length);
             Assert.IsFalse(referConfig.AllowEmptyReferer);
 
 
@@ -53,7 +52,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _ossClient.SetBucketReferer(sbrRequest);
             OssTestUtils.WaitForCacheExpire();
             referConfig = _ossClient.GetBucketReferer(_bucketName);
-            Assert.AreEqual(3, referConfig.RefererList.Referers.Count());
+            Assert.AreEqual(3, referConfig.RefererList.Referers.Length);
             //it is true this time
             Assert.IsTrue(referConfig.AllowEmptyReferer);
 

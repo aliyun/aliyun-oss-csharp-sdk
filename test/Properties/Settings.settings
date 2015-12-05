@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Aliyun.OSS.Test.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="AccessKeyId" Type="System.String" Scope="User">
-      <Value Profile="(Default)">your access key id</Value>
-    </Setting>
     <Setting Name="ProxyHost" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -31,6 +28,9 @@
     </Setting>
     <Setting Name="UploadSampleFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">c:\temp\UploadFiles</Value>
+    </Setting>
+    <Setting Name="AccessKeyId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">your access key id</Value>
     </Setting>
     <Setting Name="AccessKeySecret" Type="System.String" Scope="User">
       <Value Profile="(Default)">your access key secret</Value>

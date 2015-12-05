@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Aliyun.OSS;
+﻿using Aliyun.OSS;
 using Aliyun.OSS.Test.Util;
 
 using NUnit.Framework;
@@ -17,8 +16,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _ossClient.SetBucketAcl(_bucketName, CannedAccessControlList.PublicRead);
             OssTestUtils.WaitForCacheExpire();
             var acl = _ossClient.GetBucketAcl(_bucketName);
-            var grants = acl.Grants.ToArray();
-            Assert.AreEqual(1, grants.Length);
+            var grants = OssTestUtils.ToArray<Grant>(acl.Grants);
+            Assert.AreEqual(1, grants.Count);
             Assert.AreEqual(GroupGrantee.AllUsers, grants[0].Grantee);
             Assert.AreEqual(Permission.Read, grants[0].Permission);
 
@@ -26,8 +25,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _ossClient.SetBucketAcl(_bucketName, CannedAccessControlList.PublicReadWrite);
             OssTestUtils.WaitForCacheExpire();
             acl = _ossClient.GetBucketAcl(_bucketName);
-            grants = acl.Grants.ToArray();
-            Assert.AreEqual(1, grants.Length);
+            grants = OssTestUtils.ToArray <Grant>(acl.Grants);
+            Assert.AreEqual(1, grants.Count);
             Assert.AreEqual(GroupGrantee.AllUsers, grants[0].Grantee);
             Assert.AreEqual(Permission.FullControl, grants[0].Permission);
 
@@ -35,8 +34,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _ossClient.SetBucketAcl(_bucketName, CannedAccessControlList.Private);
             OssTestUtils.WaitForCacheExpire();
             acl = _ossClient.GetBucketAcl(_bucketName);
-            grants = acl.Grants.ToArray();
-            Assert.AreEqual(0, grants.Length);
+            grants = OssTestUtils.ToArray <Grant> (acl.Grants);
+            Assert.AreEqual(0, grants.Count);
         }
 
         [Test]
@@ -46,8 +45,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 new SetBucketAclRequest(_bucketName, CannedAccessControlList.PublicRead));
             OssTestUtils.WaitForCacheExpire();
             var acl = _ossClient.GetBucketAcl(_bucketName);
-            var grants = acl.Grants.ToArray();
-            Assert.AreEqual(1, grants.Length);
+            var grants = OssTestUtils.ToArray <Grant> (acl.Grants);
+            Assert.AreEqual(1, grants.Count);
             Assert.AreEqual(GroupGrantee.AllUsers, grants[0].Grantee);
             Assert.AreEqual(Permission.Read, grants[0].Permission);
 
@@ -56,8 +55,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 new SetBucketAclRequest(_bucketName, CannedAccessControlList.PublicReadWrite));
             OssTestUtils.WaitForCacheExpire();
             acl = _ossClient.GetBucketAcl(_bucketName);
-            grants = acl.Grants.ToArray();
-            Assert.AreEqual(1, grants.Length);
+            grants = OssTestUtils.ToArray <Grant>(acl.Grants);
+            Assert.AreEqual(1, grants.Count);
             Assert.AreEqual(GroupGrantee.AllUsers, grants[0].Grantee);
             Assert.AreEqual(Permission.FullControl, grants[0].Permission);
 
@@ -66,8 +65,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 new SetBucketAclRequest(_bucketName, CannedAccessControlList.Private));
             OssTestUtils.WaitForCacheExpire();
             acl = _ossClient.GetBucketAcl(_bucketName);
-            grants = acl.Grants.ToArray();
-            Assert.AreEqual(0, grants.Length);
+            grants = OssTestUtils.ToArray <Grant>(acl.Grants);
+            Assert.AreEqual(0, grants.Count);
         }
     }
 }

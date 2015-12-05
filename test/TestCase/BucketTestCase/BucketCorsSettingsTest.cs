@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Test.Util;
@@ -51,7 +50,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 sbcRequest.AddCORSRule(ConstructDummyCorsRule());
                 _ossClient.SetBucketCors(sbcRequest);
                 OssTestUtils.WaitForCacheExpire();
-                var rules = _ossClient.GetBucketCors(_bucketName).ToList();
+                var rules = OssTestUtils.ToArray<CORSRule>(_ossClient.GetBucketCors(_bucketName));
                 Assert.AreEqual(1, rules.Count);
             }
             finally
@@ -80,7 +79,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 sbcRequest.AddCORSRule(ConstructDummyCorsRule());
                 _ossClient.SetBucketCors(sbcRequest);
                 OssTestUtils.WaitForCacheExpire();
-                var rules = _ossClient.GetBucketCors(_bucketName).ToList();
+                var rules = OssTestUtils.ToArray <CORSRule>(_ossClient.GetBucketCors(_bucketName));
                 Assert.AreEqual(2, rules.Count);
             }
             finally

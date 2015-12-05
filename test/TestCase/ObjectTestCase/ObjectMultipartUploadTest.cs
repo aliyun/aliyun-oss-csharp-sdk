@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Aliyun.OSS;
 using Aliyun.OSS.Test.Util;
 
@@ -96,7 +95,13 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             var lmuRequest = new ListMultipartUploadsRequest(_bucketName);
             var lmuListing = _ossClient.ListMultipartUploads(lmuRequest);
-            var mpUpload = lmuListing.MultipartUploads.Single(t => t.UploadId == initResult.UploadId);
+            string mpUpload = null;
+            foreach (var t in lmuListing.MultipartUploads)
+            {
+                if (t.UploadId == initResult.UploadId)
+                    mpUpload = t.UploadId;
+            }
+
             Assert.IsNotNull(mpUpload, "The multipart uploading should be in progress");
 
             var completeRequest = new CompleteMultipartUploadRequest(_bucketName, targetObjectKey, initResult.UploadId);
@@ -164,7 +169,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     var listPartsRequest = new ListPartsRequest(_bucketName, targetObjectKey, initResult.UploadId);
                     var listPartsResult = _ossClient.ListParts(listPartsRequest);
                     //there should be only 1 part was not uploaded
-                    Assert.AreEqual(i + 1, listPartsResult.Parts.Count(), "uploaded parts is not expected");
+                    Assert.AreEqual(i + 1, OssTestUtils.ToArray<Part>(listPartsResult.Parts).Count, "uploaded parts is not expected");
                 }
             }
             //abort the upload
@@ -222,7 +227,17 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             var lmuRequest = new ListMultipartUploadsRequest(_bucketName);
             var lmuListing = _ossClient.ListMultipartUploads(lmuRequest);
-            var mpUpload = lmuListing.MultipartUploads.Single(t => t.UploadId == initResult.UploadId);
+           
+            string mpUpload = null;
+            foreach (var t in lmuListing.MultipartUploads)
+            {
+                if (t.UploadId == initResult.UploadId)
+                {
+                    mpUpload = t.UploadId;
+                    break;
+                }
+            }
+
             Assert.IsNotNull(mpUpload, "The multipart uploading should be in progress");
 
             var completeRequest = new CompleteMultipartUploadRequest(_bucketName, targetObjectKey, initResult.UploadId);

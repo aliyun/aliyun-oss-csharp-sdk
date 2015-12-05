@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using Aliyun.OSS;
 using Aliyun.OSS.Test.Util;
 
 using NUnit.Framework;
+using System.Threading;
+using System;
 
 namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 {
@@ -55,32 +56,85 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             RunTest(name, numberOfConcurrency, fileSize, false);
         }
 
+        class PrepareFileThread
+        {
+            private string _fileName = null;
+            private int _fileSize = 0;
+            private ManualResetEvent _doneEvent;
+
+            public PrepareFileThread(string fileName, int fileSize, ManualResetEvent doneEvent)
+            {
+                _fileName = fileName;
+                _fileSize = fileSize;
+                _doneEvent = doneEvent;
+            }
+
+            public void ThreadPoolCallback(Object threadIndex)
+            {
+                FileUtils.PrepareSampleFile(_fileName, _fileSize);
+
+                _doneEvent.Set();
+            }
+
+        };
+
+        class ObjectOperateThread
+        {
+            private string _fileName = null;
+            private int _index = 0;
+            private IOss _client = null;
+            private ManualResetEvent _doneEvent;
+
+            public ObjectOperateThread(IOss client, string fileName, int index, ManualResetEvent doneEvent)
+            {
+                _client = client;
+                _fileName = fileName;
+                _index = index;
+                _doneEvent = doneEvent;
+            }
+
+            public void ThreadPoolCallback(Object threadIndex)
+            {
+                PutAndGetObject(_client, _fileName, _index);
+
+                _doneEvent.Set();
+            }
+
+        };
+
         private static void RunTest(string name, int numberOfConcurrency, int fileSize, bool isUniqueOssClient)
         {
-            var allTasks = new List<Task>();
+            var doneEvents = new List<ManualResetEvent>();
+            var prepareFileThreads = new List<PrepareFileThread>();
 
-            for (var i = 0; i < numberOfConcurrency; i++)
+            for (int i = 0; i < numberOfConcurrency; i++)
             {
-                var fileName = string.Format("{0}_{1}", name, i);
-                fileName = Path.Combine(Config.UploadSampleFolder, fileName);
-                var task = Task.Factory.StartNew(() => FileUtils.PrepareSampleFile(fileName, fileSize));
-                allTasks.Add(task);
+                var resetEvent = new ManualResetEvent(false);
+                doneEvents.Add(resetEvent);
+                var fileName = Path.Combine(Config.UploadSampleFolder, string.Format("{0}_{1}", name, i));
+                var threadWrapper = new PrepareFileThread(fileName, fileSize, doneEvents[i]);
+                prepareFileThreads.Add(threadWrapper);
+                ThreadPool.QueueUserWorkItem(threadWrapper.ThreadPoolCallback, i);
             }
+            WaitHandle.WaitAll(doneEvents.ToArray());
+            doneEvents.Clear();
+            prepareFileThreads.Clear();
 
-            Task.WaitAll(allTasks.ToArray());
+            var objectOperateThreads = new List<ObjectOperateThread>();
 
-            allTasks.Clear();
-            for (var i = 0; i < numberOfConcurrency; i++)
+            for (int i = 0; i < numberOfConcurrency; i++)
             {
-                var fileName = string.Format("{0}_{1}", name, i);
-                fileName = Path.Combine(Config.UploadSampleFolder, fileName);
-                var index = i;
-                var task = Task.Factory.StartNew(() => PutAndGetObject(
-                    isUniqueOssClient ? _ossClient : OssClientFactory.CreateOssClient(), fileName, index));
-                allTasks.Add(task);
+                var resetEvent = new ManualResetEvent(false);
+                doneEvents.Add(resetEvent);
+                var fileName = Path.Combine(Config.UploadSampleFolder, string.Format("{0}_{1}", name, i));
+                var client = isUniqueOssClient ? _ossClient : OssClientFactory.CreateOssClient();
+                var threadWrapper = new ObjectOperateThread(client, fileName, i, doneEvents[i]);
+                objectOperateThreads.Add(threadWrapper);
+                ThreadPool.QueueUserWorkItem(threadWrapper.ThreadPoolCallback, i);
             }
-
-            Task.WaitAll(allTasks.ToArray());
+            WaitHandle.WaitAll(doneEvents.ToArray());
+            doneEvents.Clear();
+            objectOperateThreads.Clear();
         }
 
         private static void PutAndGetObject(IOss ossClient, string originalFile, int i)
