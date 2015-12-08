@@ -30,7 +30,7 @@ namespace Aliyun.OSS.Samples
                 // put object with zero bytes stream.
                 using (MemoryStream memStream = new MemoryStream())
                 {
-                    PutObjectResult ret = client.PutObject(bucketName, key, memStream);
+                    client.PutObject(bucketName, key, memStream);
                     Console.WriteLine("Create dir:{0} succeeded", key);
                 }
             }

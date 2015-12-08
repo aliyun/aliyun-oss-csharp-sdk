@@ -11,9 +11,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-test", "test\aliyun-oss-sdk-test.csproj", "{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}"
 EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = aliyunapi.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
@@ -21,6 +18,12 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Release|x86.ActiveCfg = Release|Any CPU
 		{67BDC800-084C-4F84-8A80-661B5AFE499A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{67BDC800-084C-4F84-8A80-661B5AFE499A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67BDC800-084C-4F84-8A80-661B5AFE499A}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -35,12 +38,9 @@ Global
 		{ADC5BCC2-3677-4CD5-9ED3-5BBA427519DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADC5BCC2-3677-4CD5-9ED3-5BBA427519DD}.Release|x86.ActiveCfg = Release|x86
 		{ADC5BCC2-3677-4CD5-9ED3-5BBA427519DD}.Release|x86.Build.0 = Release|x86
-		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = samples\aliyun-oss-sdk-samples.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

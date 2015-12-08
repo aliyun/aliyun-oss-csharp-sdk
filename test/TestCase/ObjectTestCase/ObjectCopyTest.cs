@@ -230,7 +230,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
                 var sourceObjectMeta = _ossClient.GetObjectMetadata(_bucketName, _sourceBigObjectKey);
 
-                var result = _ossClient.CopyBigObject(copyRequest, sourceObjectMeta.ContentLength + 1);
+                _ossClient.CopyBigObject(copyRequest, sourceObjectMeta.ContentLength + 1);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, targetObjectKey));
 
                 var targetObjectMeta = _ossClient.GetObjectMetadata(_bucketName, targetObjectKey);
@@ -253,7 +253,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
                 var sourceObjectMeta = _ossClient.GetObjectMetadata(_bucketName, _sourceBigObjectKey);
 
-                var result = _ossClient.CopyBigObject(copyRequest, sourceObjectMeta.ContentLength);
+                _ossClient.CopyBigObject(copyRequest, sourceObjectMeta.ContentLength);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, targetObjectKey));
 
                 var targetObjectMeta = _ossClient.GetObjectMetadata(_bucketName, targetObjectKey);
@@ -276,7 +276,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
                 var sourceObjectMeta = _ossClient.GetObjectMetadata(_bucketName, _sourceBigObjectKey);
 
-                var result = _ossClient.CopyBigObject(copyRequest, sourceObjectMeta.ContentLength - 10);
+                _ossClient.CopyBigObject(copyRequest, sourceObjectMeta.ContentLength - 10);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, targetObjectKey));
 
                 var targetObjectMeta = _ossClient.GetObjectMetadata(_bucketName, targetObjectKey);
@@ -299,7 +299,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
                 var sourceObjectMeta = _ossClient.GetObjectMetadata(_bucketName, _sourceBigObjectKey);
 
-                var result = _ossClient.CopyBigObject(copyRequest);
+                _ossClient.CopyBigObject(copyRequest);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, targetObjectKey));
 
                 var targetObjectMeta = _ossClient.GetObjectMetadata(_bucketName, targetObjectKey);

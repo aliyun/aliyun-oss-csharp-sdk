@@ -200,7 +200,7 @@ namespace Aliyun.OSS.Samples
         {
             try
             {
-                var result = client.EndPutObject(ar);
+                client.EndPutObject(ar);
 
                 Console.WriteLine(ar.AsyncState as string);
             }

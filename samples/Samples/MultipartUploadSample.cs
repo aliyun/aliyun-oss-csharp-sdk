@@ -22,7 +22,7 @@ namespace Aliyun.OSS.Samples
         static string key = "key-1";
         static string fileToUpload = Config.BigFileToUpload;
 
-        static int partSize = 10 * 1024 * 1024;
+        static int partSize = 50 * 1024 * 1024;
 
         public class UploadPartContext
         {
@@ -85,7 +85,7 @@ namespace Aliyun.OSS.Samples
         {
             var uploadId = InitiateMultipartUpload(bucketName, key);
             var partETags = UploadParts(bucketName, key, fileToUpload, uploadId, partSize);
-            var completeResult = CompleteUploadPart(bucketName, key, uploadId, partETags);
+            CompleteUploadPart(bucketName, key, uploadId, partETags);
 
             Console.WriteLine("Multipart put object:{0} succeeded", key);
         }
@@ -174,9 +174,9 @@ namespace Aliyun.OSS.Samples
                     };
                    
                     var result = client.UploadPart(request);
-                    Console.WriteLine("oss etag:{0}", result.PartETag.ETag);
 
                     partETags.Add(result.PartETag);
+					Console.WriteLine ("finish {0}/{1}", partETags.Count, partCount);
                 }
             }
             return partETags;
@@ -219,7 +219,7 @@ namespace Aliyun.OSS.Samples
                 };
                 client.BeginUploadPart(request, UploadPartCallback, new UploadPartContextWrapper(ctx, fs, i + 1));
             }
-
+				
             ctx.WaitEvent.WaitOne();
         }
 
@@ -236,6 +236,7 @@ namespace Aliyun.OSS.Samples
                 partETags.Add(new PartETag(wrappedContext.PartNumber, result.ETag));
                 ctx.CompletedParts++;
 
+				Console.WriteLine ("finish {0}/{1}", ctx.CompletedParts, ctx.TotalParts);
                 if (ctx.CompletedParts == ctx.TotalParts)
                 {
                     partETags.Sort((e1, e2) => (e1.PartNumber - e2.PartNumber));

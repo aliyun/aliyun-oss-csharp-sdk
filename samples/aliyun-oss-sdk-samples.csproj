@@ -37,6 +37,8 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -69,13 +71,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>
-    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Aliyun.OSS.Samples.Program</StartupObject>
@@ -140,7 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\sdk\aliyun-oss-sdk.csproj">
-      <Project>{67bdc800-084c-4f84-8a80-661b5afe499a}</Project>
+      <Project>{67BDC800-084C-4F84-8A80-661B5AFE499A}</Project>
       <Name>aliyun-oss-sdk</Name>
     </ProjectReference>
   </ItemGroup>
