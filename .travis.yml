@@ -2,6 +2,6 @@ language: csharp
 solution: aliyun-oss-sdk.sln
 mono:
   - latest
-  - 4.2.0
-  - 4.0.0
-  - 3.12.0
+  - 4.2
+  - 4.0
+  - 3.12
