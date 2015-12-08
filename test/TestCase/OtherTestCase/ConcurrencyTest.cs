@@ -111,7 +111,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             {
                 var resetEvent = new ManualResetEvent(false);
                 doneEvents.Add(resetEvent);
-                var fileName = Path.Combine(Config.UploadSampleFolder, string.Format("{0}_{1}", name, i));
+                var fileName = Path.Combine(Config.DownloadFolder, string.Format("{0}_{1}", name, i));
                 var threadWrapper = new PrepareFileThread(fileName, fileSize, doneEvents[i]);
                 prepareFileThreads.Add(threadWrapper);
                 ThreadPool.QueueUserWorkItem(threadWrapper.ThreadPoolCallback, i);
@@ -126,7 +126,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             {
                 var resetEvent = new ManualResetEvent(false);
                 doneEvents.Add(resetEvent);
-                var fileName = Path.Combine(Config.UploadSampleFolder, string.Format("{0}_{1}", name, i));
+                var fileName = Path.Combine(Config.DownloadFolder, string.Format("{0}_{1}", name, i));
                 var client = isUniqueOssClient ? _ossClient : OssClientFactory.CreateOssClient();
                 var threadWrapper = new ObjectOperateThread(client, fileName, i, doneEvents[i]);
                 objectOperateThreads.Add(threadWrapper);

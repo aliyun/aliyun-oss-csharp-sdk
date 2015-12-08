@@ -30,13 +30,13 @@ namespace Aliyun.OSS.Samples
         {
             const string key = "UrlSignature";
 
-            GetObjectBySignedUrlWithWebRequest(bucketName, key);
-
-            GetObjectBySignedUrlWithClient(bucketName, key);
-
             PutLocalFileBySignedUrl(bucketName, key);
 
             PutStreamBySignedUrl(bucketName, key);
+
+            GetObjectBySignedUrlWithWebRequest(bucketName, key);
+
+            GetObjectBySignedUrlWithClient(bucketName, key);
         }
 
         public static void GetObjectBySignedUrlWithWebRequest(string bucketName, string key)

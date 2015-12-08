@@ -14,7 +14,6 @@ namespace Aliyun.OSS.Test.Util
 		public static readonly string SecondEndpoint = ConfigurationManager.AppSettings["SecondEndpoint"];
 		public static readonly string UploadSampleFile = ConfigurationManager.AppSettings["UploadSampleFile"];
 		public static readonly string MultiUploadSampleFile = ConfigurationManager.AppSettings["MultiUploadSampleFile"];
-		public static readonly string UploadSampleFolder = ConfigurationManager.AppSettings["UploadSampleFolder"];
 		public static readonly string DownloadFolder = ConfigurationManager.AppSettings["DownloadFolder"];
     }
 }
