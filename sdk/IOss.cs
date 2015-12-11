@@ -51,7 +51,6 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="bucketName">要创建的Bucket的名称。</param>
         /// <returns><see cref="Bucket" />对象。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.CreateBucketSample"]/*'/>
         Bucket CreateBucket(string bucketName);
 
         /// <summary>
@@ -78,14 +77,12 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
         /// <param name="acl"><see cref="CannedAccessControlList" />枚举中的访问控制列表。</param>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.SetBucketAclSample"]/*'/>
         void SetBucketAcl(string bucketName, CannedAccessControlList acl);
 
         /// <summary>
         /// 设置指定<see cref="Bucket" />的访问控制列表<see cref="AccessControlList" />。
         /// </summary>
         /// <param name="setBucketAclRequest"></param>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.SetBucketAclSample"]/*'/>
         void SetBucketAcl(SetBucketAclRequest setBucketAclRequest);
 
         /// <summary>
@@ -269,7 +266,6 @@ namespace Aliyun.OSS
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
         /// <param name="content"><see cref="OssObject" />的<see cref="OssObject.Content" />。</param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.PutObjectSample"]/*'/>
         PutObjectResult PutObject(string bucketName, string key, Stream content);
 
         /// <summary>
@@ -281,7 +277,6 @@ namespace Aliyun.OSS
         /// <param name="callback">用户自定义委托对象。</param>
         /// <param name="state">用户自定义状态对象。</param>
         /// <returns>异步请求的对象引用。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.PutObjectSample"]/*'/>
         IAsyncResult BeginPutObject(string bucketName, string key, Stream content,
             AsyncCallback callback, Object state);
 
@@ -293,7 +288,6 @@ namespace Aliyun.OSS
         /// <param name="content"><see cref="OssObject" />的<see cref="OssObject.Content" />。</param>
         /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.PutObjectSample"]/*'/>
         PutObjectResult PutObject(string bucketName, string key, Stream content, ObjectMetadata metadata);
 
         /// <summary>
@@ -306,7 +300,6 @@ namespace Aliyun.OSS
         /// <param name="callback">用户自定义委托对象。</param>
         /// <param name="state">用户自定义状态对象。</param>
         /// <returns>异步请求的对象引用。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.PutObjectSample"]/*'/>
         IAsyncResult BeginPutObject(string bucketName, string key, Stream content, ObjectMetadata metadata,
             AsyncCallback callback, Object state);
 
@@ -317,7 +310,6 @@ namespace Aliyun.OSS
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
         /// <param name="fileToUpload">指定上传文件的路径。</param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.PutObjectSample"]/*'/>
         PutObjectResult PutObject(string bucketName, string key, string fileToUpload);
 
         /// <summary>
@@ -329,7 +321,6 @@ namespace Aliyun.OSS
         /// <param name="callback">用户自定义委托对象。</param>
         /// <param name="state">用户自定义状态对象。</param>
         /// <returns>异步请求的对象引用。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.PutObjectSample"]/*'/>
         IAsyncResult BeginPutObject(string bucketName, string key, string fileToUpload,
             AsyncCallback callback, Object state);
 
@@ -341,7 +332,6 @@ namespace Aliyun.OSS
         /// <param name="fileToUpload">指定上传文件的路径。</param>
         /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.PutObjectSample"]/*'/>
         PutObjectResult PutObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata);
 
         /// <summary>
@@ -354,7 +344,6 @@ namespace Aliyun.OSS
         /// <param name="callback">用户自定义委托对象。</param>
         /// <param name="state">用户自定义状态对象。</param>
         /// <returns>异步请求的对象引用。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.PutObjectSample"]/*'/>
         IAsyncResult BeginPutObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata,
             AsyncCallback callback, Object state);
 
@@ -366,6 +355,7 @@ namespace Aliyun.OSS
         PutObjectResult EndPutObject(IAsyncResult asyncResult);
 
         /// <summary>
+        /// 已废弃，请使用ResumablePutObject。
         /// 上传指定的大文件：<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
         /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
         /// 如果上传文件大小大于分片大小，则会使用分片上传。
@@ -378,9 +368,11 @@ namespace Aliyun.OSS
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
+        [Obsolete("PutBigObject is deprecated, please use ResumablePutObject instead")]
         PutObjectResult PutBigObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, long? partSize = null);
 
         /// <summary>
+        /// 已废弃，请使用ResumablePutObject。
         /// 上传指定的大文件：<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
         /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
         /// 如果上传文件大小大于分片大小，则会使用分片上传。
@@ -393,6 +385,7 @@ namespace Aliyun.OSS
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
+        [Obsolete("PutBigObject is deprecated, please use ResumablePutObject instead")]
         PutObjectResult PutBigObject(string bucketName, string key, Stream content, ObjectMetadata metadata, long? partSize = null); 
 
         /// <summary>
@@ -412,11 +405,42 @@ namespace Aliyun.OSS
         PutObjectResult PutObject(Uri signedUrl, Stream content);
 
         /// <summary>
+        /// 自动分片后按片上传，支持断点续传。
+        /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
+        /// 如果上传文件大小大于分片大小，则会使用分片上传。
+        /// </summary>
+        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
+        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
+        /// <param name="fileToUpload">指定上传文件的路径。</param>
+        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
+        /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新上传</param>
+        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>
+        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// </param>
+        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        PutObjectResult ResumablePutObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null);
+
+        /// <summary>
+        /// 自动分片后按片上传，支持断点续传。
+        /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
+        /// 如果上传文件大小大于分片大小，则会使用分片上传。
+        /// </summary>
+        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
+        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
+        /// <param name="content"><see cref="OssObject" />的<see cref="OssObject.Content" />。</param>
+        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
+        /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新上传</param>
+        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>,
+        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// </param>
+        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        PutObjectResult ResumablePutObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null);
+
+        /// <summary>
         /// 追加指定的内容到指定的OSS<see cref="OssObject" />。
         /// </summary>
         /// <param name="request"><see cref="AppendObjectRequest" />的实例</param>
         /// <returns><see cref="AppendObjectResult" />实例</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.AppendObjectSample"]/*'/>
         AppendObjectResult AppendObject(AppendObjectRequest request);
 
         /// <summary>
@@ -426,7 +450,6 @@ namespace Aliyun.OSS
         /// <param name="callback">用户自定义委托对象。</param>
         /// <param name="state">用户自定义状态对象。</param>
         /// <returns>异步请求的对象引用。</returns>
-        /// <include file='oss_comments_include.xml' path='Comments/Member[@name="OSS.SampleCode.AppendObjectSample"]/*'/>
         IAsyncResult BeginAppendObject(AppendObjectRequest request, AsyncCallback callback, Object state);
 
         /// <summary>
@@ -540,6 +563,7 @@ namespace Aliyun.OSS
         CopyObjectResult EndCopyResult(IAsyncResult asyncResult);
 
         /// <summary>
+        /// 已废弃，请使用ResumableCopyObject。
         /// 拷贝指定的大文件：<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
         /// 如果拷贝的文件大小小于或等于分片大小，则会使用普通拷贝，只需拷贝一次即可。
         /// 如果拷贝文件大小大于分片大小，则会使用分片拷贝。
@@ -549,7 +573,21 @@ namespace Aliyun.OSS
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
         /// <returns><see cref="CopyObjectResult" />实例。</returns>
+        [Obsolete("CopyBigObject is deprecated, please use ResumableCopyObject instead")]
         CopyObjectResult CopyBigObject(CopyObjectRequest copyObjectRequest, long? partSize = null);
+
+        /// <summary>
+        /// 自动分片后按片拷贝，支持断点续传。
+        /// 如果拷贝的文件大小小于或等于分片大小，则会使用普通拷贝，只需拷贝一次即可。
+        /// 如果拷贝文件大小大于分片大小，则会使用分片拷贝。
+        /// </summary>
+        /// <param name="copyObjectRequest">请求对象</param>
+        /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新拷贝</param>
+        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>。
+        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// </param>
+        /// <returns><see cref="CopyObjectResult" />实例。</returns>
+        CopyObjectResult ResumableCopyObject(CopyObjectRequest copyObjectRequest, string checkpointDir, long? partSize = null);
 
         /// <summary>
         /// 修改文件的元数据

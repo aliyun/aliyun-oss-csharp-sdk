@@ -56,7 +56,7 @@ namespace Aliyun.OSS.Common.Communication
 
         public ServiceResponse Send(ServiceRequest request, ExecutionContext context)
         {
-            return SendImpl(request, context, 0);
+            return SendImpl(request, context, MaxRetryTimes);
         }
 
         private ServiceResponse SendImpl(ServiceRequest request, ExecutionContext context, int retryTimes)

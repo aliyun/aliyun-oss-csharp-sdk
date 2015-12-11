@@ -139,7 +139,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +171,7 @@
     <Compile Include="Common\Handlers\ResponseHandler.cs" />
     <Compile Include="Domain\AppendObjectRequest.cs" />
     <Compile Include="Domain\AppendObjectResult.cs" />
+    <Compile Include="Domain\ResumableContext.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\IDeserializer.cs" />
     <Compile Include="Transform\ISerializer.cs" />
@@ -340,9 +340,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />
-    <None Include="oss_comments_include.xml">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

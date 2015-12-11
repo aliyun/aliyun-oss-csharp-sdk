@@ -85,6 +85,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Samples\DeleteBucketSample.cs" />
     <Compile Include="Samples\ModifyObjectMetaSample.cs" />
+    <Compile Include="Samples\ResumableSample.cs" />
     <Compile Include="Samples\SetBucketLifecycleSample.cs" />
     <Compile Include="Samples\AppendObjectSample.cs" />
     <Compile Include="Samples\GetBucketLifecycleSample.cs" />

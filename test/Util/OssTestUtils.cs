@@ -84,7 +84,7 @@ namespace Aliyun.OSS.Test.Util
         #region Object related
         public static string GetObjectKey(string prefix)
         {
-            return prefix.ToLower() + "-object-" + DateTime.Now.ToFileTimeUtc();
+            return prefix.ToLower() + DateTime.Now.Ticks.ToString();
         }
 
         public static PutObjectResult UploadObject(IOss ossClient, string bucketName, 
