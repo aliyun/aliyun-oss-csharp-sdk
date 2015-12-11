@@ -9,8 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Aliyun.OSS;
-using Aliyun.OSS.Common;
 
 namespace Aliyun.OSS.Test.Util
 {
