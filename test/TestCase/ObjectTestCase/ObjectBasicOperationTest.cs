@@ -247,7 +247,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
-        public void ResumbalePutObjectTestWithObjectMoreThanPartSize()
+        public void ResumablePutObjectTestWithObjectMoreThanPartSize()
         {
             var key = OssTestUtils.GetObjectKey(_className);
 

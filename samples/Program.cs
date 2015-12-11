@@ -8,7 +8,6 @@ namespace Aliyun.OSS.Samples
         /// <summary>
         /// SDK的示例程序
         /// </summary>
-        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             Console.WriteLine("Aliyun SDK for .NET Samples!");
