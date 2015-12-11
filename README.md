@@ -1,6 +1,7 @@
 ﻿# Aliyun OSS SDK for C# 
 
 [![Build Status](https://travis-ci.org/qiyuewuyi/aliyun-oss-csharp-sdk.svg?branch=master)](https://travis-ci.org/qiyuewuyi/aliyun-oss-csharp-sdk)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 ## 关于
 > - 此C# SDK基于[阿里云对象存储服务](http://www.aliyun.com/product/oss/) API构建。
