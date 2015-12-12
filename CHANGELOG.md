@@ -1,5 +1,15 @@
 ﻿# ChangeLog - Aliyun OSS SDK for .NET
 
+## 版本号：2.2.0  日期：2015/12/12
+### 新增内容
+- 支持Mono 3.12.0及其以上版本
+- 新增追加文件接口：AppendObject
+- 新增断点续传上传接口：ResumablePutObject
+- 新增断点续传拷贝接口：ResumableCopyObject
+
+### 修改内容
+- 移除对System.Web库的依赖
+
 ## 版本号：2.1.0  日期：2015/11/24
 ### 新增内容
 - .NET Framework 2.0和.NET Framework 3.5支持
