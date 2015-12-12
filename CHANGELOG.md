@@ -1,4 +1,4 @@
-﻿# ChangeLog - Aliyun OSS SDK for C#
+﻿# ChangeLog - Aliyun OSS SDK for C# 
 
 ## 版本号：2.2.0  日期：2015/12/12
 ### 新增内容
