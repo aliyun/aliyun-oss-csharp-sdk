@@ -1,4 +1,4 @@
-﻿# ChangeLog - Aliyun OSS SDK for .NET
+﻿# ChangeLog - Aliyun OSS SDK for C#
 
 ## 版本号：2.2.0  日期：2015/12/12
 ### 新增内容
@@ -6,6 +6,7 @@
 - 新增追加文件接口：AppendObject
 - 新增断点续传上传接口：ResumablePutObject
 - 新增断点续传拷贝接口：ResumableCopyObject
+- 新增部分示例程序
 
 ### 修改内容
 - 移除对System.Web库的依赖
