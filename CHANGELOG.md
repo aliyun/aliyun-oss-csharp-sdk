@@ -4,7 +4,7 @@
 ### 新增内容
 - 支持Mono 3.12.0及其以上版本
 - 新增追加文件接口：AppendObject
-- 新增断点续传上传接口：ResumablePutObject
+- 新增断点续传上传接口：ResumableUploadObject
 - 新增断点续传拷贝接口：ResumableCopyObject
 - 新增部分示例程序
 
