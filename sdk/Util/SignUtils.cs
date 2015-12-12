@@ -118,7 +118,7 @@ namespace Aliyun.OSS.Util
                     canonicalizedResource.Append(separator);
                     canonicalizedResource.Append(paramName);
                     var paramValue = parameters[paramName];
-                    if (paramValue != null && paramValue != string.Empty)
+                    if (!string.IsNullOrEmpty(paramValue))
                         canonicalizedResource.Append("=").Append(paramValue);
 
                     separator = '&';

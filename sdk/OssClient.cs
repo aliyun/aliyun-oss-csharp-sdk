@@ -853,10 +853,11 @@ namespace Aliyun.OSS
                 var initResult = InitiateMultipartUpload(initRequest);
                 resumableCopyContext.UploadId = initResult.UploadId;
             }
-
+            
+            //执行拷贝
             ResumableCopy(copyObjectRequest, resumableCopyContext);
 
-            // 完成上传
+            // 完成拷贝
             var completeRequest = new CompleteMultipartUploadRequest(copyObjectRequest.DestinationBucketName, 
                                                                      copyObjectRequest.DestinationKey, resumableCopyContext.UploadId);
             foreach (var part in resumableCopyContext.PartContextList)

@@ -26,7 +26,7 @@ namespace Aliyun.OSS.Samples
             try
             {
                 string key = null;
-                 var listResult = client.ListObjects(bucketName);
+                var listResult = client.ListObjects(bucketName);
                 foreach (var summary in listResult.ObjectSummaries)
                 {
                     key = summary.Key;

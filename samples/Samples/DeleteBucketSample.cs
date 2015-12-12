@@ -59,14 +59,14 @@ namespace Aliyun.OSS.Samples
                     
                     nextMarker = result.NextMarker;
 
-					if (keys.Count != 0)
-					{
-                    	client.DeleteObjects(new DeleteObjectsRequest(bucketName, keys));
-                    	keys.Clear();
-					}
+                    if (keys.Count != 0)
+                    {
+                        client.DeleteObjects(new DeleteObjectsRequest(bucketName, keys));
+                        keys.Clear();
+                    }
                 } while (result.IsTruncated);
 
-				client.DeleteBucket(bucketName);
+                client.DeleteBucket(bucketName);
 
                 Console.WriteLine("Delete bucket name:{0} succeeded ", bucketName);
             }
