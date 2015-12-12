@@ -54,7 +54,7 @@ namespace Aliyun.OSS.Samples
 
                 //PutObjectSample.PutObject(bucketName);
 
-                //ResumbaleSample.ResumablePutObject(bucketName);
+                //ResumbaleSample.ResumableUploadObject(bucketName);
 
                 //CreateEmptyFolderSample.CreateEmptyFolder(bucketName);
 
@@ -71,9 +71,9 @@ namespace Aliyun.OSS.Samples
                 //DeleteObjectsSample.DeleteObjects(bucketName);
 
                 //const string sourceBucket = bucketName;
-                //const string sourceKey = "ResumablePutObject";
+                //const string sourceKey = "ResumableUploadObject";
                 //const string targetBucket = bucketName;
-                //const string targetKey = "ResumablePutObject2";
+                //const string targetKey = "ResumableUploadObject2";
                 //CopyObjectSample.CopyObject(sourceBucket, sourceKey, targetBucket, targetKey);
                 //CopyObjectSample.AsyncCopyObject(sourceBucket, sourceKey, targetBucket, targetKey);
 

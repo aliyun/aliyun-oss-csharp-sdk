@@ -355,7 +355,7 @@ namespace Aliyun.OSS
         PutObjectResult EndPutObject(IAsyncResult asyncResult);
 
         /// <summary>
-        /// 已废弃，请使用ResumablePutObject。
+        /// 已废弃，请使用ResumableUploadObject。
         /// 上传指定的大文件：<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
         /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
         /// 如果上传文件大小大于分片大小，则会使用分片上传。
@@ -368,11 +368,11 @@ namespace Aliyun.OSS
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        [Obsolete("PutBigObject is deprecated, please use ResumablePutObject instead")]
+        [Obsolete("PutBigObject is deprecated, please use ResumableUploadObject instead")]
         PutObjectResult PutBigObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, long? partSize = null);
 
         /// <summary>
-        /// 已废弃，请使用ResumablePutObject。
+        /// 已废弃，请使用ResumableUploadObject。
         /// 上传指定的大文件：<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
         /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
         /// 如果上传文件大小大于分片大小，则会使用分片上传。
@@ -385,7 +385,7 @@ namespace Aliyun.OSS
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        [Obsolete("PutBigObject is deprecated, please use ResumablePutObject instead")]
+        [Obsolete("PutBigObject is deprecated, please use ResumableUploadObject instead")]
         PutObjectResult PutBigObject(string bucketName, string key, Stream content, ObjectMetadata metadata, long? partSize = null); 
 
         /// <summary>
@@ -418,7 +418,7 @@ namespace Aliyun.OSS
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        PutObjectResult ResumablePutObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null);
+        PutObjectResult ResumableUploadObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null);
 
         /// <summary>
         /// 自动分片后按片上传，支持断点续传。
@@ -434,7 +434,7 @@ namespace Aliyun.OSS
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        PutObjectResult ResumablePutObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null);
+        PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null);
 
         /// <summary>
         /// 追加指定的内容到指定的OSS<see cref="OssObject" />。
@@ -506,7 +506,6 @@ namespace Aliyun.OSS
         /// <param name="asyncResult">对所等待的挂起异步请求的引用。</param>
         /// <returns><see cref="OssObject"/>对象。</returns>
         OssObject EndGetObject(IAsyncResult asyncResult);
-
 
         /// <summary>
         /// 从指定的OSS<see cref="Bucket" />中获取指定的<see cref="OssObject" />，

@@ -597,17 +597,17 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public PutObjectResult PutBigObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, long? partSize = null)
         {
-            return ResumablePutObject(bucketName, key, fileToUpload, metadata, null, partSize);
+            return ResumableUploadObject(bucketName, key, fileToUpload, metadata, null, partSize);
         }
 
         /// <inheritdoc/>
         public PutObjectResult PutBigObject(string bucketName, string key, Stream content, ObjectMetadata metadata, long? partSize = null)
         {
-            return ResumablePutObject(bucketName, key, content, metadata, null, partSize);
+            return ResumableUploadObject(bucketName, key, content, metadata, null, partSize);
         }
 
         /// <inheritdoc/>
-        public PutObjectResult ResumablePutObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null)
+        public PutObjectResult ResumableUploadObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null)
         {
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
                 throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
@@ -618,12 +618,12 @@ namespace Aliyun.OSS
 
             using (var fs = File.Open(fileToUpload, FileMode.Open))
             {
-                return ResumablePutObject(bucketName, key, fs, metadata, checkpointDir, partSize);
+                return ResumableUploadObject(bucketName, key, fs, metadata, checkpointDir, partSize);
             }
         }
 
         /// <inheritdoc/>
-        public PutObjectResult ResumablePutObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null)
+        public PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null)
         {
             // 计算content-type
             metadata = metadata ?? new ObjectMetadata();
@@ -638,8 +638,8 @@ namespace Aliyun.OSS
                 return PutObject(bucketName, key, content, metadata);
             }
 
-            var resumableContext = GenerateResumablePutContext(bucketName, key, content,
-                                                               checkpointDir, actualPartSize);
+            var resumableContext = LoadResumableUploadContext(bucketName, key, content,
+                                                              checkpointDir, actualPartSize);
 
             if (resumableContext.UploadId == null)
             {
@@ -648,7 +648,7 @@ namespace Aliyun.OSS
                 resumableContext.UploadId = initResult.UploadId;
             }
 
-            ResumablePut(bucketName, key, content, resumableContext);
+            ResumableUploadWithRetry(bucketName, key, content, resumableContext);
 
             // 完成上传
             var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, resumableContext.UploadId);
@@ -843,7 +843,7 @@ namespace Aliyun.OSS
                 return CopyObject(copyObjectRequest);
             }
 
-            var resumableCopyContext = GenerateResumableCopyContext(copyObjectRequest, objectMeta, checkpointDir, actualPartSize);
+            var resumableCopyContext = LoadResumableCopyContext(copyObjectRequest, objectMeta, checkpointDir, actualPartSize);
 
             if (resumableCopyContext.UploadId == null)
             {
@@ -855,7 +855,7 @@ namespace Aliyun.OSS
             }
             
             //执行拷贝
-            ResumableCopy(copyObjectRequest, resumableCopyContext);
+            ResumableCopyWithRetry(copyObjectRequest, resumableCopyContext);
 
             // 完成拷贝
             var completeRequest = new CompleteMultipartUploadRequest(copyObjectRequest.DestinationBucketName, 
@@ -1205,7 +1205,7 @@ namespace Aliyun.OSS
             return actualPartSize;
         }
 
-        private ResumableContext GenerateResumableCopyContext(CopyObjectRequest request, ObjectMetadata metadata, string checkpointDir, long partSize)
+        private ResumableContext LoadResumableCopyContext(CopyObjectRequest request, ObjectMetadata metadata, string checkpointDir, long partSize)
         {
             ResumableContext resumableContext = new ResumableCopyContext(request.SourceBucketName, request.SourceKey,
                                                             request.DestinationBucketName, request.DestinationKey, checkpointDir);
@@ -1219,7 +1219,7 @@ namespace Aliyun.OSS
             return resumableContext;
         }
 
-        private ResumableContext GenerateResumablePutContext(string bucketName, string key, Stream content,
+        private ResumableContext LoadResumableUploadContext(string bucketName, string key, Stream content,
                                                             string checkpointDir, long partSize)
         {
             string contentMd5 = OssUtils.ComputeContentMd5(content, content.Length);
@@ -1271,7 +1271,7 @@ namespace Aliyun.OSS
             return resumableContext;
         }
 
-        private void ResumablePut(string bucketName, string key, Stream content, ResumableContext resumableContext)
+        private void ResumableUploadWithRetry(string bucketName, string key, Stream content, ResumableContext resumableContext)
         {
             using (var fs = content)
             {
@@ -1281,7 +1281,7 @@ namespace Aliyun.OSS
                 {
                     try
                     {
-                        DoResumablePut(bucketName, key, resumableContext, fs);
+                        DoResumableUpload(bucketName, key, resumableContext, fs);
                         break;
                     }
                     catch (Exception ex)
@@ -1300,7 +1300,7 @@ namespace Aliyun.OSS
             }
         }
 
-        private void DoResumablePut(string bucketName, string key, ResumableContext resumableContext, Stream fs)
+        private void DoResumableUpload(string bucketName, string key, ResumableContext resumableContext, Stream fs)
         {
             foreach (var part in resumableContext.PartContextList)
             {
@@ -1324,7 +1324,7 @@ namespace Aliyun.OSS
             }
         }
 
-        private void ResumableCopy(CopyObjectRequest request, ResumableContext context)
+        private void ResumableCopyWithRetry(CopyObjectRequest request, ResumableContext context)
         {
             int maxRetryTimes = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
 

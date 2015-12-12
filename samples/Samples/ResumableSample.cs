@@ -26,14 +26,14 @@ namespace Aliyun.OSS.Samples
 
         static string fileToUpload = Config.BigFileToUpload;
 
-        public static void ResumablePutObject(string bucketName) 
+        public static void ResumableUploadObject(string bucketName) 
         {
-            const string key = "ResumablePutObject";
+            const string key = "ResumableUploadObject";
             string checkpointDir = Config.DirToDownload;
             try
             {
-                client.ResumablePutObject(bucketName, key, fileToUpload, null, checkpointDir);
-                Console.WriteLine("Resumable put object:{0} succeeded", key);
+                client.ResumableUploadObject(bucketName, key, fileToUpload, null, checkpointDir);
+                Console.WriteLine("Resumable upload object:{0} succeeded", key);
             }
             catch (OssException ex)
             {
