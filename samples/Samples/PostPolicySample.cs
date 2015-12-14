@@ -19,6 +19,11 @@ namespace Aliyun.OSS.Samples
     /// </summary>
     public static class PostPolicySample
     {
+        static string accessKeyId = Config.AccessKeyId;
+        static string accessKeySecret = Config.AccessKeySecret;
+        static string endpoint = Config.Endpoint;
+        static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
+
         static string ComputeSignature(string key, string data)
         {
             using (var algorithm = KeyedHashAlgorithm.Create("HmacSHA1".ToUpperInvariant()))
@@ -29,19 +34,13 @@ namespace Aliyun.OSS.Samples
             }
         }
 
-        public static void GenPostPolicy()
+        public static void GenPostPolicy(string bucketName)
         {
-            const string accessKeyId = "<your access key id>";
-            const string accessKeySecret = "<your access key secret>";
-            const string endpoint = "<valid endpoint>";
-
-            var client = new OssClient(endpoint, accessKeyId, accessKeySecret);
-
             try
             {
                 var expiration = DateTime.Now.AddMinutes(10);
                 var policyConds = new PolicyConditions();
-                policyConds.AddConditionItem("bucket", "oss-test2");
+                policyConds.AddConditionItem("bucket", bucketName);
                 // $ must be escaped with backslash.
                 policyConds.AddConditionItem(MatchMode.Exact, PolicyConditions.CondKey, "user/eric/\\${filename}");
                 policyConds.AddConditionItem(MatchMode.StartWith, PolicyConditions.CondKey, "user/eric");
@@ -52,7 +51,7 @@ namespace Aliyun.OSS.Samples
                 var encPolicy = Convert.ToBase64String(Encoding.UTF8.GetBytes(postPolicy));
                 Console.WriteLine("Generated post policy: {0}", postPolicy);
 
-                var requestUri = "<your endpoint>";
+                var requestUri = endpoint + "/" + bucketName;
                 var boundary = "9431149156168";
                 var webRequest = (HttpWebRequest)WebRequest.Create(requestUri);
                 webRequest.Timeout = -1;
@@ -60,9 +59,8 @@ namespace Aliyun.OSS.Samples
                 webRequest.ContentType = "multipart/form-data; boundary=" + boundary;
 
                 var objectName = "xxx";
-                var bucketName = "oss-test2";
                 var signature = ComputeSignature(accessKeySecret, encPolicy);
-                Console.WriteLine(signature);
+
                 var fileContent = "这是一行简单的测试文本";
                 var requestBody = "--" + boundary + "\r\n" 
                         + "Content-Disposition: form-data; name=\"key\"\r\n"
@@ -88,6 +86,7 @@ namespace Aliyun.OSS.Samples
                         + "--" + boundary + "\r\n" 
                         + "Content-Disposition: form-data; name=\"submit\"\r\n\r\nUpload to OSS\r\n" 
                         + "--" + boundary + "--\r\n";
+
                 webRequest.ContentLength = requestBody.Length;
                 using (var ms = new MemoryStream())
                 {

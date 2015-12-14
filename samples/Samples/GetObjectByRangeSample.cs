@@ -15,23 +15,23 @@ namespace Aliyun.OSS.Samples
     /// </summary>
     public static class GetObjectByRangeSample
     {
-        private static OssClient _client = null;
+        static string accessKeyId = Config.AccessKeyId;
+        static string accessKeySecret = Config.AccessKeySecret;
+        static string endpoint = Config.Endpoint;
+        static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 
-        public static void GetObjectPartly()
+        static string key = "GetObjectSample";
+        static string dirToDownload = Config.DirToDownload;
+
+        public static void GetObjectPartly(string bucketName)
         {
-            const string localFilePath = "<your localFilePath>";
-            const string bucketName = "<your bucketName>";
-            const string fileKey = "<your fileKey>";
-            const string accessKeyId = "<your access key id>";
-            const string accessKeySecret = "<your access key secret>";
-            const string endpoint = "<your endpoint>";
+            client.PutObject(bucketName, key, Config.BigFileToUpload);
 
-            _client = new OssClient(endpoint, accessKeyId, accessKeySecret);
-
+            string localFilePath = dirToDownload + "/sample.3.data";
             using (var fileStream = new FileStream(localFilePath, FileMode.OpenOrCreate))
             {
                 var bufferedStream = new BufferedStream(fileStream);
-                var objectMetadata = _client.GetObjectMetadata(bucketName, fileKey);
+                var objectMetadata = client.GetObjectMetadata(bucketName, key);
                 var fileLength = objectMetadata.ContentLength;
                 const int partSize = 1024 * 1024 * 10;
 
@@ -41,7 +41,7 @@ namespace Aliyun.OSS.Samples
                 {
                     var startPos = partSize * i;
                     var endPos = partSize * i + (partSize < (fileLength - startPos) ? partSize : (fileLength - startPos)) - 1;
-                    Download(bufferedStream, startPos, endPos, localFilePath, bucketName, fileKey);
+                    Download(bufferedStream, startPos, endPos, localFilePath, bucketName, key);
                 }
                 bufferedStream.Flush();
             }
@@ -79,7 +79,7 @@ namespace Aliyun.OSS.Samples
             {
                 var getObjectRequest = new GetObjectRequest(bucketName, fileKey);
                 getObjectRequest.SetRange(startPos, endPos);
-                var ossObject = _client.GetObject(getObjectRequest);
+                var ossObject = client.GetObject(getObjectRequest);
                 byte[] buffer = new byte[1024 * 1024];
                 var bytesRead = 0;
                 bufferedStream.Seek(startPos, SeekOrigin.Begin);

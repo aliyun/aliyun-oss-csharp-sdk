@@ -119,7 +119,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             gpuRequest.ContentType = "application/zip";
             gpuRequest.ContentMd5 = _objectETag;
             var uri = _ossClient.GeneratePresignedUri(gpuRequest);
-            Console.WriteLine(uri);
+
             try
             {
                 req = WebRequest.Create(uri) as HttpWebRequest;
@@ -160,7 +160,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             //gpuRequest.ContentType = "application/zip";
             gpuRequest.ContentMd5 = _objectETag;
             var uri = _ossClient.GeneratePresignedUri(gpuRequest);
-            Console.WriteLine(uri);
+
             try
             {
                 req = WebRequest.Create(uri) as HttpWebRequest;
@@ -196,7 +196,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             gpuRequest.UserMetadata.Add("name1", "vaue1");
             gpuRequest.UserMetadata.Add("name2", "vaue2");
             var uri = _ossClient.GeneratePresignedUri(gpuRequest);
-            Console.WriteLine(uri);
+
             try
             {
                 req = WebRequest.Create(uri) as HttpWebRequest;
@@ -242,7 +242,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 }
             };
             var uri = _ossClient.GeneratePresignedUri(gpuRequest);
-            Console.WriteLine(uri);
+
             try
             {
                 req = WebRequest.Create(uri) as HttpWebRequest;

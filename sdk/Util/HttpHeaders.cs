@@ -42,5 +42,13 @@ namespace Aliyun.OSS.Util
         public const string ServerSideEncryption = "x-oss-server-side-encryption";
 
         public const string SecurityToken = "x-oss-security-token";
+
+        public const string NextAppendPosition = "x-oss-next-append-position";
+
+        public const string HashCrc64Ecma = "x-oss-hash-crc64ecma";
+
+        public const string ObjectType = "x-oss-object-type";
+
+        public const string RequestId = "x-oss-request-id";
     }
 }

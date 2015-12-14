@@ -467,7 +467,6 @@ namespace Aliyun.OSS
             return OssUtils.EndOperationHelper<ObjectListing>(_serviceClient, asyncResult);
         }
 
-
         /// <inheritdoc/>
         public PutObjectResult PutObject(string bucketName, string key, Stream content)
         {
@@ -565,33 +564,26 @@ namespace Aliyun.OSS
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
                 throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
 
-            var metadata = new ObjectMetadata();
-            SetContentTypeIfNull(null, fileToUpload, ref metadata);
-
             PutObjectResult result;
             using (Stream content = File.OpenRead(fileToUpload))
             {
-                result = PutObject(signedUrl, content, metadata);
+                result = PutObject(signedUrl, content);
             }
             return result;
         }
 
         /// <inheritdoc/>
-        public PutObjectResult PutObject(Uri signedUrl, Stream content, ObjectMetadata metadata = null)
+        public PutObjectResult PutObject(Uri signedUrl, Stream content)
         {
             var webRequest = (HttpWebRequest)WebRequest.Create(signedUrl);
             webRequest.Timeout = Timeout.Infinite;  // A temporary solution. 
             webRequest.Method = HttpMethod.Put.ToString().ToUpperInvariant();
             webRequest.ContentLength = content.Length;
-
-            if (metadata != null && metadata.ContentType != null) {
-                webRequest.ContentType = metadata.ContentType;
-            }
            
             using (var requestStream = webRequest.GetRequestStream())
             {
                 IoUtils.WriteTo(content, requestStream);
-            }
+            } 
 
             var response = webRequest.GetResponse() as HttpWebResponse;
             PutObjectResult result = null;
@@ -605,6 +597,18 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public PutObjectResult PutBigObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, long? partSize = null)
         {
+            return ResumableUploadObject(bucketName, key, fileToUpload, metadata, null, partSize);
+        }
+
+        /// <inheritdoc/>
+        public PutObjectResult PutBigObject(string bucketName, string key, Stream content, ObjectMetadata metadata, long? partSize = null)
+        {
+            return ResumableUploadObject(bucketName, key, content, metadata, null, partSize);
+        }
+
+        /// <inheritdoc/>
+        public PutObjectResult ResumableUploadObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null)
+        {
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
                 throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
 
@@ -614,12 +618,12 @@ namespace Aliyun.OSS
 
             using (var fs = File.Open(fileToUpload, FileMode.Open))
             {
-                return PutBigObject(bucketName, key, fs, metadata, partSize);
+                return ResumableUploadObject(bucketName, key, fs, metadata, checkpointDir, partSize);
             }
         }
 
         /// <inheritdoc/>
-        public PutObjectResult PutBigObject(string bucketName, string key, Stream content, ObjectMetadata metadata, long? partSize = null)
+        public PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null)
         {
             // 计算content-type
             metadata = metadata ?? new ObjectMetadata();
@@ -634,22 +638,57 @@ namespace Aliyun.OSS
                 return PutObject(bucketName, key, content, metadata);
             }
 
-            // 初始化分片上传
-            var initRequest = new InitiateMultipartUploadRequest(bucketName, key, metadata);
-            var initResult = InitiateMultipartUpload(initRequest);
-            var uploadId = initResult.UploadId;
+            var resumableContext = LoadResumableUploadContext(bucketName, key, content,
+                                                              checkpointDir, actualPartSize);
 
-            // 上传分片
-            List<PartETag> partETags = DoUploadMultiPart(bucketName, key, content, actualPartSize, uploadId);
+            if (resumableContext.UploadId == null)
+            {
+                var initRequest = new InitiateMultipartUploadRequest(bucketName, key, metadata);
+                var initResult = InitiateMultipartUpload(initRequest);
+                resumableContext.UploadId = initResult.UploadId;
+            }
+
+            ResumableUploadWithRetry(bucketName, key, content, resumableContext);
 
             // 完成上传
-            var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, uploadId);
-            foreach (var partETag in partETags)
+            var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, resumableContext.UploadId);
+            foreach (var part in resumableContext.PartContextList)
             {
-                completeRequest.PartETags.Add(partETag);
+                completeRequest.PartETags.Add(part.PartETag);
             }
             var result = CompleteMultipartUpload(completeRequest);
+
+            resumableContext.Clear();
+
             return new PutObjectResult() { ETag = result.ETag };
+        }
+
+        /// <inheritdoc/>
+        public AppendObjectResult AppendObject(AppendObjectRequest request)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = AppendObjectCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Post, request.BucketName, request.Key),
+                                                 request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public IAsyncResult BeginAppendObject(AppendObjectRequest request, AsyncCallback callback, Object state)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = AppendObjectCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Post, request.BucketName, request.Key),
+                                                 request);
+            return OssUtils.BeginOperationHelper(cmd, callback, state);
+        }
+
+        /// <inheritdoc/>
+        public AppendObjectResult EndAppendObject(IAsyncResult asyncResult)
+        {
+            return OssUtils.EndOperationHelper<AppendObjectResult>(_serviceClient, asyncResult);
         }
 
         /// <inheritdoc/>
@@ -712,7 +751,6 @@ namespace Aliyun.OSS
         {
             return OssUtils.EndOperationHelper<OssObject>(_serviceClient, asyncResult);
         }
-
 
         /// <inheritdoc/>
         public ObjectMetadata GetObject(GetObjectRequest getObjectRequest, Stream output)
@@ -785,6 +823,12 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public CopyObjectResult CopyBigObject(CopyObjectRequest copyObjectRequest, long? partSize = null)
         {
+            return ResumableCopyObject(copyObjectRequest, null, partSize);
+        }
+
+        /// <inheritdoc/>
+        public CopyObjectResult ResumableCopyObject(CopyObjectRequest copyObjectRequest, string checkpointDir, long? partSize = null)
+        {
             ThrowIfNullRequest(copyObjectRequest);
 
             // 调整实际的part size
@@ -799,23 +843,30 @@ namespace Aliyun.OSS
                 return CopyObject(copyObjectRequest);
             }
 
-            // 初始化分片拷贝
-            var initRequest = new InitiateMultipartUploadRequest(copyObjectRequest.DestinationBucketName,
-                                                                 copyObjectRequest.DestinationKey);
-            var initResult = InitiateMultipartUpload(initRequest);
-            var uploadId = initResult.UploadId;
+            var resumableCopyContext = LoadResumableCopyContext(copyObjectRequest, objectMeta, checkpointDir, actualPartSize);
 
-            // 分片拷贝
-            List<PartETag> partETags = DoCopyMultiPart(copyObjectRequest, fileSize, actualPartSize, uploadId);
+            if (resumableCopyContext.UploadId == null)
+            {
+                var initRequest = new InitiateMultipartUploadRequest(copyObjectRequest.DestinationBucketName, 
+                                                                     copyObjectRequest.DestinationKey, 
+                                                                     copyObjectRequest.NewObjectMetadata);
+                var initResult = InitiateMultipartUpload(initRequest);
+                resumableCopyContext.UploadId = initResult.UploadId;
+            }
+            
+            //执行拷贝
+            ResumableCopyWithRetry(copyObjectRequest, resumableCopyContext);
 
             // 完成拷贝
-            var completeRequest = new CompleteMultipartUploadRequest(copyObjectRequest.DestinationBucketName,
-                                                                     copyObjectRequest.DestinationKey, uploadId);
-            foreach (var partETag in partETags)
+            var completeRequest = new CompleteMultipartUploadRequest(copyObjectRequest.DestinationBucketName, 
+                                                                     copyObjectRequest.DestinationKey, resumableCopyContext.UploadId);
+            foreach (var part in resumableCopyContext.PartContextList)
             {
-                completeRequest.PartETags.Add(partETag);
+                completeRequest.PartETags.Add(part.PartETag);
             }
             var result = CompleteMultipartUpload(completeRequest);
+
+            resumableCopyContext.Clear();
 
             // 获取目标文件上次修改时间
             objectMeta = GetObjectMetadata(copyObjectRequest.DestinationBucketName, copyObjectRequest.DestinationKey);
@@ -1068,7 +1119,6 @@ namespace Aliyun.OSS
             return OssUtils.EndOperationHelper<UploadPartResult>(_serviceClient, asyncResult);
         }
 
-
         /// <inheritdoc/>
         public UploadPartCopyResult UploadPartCopy(UploadPartCopyRequest uploadPartCopyRequest)
         {
@@ -1134,7 +1184,7 @@ namespace Aliyun.OSS
             return builder.Build();
         }
 
-        private void ThrowIfNullRequest<TRequestType> (TRequestType request)
+        virtual protected void ThrowIfNullRequest<TRequestType> (TRequestType request)
         {
             if (request == null)
                 throw new ArgumentNullException("request");
@@ -1155,48 +1205,39 @@ namespace Aliyun.OSS
             return actualPartSize;
         }
 
-        private List<PartETag> DoUploadMultiPart(string bucketName, string key, Stream content, long partSize, string uploadId)
+        private ResumableContext LoadResumableCopyContext(CopyObjectRequest request, ObjectMetadata metadata, string checkpointDir, long partSize)
         {
-            var fileSize = content.Length;
-            var partCount = fileSize / partSize;
-            if (fileSize % partSize != 0)
+            ResumableContext resumableContext = new ResumableCopyContext(request.SourceBucketName, request.SourceKey,
+                                                            request.DestinationBucketName, request.DestinationKey, checkpointDir);
+            if (resumableContext.Load() && resumableContext.ContentMd5 == metadata.ETag)
             {
-                partCount++;
+                return resumableContext;
             }
 
-            if (partCount >= OssUtils.PartNumberUpperLimit)
-            {
-                partCount = OssUtils.PartNumberUpperLimit;
-                partSize = fileSize / partCount + 1;
-            }
-
-            // 分片上传 
-            var partETags = new List<PartETag>();
-            using (var fs = content)
-            {
-                for (var i = 0; i < partCount; i++)
-                {
-                    var skipBytes = partSize * i;
-                    fs.Seek(skipBytes, 0);
-                    var size = (partSize < fileSize - skipBytes) ? partSize : (fileSize - skipBytes);
-                    var request = new UploadPartRequest(bucketName, key, uploadId)
-                    {
-                        InputStream = fs,
-                        PartSize = size,
-                        PartNumber = i + 1
-                    };
-
-                    var partResult = UploadPart(request);
-                    partETags.Add(partResult.PartETag);
-                }
-            }
-
-            return partETags;
+            resumableContext = NewResumableContext(metadata.ContentLength, partSize, resumableContext);
+            resumableContext.ContentMd5 = metadata.ETag;
+            return resumableContext;
         }
 
-        private List<PartETag> DoCopyMultiPart(CopyObjectRequest copyObjectRequest, long fileSize, long partSize, string uploadId)
+        private ResumableContext LoadResumableUploadContext(string bucketName, string key, Stream content,
+                                                            string checkpointDir, long partSize)
         {
-            // 计算分片个数
+            string contentMd5 = OssUtils.ComputeContentMd5(content, content.Length);
+
+            var resumableContext = new ResumableContext(bucketName, key, checkpointDir);
+            if (resumableContext.Load() && resumableContext.ContentMd5 == contentMd5)
+            {
+                return resumableContext;
+            }
+
+            resumableContext = NewResumableContext(content.Length, partSize, resumableContext);
+            resumableContext.ContentMd5 = contentMd5;
+            return resumableContext;
+        }
+
+        private static ResumableContext NewResumableContext(long contentLength, long partSize, ResumableContext resumableContext)
+        {
+            var fileSize = contentLength;
             var partCount = fileSize / partSize;
             if (fileSize % partSize != 0)
             {
@@ -1209,27 +1250,132 @@ namespace Aliyun.OSS
                 partSize = fileSize / partCount + 1;
             }
 
-            // 分片拷贝
-            var partETags = new List<PartETag>();
+            var partContextList = new List<ResumablePartContext>();
             for (var i = 0; i < partCount; i++)
             {
                 var skipBytes = partSize * i;
                 var size = (partSize < fileSize - skipBytes) ? partSize : (fileSize - skipBytes);
-                var request = new UploadPartCopyRequest(copyObjectRequest.DestinationBucketName,
-                                                        copyObjectRequest.DestinationKey,
-                                                        copyObjectRequest.SourceBucketName,
-                                                        copyObjectRequest.SourceKey, uploadId)
+                var partContext = new ResumablePartContext()
                 {
-                    PartSize = size,
-                    PartNumber = i + 1,
-                    BeginIndex = skipBytes
+                    PartId = i + 1,
+                    Position = skipBytes,
+                    Length = size,
+                    IsCompleted = false,
+                    PartETag = null
                 };
-                var copyResult = UploadPartCopy(request);
-                partETags.Add(copyResult.PartETag);
+
+                partContextList.Add(partContext);
             }
 
-            return partETags;
+            resumableContext.PartContextList = partContextList;
+            return resumableContext;
         }
+
+        private void ResumableUploadWithRetry(string bucketName, string key, Stream content, ResumableContext resumableContext)
+        {
+            using (var fs = content)
+            {
+                int maxRetryTimes = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
+
+                for (int i = 0; i < maxRetryTimes; i++)
+                {
+                    try
+                    {
+                        DoResumableUpload(bucketName, key, resumableContext, fs);
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (i != maxRetryTimes - 1)
+                        {
+                            Thread.Sleep(1000);
+                            continue;
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DoResumableUpload(string bucketName, string key, ResumableContext resumableContext, Stream fs)
+        {
+            foreach (var part in resumableContext.PartContextList)
+            {
+                if (part.IsCompleted)
+                {
+                    continue;
+                }
+
+                fs.Seek(part.Position, SeekOrigin.Begin);
+                var request = new UploadPartRequest(bucketName, key, resumableContext.UploadId)
+                {
+                    InputStream = fs,
+                    PartSize = part.Length,
+                    PartNumber = part.PartId
+                };
+
+                var partResult = UploadPart(request);
+                part.PartETag = partResult.PartETag;
+                part.IsCompleted = true;
+                resumableContext.Dump();
+            }
+        }
+
+        private void ResumableCopyWithRetry(CopyObjectRequest request, ResumableContext context)
+        {
+            int maxRetryTimes = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
+
+            for (int i = 0; i < maxRetryTimes; i++)
+            {
+                try
+                {
+                    DoResumableCopy(request, context);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    if (i != maxRetryTimes - 1)
+                    {
+                        Thread.Sleep(1000);
+                        continue;
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        private void DoResumableCopy(CopyObjectRequest request, ResumableContext resumableContext)
+        {
+            foreach (var part in resumableContext.PartContextList)
+            {
+                if (part.IsCompleted)
+                {
+                    continue;
+                }
+
+                var copyRequest = new UploadPartCopyRequest(request.DestinationBucketName,
+                                                            request.DestinationKey,
+                                                            request.SourceBucketName,
+                                                            request.SourceKey, resumableContext.UploadId)
+                {
+                    PartSize = part.Length,
+                    PartNumber = part.PartId,
+                    BeginIndex = part.Position
+                };
+                var copyResult = UploadPartCopy(copyRequest);
+ 
+                part.PartETag = copyResult.PartETag;
+                part.IsCompleted = true;
+                resumableContext.Dump();
+            }
+        }
+
         #endregion
     }
 }

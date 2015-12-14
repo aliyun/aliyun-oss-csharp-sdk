@@ -25,30 +25,6 @@ namespace Aliyun.OSS.Test.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("your end point")]
-        public string Endpoint {
-            get {
-                return ((string)(this["Endpoint"]));
-            }
-            set {
-                this["Endpoint"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("your access key id")]
-        public string AccessKeyId {
-            get {
-                return ((string)(this["AccessKeyId"]));
-            }
-            set {
-                this["AccessKeyId"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ProxyHost {
             get {
@@ -157,6 +133,18 @@ namespace Aliyun.OSS.Test.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("your access key id")]
+        public string AccessKeyId {
+            get {
+                return ((string)(this["AccessKeyId"]));
+            }
+            set {
+                this["AccessKeyId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("your access key secret")]
         public string AccessKeySecret {
             get {
@@ -164,6 +152,18 @@ namespace Aliyun.OSS.Test.Properties {
             }
             set {
                 this["AccessKeySecret"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("your endpoint")]
+        public string Endpoint {
+            get {
+                return ((string)(this["Endpoint"]));
+            }
+            set {
+                this["Endpoint"] = value;
             }
         }
     }

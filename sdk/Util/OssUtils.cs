@@ -81,7 +81,7 @@ namespace Aliyun.OSS.Util
         /// <summary>
         /// 默认分片大小，128M
         /// </summary>
-        public const long DefaultPartSize = 128 * 1024 * 1024;
+        public const long DefaultPartSize = 8 * 1024 * 1024;
 
         /// <summary>
         /// 分片上传或者拷贝时，最小分片大小

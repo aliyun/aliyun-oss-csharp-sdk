@@ -5,118 +5,99 @@ namespace Aliyun.OSS.Samples
 {
     public class Program
     {
+        /// <summary>
+        /// SDK的示例程序
+        /// </summary>
         public static void Main(string[] args)
         {
             Console.WriteLine("Aliyun SDK for .NET Samples!");
 
+            const string bucketName = "csharp-sdk-test-bucket";
+
             try
             {
-                // 1. Create bucket sample
-                //const string bucketName = "cname-test-for-sdk";
-                //CreateBucketSample.CreateBucket(bucketName);
+                CreateBucketSample.CreateBucket(bucketName);
 
-                // 2. List bucket sample
                 //ListBucketsSample.ListBuckets();
 
-                // 3. Set bucket cors sample
-                //SetBucketCorsSample.SetBucketCors();
+                //SetBucketCorsSample.SetBucketCors(bucketName);
 
-                // 4. Set bucket acl sample
-                //SetBucketAclSample.SetBucketAcl();
+                //GetBucketCorsSample.GetBucketCors(bucketName);
 
-                // 5. CName sample
-                //CNameSample.CNameOperation();
+                //DeleteBucketCorsSample.DeleteBucketCors(bucketName);
 
-                // 6. Get/Set bucket referer list sample
-                //SetBucketRefererSample.SetBucketReferer();
+                //SetBucketLoggingSample.SetBucketLogging(bucketName);
 
-                // 7.1 Put object sample
-                //PutObjectSample.PutObject();
+                //GetBucketLoggingSample.GetBucketLogging(bucketName);
 
-                // 7.2 Async put object sample
-                //PutObjectSample.AsyncPutObject();
+                //DeleteBucketLoggingSample.DeleteBucketLogging(bucketName);
 
-                // 8. Delete objects sample
-                // DeleteObjectsSample.DeleteObjects();
+                //SetBucketAclSample.SetBucketAcl(bucketName);
 
-                // 9.1 Upload multipart sample
-                //const string bucketName = "<bucket name>";
-                //const string objectName = "<object key>";
-                //const string fileToUpload = "<local file to upload>";
-                //const int partSize = 5 * 1024 * 1024; // 5MB
-                //MultipartUploadSample.UploadMultipart(bucketName, objectName, fileToUpload, partSize);
+                //GetBucketAclSample.GetBucketAcl(bucketName);
 
-                // 9.2 Async upload multipart sample
-                //const string bucketName = "<bucket name>";
-                //const string objectName = "<object name>";
-                //const string fileToUpload = "<file to upload>";
-                //const int partSize = 5 * 1024 * 1024; // 5MB
-                //MultipartUploadSample.AsyncUploadMultipart(bucketName, objectName, fileToUpload, partSize);
+                //SetBucketWebsiteSample.SetBucketWebsite(bucketName);
 
-                // 10.1 Upload multipart copy sample 
-                //const string targetName = "<target bucket>";
-                //const string targetKey = "<target key>";
-                //const string sourceBucket = "<source bucket>";
-                //const string sourceKey = "<source key>";
-                //const int partSize = 5 * 1024 * 1024; // 5MB
-                //MultipartUploadSample.UploadMultipartCopy(targetName, targetKey, sourceBucket, sourceKey, partSize);
+                //GetBucketWebsiteSample.GetBucketWebsite(bucketName);
 
-                // 10.2 Async upload multipart copy sample 
-                //const string targetName = "<target bucket>";
-                //const string targetKey = "<target key>";
-                //const string sourceBucket = "<source bucket>";
-                //const string sourceKey = "<source key>";
-                //const int partSize = 5 * 1024 * 1024; // 5MB
-                //MultipartUploadSample.AsyncUploadMultipartCopy(targetName, targetKey, sourceBucket, sourceKey, partSize);
+                //DeleteBucketWebsiteSample.DeleteBucketWebsite(bucketName);
 
-                // 10.3 Upload multipart copy sample 
-                //const string bucketName = "shaoqiang";
+                //SetBucketRefererSample.SetBucketReferer(bucketName);
+
+                //GetBucketRefererSample.GetBucketReferer(bucketName);
+
+                //SetBucketLifecycleSample.SetBucketLifecycle(bucketName);
+
+                //GetBucketLifecycleSample.GetBucketLifecycle(bucketName);
+
+                //DoesBucketExistSample.DoesBucketExist(bucketName);
+
+                //PutObjectSample.PutObject(bucketName);
+
+                //ResumbaleSample.ResumableUploadObject(bucketName);
+
+                //CreateEmptyFolderSample.CreateEmptyFolder(bucketName);
+
+                //AppendObjectSample.AppendObject(bucketName);
+
+                //ListObjectsSample.ListObjects(bucketName);
+
+                //UrlSignatureSample.UrlSignature(bucketName);
+
+                //GetObjectSample.GetObjects(bucketName);
+                //GetObjectByRangeSample.GetObjectPartly(bucketName);
+
+                //DeleteObjectsSample.DeleteObject(bucketName);
+                //DeleteObjectsSample.DeleteObjects(bucketName);
+
+                //const string sourceBucket = bucketName;
+                //const string sourceKey = "ResumableUploadObject";
+                //const string targetBucket = bucketName;
+                //const string targetKey = "ResumableUploadObject2";
+                //CopyObjectSample.CopyObject(sourceBucket, sourceKey, targetBucket, targetKey);
+                //CopyObjectSample.AsyncCopyObject(sourceBucket, sourceKey, targetBucket, targetKey);
+
+                //ResumbaleSample.ResumableCopyObject(sourceBucket, sourceKey, targetBucket, targetKey);
+
+                //ModifyObjectMetaSample.ModifyObjectMeta(bucketName);
+
+                //DoesObjectExistSample.DoesObjectExist(bucketName);
+
+                //MultipartUploadSample.UploadMultipart(bucketName);
+                //MultipartUploadSample.AsyncUploadMultipart(bucketName);
+
+                //MultipartUploadSample.UploadMultipartCopy(targetBucket, targetKey, sourceBucket, sourceKey);
+
+                //MultipartUploadSample.AsyncUploadMultipartCopy(targetBucket, targetKey, sourceBucket, sourceKey);
+
                 //MultipartUploadSample.ListMultipartUploads(bucketName);
 
-                // 11. Get object by range sample
-                //GetObjectByRangeSample.GetObjectPartly();
+                ////CNameSample.CNameOperation(bucketName);
 
-                // 12.1 Get object once sample.
-                //GetObjectSample.GetObject();
+                //PostPolicySample.GenPostPolicy(bucketName);
 
-                // 12.2 Async get object once sample.
-                //GetObjectSample.AsyncGetObject();
+                //DeleteBucketSample.DeleteNoEmptyBucket(bucketName);
 
-                // 13. Get object by using url signature.
-                //UrlSignatureSample.GetObjectBySignedUrl();
-
-                // 14. Put object by using url signature.
-                //UrlSignatureSample.PutObjectBySignedUrl();
-
-                // 15.1 Copy object sample
-                //CopyObjectSample.CopyObject();
-
-                // 15.2 Async copy object sample
-                //CopyObjectSample.AsyncCopyObject();
-
-                // 16. Create empty folder
-                //CreateEmptyFolderSample.CreateEmptyFolder();
-
-                // 17.1 List objects
-                //ListObjectsSample.ListObjects();
-
-                // 17.2 Async list objects
-                //ListObjectsSample.AsyncListObjects();
-
-                // 18. Generate post policy
-                //PostPolicySample.GenPostPolicy();
-
-                // 19. Set bucket lifecycle
-                //BucketLifecycleSample.SetBucketLifecycle();
-
-                // 20. Get bucket lifecycle
-                //BucketLifecycleSample.GetBucketLifecycle();
-
-                // 21. Determine bucket exist
-                //DoesBucketExistSample.DoesBucketExist("oss");
-
-                // 22. Determine object exist
-                //DoesObjectExistSample.DoesObjectExist("oss-test", "conf.ini2");
             }
             catch (OssException ex)
             {

@@ -19,49 +19,48 @@ namespace Aliyun.OSS.Samples
     /// </summary>
    public static class GetObjectSample
    {
-        const string accessKeyId = "<your access key id>";
-        const string accessKeySecret = "<your access key secret>";
-        const string endpoint = "<valid host name>";
+       static string accessKeyId = Config.AccessKeyId;
+       static string accessKeySecret = Config.AccessKeySecret;
+       static string endpoint = Config.Endpoint;
+       static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 
+       static string key = "GetObjectSample";
+       static string fileToUpload = Config.FileToUpload;
+       static string dirToDownload = Config.DirToDownload;
 
-       static OssClient ossClient = new OssClient(new Uri(endpoint), accessKeyId, accessKeySecret);
+       static AutoResetEvent _event = new AutoResetEvent(false);
 
-        const string bucketName = "<your bucket name>";
-        const string key = "TestOSS";
-        const string fileToUpload = "<your file to upload path>";
-        const string fileToDownload = "<your file to download path>";
+       public static void GetObjects(string bucketName)
+       {
+           GetObject(bucketName);
 
-        static AutoResetEvent _event = new AutoResetEvent(false);
+           GetObjectByRequest(bucketName);
 
-       public static void GetObject()
+           AsyncGetObject(bucketName);
+       }
+
+       public static void GetObject(string bucketName)
        {
            try
            {
-                string eTag;
-                using (Stream fs = File.Open(fileToUpload, FileMode.Open))
-                {
-                    // compute content's md5
-                    eTag = ComputeContentMd5(fs);
-                }
+               client.PutObject(bucketName, key, fileToUpload);
 
-                // put object
-                var metadata = new ObjectMetadata {ETag = eTag};
-                ossClient.PutObject(bucketName, key, fileToUpload, metadata);
+               var result = client.GetObject(bucketName, key);
 
-               Console.WriteLine("PutObject done.");
+               using (var requestStream = result.Content)
+               {
+                   using (var fs = File.Open(dirToDownload + "/sample.data", FileMode.OpenOrCreate))
+                   {
+                       int length = 4 * 1024;
+                       var buf = new byte[length]; 
+                       do{
+                           length = requestStream.Read(buf, 0, length);
+                           fs.Write(buf, 0, length);
+                       } while (length != 0);
+                   }
+               }
 
-                // verify etag
-                var o = ossClient.GetObject(bucketName, key);
-                using (var requestStream = o.Content)
-                {
-                    int len = (int) o.Metadata.ContentLength;
-                    var buf = new byte[len];
-                    requestStream.Read(buf, 0, len);                  
-                    var fs = File.Open(fileToDownload, FileMode.OpenOrCreate);
-                    fs.Write(buf, 0, len);
-                }
-
-               Console.WriteLine("GetObject done.");
+               Console.WriteLine("Get object succeeded");
            }
            catch (OssException ex)
            {
@@ -74,18 +73,83 @@ namespace Aliyun.OSS.Samples
            }
         }
 
-        private static string ComputeContentMd5(Stream inputStream)
-        {
-            using (var md5 = MD5.Create())
-            {
-                var data = md5.ComputeHash(inputStream);
-                var sBuilder = new StringBuilder();
-                foreach (var t in data)
-                {
-                    sBuilder.Append(t.ToString("x2"));
-                }
-                return sBuilder.ToString();
-            }
-        }
+       public static void GetObjectByRequest(string bucketName)
+       {
+           try
+           {
+               client.PutObject(bucketName, key, fileToUpload);
+
+               var request = new GetObjectRequest(bucketName, key);
+               request.SetRange(0, 100);
+
+               var result = client.GetObject(request);
+
+               Console.WriteLine("Get object succeeded, length:{0}", result.Metadata.ContentLength);
+           }
+           catch (OssException ex)
+           {
+               Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                   ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+           }
+           catch (Exception ex)
+           {
+               Console.WriteLine("Failed with error info: {0}", ex.Message);
+           }
+       }
+
+       public static void AsyncGetObject(string bucketName)
+       {
+           const string key = "AsyncGetObject";
+           try
+           {
+               client.PutObject(bucketName, key, fileToUpload);
+
+               string result = "Notice user: put object finish";
+               client.BeginGetObject(bucketName, key, GetObjectCallback, result.Clone());
+
+               _event.WaitOne();
+           }
+           catch (OssException ex)
+           {
+               Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                   ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+           }
+           catch (Exception ex)
+           {
+               Console.WriteLine("Failed with error info: {0}", ex.Message);
+           }
+       }
+
+       private static void GetObjectCallback(IAsyncResult ar)
+       {
+           try
+           {
+               var result = client.EndGetObject(ar);
+
+               using (var requestStream = result.Content)
+               {
+                   using (var fs = File.Open(dirToDownload + "/sample2.data", FileMode.OpenOrCreate))
+                   {
+                       int length = 4 * 1024;
+                       var buf = new byte[length];
+                       do
+                       {
+                           length = requestStream.Read(buf, 0, length);
+                           fs.Write(buf, 0, length);
+                       } while (length != 0);
+                   }
+               }
+
+               Console.WriteLine(ar.AsyncState as string);
+           }
+           catch (Exception ex)
+           {
+               Console.WriteLine(ex.Message);
+           }
+           finally
+           {
+               _event.Set();
+           }
+       }
     }
 }

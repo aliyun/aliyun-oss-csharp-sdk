@@ -40,6 +40,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -123,18 +125,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <DocumentationFile>
-    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>
-    </DocumentationFile>
     <WarningLevel>3</WarningLevel>
-    <DefineConstants>TRACE</DefineConstants>
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -144,10 +139,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\AppendObjectCommand.cs" />
     <Compile Include="Common\ClientConfiguration.cs" />
     <Compile Include="Commands\HeadObjectCommand.cs" />
     <Compile Include="Commands\DeleteObjectsCommand.cs" />
@@ -174,6 +169,10 @@
     <Compile Include="Common\Communication\ServiceClient.cs" />
     <Compile Include="Common\Handlers\IResponseHandler.cs" />
     <Compile Include="Common\Handlers\ResponseHandler.cs" />
+    <Compile Include="Domain\AppendObjectRequest.cs" />
+    <Compile Include="Domain\AppendObjectResult.cs" />
+    <Compile Include="Domain\ResumableContext.cs" />
+    <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\IDeserializer.cs" />
     <Compile Include="Transform\ISerializer.cs" />
     <Compile Include="Transform\RequestSerializationException.cs" />
@@ -341,9 +340,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />
-    <None Include="oss_comments_include.xml">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -375,10 +371,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\MimeData.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

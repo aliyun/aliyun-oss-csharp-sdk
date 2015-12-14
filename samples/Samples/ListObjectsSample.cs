@@ -17,17 +17,46 @@ namespace Aliyun.OSS.Samples
     /// </summary>
     public static class ListObjectsSample
     {
-        const string accessKeyId = "<your access key id>";
-        const string accessKeySecret = "<your access key secret>";
-        const string endpoint = "<valid host name>";
-
-        static OssClient ossClient = new OssClient(endpoint, accessKeyId, accessKeySecret);
-
-        const string bucketName = "<your bucket name>";
+        static string accessKeyId = Config.AccessKeyId;
+        static string accessKeySecret = Config.AccessKeySecret;
+        static string endpoint = Config.Endpoint;
+        static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 
         static AutoResetEvent _event = new AutoResetEvent(false);
 
-        public static void ListObjects()
+        public static void ListObjects(string bucketName)
+        {
+            SimpleListObjects(bucketName);
+            ListObjectsWithRequest(bucketName);
+            AsyncListObjects(bucketName);
+        }
+
+        public static void SimpleListObjects(string bucketName)
+        {
+            try
+            {
+                var result = client.ListObjects(bucketName);
+
+                Console.WriteLine("List objects of bucket:{0} succeeded ", bucketName);
+                foreach (var summary in result.ObjectSummaries)
+                {
+                    Console.WriteLine(summary.Key);
+                }
+
+                Console.WriteLine("List objects of bucket:{0} succeeded, is list all objects ? {1}", bucketName, !result.IsTruncated);
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
+        }
+
+        public static void ListObjectsWithRequest(string bucketName)
         {
             try
             {
@@ -41,7 +70,7 @@ namespace Aliyun.OSS.Samples
                         Marker = nextMarker,
                         MaxKeys = 100
                     };
-                    result = ossClient.ListObjects(listObjectsRequest);
+                    result = client.ListObjects(listObjectsRequest);
                     
                     foreach (var summary in result.ObjectSummaries)
                     {
@@ -52,6 +81,7 @@ namespace Aliyun.OSS.Samples
                     nextMarker = result.NextMarker;
                 } while (result.IsTruncated);
 
+                Console.WriteLine("List objects of bucket:{0} succeeded ", bucketName);
             }
             catch (OssException ex)
             {
@@ -64,12 +94,12 @@ namespace Aliyun.OSS.Samples
             }
         }
 
-        public static void AsyncListObjects()
+        public static void AsyncListObjects(string bucketName)
         {
             try
             {
                 var listObjectsRequest = new ListObjectsRequest(bucketName);
-                ossClient.BeginListObjects(listObjectsRequest, ListObjectCallback, null);
+                client.BeginListObjects(listObjectsRequest, ListObjectCallback, null);
 
                 _event.WaitOne();
             }
@@ -86,13 +116,31 @@ namespace Aliyun.OSS.Samples
 
         private static void ListObjectCallback(IAsyncResult ar)
         {
-            var result = ossClient.EndListObjects(ar);
-            foreach (var summary in result.ObjectSummaries)
+            try
             {
-                Console.WriteLine(summary.Key);
-            }
+                var result = client.EndListObjects(ar);
 
-            _event.Set();
+                Console.WriteLine("List objects of bucket:{0} succeeded ", result.BucketName);
+
+                foreach (var summary in result.ObjectSummaries)
+                {
+                    Console.WriteLine(summary.Key);
+                }
+
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
+            finally
+            {
+                _event.Set();
+            }
         }
     }
 }

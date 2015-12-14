@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Aliyun.OpenServices.OpenStorageService</RootNamespace>
+    <RootNamespace>Aliyun.OSS.Sample</RootNamespace>
     <AssemblyName>Aliyun.OSS.Samples</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
@@ -37,6 +37,8 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -69,30 +71,34 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>
-    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Aliyun.OSS.Samples.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Samples\BucketLifecycleSample.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Samples\DeleteBucketSample.cs" />
+    <Compile Include="Samples\ModifyObjectMetaSample.cs" />
+    <Compile Include="Samples\ResumableSample.cs" />
+    <Compile Include="Samples\SetBucketLifecycleSample.cs" />
+    <Compile Include="Samples\AppendObjectSample.cs" />
+    <Compile Include="Samples\GetBucketLifecycleSample.cs" />
+    <Compile Include="Samples\GetBucketRefererSample.cs" />
+    <Compile Include="Samples\GetBucketWetbsiteSample.cs" />
+    <Compile Include="Samples\DeleteBucketWetbsiteSample.cs" />
+    <Compile Include="Samples\SetBucketWetbsiteSample.cs" />
+    <Compile Include="Samples\DeleteBucketLoggingSample.cs" />
+    <Compile Include="Samples\GetBucketLoggingSample.cs" />
+    <Compile Include="Samples\SetBucketLoggingSample.cs" />
+    <Compile Include="Samples\DeleteBucketCorsSample.cs" />
+    <Compile Include="Samples\GetBucketCorsSample.cs" />
+    <Compile Include="Samples\GetBucketAclSample.cs" />
     <Compile Include="Samples\DoesBucketExistSample.cs" />
     <Compile Include="Samples\DoesObjectExistSample.cs" />
     <Compile Include="Samples\PostPolicySample.cs" />
@@ -133,7 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\sdk\aliyun-oss-sdk.csproj">
-      <Project>{67bdc800-084c-4f84-8a80-661b5afe499a}</Project>
+      <Project>{67BDC800-084C-4F84-8A80-661B5AFE499A}</Project>
       <Name>aliyun-oss-sdk</Name>
     </ProjectReference>
   </ItemGroup>

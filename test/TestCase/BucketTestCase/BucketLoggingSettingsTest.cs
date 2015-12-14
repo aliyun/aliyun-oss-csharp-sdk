@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Test.Util;
@@ -46,7 +45,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         [Test]
         public void EnableLoggingInvalidTargetBucketNameTest()
         {
-            Parallel.ForEach(OssTestUtils.InvalidBucketNamesList, invalidBucketName =>
+            foreach (var invalidBucketName in OssTestUtils.InvalidBucketNamesList)
             {
                 try
                 {
@@ -62,7 +61,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 {
                     _ossClient.DeleteBucketLogging(_bucketName);
                 }
-            });
+            }
         }
 
         [Test]
@@ -93,7 +92,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         [Test]
         public void EnableLoggingInvalidPrefixNameTest()
         {
-            Parallel.ForEach(OssTestUtils.InvalidLoggingPrefixNamesList, invalidPrefix =>
+            foreach (var invalidPrefix in OssTestUtils.InvalidLoggingPrefixNamesList)
             {
                 try
                 {
@@ -109,7 +108,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 {
                     _ossClient.DeleteBucketLogging(_bucketName);
                 }
-            });
+            }
         }
     }
 }
