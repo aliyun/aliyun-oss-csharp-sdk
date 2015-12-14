@@ -1,6 +1,6 @@
 ﻿# Aliyun OSS SDK for C# 
 
-[![Build Status](https://travis-ci.org/qiyuewuyi/aliyun-oss-csharp-sdk.svg?branch=master)](https://travis-ci.org/qiyuewuyi/aliyun-oss-csharp-sdk)
+[![Build Status](https://travis-ci.org/aliyun/aliyun-oss-csharp-sdk.svg?branch=master)](https://travis-ci.org/aliyun/aliyun-oss-csharp-sdk)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 ## 关于
