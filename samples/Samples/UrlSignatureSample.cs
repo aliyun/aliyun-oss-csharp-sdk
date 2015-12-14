@@ -151,7 +151,7 @@ namespace Aliyun.OSS.Samples
                 // Step2: Prepares for filepath to be uploaded and sends out this request.
                 client.PutObject(signedUrl, fileToUpload);
 
-                Console.WriteLine("Put object:{0} succeeded", key);
+                Console.WriteLine("Put object by signatrue succeeded.");
             }
             catch (OssException ex)
             {
@@ -181,7 +181,7 @@ namespace Aliyun.OSS.Samples
                     client.PutObject(signedUrl, ms);
                 }
 
-                Console.WriteLine("Put object:{0} succeeded", key);
+                Console.WriteLine("Get object by signatrue succeeded.");
             }
             catch (OssException ex)
             {

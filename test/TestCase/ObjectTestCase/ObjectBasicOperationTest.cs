@@ -1256,6 +1256,14 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 Assert.AreEqual("PositionNotEqualToLength", ex.ErrorCode);
             }
+            catch (WebException ex)
+            {
+                HttpWebResponse errorResponse = ex.Response as HttpWebResponse;
+                if (errorResponse.StatusCode != HttpStatusCode.Conflict)
+                {
+                    Assert.IsTrue(false);
+                }
+            }
             finally
             {
                 System.Threading.Thread.Sleep(5000);
