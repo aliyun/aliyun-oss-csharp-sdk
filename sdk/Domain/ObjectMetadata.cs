@@ -71,7 +71,7 @@ namespace Aliyun.OSS
                 return _metadata.ContainsKey(HttpHeaders.Expires)
                      ? (DateTime)_metadata[HttpHeaders.Expires] : DateTime.MinValue;
             }
-            internal set
+            set
             {
                 _metadata[HttpHeaders.Expires] = value;
             }
