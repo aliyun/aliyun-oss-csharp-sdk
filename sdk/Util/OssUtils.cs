@@ -44,47 +44,47 @@ namespace Aliyun.OSS.Util
         public const int MaxMarkerStringSize = 1024;
 
         /// <summary>
-        /// 分隔字符串最大长度
+        /// 分隔字符串最大长度,1K
         /// </summary>
         public const int MaxDelimiterStringSize = 1024;
 
         /// <summary>
-        /// 最多返回的文件数
+        /// 最多返回的文件数,1000
         /// </summary>
         public const int MaxReturnedKeys = 1000;
 
         /// <summary>
-        /// 一次最多删除的文件数
+        /// 一次最多删除的文件数,1000
         /// </summary>
         public const int DeleteObjectsUpperLimit = 1000;
 
         /// <summary>
-        /// 存储空间的跨域资源共享规则数量限制
+        /// 存储空间的跨域资源共享规则数量限制,10
         /// </summary>
         public const int BucketCorsRuleLimit = 10;
 
         /// <summary>
-        /// 生命周期规则数量限制
+        /// 生命周期规则数量限制,1000
         /// </summary>
         public const int LifecycleRuleLimit = 1000;
 
         /// <summary>
-        /// 文件长度最长限制
+        /// 文件长度最长限制,1023
         /// </summary>
         public const int ObjectNameLengthLimit = 1023;
 
         /// <summary>
-        /// 分片个数限制
+        /// 分片个数限制,10000
         /// </summary>
         public const int PartNumberUpperLimit = 10000;
 
         /// <summary>
-        /// 默认分片大小，128M
+        /// 默认分片大小，8M
         /// </summary>
         public const long DefaultPartSize = 8 * 1024 * 1024;
 
         /// <summary>
-        /// 分片上传或者拷贝时，最小分片大小
+        /// 分片上传或者拷贝时，最小分片大小,100K
         /// </summary>
         public const long PartSizeLowerLimit = 100 * 1024;
 

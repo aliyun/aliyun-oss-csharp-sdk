@@ -260,7 +260,7 @@ namespace Aliyun.OSS
 
 
         /// <summary>
-        /// 上传指定的<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// </summary>
         /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
@@ -269,7 +269,7 @@ namespace Aliyun.OSS
         PutObjectResult PutObject(string bucketName, string key, Stream content);
 
         /// <summary>
-        /// 开始异步上传指定的<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// </summary>
         /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
@@ -281,7 +281,7 @@ namespace Aliyun.OSS
             AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 上传指定的<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// </summary>
         /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
@@ -291,7 +291,7 @@ namespace Aliyun.OSS
         PutObjectResult PutObject(string bucketName, string key, Stream content, ObjectMetadata metadata);
 
         /// <summary>
-        /// 开始异步上传指定的<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// </summary>
         /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
@@ -304,7 +304,7 @@ namespace Aliyun.OSS
             AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 上传指定的<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// </summary>
         /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
@@ -313,7 +313,7 @@ namespace Aliyun.OSS
         PutObjectResult PutObject(string bucketName, string key, string fileToUpload);
 
         /// <summary>
-        /// 开始异步上传指定的<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// </summary>
         /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
@@ -325,7 +325,7 @@ namespace Aliyun.OSS
             AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 上传指定的<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// </summary>
         /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
@@ -335,7 +335,7 @@ namespace Aliyun.OSS
         PutObjectResult PutObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata);
 
         /// <summary>
-        /// 开始异步上传指定的<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// </summary>
         /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
         /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
@@ -356,7 +356,7 @@ namespace Aliyun.OSS
 
         /// <summary>
         /// 已废弃，请使用ResumableUploadObject。
-        /// 上传指定的大文件：<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 上传指定的大文件：<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
         /// 如果上传文件大小大于分片大小，则会使用分片上传。
         /// </summary>
@@ -373,7 +373,7 @@ namespace Aliyun.OSS
 
         /// <summary>
         /// 已废弃，请使用ResumableUploadObject。
-        /// 上传指定的大文件：<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 上传指定的大文件：<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
         /// 如果上传文件大小大于分片大小，则会使用分片上传。
         /// </summary>
@@ -437,14 +437,14 @@ namespace Aliyun.OSS
         PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null);
 
         /// <summary>
-        /// 追加指定的内容到指定的OSS<see cref="OssObject" />。
+        /// 追加指定的内容到指定的<see cref="OssObject" />。
         /// </summary>
         /// <param name="request"><see cref="AppendObjectRequest" />的实例</param>
         /// <returns><see cref="AppendObjectResult" />实例</returns>
         AppendObjectResult AppendObject(AppendObjectRequest request);
 
         /// <summary>
-        /// 追加指定的内容到指定的OSS<see cref="OssObject" />。
+        /// 追加指定的内容到指定的<see cref="OssObject" />。
         /// </summary>
         /// <param name="request"><see cref="AppendObjectRequest" />的实例</param>
         /// <param name="callback">用户自定义委托对象。</param>
@@ -460,7 +460,7 @@ namespace Aliyun.OSS
         AppendObjectResult EndAppendObject(IAsyncResult asyncResult);
 
         /// <summary>
-        /// 从指定的OSS<see cref="Bucket" />中获取指定的<see cref="OssObject" />。
+        /// 从指定的<see cref="Bucket" />中获取指定的<see cref="OssObject" />。
         /// </summary>
         /// <param name="bucketName">要获取的<see cref="OssObject"/>所在的<see cref="Bucket" />的名称。</param>
         /// <param name="key">要获取的<see cref="OssObject"/>的<see cref="OssObject.Key"/>。</param>
@@ -475,14 +475,14 @@ namespace Aliyun.OSS
         OssObject GetObject(Uri signedUrl);
 
         /// <summary>
-        /// 从指定的OSS<see cref="Bucket" />中获取满足请求参数<see cref="GetObjectRequest"/>的<see cref="OssObject" />。
+        /// 从指定的<see cref="Bucket" />中获取满足请求参数<see cref="GetObjectRequest"/>的<see cref="OssObject" />。
         /// </summary>
         /// <param name="getObjectRequest">请求参数。</param>
         /// <returns><see cref="OssObject" />实例。使用后需要释放此对象以释放HTTP连接。</returns>
         OssObject GetObject(GetObjectRequest getObjectRequest);
 
         /// <summary>
-        /// 开始从指定的OSS<see cref="Bucket" />中异步获取满足请求参数<see cref="GetObjectRequest"/>的<see cref="OssObject" />。
+        /// 开始从指定的<see cref="Bucket" />中异步获取满足请求参数<see cref="GetObjectRequest"/>的<see cref="OssObject" />。
         /// </summary>
         /// <param name="getObjectRequest">请求参数。</param>
         /// <param name="callback">用户自定义委托对象。</param>
@@ -508,7 +508,7 @@ namespace Aliyun.OSS
         OssObject EndGetObject(IAsyncResult asyncResult);
 
         /// <summary>
-        /// 从指定的OSS<see cref="Bucket" />中获取指定的<see cref="OssObject" />，
+        /// 从指定的<see cref="Bucket" />中获取指定的<see cref="OssObject" />，
         /// 并导出到指定的输出流。
         /// </summary>
         /// <param name="getObjectRequest">请求参数。</param>
@@ -563,7 +563,7 @@ namespace Aliyun.OSS
 
         /// <summary>
         /// 已废弃，请使用ResumableCopyObject。
-        /// 拷贝指定的大文件：<see cref="OssObject" />到指定的OSS<see cref="Bucket" />。
+        /// 拷贝指定的大文件：<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// 如果拷贝的文件大小小于或等于分片大小，则会使用普通拷贝，只需拷贝一次即可。
         /// 如果拷贝文件大小大于分片大小，则会使用分片拷贝。
         /// </summary>
