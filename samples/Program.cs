@@ -12,7 +12,7 @@ namespace Aliyun.OSS.Samples
         {
             Console.WriteLine("Aliyun SDK for .NET Samples!");
 
-            const string bucketName = "csharp-sdk-test-bucket";
+            const string bucketName = "<your bucket name>";
 
             try
             {

@@ -171,6 +171,7 @@
     <Compile Include="Common\Handlers\ResponseHandler.cs" />
     <Compile Include="Domain\AppendObjectRequest.cs" />
     <Compile Include="Domain\AppendObjectResult.cs" />
+    <Compile Include="Domain\ObjectMetadata.cs" />
     <Compile Include="Domain\ResumableContext.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\IDeserializer.cs" />
@@ -267,7 +268,6 @@
     <Compile Include="Domain\MultipartUpload.cs" />
     <Compile Include="Domain\MultipartUploadListing.cs" />
     <Compile Include="Domain\ObjectListing.cs" />
-    <Compile Include="Domain\ObjectMetadata.cs" />
     <Compile Include="Model\UploadPartCopyRequestModel.cs" />
     <Compile Include="OssClient.cs" />
     <Compile Include="Common\OssException.cs" />

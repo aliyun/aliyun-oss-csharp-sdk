@@ -84,6 +84,9 @@ namespace Aliyun.OSS
         public CopyObjectRequest(string sourceBucketName, string sourceKey,
             string destinationBucketName, string destinationKey)
         {
+            OssUtils.CheckBucketName(destinationBucketName);
+            OssUtils.CheckObjectKey(destinationKey);
+
             SourceBucketName = sourceBucketName;
             SourceKey = sourceKey;
             DestinationBucketName = destinationBucketName;

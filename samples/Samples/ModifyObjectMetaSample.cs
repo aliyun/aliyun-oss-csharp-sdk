@@ -32,12 +32,17 @@ namespace Aliyun.OSS.Samples
 
                 client.PutObject(bucketName, key, stream);
 
-                var meta = new ObjectMetadata()
+                var oldMeta = client.GetObjectMetadata(bucketName, key);
+
+                var newMeta = new ObjectMetadata()
                 {
-                    ContentType = "application/msword"
+                    ContentType = "application/msword",
+                    ExpirationTime = oldMeta.ExpirationTime,
+                    ContentEncoding = null,
+                    CacheControl = ""
                 };
 
-                client.ModifyObjectMeta(bucketName, key, meta);
+                client.ModifyObjectMeta(bucketName, key, newMeta);
 
                 Console.WriteLine("Modify object meta succeeded");
             }

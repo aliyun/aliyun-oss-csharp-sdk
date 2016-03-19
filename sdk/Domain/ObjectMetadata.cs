@@ -62,18 +62,20 @@ namespace Aliyun.OSS
 
         /// <summary>
         /// 获取Expires请求头，表示Object的过期时间。
-        /// 如果Object没有定义过期时间，则返回null。
         /// </summary>
         public DateTime ExpirationTime
         {
             get
             {
                 return _metadata.ContainsKey(HttpHeaders.Expires)
-                     ? (DateTime)_metadata[HttpHeaders.Expires] : DateTime.MinValue;
+                     ? DateUtils.ParseRfc822Date((string)_metadata[HttpHeaders.Expires]) : DateTime.MinValue;
             }
             set
             {
-                _metadata[HttpHeaders.Expires] = value;
+                if (value != null)
+                {
+                    _metadata[HttpHeaders.Expires] = DateUtils.FormatRfc822Date(value);
+                }
             }
         }
 
@@ -107,7 +109,10 @@ namespace Aliyun.OSS
             }
             set
             {
-                _metadata[HttpHeaders.ContentType] = value;
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _metadata[HttpHeaders.ContentType] = value;
+                }
             }
         }
 
@@ -123,7 +128,10 @@ namespace Aliyun.OSS
             }
             set
             {
-                _metadata[HttpHeaders.ContentEncoding] = value;
+                if (value != null)
+                {
+                    _metadata[HttpHeaders.ContentEncoding] = value;
+                }
             }
         }
 
@@ -139,7 +147,10 @@ namespace Aliyun.OSS
             }
             set
             {
-                _metadata[HttpHeaders.CacheControl] = value;
+                if (value != null)
+                {
+                    _metadata[HttpHeaders.CacheControl] = value;
+                }
             }
         }
 
@@ -155,7 +166,10 @@ namespace Aliyun.OSS
             }
             set
             {
-                _metadata[HttpHeaders.ContentDisposition] = value;
+                if (value != null)
+                {
+                    _metadata[HttpHeaders.ContentDisposition] = value;
+                }
             }
         }
 
@@ -171,7 +185,10 @@ namespace Aliyun.OSS
             }
             set
             {
-                _metadata[HttpHeaders.ETag] = value;
+                if (value != null)
+                {
+                    _metadata[HttpHeaders.ETag] = value;
+                }
             }
         }
 

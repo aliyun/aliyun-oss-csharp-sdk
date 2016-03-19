@@ -78,6 +78,64 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
+        public void CopyObjectBasicTestWithInvalidBucket()
+        {
+            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
+
+            //construct metadata
+            var metadata = new ObjectMetadata();
+            const string userMetaKey = "myKey";
+            const string userMetaValue = "myValue";
+            metadata.UserMetadata.Add(userMetaKey, userMetaValue);
+            metadata.CacheControl = "No-Cache";
+
+            try
+            {
+                var coRequest = new CopyObjectRequest(_bucketName, _sourceObjectKey, "/invalid_bucket", targetObjectKey)
+                {
+                    NewObjectMetadata = metadata
+                };
+
+                _ossClient.CopyObject(coRequest);
+
+                Assert.Fail("Copy object should not pass with invalid bucket name");
+            }
+            catch (ArgumentException)
+            {
+                Assert.IsTrue(true);
+            } 
+        }
+
+        [Test]
+        public void CopyObjectBasicTestWithInvalidObject()
+        {
+            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
+
+            //construct metadata
+            var metadata = new ObjectMetadata();
+            const string userMetaKey = "myKey";
+            const string userMetaValue = "myValue";
+            metadata.UserMetadata.Add(userMetaKey, userMetaValue);
+            metadata.CacheControl = "No-Cache";
+
+            try
+            {
+                var coRequest = new CopyObjectRequest(_bucketName, _sourceObjectKey, _bucketName, "/__%")
+                {
+                    NewObjectMetadata = metadata
+                };
+
+                _ossClient.CopyObject(coRequest);
+
+                Assert.Fail("Copy object should not pass with invalid object name");
+            }
+            catch (ArgumentException)
+            {
+                Assert.IsTrue(true);
+            } 
+        }
+
+        [Test]
         public void CopyObjectMatchingETagPositiveTest()
         {
             var targetObjectKey = OssTestUtils.GetObjectKey(_className);

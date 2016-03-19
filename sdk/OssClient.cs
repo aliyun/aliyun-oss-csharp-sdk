@@ -56,7 +56,7 @@ namespace Aliyun.OSS
         /// <param name="accessKeySecret">STS提供的访问密钥。</param>
         /// <param name="securityToken">STS提供的安全令牌。</param>
         public OssClient(string endpoint, string accessKeyId, string accessKeySecret, string securityToken)
-            : this(new Uri(endpoint.ToLower().StartsWith("http") ? endpoint : "http://" + endpoint),
+            : this(new Uri(endpoint.ToLower().Trim().StartsWith("http") ? endpoint.Trim() : "http://" + endpoint.Trim()),
                    accessKeyId, accessKeySecret, securityToken) { }
 
         /// <summary>

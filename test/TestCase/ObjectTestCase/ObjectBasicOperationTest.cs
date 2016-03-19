@@ -1126,6 +1126,52 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        /// <summary>
+        /// 验证是否可以设置空值
+        /// </summary>
+        [Test]
+        public void ModifyObjectMetaWithUseOldMeta()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var meta = new ObjectMetadata()
+                {
+                    ContentType = "text/rtf",
+                };
+
+                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile, meta);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+
+                var oldMeta = _ossClient.GetObjectMetadata(_bucketName, key);
+                Assert.AreEqual(meta.ContentType, oldMeta.ContentType);
+                Assert.AreEqual(meta.CacheControl, oldMeta.CacheControl);
+                Assert.IsTrue(oldMeta.ExpirationTime != null);
+
+                var newMeta = new ObjectMetadata()
+                {
+                    CacheControl = "",
+                    ContentEncoding = null,
+                    ContentType = "application/octet-stream",
+                    ExpirationTime = oldMeta.ExpirationTime
+                };
+
+                _ossClient.ModifyObjectMeta(_bucketName, key, newMeta);
+
+                var newMeta2 = _ossClient.GetObjectMetadata(_bucketName, key);
+                Assert.AreEqual("application/octet-stream", newMeta2.ContentType);
+                Assert.AreEqual(null, newMeta2.CacheControl);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
         #endregion
 
         #region append object
