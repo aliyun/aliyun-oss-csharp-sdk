@@ -1624,7 +1624,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 client.endFailedIndex = 100;
                 client.currentIndex = 0;
 
-                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
+                client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
                                                         Config.DownloadFolder);
                 Assert.IsFalse(true);
             }
@@ -1652,7 +1652,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 client.beginFailedIndex = 2;
                 client.endFailedIndex = 100;
 
-                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
+                client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
                                                        Config.DownloadFolder);
                 Assert.IsTrue(false);
             }

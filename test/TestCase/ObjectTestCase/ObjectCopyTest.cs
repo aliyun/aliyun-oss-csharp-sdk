@@ -109,8 +109,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void CopyObjectBasicTestWithInvalidObject()
         {
-            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
-
             //construct metadata
             var metadata = new ObjectMetadata();
             const string userMetaKey = "myKey";
