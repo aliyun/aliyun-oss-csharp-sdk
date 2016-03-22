@@ -72,10 +72,7 @@ namespace Aliyun.OSS
             }
             set
             {
-                if (value != null)
-                {
-                    _metadata[HttpHeaders.Expires] = DateUtils.FormatRfc822Date(value);
-                }
+                _metadata[HttpHeaders.Expires] = DateUtils.FormatRfc822Date(value);
             }
         }
 
