@@ -1175,7 +1175,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var oldMeta = _ossClient.GetObjectMetadata(_bucketName, key);
                 Assert.AreEqual(meta.ContentType, oldMeta.ContentType);
                 Assert.AreEqual(meta.CacheControl, oldMeta.CacheControl);
-                Assert.IsTrue(oldMeta.ExpirationTime != null);
 
                 var newMeta = new ObjectMetadata()
                 {
