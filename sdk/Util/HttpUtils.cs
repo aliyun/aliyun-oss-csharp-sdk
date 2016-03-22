@@ -17,6 +17,7 @@ namespace Aliyun.OSS.Util
         public const string Utf8Charset = "utf-8";
         public const string Iso88591Charset = "iso-8859-1";
         public const string UrlEncodingType = "url";
+        public const string HttpProto = "http://";
         public const string DefaultContentType = "application/octet-stream";
         private const string UrlAllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
         private static IDictionary<string, string> _mimeDict = new Dictionary<string, string>();
