@@ -51,7 +51,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                _ossClient.PutObject(_bucketName, newKey, Config.UploadSampleFile);
+                _ossClient.PutObject(_bucketName, newKey, Config.UploadTestFile);
 
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, newKey));
 
@@ -78,9 +78,9 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                _ossClient.PutObject(_bucketName, newKey1, Config.UploadSampleFile);
-                _ossClient.PutObject(_bucketName, newKey2, Config.UploadSampleFile);
-                _ossClient.PutObject(_bucketName, newKey3, Config.UploadSampleFile);
+                _ossClient.PutObject(_bucketName, newKey1, Config.UploadTestFile);
+                _ossClient.PutObject(_bucketName, newKey2, Config.UploadTestFile);
+                _ossClient.PutObject(_bucketName, newKey3, Config.UploadTestFile);
 
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, newKey1));
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, newKey2));
@@ -124,7 +124,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 // 设置每块为 5M
                 const int partSize = 5 * 1024 * 1024;
 
-                var fileInfo = new FileInfo(Config.MultiUploadSampleFile);
+                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
 
                 // 计算分块数目
                 var partCount = OssTestUtils.CalculatePartCount(fileInfo.Length, partSize);
@@ -190,7 +190,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 var objectKey = OssTestUtils.GetObjectKey(_className);
                 OssTestUtils.UploadObject(_ossClient, _bucketName, objectKey,
-                    Config.UploadSampleFile, new ObjectMetadata());
+                    Config.UploadTestFile, new ObjectMetadata());
                 sampleObjects.Add(objectKey);
                 System.Threading.Thread.Sleep(100);
             }

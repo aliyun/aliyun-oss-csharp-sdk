@@ -34,14 +34,14 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _sourceObjectKey = OssTestUtils.GetObjectKey(_className);
             var metadata = new ObjectMetadata();
             var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _sourceObjectKey, 
-                Config.UploadSampleFile, metadata);
+                Config.UploadTestFile, metadata);
             _sourceObjectETag = poResult.ETag;
 
             //upload multipart sample object as source object
             _sourceBigObjectKey = _sourceObjectKey + ".js";
             metadata = new ObjectMetadata();
             poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _sourceBigObjectKey,
-                Config.MultiUploadSampleFile, metadata);
+                Config.MultiUploadTestFile, metadata);
             _sourceBigObjectETag = poResult.ETag;
         }
 

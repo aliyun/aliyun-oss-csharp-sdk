@@ -12,8 +12,8 @@ namespace Aliyun.OSS.Test.Util
 		public static readonly string DisabledAccessKeyId = ConfigurationManager.AppSettings["DisabledAccessKeyId"];
 		public static readonly string DisabledAccessKeySecret = ConfigurationManager.AppSettings["DisabledAccessKeySecret"];
 		public static readonly string SecondEndpoint = ConfigurationManager.AppSettings["SecondEndpoint"];
-		public static readonly string UploadSampleFile = ConfigurationManager.AppSettings["UploadSampleFile"];
-		public static readonly string MultiUploadSampleFile = ConfigurationManager.AppSettings["MultiUploadSampleFile"];
+		public static readonly string UploadTestFile = ConfigurationManager.AppSettings["UploadTestFile"];
+		public static readonly string MultiUploadTestFile = ConfigurationManager.AppSettings["MultiUploadTestFile"];
 		public static readonly string DownloadFolder = ConfigurationManager.AppSettings["DownloadFolder"];
     }
 }

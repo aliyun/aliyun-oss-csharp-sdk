@@ -37,7 +37,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             //create sample object
             _objectKey = OssTestUtils.GetObjectKey(_className);
             var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
-                Config.UploadSampleFile, new ObjectMetadata());
+                Config.UploadTestFile, new ObjectMetadata());
             _objectETag = poResult.ETag;
 
             _event = new AutoResetEvent(false);
@@ -60,7 +60,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 //upload the object
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key,
-                    Config.UploadSampleFile, new ObjectMetadata());
+                    Config.UploadTestFile, new ObjectMetadata());
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
             }
             finally
@@ -81,7 +81,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 //upload the object
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key,
-                    Config.UploadSampleFile, null);
+                    Config.UploadTestFile, null);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
             }
             finally
@@ -102,7 +102,35 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 //upload the object
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key,
-                    Config.UploadSampleFile);
+                    Config.UploadTestFile);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadObjectWithMd5()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                string md5;
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    md5 = OssUtils.ComputeContentMd5(fs, fs.Length);
+                }
+
+                var meta = new ObjectMetadata() { ContentMd5 = md5 };
+
+                //upload the object
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile, meta);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
             }
             finally
@@ -128,7 +156,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 ContentDisposition = "abc.zip",
                 ContentEncoding = "gzip"
             };
-            var eTag = FileUtils.ComputeContentMd5(Config.UploadSampleFile);
+            var eTag = FileUtils.ComputeContentMd5(Config.UploadTestFile);
             metadata.ETag = eTag;
             //enable server side encryption
             const string encryption = "AES256";
@@ -141,7 +169,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 //upload object
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key,
-                    Config.UploadSampleFile, metadata);
+                    Config.UploadTestFile, metadata);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
                 var uploadedObjectMetadata = _ossClient.GetObjectMetadata(_bucketName, key);
@@ -169,7 +197,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile, new ObjectMetadata());
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile, new ObjectMetadata());
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
             }
             finally
@@ -188,7 +216,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile);
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
             }
             finally
@@ -207,10 +235,10 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                var fileInfo = new FileInfo(Config.MultiUploadSampleFile);
+                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
                 var fileSize = fileInfo.Length;
 
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadSampleFile, new ObjectMetadata(), null, fileSize + 1);
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), null, fileSize + 1);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
             }
@@ -230,10 +258,10 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                var fileInfo = new FileInfo(Config.MultiUploadSampleFile);
+                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
                 var fileSize = fileInfo.Length;
 
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadSampleFile, new ObjectMetadata(), null, fileSize);
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), null, fileSize);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
             }
@@ -253,10 +281,10 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                var fileInfo = new FileInfo(Config.MultiUploadSampleFile);
+                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
                 var fileSize = fileInfo.Length;
 
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadSampleFile, new ObjectMetadata(), null, fileSize - 1);
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), null, fileSize - 1);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
             }
@@ -276,10 +304,10 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                var fileInfo = new FileInfo(Config.MultiUploadSampleFile);
+                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
                 var fileSize = fileInfo.Length;
 
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadSampleFile, new ObjectMetadata(), null, 1);
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), null, 1);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
             }
@@ -296,11 +324,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void ResumableUploadObjectTestWithSmallObjectCheckContentType()
         {
             var key = OssTestUtils.GetObjectKey(_className);
-            var newFileName = Path.GetDirectoryName(Config.UploadSampleFile) + "/newfile.js";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newfile.js";
 
             try
             {
-                File.Copy(Config.UploadSampleFile, newFileName);
+                File.Copy(Config.UploadTestFile, newFileName);
 
                 var result = _ossClient.ResumableUploadObject(_bucketName, key, newFileName, new ObjectMetadata(), null);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
@@ -323,11 +351,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void ResumableUploadObjectTestWithBigObjectCheckContentType()
         {
             var key = OssTestUtils.GetObjectKey(_className);
-            var newFileName = Path.GetDirectoryName(Config.MultiUploadSampleFile) + "/newfile.js";
+            var newFileName = Path.GetDirectoryName(Config.MultiUploadTestFile) + "/newfile.js";
 
             try
             {
-                File.Copy(Config.MultiUploadSampleFile, newFileName, true);
+                File.Copy(Config.MultiUploadTestFile, newFileName, true);
                 var fileInfo = new FileInfo(newFileName);
                 var fileSize = fileInfo.Length;
 
@@ -360,7 +388,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 {
                     //try to upload the object with invalid key name
                     OssTestUtils.UploadObject(_ossClient, _bucketName, invalidKeyName,
-                        Config.UploadSampleFile, new ObjectMetadata());
+                        Config.UploadTestFile, new ObjectMetadata());
                     Assert.Fail("Upload should not pass for invalid object key name {0}", invalidKeyName);
                 }
                 catch (ArgumentException)
@@ -454,7 +482,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 //upload the object
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key,
-                    Config.UploadSampleFile, new ObjectMetadata());
+                    Config.UploadTestFile, new ObjectMetadata());
 
                 //list objects by specifying bucket name
                 var allObjects = _ossClient.ListObjects(_bucketName);
@@ -630,7 +658,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var key = OssTestUtils.GetObjectKey(_className) + "";
             try
             {
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     _ossClient.PutObject(_bucketName, key, fs, null);
                 }
@@ -660,7 +688,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var key = OssTestUtils.GetObjectKey(_className) + ".js";
             try
             {
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     _ossClient.PutObject(_bucketName, key, fs, null);
                 }
@@ -689,7 +717,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var metadata = new ObjectMetadata();
                 metadata.ContentType = "application/vnd.android.package-archive";
 
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     _ossClient.PutObject(_bucketName, key, fs, metadata);
                 }
@@ -714,10 +742,10 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void UploadObjectWithKeySurfix()
         {
             var key = OssTestUtils.GetObjectKey(_className) + ".js";
-            var newFileName = Path.GetDirectoryName(Config.UploadSampleFile) + "/newfile";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newfile";
             try
             {
-                File.Copy(Config.UploadSampleFile, newFileName, true);
+                File.Copy(Config.UploadTestFile, newFileName, true);
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key, newFileName, null);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
@@ -739,11 +767,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void UploadObjectWithFileSurfix()
         {
             var key = OssTestUtils.GetObjectKey(_className);
-            var newFileName = Path.GetDirectoryName(Config.UploadSampleFile) + "/newfile.js";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newfile.js";
 
             try
             {
-                File.Copy(Config.UploadSampleFile, newFileName, true);
+                File.Copy(Config.UploadTestFile, newFileName, true);
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key, newFileName, null);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
@@ -765,11 +793,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void UploadObjectWithFileSurfix2()
         {
             var key = OssTestUtils.GetObjectKey(_className);
-            var newFileName = Path.GetDirectoryName(Config.UploadSampleFile) + "/newfile.m4u";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newfile.m4u";
 
             try
             {
-                File.Copy(Config.UploadSampleFile, newFileName, true);
+                File.Copy(Config.UploadTestFile, newFileName, true);
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key, newFileName, null);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
@@ -791,11 +819,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void UploadObjectWithFileSurfixAndFileSurfix()
         {
             var key = OssTestUtils.GetObjectKey(_className) + ".potx";
-            var newFileName = Path.GetDirectoryName(Config.UploadSampleFile) + "/newFile.docx";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newFile.docx";
 
             try
             {
-                File.Copy(Config.UploadSampleFile, newFileName, true);
+                File.Copy(Config.UploadTestFile, newFileName, true);
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key, newFileName, null);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
@@ -878,7 +906,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 try
                 {
-                    _ossClient.PutObject(bucketName, key, Config.UploadSampleFile);
+                    _ossClient.PutObject(bucketName, key, Config.UploadTestFile);
                 }
                 catch (Exception)
                 {
@@ -917,7 +945,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     ContentType = "text/rtf"
                 };
 
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile, meta);
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile, meta);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
                 var oldMeta = _ossClient.GetObjectMetadata(_bucketName, key);
@@ -953,7 +981,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     ContentType = "text/rtf"
                 };
 
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile, meta);
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile, meta);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
                 var oldMeta = _ossClient.GetObjectMetadata(_bucketName, key);
@@ -989,7 +1017,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     CacheControl = "public"
                 };
 
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile, meta);
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile, meta);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
                 var oldMeta = _ossClient.GetObjectMetadata(_bucketName, key);
@@ -1026,7 +1054,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     ContentType = "text/rtf",
                 };
 
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile, meta);
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile, meta);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
                 var oldMeta = _ossClient.GetObjectMetadata(_bucketName, key);
@@ -1068,7 +1096,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     ContentType = "text/rtf",
                 };
 
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile, meta);
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile, meta);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
                 var oldMeta = _ossClient.GetObjectMetadata(_bucketName, key);
@@ -1097,11 +1125,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void ModifyObjectMetaWithAddMeta() 
         {
             var key = OssTestUtils.GetObjectKey(_className);
-            var newFileName = Path.GetDirectoryName(Config.UploadSampleFile) + "/newfile";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newfile";
 
             try
             {
-                File.Copy(Config.UploadSampleFile, newFileName, true);
+                File.Copy(Config.UploadTestFile, newFileName, true);
 
                 _ossClient.PutObject(_bucketName, key, newFileName, new ObjectMetadata());
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
@@ -1141,7 +1169,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     ContentType = "text/rtf",
                 };
 
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile, meta);
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile, meta);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
 
                 var oldMeta = _ossClient.GetObjectMetadata(_bucketName, key);
@@ -1184,7 +1212,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             try
             {
                 long position = 0;
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
                     var request = new AppendObjectRequest(_bucketName, key)
@@ -1199,7 +1227,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     position = result.NextAppendPosition;
                 }
 
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
                     var request = new AppendObjectRequest(_bucketName, key)
@@ -1235,7 +1263,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             try
             {
                 long position = 0;
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
                     var request = new AppendObjectRequest(_bucketName, key)
@@ -1251,7 +1279,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     position = result.NextAppendPosition;
                 }
 
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
                     var request = new AppendObjectRequest(_bucketName, key)
@@ -1285,7 +1313,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var request = new AppendObjectRequest(_bucketName, key)
                     {
@@ -1327,7 +1355,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
                     var request = new AppendObjectRequest(_bucketName, key)
@@ -1366,9 +1394,9 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile);
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile);
 
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var request = new AppendObjectRequest(_bucketName, key)
                     {
@@ -1411,7 +1439,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             try
             {
                 long position = 0;
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
                     var request = new AppendObjectRequest(_bucketName, key)
@@ -1426,7 +1454,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     position = result.NextAppendPosition;
                 }
 
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
                      var request = new AppendObjectRequest(_bucketName, key)
@@ -1457,7 +1485,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var request = new AppendObjectRequest(_bucketName, _objectKey)
                     {
@@ -1487,7 +1515,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                using (var fs = File.Open(Config.UploadSampleFile, FileMode.Open))
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
                     var request = new AppendObjectRequest(_bucketName, key)
@@ -1501,7 +1529,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     Assert.AreEqual(fileLength, result.NextAppendPosition);
                 }
 
-                _ossClient.PutObject(_bucketName, key, Config.UploadSampleFile);
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile);
             }
             finally
             {
@@ -1523,7 +1551,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadSampleFile, null,
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
                                                            Config.DownloadFolder);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
@@ -1571,7 +1599,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 client.beginFailedIndex = 2;
                 client.endFailedIndex = 3;
 
-                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadSampleFile, null,
+                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
                                                         Config.DownloadFolder);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
@@ -1597,7 +1625,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 client.endFailedIndex = 100;
                 client.currentIndex = 0;
 
-                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadSampleFile, null,
+                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
                                                         Config.DownloadFolder);
                 Assert.IsFalse(true);
             }
@@ -1625,7 +1653,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 client.beginFailedIndex = 2;
                 client.endFailedIndex = 100;
 
-                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadSampleFile, null,
+                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
                                                        Config.DownloadFolder);
                 Assert.IsTrue(false);
             }
@@ -1640,7 +1668,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 client.endFailedIndex = 0;
                 client.currentIndex = 1;
 
-                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadSampleFile, null,
+                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
                                                        Config.DownloadFolder);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
@@ -1664,7 +1692,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 var objectKey = OssTestUtils.GetObjectKey(_className);
                 OssTestUtils.UploadObject(_ossClient, _bucketName, objectKey,
-                    Config.UploadSampleFile, new ObjectMetadata());
+                    Config.UploadTestFile, new ObjectMetadata());
                 sampleObjects.Add(objectKey);
                 System.Threading.Thread.Sleep(100);
             }

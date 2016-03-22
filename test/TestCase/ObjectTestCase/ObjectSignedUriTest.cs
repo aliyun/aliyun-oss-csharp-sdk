@@ -32,7 +32,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             //create sample object
             _objectKey = OssTestUtils.GetObjectKey(_className);
             var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
-                Config.UploadSampleFile, new ObjectMetadata());
+                Config.UploadTestFile, new ObjectMetadata());
             _objectETag = poResult.ETag;
         }
 

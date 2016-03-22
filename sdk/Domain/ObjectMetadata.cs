@@ -174,7 +174,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置一个值表示与Object相关的hex编码的128位MD5摘要。
+        /// 获取或者设置ETAG值，如果要设置Content-Md5值，请使用Content-Md5属性。
         /// </summary>
         public string ETag
         {
@@ -188,6 +188,25 @@ namespace Aliyun.OSS
                 if (value != null)
                 {
                     _metadata[HttpHeaders.ETag] = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置一个值表示与Object相关的hex编码的128位MD5摘要。
+        /// </summary>
+        public string ContentMd5
+        {
+            get
+            {
+                return _metadata.ContainsKey(HttpHeaders.ContentMd5)
+                    ? _metadata[HttpHeaders.ContentMd5] as string : null;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    _metadata[HttpHeaders.ContentMd5] = value;
                 }
             }
         }

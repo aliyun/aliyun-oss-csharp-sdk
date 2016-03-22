@@ -33,7 +33,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _sourceObjectKey = OssTestUtils.GetObjectKey(_className);
             var metadata = new ObjectMetadata();
             var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _sourceObjectKey,
-                Config.UploadSampleFile, metadata);
+                Config.UploadTestFile, metadata);
             _objectETag = poResult.ETag;
         }
 
@@ -46,7 +46,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void MultipartUploadComplexStepTest()
         {
-            var sourceFile = Config.MultiUploadSampleFile;
+            var sourceFile = Config.MultiUploadTestFile;
             //get target object name
             var targetObjectKey = OssTestUtils.GetObjectKey(_className);
 
@@ -120,7 +120,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void MultipartUploadAbortInMiddleTest()
         {
-            var sourceFile = Config.MultiUploadSampleFile;
+            var sourceFile = Config.MultiUploadTestFile;
             //get target object name
             var targetObjectKey = OssTestUtils.GetObjectKey(_className);
 

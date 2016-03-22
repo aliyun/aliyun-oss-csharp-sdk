@@ -113,13 +113,13 @@ namespace Aliyun.OSS.Samples
         {
             const string key = "PutObjectWithMd5";
 
-            string eTag;
+            string md5;
             using (var fs = File.Open(fileToUpload, FileMode.Open))
             {
-                eTag = OssUtils.ComputeContentMd5(fs, fs.Length);
+                md5 = OssUtils.ComputeContentMd5(fs, fs.Length);
             }
 
-            var meta = new ObjectMetadata() { ETag = eTag };
+            var meta = new ObjectMetadata() { ContentMd5 = md5 };
             try
             {
                 client.PutObject(bucketName, key, fileToUpload, meta);
