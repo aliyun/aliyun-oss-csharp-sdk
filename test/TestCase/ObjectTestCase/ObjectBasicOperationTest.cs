@@ -1158,7 +1158,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         /// 验证是否可以设置空值
         /// </summary>
         [Test]
-        public void ModifyObjectMetaWithUseOldMeta()
+        public void ModifyObjectMetaWithSetEmptyValue()
         {
             var key = OssTestUtils.GetObjectKey(_className);
 
