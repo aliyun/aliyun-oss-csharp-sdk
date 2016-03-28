@@ -34,14 +34,14 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _sourceObjectKey = OssTestUtils.GetObjectKey(_className);
             var metadata = new ObjectMetadata();
             var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _sourceObjectKey, 
-                Config.UploadSampleFile, metadata);
+                Config.UploadTestFile, metadata);
             _sourceObjectETag = poResult.ETag;
 
             //upload multipart sample object as source object
             _sourceBigObjectKey = _sourceObjectKey + ".js";
             metadata = new ObjectMetadata();
             poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _sourceBigObjectKey,
-                Config.MultiUploadSampleFile, metadata);
+                Config.MultiUploadTestFile, metadata);
             _sourceBigObjectETag = poResult.ETag;
         }
 
@@ -75,6 +75,62 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             Assert.AreEqual(userMetaValue, resMetadata.UserMetadata[userMetaKey]);
 
             _ossClient.DeleteObject(_bucketName, targetObjectKey);
+        }
+
+        [Test]
+        public void CopyObjectBasicTestWithInvalidBucket()
+        {
+            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
+
+            //construct metadata
+            var metadata = new ObjectMetadata();
+            const string userMetaKey = "myKey";
+            const string userMetaValue = "myValue";
+            metadata.UserMetadata.Add(userMetaKey, userMetaValue);
+            metadata.CacheControl = "No-Cache";
+
+            try
+            {
+                var coRequest = new CopyObjectRequest(_bucketName, _sourceObjectKey, "/invalid_bucket", targetObjectKey)
+                {
+                    NewObjectMetadata = metadata
+                };
+
+                _ossClient.CopyObject(coRequest);
+
+                Assert.Fail("Copy object should not pass with invalid bucket name");
+            }
+            catch (ArgumentException)
+            {
+                Assert.IsTrue(true);
+            } 
+        }
+
+        [Test]
+        public void CopyObjectBasicTestWithInvalidObject()
+        {
+            //construct metadata
+            var metadata = new ObjectMetadata();
+            const string userMetaKey = "myKey";
+            const string userMetaValue = "myValue";
+            metadata.UserMetadata.Add(userMetaKey, userMetaValue);
+            metadata.CacheControl = "No-Cache";
+
+            try
+            {
+                var coRequest = new CopyObjectRequest(_bucketName, _sourceObjectKey, _bucketName, "/__%")
+                {
+                    NewObjectMetadata = metadata
+                };
+
+                _ossClient.CopyObject(coRequest);
+
+                Assert.Fail("Copy object should not pass with invalid object name");
+            }
+            catch (ArgumentException)
+            {
+                Assert.IsTrue(true);
+            } 
         }
 
         [Test]
