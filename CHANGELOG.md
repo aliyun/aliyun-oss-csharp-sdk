@@ -1,5 +1,14 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.3.0  日期：2016/03/28
+### 变更内容
+- ObjectMetadata新增ContentMd5属性，支持上传文件时验证md5
+- 拷贝时验证目标bucket和object名称合法性
+- 解决无法从Metadata获取Expires的问题
+- 解决重试机制失效的问题
+- 解决设置Content-Encoding等值为null时抛异常的问题
+- 解决Endpoint头尾含空字符报错的问题
+
 ## 版本号：2.2.0  日期：2015/12/12
 ### 新增内容
 - 支持Mono 3.12.0及其以上版本
