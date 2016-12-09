@@ -5,6 +5,7 @@
  * 版权所有 （C）阿里云计算有限公司
  */
 
+using System;
 using System.IO;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Util;
@@ -25,9 +26,23 @@ namespace Aliyun.OSS.Transform
             foreach(var grant in model.Grants)
             {
                 if (grant == EnumUtils.GetStringValue(CannedAccessControlList.PublicRead))
+                {
                     acl.GrantPermission(GroupGrantee.AllUsers, Permission.Read);
+                    acl.ACL = CannedAccessControlList.PublicRead;
+                }
                 else if (grant == EnumUtils.GetStringValue(CannedAccessControlList.PublicReadWrite))
+                {
                     acl.GrantPermission(GroupGrantee.AllUsers, Permission.FullControl);
+                    acl.ACL = CannedAccessControlList.PublicReadWrite;
+                }
+                else if (grant == EnumUtils.GetStringValue(CannedAccessControlList.Private))
+                {
+                    acl.ACL = CannedAccessControlList.Private;
+                }
+                else if (grant == EnumUtils.GetStringValue(CannedAccessControlList.Default)) 
+                {
+                    acl.ACL = CannedAccessControlList.Default;
+                }
             }
             return acl;
         }

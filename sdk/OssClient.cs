@@ -923,6 +923,39 @@ namespace Aliyun.OSS
             return true;
         }
 
+        /// <inheritdoc/>
+        public void SetObjectAcl(string bucketName, string key, CannedAccessControlList acl)
+        {
+            var setObjectAclRequest = new SetObjectAclRequest(bucketName, key, acl);
+            SetObjectAcl(setObjectAclRequest);
+        }
+
+        /// <inheritdoc/>
+        public void SetObjectAcl(SetObjectAclRequest setObjectAclRequest)
+        {
+            ThrowIfNullRequest(setObjectAclRequest);
+
+            var cmd = SetObjectAclCommand.Create(_serviceClient, 
+                                                 _endpoint,
+                                                 CreateContext(HttpMethod.Put, setObjectAclRequest.BucketName, setObjectAclRequest.Key),
+                                                 setObjectAclRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public AccessControlList GetObjectAcl(string bucketName, string key)
+        {
+            var cmd = GetObjectAclCommand.Create(_serviceClient, 
+                                                 _endpoint,
+                                                 CreateContext(HttpMethod.Get, bucketName, key),
+                                                 bucketName, 
+                                                 key);
+            return cmd.Execute();
+        }
+
         #endregion
         
         #region Generate URL

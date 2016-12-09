@@ -43,6 +43,10 @@ namespace Aliyun.OSS.Commands
             {
                 var parameters = base.Parameters;
                 _getObjectRequest.ResponseHeaders.Populate(parameters);
+                if (_getObjectRequest.Process != null)
+                {
+                    parameters[RequestParameters.OSS_PROCESS] = _getObjectRequest.Process;
+                }
                 return parameters;
             }
         }

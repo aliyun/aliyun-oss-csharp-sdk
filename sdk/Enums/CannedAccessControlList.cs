@@ -33,6 +33,12 @@ namespace Aliyun.OSS
         /// 公共读写，任何人都可以读和写
         /// </summary>
         [StringValue("public-read-write")]
-        PublicReadWrite
+        PublicReadWrite,
+
+        /// <summary>
+        /// 默认权限，仅用于文件，与存储空间的权限相同
+        /// </summary>
+        [StringValue("default")]
+        Default
     }
 }

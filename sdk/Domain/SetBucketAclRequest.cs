@@ -26,6 +26,7 @@ namespace Aliyun.OSS
         /// 构造一个新的<see cref="SetBucketAclRequest" />实例。
         /// </summary>
         /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
+        /// <param name="key">需要设置的<see cref="OssObject" />名称</param>
         /// <param name="acl">用户访问权限</param>
         public SetBucketAclRequest(string bucketName, CannedAccessControlList acl) 
         {

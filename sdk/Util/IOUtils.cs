@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Aliyun.OSS.Util
 {
-    internal static class IoUtils
+    public static class IoUtils
     {
         private const int BufferSize = 4 * 1024;
         

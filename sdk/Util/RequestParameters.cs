@@ -37,5 +37,7 @@ namespace Aliyun.OSS.Util
         public const string OSS_ACCESS_KEY_ID = "OSSAccessKeyId";
     
         public const string SECURITY_TOKEN = "security-token";
+
+        public const string OSS_PROCESS = "x-oss-process";
     }
 }
