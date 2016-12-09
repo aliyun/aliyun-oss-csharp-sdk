@@ -121,6 +121,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 
             //delete the bucket
             ossClient.DeleteBucket(bucketName);
+            OssTestUtils.WaitForCacheExpire();
             Assert.IsFalse(ossClient.DoesBucketExist(bucketName),
                 string.Format("Bucket {0} should not exist after deletion", bucketName));
         }
