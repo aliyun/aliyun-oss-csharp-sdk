@@ -18,6 +18,11 @@ namespace Aliyun.OSS.Commands
         private readonly string _bucketName;
         private readonly string _key;
 
+        protected override string Bucket
+        {
+            get { return _bucketName; }
+        }
+
         protected override string Key
         {
             get { return _key; }
