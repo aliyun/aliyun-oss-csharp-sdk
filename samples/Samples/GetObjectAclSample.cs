@@ -13,7 +13,7 @@ namespace Aliyun.OSS.Samples
     /// <summary>
     /// Sample for setting bucket acl.
     /// </summary>
-    public static class GetBucketAclSample
+    public static class GetObjectAclSample
     {
         static string accessKeyId = Config.AccessKeyId;
         static string accessKeySecret = Config.AccessKeySecret;
@@ -22,10 +22,12 @@ namespace Aliyun.OSS.Samples
 
         public static void GetBucketAcl(string bucketName)
         {
+            string key = "GetObjectSample";
+
             try
             {
-                var result = client.GetBucketAcl(bucketName);
-                Console.WriteLine("Get Bucket Acl succeeded,Id:{0} Acl:{1} succeeded", 
+                var result = client.GetObjectAcl(bucketName, key);
+                Console.WriteLine("Get Object Acl succeeded,Id:{0} Acl:{1} succeeded", 
                     result.Owner.Id,  result.ACL.ToString());
             }
             catch (OssException ex)

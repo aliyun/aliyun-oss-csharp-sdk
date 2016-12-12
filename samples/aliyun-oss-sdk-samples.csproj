@@ -84,6 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Samples\ImageProcessSample.cs" />
+    <Compile Include="Samples\SetObjectAclSample.cs" />
+    <Compile Include="Samples\GetObjectAclSample.cs" />
     <Compile Include="Samples\DeleteBucketSample.cs" />
     <Compile Include="Samples\ModifyObjectMetaSample.cs" />
     <Compile Include="Samples\ResumableSample.cs" />

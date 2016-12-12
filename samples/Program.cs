@@ -98,6 +98,11 @@ namespace Aliyun.OSS.Samples
 
                 //DeleteBucketSample.DeleteNoEmptyBucket(bucketName);
 
+                //SetObjectAclSample.SetObjectAcl(bucketName);
+                
+                //GetObjectAclSample.GetBucketAcl(bucketName);
+                
+                //ImageProcessSample.ImageProcess(bucketName);
             }
             catch (OssException ex)
             {

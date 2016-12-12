@@ -1,4 +1,5 @@
 ﻿using Aliyun.OSS;
+using Aliyun.OSS.Common;
 using Aliyun.OSS.Test.Util;
 
 using NUnit.Framework;
@@ -53,6 +54,21 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             OssTestUtils.WaitForCacheExpire();
             acl = _ossClient.GetBucketAcl(_bucketName);
             Assert.AreEqual(acl.ACL, CannedAccessControlList.Private);
+        }
+
+        [Test]
+        public void SetBucketAclUseDefaultTest()
+        {
+            try
+            {
+                _ossClient.SetBucketAcl(
+                    new SetBucketAclRequest(_bucketName, CannedAccessControlList.Default));
+                Assert.Fail("Bucket creation should fail ");
+            }
+            catch (OssException e)
+            {
+                Assert.AreEqual(OssErrorCode.InvalidArgument, e.ErrorCode);
+            }
         }
     }
 }
