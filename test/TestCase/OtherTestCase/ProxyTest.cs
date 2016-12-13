@@ -29,7 +29,6 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             _bucketName = OssTestUtils.GetBucketName(_className);
             IOss ossClient = OssClientFactory.CreateOssClient();
             ossClient.CreateBucket(_bucketName);
-            //_bucketName = "mingdi-hz-2";
         }
 
         [TestFixtureTearDown]
