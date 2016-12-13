@@ -338,6 +338,7 @@ namespace Aliyun.OSS.Common.Communication
             // it will try to load the IE proxy settings including auto proxy detection,
             // which is quite time consuming.
             webRequest.Proxy = null;
+            
 
             // Set proxy if proxy settings are specified.
             if (!string.IsNullOrEmpty(configuration.ProxyHost))
@@ -354,6 +355,7 @@ namespace Aliyun.OSS.Common.Communication
                         new NetworkCredential(configuration.ProxyUserName, configuration.ProxyPassword ?? string.Empty,
                                               configuration.ProxyDomain);
                 }
+                webRequest.PreAuthenticate = true;
             }
         }
 

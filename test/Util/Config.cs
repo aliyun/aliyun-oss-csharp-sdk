@@ -9,6 +9,8 @@ namespace Aliyun.OSS.Test.Util
 		public static readonly string AccessKeySecret = ConfigurationManager.AppSettings["AccessKeySecret"];
 		public static readonly string ProxyHost = ConfigurationManager.AppSettings["ProxyHost"];
 		public static readonly string ProxyPort = ConfigurationManager.AppSettings["ProxyPort"];
+        public static readonly string ProxyUser = ConfigurationManager.AppSettings["ProxyUser"];
+        public static readonly string ProxyPassword = ConfigurationManager.AppSettings["ProxyPassword"];
 		public static readonly string DisabledAccessKeyId = ConfigurationManager.AppSettings["DisabledAccessKeyId"];
 		public static readonly string DisabledAccessKeySecret = ConfigurationManager.AppSettings["DisabledAccessKeySecret"];
 		public static readonly string SecondEndpoint = ConfigurationManager.AppSettings["SecondEndpoint"];

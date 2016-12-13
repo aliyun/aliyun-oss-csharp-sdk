@@ -45,7 +45,7 @@ namespace Aliyun.OSS
         /// <param name="accessKeyId">OSS的访问ID。</param>
         /// <param name="accessKeySecret">OSS的访问密钥。</param>
         public OssClient(string endpoint, string accessKeyId, string accessKeySecret)
-            : this(endpoint, accessKeyId, accessKeySecret, null) { }
+            : this(FormatEndpoint(endpoint), accessKeyId, accessKeySecret) { }
 
         /// <summary>
         /// 由用户指定的OSS访问地址、STS提供的临时Token信息(Access Key Id/Access Key Secret/Security Token)
@@ -56,8 +56,47 @@ namespace Aliyun.OSS
         /// <param name="accessKeySecret">STS提供的访问密钥。</param>
         /// <param name="securityToken">STS提供的安全令牌。</param>
         public OssClient(string endpoint, string accessKeyId, string accessKeySecret, string securityToken)
-			: this(new Uri(endpoint.ToLower().Trim().StartsWith(HttpUtils.HttpProto) ? endpoint.Trim() : HttpUtils.HttpProto + endpoint.Trim()),
-                   accessKeyId, accessKeySecret, securityToken) { }
+            : this(FormatEndpoint(endpoint), accessKeyId, accessKeySecret, securityToken) { }
+
+        /// <summary>
+        /// 由用户指定的OSS访问地址、阿里云颁发的Access Key Id/Access Key Secret、客户端配置
+        /// 构造一个新的<see cref="OssClient" />实例。
+        /// </summary>
+        /// <param name="endpoint">OSS的访问地址。</param>
+        /// <param name="accessKeyId">OSS的访问ID。</param>
+        /// <param name="accessKeySecret">OSS的访问密钥。</param>
+        /// <param name="configuration">客户端配置。</param>
+        public OssClient(string endpoint, string accessKeyId, string accessKeySecret, ClientConfiguration configuration)
+            : this(FormatEndpoint(endpoint), new DefaultCredentialsProvider(new DefaultCredentials(accessKeyId, accessKeySecret, null)), configuration) { }
+
+        /// <summary>
+        /// 由用户指定的OSS访问地址、STS提供的临时Token信息(Access Key Id/Access Key Secret/Security Token)、
+        /// 客户端配置构造一个新的<see cref="OssClient" />实例。
+        /// </summary>
+        /// <param name="endpoint">OSS的访问地址。</param>
+        /// <param name="accessKeyId">STS提供的临时访问ID。</param>
+        /// <param name="accessKeySecret">STS提供的临时访问密钥。</param>
+        /// <param name="securityToken">STS提供的安全令牌。</param>
+        /// <param name="configuration">客户端配置。</param>
+        public OssClient(string endpoint, string accessKeyId, string accessKeySecret, string securityToken, ClientConfiguration configuration)
+            : this(endpoint, new DefaultCredentialsProvider(new DefaultCredentials(accessKeyId, accessKeySecret, securityToken)), configuration) { }
+
+        /// <summary>
+        /// 由用户指定的OSS访问地址、Credentials提供者构造一个新的<see cref="OssClient" />实例。
+        /// </summary>
+        /// <param name="endpoint">OSS的访问地址。</param>
+        /// <param name="credsProvider">Credentials提供者。</param>
+        public OssClient(string endpoint, ICredentialsProvider credsProvider)
+            : this(FormatEndpoint(endpoint), credsProvider, new ClientConfiguration()) { }
+
+        /// <summary>
+        /// 由用户指定的OSS访问地址、Credentials提供者构造一个新的<see cref="OssClient" />实例。
+        /// </summary>
+        /// <param name="endpoint">OSS的访问地址。</param>
+        /// <param name="credsProvider">Credentials提供者。</param>
+        /// <param name="configuration">客户端配置。</param>
+        public OssClient(string endpoint, ICredentialsProvider credsProvider, ClientConfiguration configuration)
+            : this(FormatEndpoint(endpoint), credsProvider, configuration) { }
 
         /// <summary>
         /// 由用户指定的OSS访问地址、阿里云颁发的Access Key Id/Access Key Secret构造一个新的<see cref="OssClient" />实例。
@@ -702,11 +741,10 @@ namespace Aliyun.OSS
             OssObject result = null;
             if (response != null && response.StatusCode == HttpStatusCode.OK)
             {
-                result = new OssObject();
-                var ms = new MemoryStream();
-                IoUtils.WriteTo(response.GetResponseStream(), ms);
-                ms.Seek(0, SeekOrigin.Begin);
-                result.Content = ms;
+                result = new OssObject()
+                {
+                    Content = response.GetResponseStream()
+                };
             }
             return result;
         }
@@ -1407,6 +1445,12 @@ namespace Aliyun.OSS
                 part.IsCompleted = true;
                 resumableContext.Dump();
             }
+        }
+
+        private static Uri FormatEndpoint(string endpoint)
+        {
+            return new Uri(endpoint.ToLower().Trim().StartsWith(HttpUtils.HttpProto) ? 
+                endpoint.Trim() : HttpUtils.HttpProto + endpoint.Trim());
         }
 
         #endregion

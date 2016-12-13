@@ -10,6 +10,8 @@ namespace Aliyun.OSS.Test.Util
 
         public string ProxyHost { get; set; }
         public int ProxyPort { get; set; }
+        public string ProxyUser { get; set; }
+        public string ProxyPassword { get; set; }
 
         private AccountSettings()
         {
@@ -35,6 +37,8 @@ namespace Aliyun.OSS.Test.Util
                 throw new Exception("ProxyPort in configuration is not configured as a valid integer");
             }
             accountSettings.ProxyPort = proxyPort;
+            accountSettings.ProxyUser = Config.ProxyUser;
+            accountSettings.ProxyPassword = Config.ProxyPassword;
 
             return accountSettings;
         }
