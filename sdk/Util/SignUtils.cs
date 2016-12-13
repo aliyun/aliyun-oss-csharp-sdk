@@ -27,7 +27,8 @@ namespace Aliyun.OSS.Util
 
         private static readonly IList<string> ParamtersToSign = new List<string> {
             "acl", "uploadId", "partNumber", "uploads", "cors", "logging", 
-            "website", "delete", "referer", "lifecycle", "security-token","append", "position",
+            "website", "delete", "referer", "lifecycle", "security-token","append", 
+            "position", "x-oss-process",
             ResponseHeaderOverrides.ResponseCacheControl,
             ResponseHeaderOverrides.ResponseContentDisposition,
             ResponseHeaderOverrides.ResponseContentEncoding,
@@ -65,16 +66,6 @@ namespace Aliyun.OSS.Util
                 headersToSign.Add(HttpHeaders.ContentType.ToLowerInvariant(), "");
             if (!headersToSign.ContainsKey(HttpHeaders.ContentMd5.ToLowerInvariant()))
                 headersToSign.Add(HttpHeaders.ContentMd5.ToLowerInvariant(), "");
-
-            // Add params that start with "x-oss-"
-            if (request.Parameters != null)
-            {
-                foreach (var p in request.Parameters)
-                {
-                    if (p.Key.StartsWith(OssHeaders.OssPrefix))
-                        headersToSign.Add(p.Key.Trim(), p.Value.Trim());
-                }
-            }
 
             // Add all headers to sign into canonical string, 
             // note that these headers should be ordered before adding.

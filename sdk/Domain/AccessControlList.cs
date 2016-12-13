@@ -21,9 +21,11 @@ namespace Aliyun.OSS
     {
 
         private readonly Dictionary<Grant, bool> _grants = new Dictionary<Grant, bool>();
+
         /// <summary>
         /// 获取所有<see cref="Grant" />实例的枚举。
         /// </summary>
+        [Obsolete("Use ACL instead")]
         public IEnumerable<Grant> Grants
         {
             get { return _grants.Keys; }
@@ -33,6 +35,11 @@ namespace Aliyun.OSS
         /// 获取或设置所有者。
         /// </summary>
         public Owner Owner { get; internal set; }
+
+        /// <summary>
+        /// 获取或设置权限。
+        /// </summary>
+        public CannedAccessControlList ACL { get; internal set; }
 
         /// <summary>
         /// 构造函数。
@@ -82,14 +89,8 @@ namespace Aliyun.OSS
         /// </summary>
         /// <returns>对象的字符串表示形式</returns>
         public override String ToString() {
-            var grantsBuilder = new StringBuilder();
-            foreach(var g in Grants)
-            {
-                grantsBuilder.Append(g).Append(",");
-            }
-
             return string.Format(CultureInfo.InvariantCulture,
-                "[AccessControlList: Owner={0}, Grants={1}]", Owner, grantsBuilder);
+                "[AccessControlList: Owner={0}, ACL={1}]", Owner, ACL);
         }
     }
 }

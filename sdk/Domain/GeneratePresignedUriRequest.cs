@@ -62,6 +62,11 @@ namespace Aliyun.OSS
         public DateTime Expiration { get; set; }
 
         /// <summary>
+        /// 获取或设置文件处理方式。
+        /// </summary>
+        public string Process { get; set; }
+
+        /// <summary>
         /// 获取或者设置要重载的返回请求头。
         /// </summary>
         public ResponseHeaderOverrides ResponseHeaders
@@ -94,7 +99,12 @@ namespace Aliyun.OSS
         /// </summary>
         public IDictionary<string, string> QueryParams
         {
-            get { return _queryParams; }
+            get 
+            {
+                if (Process != null)
+                    _queryParams[RequestParameters.OSS_PROCESS] = Process;
+                return _queryParams; 
+            }
             set
             {
                 if (value == null)

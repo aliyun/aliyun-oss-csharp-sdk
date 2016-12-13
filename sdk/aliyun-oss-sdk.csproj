@@ -144,6 +144,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AppendObjectCommand.cs" />
+    <Compile Include="Commands\GetObjectAclCommand.cs" />
+    <Compile Include="Commands\SetObjectAclCommand.cs" />
     <Compile Include="Common\ClientConfiguration.cs" />
     <Compile Include="Commands\HeadObjectCommand.cs" />
     <Compile Include="Commands\DeleteObjectsCommand.cs" />
@@ -172,6 +174,7 @@
     <Compile Include="Common\Handlers\ResponseHandler.cs" />
     <Compile Include="Domain\AppendObjectRequest.cs" />
     <Compile Include="Domain\AppendObjectResult.cs" />
+    <Compile Include="Domain\SetObjectAclRequest.cs" />
     <Compile Include="Domain\ObjectMetadata.cs" />
     <Compile Include="Domain\ResumableContext.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />

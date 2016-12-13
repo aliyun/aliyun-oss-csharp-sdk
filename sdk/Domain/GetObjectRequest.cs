@@ -42,6 +42,11 @@ namespace Aliyun.OSS
         public long[] Range { get; private set; }
 
         /// <summary>
+        /// 获取或设置<see cref="OssObject" />内容的处理方法，下载的内容为处理后的结果。
+        /// </summary>
+        public string Process { get; set; }
+
+        /// <summary>
         /// 获取或设置“If-Unmodified-Since”参数。
         /// </summary>
         /// <remarks>
@@ -96,6 +101,19 @@ namespace Aliyun.OSS
         {
             BucketName = bucketName;
             Key = key;
+        }
+
+        /// <summary>
+        /// 构造一个新的<see cref="GetObjectRequest" />实例。
+        /// </summary>
+        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
+        /// <param name="key"><see cref="OssObject" />的<see cref="P:OssObject.Key" />。</param>
+        /// <param name="process"><see cref="OssObject" />的内容的处理方法，下载的内容为处理后的结果。</param>
+        public GetObjectRequest(string bucketName, string key, string process)
+        {
+            BucketName = bucketName;
+            Key = key;
+            Process = process;
         }
 
         /// <summary>

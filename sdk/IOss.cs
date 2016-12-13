@@ -73,23 +73,23 @@ namespace Aliyun.OSS
         ListBucketsResult ListBuckets(ListBucketsRequest listBucketsRequest);
 
         /// <summary>
-        /// 设置指定<see cref="Bucket" />的访问控制列表<see cref="AccessControlList" />。
+        /// 设置指定<see cref="Bucket" />的访问权限<see cref="AccessControlList" />。
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="acl"><see cref="CannedAccessControlList" />枚举中的访问控制列表。</param>
+        /// <param name="acl"><see cref="CannedAccessControlList" />枚举中的访问权限。</param>
         void SetBucketAcl(string bucketName, CannedAccessControlList acl);
 
         /// <summary>
-        /// 设置指定<see cref="Bucket" />的访问控制列表<see cref="AccessControlList" />。
+        /// 设置指定<see cref="Bucket" />的访问权限<see cref="AccessControlList" />。
         /// </summary>
         /// <param name="setBucketAclRequest"></param>
         void SetBucketAcl(SetBucketAclRequest setBucketAclRequest);
 
         /// <summary>
-        /// 获取指定<see cref="Bucket" />的访问控制列表<see cref="AccessControlList" />。
+        /// 获取指定<see cref="Bucket" />的访问权限<see cref="AccessControlList" />。
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <returns>访问控制列表<see cref="AccessControlList" />的实例。</returns>
+        /// <returns>访问权限<see cref="AccessControlList" />的实例。</returns>
         AccessControlList GetBucketAcl(string bucketName);
 
 
@@ -603,6 +603,28 @@ namespace Aliyun.OSS
         /// <param name="key"><see cref="OssObject.Key" />。</param>
         /// <returns>如果存在则返回True，否则返回False。</returns>
         bool DoesObjectExist(string bucketName, string key);
+
+        /// <summary>
+        /// 设置文件的访问控制权限<see cref="CannedAccessControlList" />。
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
+        /// <param name="key"><see cref="OssObject.Key" />。</param>
+        /// <param name="acl"><see cref="CannedAccessControlList" />枚举中的访问权限。</param>
+        void SetObjectAcl(string bucketName, string key, CannedAccessControlList acl);
+
+        /// <summary>
+        /// 设置文件的访问控制权限<see cref="CannedAccessControlList" />。
+        /// </summary>
+        /// <param name="setBucketAclRequest"></param>
+        void SetObjectAcl(SetObjectAclRequest setObjectAclRequest);
+
+        /// <summary>
+        /// 获取文件的访问控制权限<see cref="AccessControlList" />。
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
+        /// <param name="key"><see cref="OssObject.Key" />。</param>
+        /// <returns>访问控制列表<see cref="AccessControlList" />的实例。</returns>
+        AccessControlList GetObjectAcl(string bucketName, string key);
 
         #endregion
         

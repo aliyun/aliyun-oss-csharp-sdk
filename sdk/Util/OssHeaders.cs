@@ -13,6 +13,7 @@ namespace Aliyun.OSS.Util
         public const string OssUserMetaPrefix = "x-oss-meta-";
 
         public const string OssCannedAcl = "x-oss-acl";
+        public const string OssObjectCannedAcl = "x-oss-object-acl";
 
         public const string GetObjectIfModifiedSince = "If-Modified-Since";
         public const string GetObjectIfUnmodifiedSince = "If-Unmodified-Since";
