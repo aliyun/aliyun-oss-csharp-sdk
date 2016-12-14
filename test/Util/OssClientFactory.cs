@@ -14,10 +14,16 @@ namespace Aliyun.OSS.Test.Util
     internal static class OssClientFactory
     {
         private const string HttpProto = "http://";
+        private const string HttpsProto = "https://";
 
         public static IOss CreateOssClient()
         {
             return CreateOssClient(AccountSettings.Load());
+        }
+
+        public static IOss CreateOssClientUseHttps()
+        {
+            return CreateOssClientUseHttps(AccountSettings.Load());
         }
 
         public static IOss CreateOssClientWithProxy()
@@ -30,6 +36,26 @@ namespace Aliyun.OSS.Test.Util
             return new OssClient(settings.OssEndpoint,
                                  settings.OssAccessKeyId,
                                  settings.OssAccessKeySecret);
+        }
+
+        public static IOss CreateOssClientUseHttps(AccountSettings settings)
+        {
+            string endpoint = settings.OssEndpoint.Trim().ToLower();
+
+            if (endpoint.StartsWith(HttpProto))
+            {
+                endpoint = settings.OssEndpoint.Trim().Replace(HttpProto, HttpsProto);
+            }
+            else if (endpoint.StartsWith(HttpsProto))
+            {
+                endpoint = settings.OssEndpoint.Trim();
+            }
+            else
+            {
+                endpoint = HttpsProto + settings.OssEndpoint.Trim();
+            }
+
+            return new OssClient(endpoint, settings.OssAccessKeyId, settings.OssAccessKeySecret);
         }
 
         public static IOss CreateOssClientWithProxy(AccountSettings settings)

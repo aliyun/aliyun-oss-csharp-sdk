@@ -1449,8 +1449,17 @@ namespace Aliyun.OSS
 
         private static Uri FormatEndpoint(string endpoint)
         {
-            return new Uri(endpoint.ToLower().Trim().StartsWith(HttpUtils.HttpProto) ? 
-                endpoint.Trim() : HttpUtils.HttpProto + endpoint.Trim());
+            string canonicalizedEndpoint = endpoint.Trim().ToLower();
+
+            if (canonicalizedEndpoint.StartsWith(HttpUtils.HttpProto) ||
+                canonicalizedEndpoint.StartsWith(HttpUtils.HttpsProto))
+            {
+                return new Uri(endpoint.Trim());
+            }
+            else
+            {
+                return new Uri(HttpUtils.HttpProto + endpoint.Trim());
+            }
         }
 
         #endregion
