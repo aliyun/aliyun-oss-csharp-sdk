@@ -1,5 +1,14 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.4.0  日期：2016/12/14
+### 变更内容
+- 增加：SetObjectAcl/GetObjectAcl接口
+- 增加：图片处理功能
+- 添加：OssClient的构造函数，方便使用
+- 修复：GetObject中使用MemoryStream占用大内存的问题
+- 修复：ObjectMetadata设置ContentLength时5G限制的问题
+- 修复：使用Proxy时，个别请求没有Proxy-Authorization头的问题
+
 ## 版本号：2.3.0  日期：2016/03/28
 ### 变更内容
 - ObjectMetadata新增ContentMd5属性，支持上传文件时验证md5
