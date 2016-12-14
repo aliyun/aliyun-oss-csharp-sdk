@@ -1571,7 +1571,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             public int currentIndex = 0;
 
             public FakeClient(string endpoint, string accessKeyId, string accessKeySecret)
-            : base(endpoint, accessKeyId, accessKeySecret, null) { }
+            : base(endpoint, accessKeyId, accessKeySecret) { }
 
             /// <inheritdoc/>        
             override protected void ThrowIfNullRequest<TRequestType>(TRequestType request)

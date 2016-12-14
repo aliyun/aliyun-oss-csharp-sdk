@@ -88,8 +88,6 @@ namespace Aliyun.OSS
             }
             set
             {
-                if (value > OssUtils.MaxFileSize)
-                    throw new ArgumentException("content length not allow to exceed 5GB.");
                 _metadata[HttpHeaders.ContentLength] = value;
             }
         }
