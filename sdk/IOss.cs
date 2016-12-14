@@ -615,7 +615,7 @@ namespace Aliyun.OSS
         /// <summary>
         /// 设置文件的访问控制权限<see cref="CannedAccessControlList" />。
         /// </summary>
-        /// <param name="setBucketAclRequest"></param>
+        /// <param name="setObjectAclRequest"></param>
         void SetObjectAcl(SetObjectAclRequest setObjectAclRequest);
 
         /// <summary>
