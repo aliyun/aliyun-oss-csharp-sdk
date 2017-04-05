@@ -383,7 +383,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                var completeMultipartUploadResult = _ossClient.CompleteMultipartUpload(completeRequest);
+                _ossClient.CompleteMultipartUpload(completeRequest);
                 Assert.Fail("Multipart upload callback should be not successfully with invald callback uri");
             }
             catch (OssException e)
@@ -578,7 +578,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
    
             try
             {
-                var putObjectResult = _ossClient.PutObject(uri, Config.UploadTestFile, metadata);
+                _ossClient.PutObject(uri, Config.UploadTestFile, metadata);
                 Assert.Fail("Put object callback should be not successfully with invald callback uri");
             }
             catch (OssException e)
