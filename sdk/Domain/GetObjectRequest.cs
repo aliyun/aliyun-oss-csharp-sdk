@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Text;
 
 using Aliyun.OSS.Util;
+using Aliyun.OSS.Common.Internal;
 
 namespace Aliyun.OSS
 {
@@ -63,6 +64,11 @@ namespace Aliyun.OSS
         /// 如果参数中的时间和实际修改时间一样或者更晚，会返回错误。
         /// </remarks>
         public DateTime? ModifiedSinceConstraint { get; set; }
+
+        /// <summary>
+        /// 获取或设置进度回调
+        /// </summary>
+        public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
 
         /// <summary>
         /// 获取一个列表表示：如果传入期望的ETag和<see cref="OssObject" />的ETag匹配，则正常的发送文件。

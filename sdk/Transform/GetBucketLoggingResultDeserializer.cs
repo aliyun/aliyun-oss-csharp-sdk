@@ -21,11 +21,15 @@ namespace Aliyun.OSS.Transform
         public override BucketLoggingResult Deserialize(ServiceResponse xmlStream)
         {
             var model = ContentDeserializer.Deserialize(xmlStream.Content);
-            return new BucketLoggingResult
+            var bucketLoggingResult = new BucketLoggingResult
             {
                 TargetBucket = model.LoggingEnabled.TargetBucket,
                 TargetPrefix = model.LoggingEnabled.TargetPrefix
             };
+
+            DeserializeGeneric(xmlStream, bucketLoggingResult);
+
+            return bucketLoggingResult;
        }
     }
 }

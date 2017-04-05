@@ -51,6 +51,9 @@
     <Compile Include="TestCase\BucketTestCase\BucketRefersSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketWebsiteSettingsTest.cs" />
+    <Compile Include="TestCase\ObjectTestCase\ObjectProgressTest.cs" />
+    <Compile Include="TestCase\ObjectTestCase\ObjectHashCheckTest.cs" />
+    <Compile Include="TestCase\ObjectTestCase\ObjectCallbackTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectProcessTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectAclSettingsTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectBasicOperationTest.cs" />

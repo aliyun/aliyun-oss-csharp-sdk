@@ -50,6 +50,8 @@ namespace Aliyun.OSS.Transform
                 }
             }
 
+            DeserializeGeneric(xmlStream, partListing);
+
             return partListing;
         }
     }

@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using Aliyun.OSS.Util;
 
 namespace Aliyun.OSS
@@ -42,6 +43,14 @@ namespace Aliyun.OSS
         public IDictionary<string, string> UserMetadata
         {
             get { return _userMetadata; }
+        }
+
+        /// <summary>
+        /// 获取HTTP标准属性（HTTP Headers）。
+        /// </summary>
+        public IDictionary<string, object> HttpMetadata
+        {
+            get { return _metadata; }
         }
 
         /// <summary>
@@ -268,6 +277,51 @@ namespace Aliyun.OSS
 
             foreach(var entry in _userMetadata)
                 requestHeaders.Add(OssHeaders.OssUserMetaPrefix + entry.Key, entry.Value);
+        }
+
+        /// <summary>
+        /// Populates the request header dictionary with the metdata and user metadata.
+        /// </summary>
+        /// <param name="webRequest"></param>
+        internal void Populate(HttpWebRequest webRequest)
+        {
+            foreach (var entry in _metadata)
+            {
+                if (entry.Key.Equals(HttpHeaders.ContentLength) )
+                {
+                    if (ContentLength > 0)
+                    {
+                        webRequest.ContentLength = ContentLength;
+                    }
+                }
+                else if (entry.Key.Equals(HttpHeaders.ContentType))
+                {
+                    webRequest.ContentType = ContentType;
+                }
+                else
+                {
+                    webRequest.Headers.Add(entry.Key, entry.Value.ToString());
+                }
+            }
+
+            foreach (var entry in _userMetadata)
+            {
+                webRequest.Headers.Add(OssHeaders.OssUserMetaPrefix + entry.Key, entry.Value);
+            }
+        }
+        
+        /// <summary>
+        /// 元数据中是否含有上传回调
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        internal static bool hasCallbackHeader(ObjectMetadata metadata)
+        {
+            if (metadata != null && metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

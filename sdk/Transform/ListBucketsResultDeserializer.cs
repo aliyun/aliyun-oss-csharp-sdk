@@ -41,6 +41,9 @@ namespace Aliyun.OSS.Transform
                 selectedBuckets.Add(newBucket);
             }
             result.Buckets = selectedBuckets;
+
+            DeserializeGeneric(xmlStream, result);
+
             return result;
         }
     }

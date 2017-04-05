@@ -5,12 +5,14 @@
  * 版权所有 （C）阿里云计算有限公司
  */
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {    
     /// <summary>
     /// 获取以某一Object作为上传某分块数据源的结果。
     /// </summary>
-    public class UploadPartCopyResult
+    public class UploadPartCopyResult : GenericResult
     {
         /// <summary>
         /// 获取一个值表示与Object相关的hex编码的128位MD5摘要。

@@ -45,7 +45,7 @@ namespace Aliyun.OSS.Common.Communication
         /// <summary>
         /// Represents the response data of <see cref="ServiceClientImpl"/> requests.
         /// </summary>
-        private class ResponseImpl : ServiceResponse
+        internal class ResponseImpl : ServiceResponse
         {
             private bool _disposed;
             private HttpWebResponse _response;
@@ -222,11 +222,6 @@ namespace Aliyun.OSS.Common.Communication
                 asyncResult.Complete(oe);
             }
         }
-
-        /// <summary>
-        /// 为了兼容.NET2.0，定义了OssAction，功能等价于.NET4.0中的System.Action
-        /// </summary>
-        private delegate void OssAction();
 
         private static void SetRequestContent(HttpWebRequest webRequest, ServiceRequest serviceRequest,
                                               bool async, OssAction asyncCallback)

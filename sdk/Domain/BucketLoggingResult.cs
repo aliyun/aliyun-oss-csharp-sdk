@@ -5,12 +5,14 @@
  * 版权所有 （C）阿里云计算有限公司
  */
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {
     /// <summary>
     /// Get Bucket Logging 的请求结果。
     /// </summary>
-   public class BucketLoggingResult
+   public class BucketLoggingResult : GenericResult
     {
        /// <summary>
        /// 访问日志记录要存入的bucket。

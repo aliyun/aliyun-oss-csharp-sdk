@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {
     /// <summary>
@@ -17,7 +19,7 @@ namespace Aliyun.OSS
     /// 包含了一组为指定被授权者<see cref="IGrantee" />
     /// 分配特定权限<see cref="Permission" />的集合。
     /// </summary>
-    public class AccessControlList
+    public class AccessControlList : GenericResult
     {
 
         private readonly Dictionary<Grant, bool> _grants = new Dictionary<Grant, bool>();

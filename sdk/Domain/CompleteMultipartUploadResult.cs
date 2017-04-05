@@ -10,7 +10,7 @@ namespace Aliyun.OSS
     /// <summary>
     /// Complete Multipart Upload的请求结果。
     /// </summary>
-    public class CompleteMultipartUploadResult
+    public class CompleteMultipartUploadResult : PutObjectResult
     {
         /// <summary>
         /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。
@@ -26,11 +26,6 @@ namespace Aliyun.OSS
         /// 获取新创建Object的URL。
         /// </summary>
         public string Location { get; internal set; }
-        
-        /// <summary>
-        /// 获取新创建的Object的ETag
-        /// </summary>
-        public string ETag { get; internal set; }
         
         internal CompleteMultipartUploadResult()
         { }

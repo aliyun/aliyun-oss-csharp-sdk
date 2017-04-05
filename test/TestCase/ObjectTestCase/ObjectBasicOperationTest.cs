@@ -1082,6 +1082,48 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         /// <summary>
+        /// Key长度超过路径最大长度
+        /// </summary>
+        [Test]
+        public void ModifyObjectMetaWithKeySizeTooLong()
+        {
+            var key = OssTestUtils.GetObjectKey(_className) + OssTestUtils.GetRandomString(512);
+
+            try
+            {
+                var meta = new ObjectMetadata()
+                {
+                    ContentType = "text/rtf",
+                };
+
+                _ossClient.PutObject(_bucketName, key, Config.UploadTestFile, meta);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+
+                var oldMeta = _ossClient.GetObjectMetadata(_bucketName, key);
+                Assert.AreEqual(meta.ContentType, oldMeta.ContentType);
+                Assert.AreEqual(meta.CacheControl, oldMeta.CacheControl);
+
+                var toModifyMeta = new ObjectMetadata()
+                {
+                    ContentType = "application/vnd.wap.wmlc",
+                    CacheControl = "max-stale"
+                };
+                _ossClient.ModifyObjectMeta(_bucketName, key, toModifyMeta, 100 * 1024);
+
+                var newMeta = _ossClient.GetObjectMetadata(_bucketName, key);
+                Assert.AreEqual("application/vnd.wap.wmlc", newMeta.ContentType);
+                Assert.AreEqual("max-stale", newMeta.CacheControl);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        /// <summary>
         /// 清空meta
         /// </summary>
         [Test]
@@ -1216,7 +1258,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     var fileLength = fs.Length;
                     var request = new AppendObjectRequest(_bucketName, key)
                     {
-                        ObjectMetadata = new ObjectMetadata(),
                         Content = fs,
                         Position = position
                     };
@@ -1231,7 +1272,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     var fileLength = fs.Length;
                     var request = new AppendObjectRequest(_bucketName, key)
                     {
-                        ObjectMetadata = new ObjectMetadata(),
                         Content = fs,
                         Position = position
                     };

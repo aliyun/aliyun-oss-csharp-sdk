@@ -62,7 +62,9 @@ namespace Aliyun.OSS.Transform
                     uploadsList.AddMultipartUpload(upload);
                 }
             }
-            
+
+            DeserializeGeneric(xmlStream, uploadsList);
+
             return uploadsList;
         }
     }

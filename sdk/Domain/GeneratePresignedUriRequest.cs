@@ -67,6 +67,16 @@ namespace Aliyun.OSS
         public string Process { get; set; }
 
         /// <summary>
+        /// 获取或设置上传回调请求头，base64后的值。
+        /// </summary>
+        public string Callback { get; set; }
+
+        /// <summary>
+        /// 获取或设置文件处理方式，base64后的值。
+        /// </summary>
+        public string CallbackVar { get; set; }
+
+        /// <summary>
         /// 获取或者设置要重载的返回请求头。
         /// </summary>
         public ResponseHeaderOverrides ResponseHeaders

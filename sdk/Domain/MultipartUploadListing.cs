@@ -7,12 +7,14 @@
 
 using System.Collections.Generic;
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {
     /// <summary>
     /// 获取List Multipart Upload的请求结果。
     /// </summary>
-    public class MultipartUploadListing
+    public class MultipartUploadListing : GenericResult
     {
         private readonly IList<MultipartUpload> _multipartUploads = new List<MultipartUpload>();
         private readonly IList<string> _commonPrefixes = new List<string>();

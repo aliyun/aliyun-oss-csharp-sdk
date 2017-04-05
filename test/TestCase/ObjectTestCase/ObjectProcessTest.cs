@@ -39,7 +39,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _keyName += ".jpg";
 
             _process = "image/resize,m_fixed,w_100,h_100";
-            _localImageFile = "../../example.jpg";
+            _localImageFile = Config.ImageTestFile;
             _processedKey = "process/image" + _keyName;
             _imageInfo = "{\n    \"FileSize\": {\"value\": \"3587\"},\n    \"Format\": {\"value\": \"jpg\"},\n    \"ImageHeight\": {\"value\": \"100\"},\n    \"ImageWidth\": {\"value\": \"100\"}}";
         }

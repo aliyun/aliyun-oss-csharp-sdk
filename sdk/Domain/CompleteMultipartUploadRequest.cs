@@ -7,6 +7,8 @@
 
 using System.Collections.Generic;
 
+using Aliyun.OSS.Util;
+
 namespace Aliyun.OSS
 {
     /// <summary>
@@ -37,7 +39,12 @@ namespace Aliyun.OSS
         public IList<PartETag> PartETags
         {
             get { return _partETags; }
-        } 
+        }
+
+        /// <summary>
+        /// 获取或设置<see cref="ObjectMetadata" />
+        /// </summary>
+        public ObjectMetadata Metadata { get; set; }
         
         /// <summary>
         /// 通过bucket名称，object名称和upload id构造本对象
@@ -50,6 +57,30 @@ namespace Aliyun.OSS
             BucketName = bucketName;
             Key = key;
             UploadId = uploadId;
+        }
+
+        /// <summary>
+        /// 是否需要返回消息体，删除回调时返回
+        /// </summary>
+        internal bool IsNeedResponseStream()
+        {
+            if (Metadata != null && Metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 请求是否携带有上传回调参数
+        /// </summary>
+        internal bool IsCallbackRequest()
+        {
+            if (Metadata != null && Metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -12,7 +12,7 @@ using System;
 
 namespace Aliyun.OSS.Util
 {
-    internal static class HttpUtils
+    public static class HttpUtils
     {
         public const string Utf8Charset = "utf-8";
         public const string Iso88591Charset = "iso-8859-1";
@@ -122,7 +122,7 @@ namespace Aliyun.OSS.Util
             {
                 return _mimeDict[fileType];
             }
-           
+
             return DefaultContentType;
         }
     }

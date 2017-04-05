@@ -232,5 +232,10 @@ namespace Aliyun.OSS.Common
         /// 304未修改。
         /// </summary>
         public const string NotModified = "NotModified";
+
+        /// <summary>
+        /// 203上传回调失败。
+        /// </summary>
+        public const string CallbackFailed = "CallbackFailed";
     }
 }

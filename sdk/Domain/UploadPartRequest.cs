@@ -5,8 +5,10 @@
  * 版权所有 （C）阿里云计算有限公司
  */
 
+using System;
 using System.IO;
 using Aliyun.OSS.Util;
+using Aliyun.OSS.Common.Internal;
 
 namespace Aliyun.OSS
 {
@@ -15,6 +17,8 @@ namespace Aliyun.OSS
     /// </summary>
     public class UploadPartRequest
     {
+        private Stream _inputStream;
+
         /// <summary>
         /// 获取或者设置<see cref="OssObject" />所在<see cref="Bucket" />的名称。
         /// </summary>
@@ -52,7 +56,16 @@ namespace Aliyun.OSS
         /// <summary>
         /// 获取或设置包含上传分块内容的数据流。
         /// </summary>
-        public Stream InputStream { get; set; }
+        public Stream InputStream
+        {
+            get { return this._inputStream; }
+            set { this._inputStream = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置进度回调
+        /// </summary>
+        public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
         
         public UploadPartRequest(string bucketName, string key, string uploadId)
         {            

@@ -17,9 +17,22 @@ using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Commands;
 using Aliyun.OSS.Domain;
 using Aliyun.OSS.Properties;
+using Aliyun.OSS.Common.Internal;
 
 namespace Aliyun.OSS.Util
 {
+    /// <summary>
+    /// 为了兼容.NET2.0，定义了OssFunc，等价于.NET4.0中的 System.Func.
+    /// </summary>
+    public delegate TResult OssFunc<in T, out TResult>(T arg);
+
+    /// <summary>
+    /// 为了兼容.NET2.0，定义了OssAction，功能等价于.NET4.0中的System.Action
+    /// </summary>
+    public delegate void OssAction();
+
+    public delegate void OssAction<in T>(T obj);
+
     /// <summary>
     /// 一些SDK中常用的工具方法
     /// </summary>
@@ -87,6 +100,16 @@ namespace Aliyun.OSS.Util
         /// 分片上传或者拷贝时，最小分片大小,100K
         /// </summary>
         public const long PartSizeLowerLimit = 100 * 1024;
+
+        /// <summary>
+        /// 文件路径最大长度
+        /// </summary>
+        public const int MaxPathLength = 124;
+
+        /// <summary>
+        /// 文件路径最小长度
+        /// </summary>
+        public const int MinPathLength = 4;
 
         /// <summary>
         /// 判断存储空间（bucket）名字是否合法
@@ -198,23 +221,13 @@ namespace Aliyun.OSS.Util
         /// <returns>流的md5值</returns>
         public static string ComputeContentMd5(Stream input, long partSize)
         {
-            using (var md5 = MD5.Create())
+            using (var md5Calculator = MD5.Create())
             {
-                int readSize = (int)partSize;
-                long pos = input.Position;
-                byte[] buffer = new byte[readSize];
-                readSize = input.Read(buffer, 0, readSize);
-
-                var data = md5.ComputeHash(buffer, 0, readSize);
-                var charset = DefaultBaseChars.ToCharArray(); 
-                var sBuilder = new StringBuilder();
-                foreach (var b in data)
-                {
-                    sBuilder.Append(charset[b >> 4]);
-                    sBuilder.Append(charset[b & 0x0F]);
-                }
-                input.Seek(pos, SeekOrigin.Begin);
-                return Convert.ToBase64String(data);
+                long position = input.Position;
+                var partialStream = new PartialWrapperStream(input, partSize);
+                var md5Value = md5Calculator.ComputeHash(partialStream);
+                input.Seek(position, SeekOrigin.Begin);
+                return Convert.ToBase64String(md5Value);
             } 
         }
 
@@ -359,6 +372,68 @@ namespace Aliyun.OSS.Util
                 throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "accessKeyId");
             if (string.IsNullOrEmpty(accessKeySecret))
                 throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "accessKeySecret");
+        }
+
+        internal static Stream SetupProgressListeners(Stream originalStream,
+                                                      long progressUpdateInterval,
+                                                      object sender,
+                                                      EventHandler<StreamTransferProgressArgs> callback)
+        {
+            return SetupProgressListeners(originalStream, originalStream.Length, progressUpdateInterval, sender, callback);
+        }
+
+        internal static Stream SetupProgressListeners(Stream originalStream,
+                                                      long contentLength,
+                                                      long progressUpdateInterval,
+                                                      object sender,
+                                                      EventHandler<StreamTransferProgressArgs> callback)
+        {
+            return SetupProgressListeners(originalStream, contentLength, 0, progressUpdateInterval, sender, callback);
+        }
+
+        /// <summary>
+        /// Sets up the progress listeners
+        /// </summary>
+        /// <param name="originalStream">The content stream</param>
+        /// <param name="contentLength">The length of originalStream</param>
+        /// <param name="totalBytesRead">The length which has read</param>
+        /// <param name="progressUpdateInterval">The interval at which progress needs to be published</param>
+        /// <param name="sender">The objects which is trigerring the progress changes</param>
+        /// <param name="callback">The callback which will be invoked when the progress changed event is trigerred</param>
+        /// <returns>an <see cref="EventStream"/> object, incase the progress is setup, else returns the original stream</returns>
+        internal static Stream SetupProgressListeners(Stream originalStream,
+                                                      long contentLength,
+                                                      long totalBytesRead,
+                                                      long progressUpdateInterval,
+                                                      object sender,
+                                                      EventHandler<StreamTransferProgressArgs> callback)
+        {
+            var eventStream = new EventStream(originalStream, true);
+            var tracker = new StreamReadTracker(sender, callback, contentLength, totalBytesRead, progressUpdateInterval);
+            eventStream.OnRead += tracker.ReadProgress;
+            return eventStream;
+        }
+
+        /// <summary>
+        /// Calls a specific EventHandler in a background thread
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="args"></param>
+        /// <param name="sender"></param>
+        internal static void InvokeInBackground<T>(EventHandler<T> handler, T args, object sender) where T : EventArgs
+        {
+            if (handler == null) return;
+
+            var list = handler.GetInvocationList();
+            foreach (var call in list)
+            {
+                var eventHandler = ((EventHandler<T>)call);
+                if (eventHandler != null)
+                {
+                    // TODO: BackgroundInvoker
+                    eventHandler(sender, args);
+                }
+            }
         }
     }
 }

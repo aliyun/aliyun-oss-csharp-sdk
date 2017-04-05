@@ -11,13 +11,17 @@ using System.Net;
 using System.Threading;
 using System.Globalization;
 using System.Collections.Generic;
+
 using Aliyun.OSS.Domain;
 using Aliyun.OSS.Commands;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Common;
-using Aliyun.OSS.Properties;
-using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Common.Authentication;
+using Aliyun.OSS.Common.Communication;
+using Aliyun.OSS.Common.Handlers;
+using Aliyun.OSS.Common.Internal;
+using Aliyun.OSS.Properties;
+using Aliyun.OSS.Transform;
 using ExecutionContext = Aliyun.OSS.Common.Communication.ExecutionContext;
 using ICredentials = Aliyun.OSS.Common.Authentication.ICredentials;
 
@@ -521,25 +525,40 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public PutObjectResult PutObject(string bucketName, string key, Stream content, ObjectMetadata metadata)
         {
-            metadata = metadata ?? new ObjectMetadata();
-            SetContentTypeIfNull(key, null, ref metadata);
-
-            var cmd = PutObjectCommand.Create(_serviceClient, _endpoint,
-                                             CreateContext(HttpMethod.Put, bucketName, key),
-                                             bucketName, key, content, metadata);
-            return cmd.Execute();
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, content, metadata);
+            return PutObject(putObjectRequest);
         }
 
         /// <inheritdoc/>
         public IAsyncResult BeginPutObject(string bucketName, string key, Stream content, ObjectMetadata metadata,
             AsyncCallback callback, object state)
         {
-            metadata = metadata ?? new ObjectMetadata();
-            SetContentTypeIfNull(key, null, ref metadata);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, content, metadata);
+            return BeginPutObject(putObjectRequest, callback, state);
+        }
+
+        /// <inheritdoc/>
+        public PutObjectResult PutObject(PutObjectRequest putObjectRequest)
+        {
+            ObjectMetadata metadata = putObjectRequest.Metadata ?? new ObjectMetadata();
+            SetContentTypeIfNull(putObjectRequest.Key, null, ref metadata);
+            putObjectRequest.Metadata = metadata;
 
             var cmd = PutObjectCommand.Create(_serviceClient, _endpoint,
-                                             CreateContext(HttpMethod.Put, bucketName, key),
-                                             bucketName, key, content, metadata);
+                                              CreateContext(HttpMethod.Put, putObjectRequest.BucketName, putObjectRequest.Key),
+                                              putObjectRequest);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public IAsyncResult BeginPutObject(PutObjectRequest putObjectRequest, AsyncCallback callback, object state)
+        {
+            ObjectMetadata metadata = putObjectRequest.Metadata ?? new ObjectMetadata();
+            SetContentTypeIfNull(putObjectRequest.Key, null, ref metadata);
+
+            var cmd = PutObjectCommand.Create(_serviceClient, _endpoint,
+                                             CreateContext(HttpMethod.Put, putObjectRequest.BucketName, putObjectRequest.Key),
+                                             putObjectRequest);
             return OssUtils.BeginOperationHelper(cmd, callback, state);
         }
 
@@ -600,13 +619,19 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public PutObjectResult PutObject(Uri signedUrl, string fileToUpload)
         {
+            return PutObject(signedUrl, fileToUpload, null);
+        }
+
+        /// <inheritdoc/>
+        public PutObjectResult PutObject(Uri signedUrl, string fileToUpload, ObjectMetadata metadata)
+        {
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
                 throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
 
             PutObjectResult result;
             using (Stream content = File.OpenRead(fileToUpload))
             {
-                result = PutObject(signedUrl, content);
+                result = PutObject(signedUrl, content, metadata);
             }
             return result;
         }
@@ -614,23 +639,50 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public PutObjectResult PutObject(Uri signedUrl, Stream content)
         {
+            return PutObject(signedUrl, content, null);
+        }
+
+        /// <inheritdoc/>
+        public PutObjectResult PutObject(Uri signedUrl, Stream content, ObjectMetadata metadata)
+        {
+            // prepare request
             var webRequest = (HttpWebRequest)WebRequest.Create(signedUrl);
             webRequest.Timeout = Timeout.Infinite;  // A temporary solution. 
             webRequest.Method = HttpMethod.Put.ToString().ToUpperInvariant();
             webRequest.ContentLength = content.Length;
-           
+
+            // populate headers
+            if (metadata != null)
+            {
+                metadata.Populate(webRequest);
+            }
+
+            // send data
             using (var requestStream = webRequest.GetRequestStream())
             {
                 IoUtils.WriteTo(content, requestStream);
-            } 
-
-            var response = webRequest.GetResponse() as HttpWebResponse;
-            PutObjectResult result = null;
-            if (response != null && response.StatusCode == HttpStatusCode.OK)
-            {
-                result = new PutObjectResult { ETag = response.Headers[HttpHeaders.ETag] };
             }
-            return result;
+
+            // convert response
+            var response = webRequest.GetResponse() as HttpWebResponse;
+            var serviceResponse = new ServiceClientImpl.ResponseImpl(response);
+
+            // handle error if exist
+            ErrorResponseHandler responseHandler;
+            if (ObjectMetadata.hasCallbackHeader(metadata))
+            {
+                responseHandler = new CallbackResponseHandler();
+            }
+            else
+            {
+                responseHandler = new ErrorResponseHandler();
+            }
+            responseHandler.Handle(serviceResponse);
+
+            // build result
+            var putObjectRequest = new PutObjectRequest(null, null, null, metadata);
+            var ResponseDeserializer = new PutObjectResponseDeserializer(putObjectRequest);
+            return ResponseDeserializer.Deserialize(serviceResponse);
         }
 
         /// <inheritdoc/>
@@ -646,7 +698,8 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
-        public PutObjectResult ResumableUploadObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null)
+        public PutObjectResult ResumableUploadObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
+                                                     EventHandler<StreamTransferProgressArgs> streamTransferProgress = null)
         {
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
                 throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
@@ -657,12 +710,13 @@ namespace Aliyun.OSS
 
             using (var fs = File.Open(fileToUpload, FileMode.Open))
             {
-                return ResumableUploadObject(bucketName, key, fs, metadata, checkpointDir, partSize);
+                return ResumableUploadObject(bucketName, key, fs, metadata, checkpointDir, partSize, streamTransferProgress);
             }
         }
 
         /// <inheritdoc/>
-        public PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null)
+        public PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
+                                                     EventHandler<StreamTransferProgressArgs> streamTransferProgress = null)
         {
             // 计算content-type
             metadata = metadata ?? new ObjectMetadata();
@@ -687,10 +741,16 @@ namespace Aliyun.OSS
                 resumableContext.UploadId = initResult.UploadId;
             }
 
-            ResumableUploadWithRetry(bucketName, key, content, resumableContext);
+            ResumableUploadWithRetry(bucketName, key, content, resumableContext, streamTransferProgress);
 
             // 完成上传
             var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, resumableContext.UploadId);
+            if (metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
+            {
+                var callbackMetadata = new ObjectMetadata();
+                callbackMetadata.AddHeader(HttpHeaders.Callback, metadata.HttpMetadata[HttpHeaders.Callback]);
+                completeRequest.Metadata = callbackMetadata;
+            }
             foreach (var part in resumableContext.PartContextList)
             {
                 completeRequest.PartETags.Add(part.PartETag);
@@ -699,7 +759,7 @@ namespace Aliyun.OSS
 
             resumableContext.Clear();
 
-            return new PutObjectResult() { ETag = result.ETag };
+            return result;
         }
 
         /// <inheritdoc/>
@@ -733,20 +793,23 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public OssObject GetObject(Uri signedUrl)
         {
+            // prepare request
             var webRequest = (HttpWebRequest)WebRequest.Create(signedUrl);
             webRequest.Timeout = Timeout.Infinite;  // A temporary solution. 
             webRequest.Method = HttpMethod.Get.ToString().ToUpperInvariant();
 
+            // convert response
             var response = webRequest.GetResponse() as HttpWebResponse;
-            OssObject result = null;
-            if (response != null && response.StatusCode == HttpStatusCode.OK)
-            {
-                result = new OssObject()
-                {
-                    Content = response.GetResponseStream()
-                };
-            }
-            return result;
+            var serviceResponse = new ServiceClientImpl.ResponseImpl(response);
+
+            // handle error if exist
+            var responseHandler = new ErrorResponseHandler();
+            responseHandler.Handle(serviceResponse);
+
+            // build result
+            var getObjectRequest = new GetObjectRequest(null, null);
+            var ResponseDeserializer = new GetObjectResponseDeserializer(getObjectRequest, _serviceClient);
+            return ResponseDeserializer.Deserialize(serviceResponse);
         }
 
         /// <inheritdoc/>
@@ -859,9 +922,9 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
-        public CopyObjectResult CopyBigObject(CopyObjectRequest copyObjectRequest, long? partSize = null)
+        public CopyObjectResult CopyBigObject(CopyObjectRequest copyObjectRequest, long? partSize = null, string checkpointDir = null)
         {
-            return ResumableCopyObject(copyObjectRequest, null, partSize);
+            return ResumableCopyObject(copyObjectRequest, checkpointDir, partSize);
         }
 
         /// <inheritdoc/>
@@ -912,14 +975,14 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
-        public void ModifyObjectMeta(string bucketName, string key, ObjectMetadata newMeta)
+        public void ModifyObjectMeta(string bucketName, string key, ObjectMetadata newMeta, long? partSize = null, string checkpointDir = null)
         {
             var copyObjectRequest = new CopyObjectRequest(bucketName, key, bucketName, key)
             {
                 NewObjectMetadata = newMeta
             };
 
-            CopyBigObject(copyObjectRequest);
+            CopyBigObject(copyObjectRequest, partSize, checkpointDir);
         }
 
         /// <inheritdoc/>
@@ -1073,6 +1136,10 @@ namespace Aliyun.OSS
                 request.Headers.Add(HttpHeaders.ContentType, generatePresignedUriRequest.ContentType);
             if (!string.IsNullOrEmpty(generatePresignedUriRequest.ContentMd5))
                 request.Headers.Add(HttpHeaders.ContentMd5, generatePresignedUriRequest.ContentMd5);
+            if (!string.IsNullOrEmpty(generatePresignedUriRequest.Callback))
+                request.Headers.Add(HttpHeaders.Callback, generatePresignedUriRequest.Callback);
+            if (!string.IsNullOrEmpty(generatePresignedUriRequest.CallbackVar))
+                request.Headers.Add(HttpHeaders.CallbackVar, generatePresignedUriRequest.CallbackVar);
 
             foreach (var pair in generatePresignedUriRequest.UserMetadata)
                 request.Headers.Add(OssHeaders.OssUserMetaPrefix + pair.Key, pair.Value);
@@ -1342,7 +1409,8 @@ namespace Aliyun.OSS
             return resumableContext;
         }
 
-        private void ResumableUploadWithRetry(string bucketName, string key, Stream content, ResumableContext resumableContext)
+        private void ResumableUploadWithRetry(string bucketName, string key, Stream content, ResumableContext resumableContext,
+                                              EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
         {
             using (var fs = content)
             {
@@ -1352,7 +1420,7 @@ namespace Aliyun.OSS
                 {
                     try
                     {
-                        DoResumableUpload(bucketName, key, resumableContext, fs);
+                        DoResumableUpload(bucketName, key, resumableContext, fs, uploadProgressCallback);
                         break;
                     }
                     catch (Exception ex)
@@ -1371,8 +1439,12 @@ namespace Aliyun.OSS
             }
         }
 
-        private void DoResumableUpload(string bucketName, string key, ResumableContext resumableContext, Stream fs)
+        private void DoResumableUpload(string bucketName, string key, ResumableContext resumableContext, Stream fs,
+                                       EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
         {
+            var uploadedBytes = resumableContext.GetUploadedBytes();
+            var conf = OssUtils.GetClientConfiguration(_serviceClient);
+            
             foreach (var part in resumableContext.PartContextList)
             {
                 if (part.IsCompleted)
@@ -1381,9 +1453,20 @@ namespace Aliyun.OSS
                 }
 
                 fs.Seek(part.Position, SeekOrigin.Begin);
+                var originalStream = fs;
+                if (uploadProgressCallback != null)
+                {
+                    originalStream = OssUtils.SetupProgressListeners(originalStream, 
+                                                                     fs.Length, 
+                                                                     uploadedBytes,
+                                                                     conf.ProgressUpdateInterval,
+                                                                     _serviceClient, 
+                                                                     uploadProgressCallback);
+                }
+
                 var request = new UploadPartRequest(bucketName, key, resumableContext.UploadId)
                 {
-                    InputStream = fs,
+                    InputStream = originalStream,
                     PartSize = part.Length,
                     PartNumber = part.PartId
                 };
@@ -1392,6 +1475,7 @@ namespace Aliyun.OSS
                 part.PartETag = partResult.PartETag;
                 part.IsCompleted = true;
                 resumableContext.Dump();
+                uploadedBytes += part.Length;
             }
         }
 

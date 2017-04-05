@@ -19,10 +19,16 @@ namespace Aliyun.OSS.Transform
 
         public override DeleteObjectsResult Deserialize(ServiceResponse xmlStream)
         {
-            if (int.Parse(xmlStream.Headers[HttpHeaders.ContentLength]) == 0)
-                return new DeleteObjectsResult();
-            
-            return ContentDeserializer.Deserialize(xmlStream.Content);
+            var deleteObjectsResult = new DeleteObjectsResult();
+
+            if (int.Parse(xmlStream.Headers[HttpHeaders.ContentLength]) != 0)
+            {
+                deleteObjectsResult = ContentDeserializer.Deserialize(xmlStream.Content);
+            }
+
+            DeserializeGeneric(xmlStream, deleteObjectsResult);
+
+            return deleteObjectsResult;
         }
     }
 }

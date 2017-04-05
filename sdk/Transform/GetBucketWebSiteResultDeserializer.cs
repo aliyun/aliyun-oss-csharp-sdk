@@ -20,11 +20,15 @@ namespace Aliyun.OSS.Transform
         public override BucketWebsiteResult Deserialize(ServiceResponse xmlStream)
         {
             var model = ContentDeserializer.Deserialize(xmlStream.Content);
-            return new BucketWebsiteResult
+            var bucketWebsiteResult = new BucketWebsiteResult
             {
                 IndexDocument = model.IndexDocument.Suffix,
                 ErrorDocument = model.ErrorDocument.Key
             };
+
+            DeserializeGeneric(xmlStream, bucketWebsiteResult);
+
+            return bucketWebsiteResult;
         }
     }
 }

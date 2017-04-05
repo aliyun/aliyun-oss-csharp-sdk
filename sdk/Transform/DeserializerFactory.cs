@@ -65,9 +65,9 @@ namespace Aliyun.OSS.Transform
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public IDeserializer<ServiceResponse, PutObjectResult> CreatePutObjectReusltDeserializer()
+        public IDeserializer<ServiceResponse, PutObjectResult> CreatePutObjectReusltDeserializer(PutObjectRequest request)
         {
-            return new PutObjectResponseDeserializer();
+            return new PutObjectResponseDeserializer(request);
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
@@ -77,9 +77,9 @@ namespace Aliyun.OSS.Transform
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public IDeserializer<ServiceResponse, OssObject> CreateGetObjectResultDeserializer(GetObjectRequest request)
+        public IDeserializer<ServiceResponse, OssObject> CreateGetObjectResultDeserializer(GetObjectRequest request, IServiceClient client)
         {
-            return new GetObjectResponseDeserializer(request);
+            return new GetObjectResponseDeserializer(request, client);
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
@@ -118,9 +118,9 @@ namespace Aliyun.OSS.Transform
             return new ListPartsResponseDeserializer(CreateContentDeserializer<ListPartsResult>());
         }
 
-        public IDeserializer<ServiceResponse, CompleteMultipartUploadResult> CreateCompleteUploadResultDeserializer()
+        public IDeserializer<ServiceResponse, CompleteMultipartUploadResult> CreateCompleteUploadResultDeserializer(CompleteMultipartUploadRequest request)
         {
-            return new CompleteMultipartUploadResultDeserializer(CreateContentDeserializer<CompleteMultipartUploadResultModel>());
+            return new CompleteMultipartUploadResultDeserializer(CreateContentDeserializer<CompleteMultipartUploadResultModel>(), request);
         }
 
         public IDeserializer<ServiceResponse, CopyObjectResult> CreateCopyObjectResultDeserializer()

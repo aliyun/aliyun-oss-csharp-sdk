@@ -28,7 +28,7 @@ namespace Aliyun.OSS.Common.Communication
         /// Gets or sets the credentials.
         /// </summary>
         public ICredentials Credentials { get; set ;}
-        
+
         /// <summary>
         /// Gets the list of <see cref="IResponseHandler" />.
         /// </summary>

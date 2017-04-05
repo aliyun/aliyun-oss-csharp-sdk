@@ -12,15 +12,29 @@ namespace Aliyun.OSS.Transform
 {
     internal class PutObjectResponseDeserializer : ResponseDeserializer<PutObjectResult, PutObjectResult>
     {
-        public PutObjectResponseDeserializer()
+        private readonly PutObjectRequest _putObjectRequest;
+
+        public PutObjectResponseDeserializer(PutObjectRequest putObjectRequest)
             : base(null)
-        { }
+        {
+            _putObjectRequest = putObjectRequest;
+        }
         
         public override PutObjectResult Deserialize(ServiceResponse xmlStream)
         {
             var result = new PutObjectResult();
+
             if (xmlStream.Headers.ContainsKey(HttpHeaders.ETag))
+            {
                 result.ETag = OssUtils.TrimQuotes(xmlStream.Headers[HttpHeaders.ETag]);
+            }
+            if (_putObjectRequest.IsNeedResponseStream())
+            {
+                result.ResponseStream = xmlStream.Content;
+            }
+
+            DeserializeGeneric(xmlStream, result);
+
             return result;
         }
     }
