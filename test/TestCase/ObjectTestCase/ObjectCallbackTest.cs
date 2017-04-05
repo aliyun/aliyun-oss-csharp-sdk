@@ -161,7 +161,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                var putObjectResult = _ossClient.PutObject(_bucketName, _objectKey, Config.UploadTestFile, metadata);
+                _ossClient.PutObject(_bucketName, _objectKey, Config.UploadTestFile, metadata);
                 Assert.Fail("Put object callback should be not successfully with invald callback uri");
             }
             catch (OssException e)
