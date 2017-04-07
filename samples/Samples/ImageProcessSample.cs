@@ -25,7 +25,7 @@ namespace Aliyun.OSS.Samples
 
         static string key = "ImageProcessSample.jpg";
         static string dirToDownload = Config.DirToDownload;
-        static string imageFile = "../../../test/example.jpg";
+        static string imageFile = Config.ImageFileToUpload;
 
         public static void ImageProcess(string bucketName)
         {
