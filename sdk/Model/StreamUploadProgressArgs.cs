@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Aliyun.OSS.Common.Internal
+namespace Aliyun.OSS
 {
     public class StreamTransferProgressArgs : EventArgs
     {

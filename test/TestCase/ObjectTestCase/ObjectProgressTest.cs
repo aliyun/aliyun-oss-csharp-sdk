@@ -59,7 +59,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             using (var inputStream = File.Open(Config.MultiUploadTestFile, FileMode.Open))
             {
                 var putObjectRequest = new PutObjectRequest(_bucketName, _objectKey, inputStream);
-                putObjectRequest.Metadata = new ObjectMetadata(); // ??? NULL
+                putObjectRequest.Metadata = new ObjectMetadata();
                 putObjectRequest.StreamTransferProgress += uploadProgressCallback;
                 _ossClient.PutObject(putObjectRequest);
                 inputStream.Close();
