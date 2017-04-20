@@ -41,7 +41,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _process = "image/resize,m_fixed,w_100,h_100";
             _localImageFile = Config.ImageTestFile;
             _processedKey = "process/image" + _keyName;
-            _imageInfo = "{\n    \"FileSize\": {\"value\": \"3587\"},\n    \"Format\": {\"value\": \"jpg\"},\n    \"ImageHeight\": {\"value\": \"100\"},\n    \"ImageWidth\": {\"value\": \"100\"}}";
+            _imageInfo = "{\n    \"FileSize\": {\"value\": \"3267\"},\n    \"Format\": {\"value\": \"jpg\"},\n    \"ImageHeight\": {\"value\": \"100\"},\n    \"ImageWidth\": {\"value\": \"100\"}}";
         }
 
         [TestFixtureTearDown]
