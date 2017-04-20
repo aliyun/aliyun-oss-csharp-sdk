@@ -5,13 +5,12 @@
 [![Build Status](https://travis-ci.org/aliyun/aliyun-oss-csharp-sdk.svg?branch=master)](https://travis-ci.org/aliyun/aliyun-oss-csharp-sdk)
 
 ## 关于
- - 此C# SDK基于[阿里云对象存储服务](http://www.aliyun.com/product/oss/) API构建。
- - 阿里云对象存储（Object Storage Service，简称OSS），是阿里云对外提供的海量，安全，低成本，高可靠的云存储服务。
- - OSS适合存放任意文件类型，适合各种网站、开发企业及开发者使用。
- - 使用此SDK，用户可以方便地在任何应用、任何时间、任何地点上传，下载和管理数据。
+ - 阿里云对象存储（Object Storage Service，OSS），是[阿里云](https://www.aliyun.com)对外提供的海量，安全，低成本，高可靠的云存储服务。
+ - OSS C# SDK基于[OSS REST API](https://help.aliyun.com/document_detail/31948.html)构建。
+ - OSS C# SDK[在线文档](https://gosspublic.alicdn.com/AliyunNetSDK/latest/apidocs/index.html)。
 
 ## 版本
- - 当前版本：2.4.0
+ - 当前版本：2.5.0
 
 ## 运行环境
 

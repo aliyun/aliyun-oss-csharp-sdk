@@ -1,5 +1,16 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.5.0  日期：2017/04/20
+### 变更内容
+- 增加：正常请求返回RequestId等
+- 增加：支持上传回调
+- 增加：支持进度条
+- 增加：支持MD5校验
+- 修复：ModifyObjectMeta指定文件路径，文件名限定长度
+- 修复：GetObject(Uri)/PutObject(Uri)返回结果与正常请求相同
+- 修复：ComputeContentMd5占用大内存问题
+- 修复：GetObject.Metadata不能为空
+
 ## 版本号：2.4.0  日期：2016/12/14
 ### 变更内容
 - 增加：SetObjectAcl/GetObjectAcl接口
