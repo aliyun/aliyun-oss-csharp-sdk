@@ -15,7 +15,7 @@ namespace Aliyun.OSS.Common
     /// <summary>
     /// 表示访问阿里云服务的配置信息。
     /// </summary>
-    public class ClientConfiguration : ICloneable
+    public class ClientConfiguration
     {
         private const string UserAgentPrefix = "aliyun-sdk-dotnet/";
         private static readonly string _userAgent = GetDefaultUserAgent();
@@ -27,7 +27,7 @@ namespace Aliyun.OSS.Common
         private int _maxErrorRetry = 3;
         private int _proxyPort = -1;
         private bool _isCname = false;
-        private bool _enalbeMD5Check = true;
+        private bool _enalbeMD5Check = false;
         private long _progressUpdateInterval = 1024 * 8;
 
         /// <summary>
@@ -156,26 +156,6 @@ namespace Aliyun.OSS.Common
         /// 获取自定义基准时间与本地时间的时差值，单位为秒。
         /// </summary>
         public long TickOffset { get; internal set; }
-
-        /// <summary>
-        /// 获取该实例的拷贝。
-        /// </summary>
-        /// <returns>该实例的拷贝。</returns>
-        public object Clone()
-        {
-            return new ClientConfiguration
-            {
-                ConnectionTimeout = ConnectionTimeout,
-                MaxErrorRetry = MaxErrorRetry,
-                ProxyDomain = ProxyDomain,
-                ProxyHost = ProxyHost,
-                ProxyPassword = ProxyPassword,
-                ProxyPort = ProxyPort,
-                ProxyUserName = ProxyUserName,
-                TickOffset = TickOffset,
-                ProgressUpdateInterval = ProgressUpdateInterval
-            };
-        }
 
         /// <summary>
         /// 获取User-Agent信息。

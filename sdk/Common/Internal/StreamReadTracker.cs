@@ -15,12 +15,12 @@ namespace Aliyun.OSS.Common.Internal
 {
     internal class StreamReadTracker
     {
-        object sender;
-        EventHandler<StreamTransferProgressArgs> callback;
-        long contentLength;
-        long totalBytesRead;
-        long totalIncrementTransferred;
-        long progressUpdateInterval;
+        private object sender;
+        private EventHandler<StreamTransferProgressArgs> callback;
+        private long contentLength;
+        private long totalBytesRead;
+        private long totalIncrementTransferred;
+        private long progressUpdateInterval;
 
         internal StreamReadTracker(object sender, EventHandler<StreamTransferProgressArgs> callback, 
                                    long contentLength, long totalBytesRead, long progressUpdateInterval)

@@ -63,7 +63,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置进度回调
+        /// 获取或设置进度回调。
         /// </summary>
         public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
         

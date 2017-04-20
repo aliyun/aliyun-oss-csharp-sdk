@@ -60,12 +60,8 @@ namespace Aliyun.OSS
         /// <param name="bucketName">需要上传的<see cref="OssObject" />所在的Bucket</param>
         /// <param name="key">需要上传的<see cref="OssObject" />名称</param>
         /// <param name="content">需要上传的<see cref="OssObject" />内容</param>
-        public PutObjectRequest(string bucketName, string key, Stream content)
-        {
-            BucketName = bucketName;
-            Key = key;
-            Content = content;
-        }
+        public PutObjectRequest(string bucketName, string key, Stream content) 
+            : this(bucketName, key, content, null) { }
 
         /// <summary>
         /// 构造一个新的<see cref="PutObjectRequest" /> 实例

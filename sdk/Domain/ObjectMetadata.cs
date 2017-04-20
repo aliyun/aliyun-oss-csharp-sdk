@@ -315,7 +315,7 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        internal static bool hasCallbackHeader(ObjectMetadata metadata)
+        internal static bool HasCallbackHeader(ObjectMetadata metadata)
         {
             if (metadata != null && metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
             {

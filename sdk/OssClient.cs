@@ -669,7 +669,7 @@ namespace Aliyun.OSS
 
             // handle error if exist
             ErrorResponseHandler responseHandler;
-            if (ObjectMetadata.hasCallbackHeader(metadata))
+            if (ObjectMetadata.HasCallbackHeader(metadata))
             {
                 responseHandler = new CallbackResponseHandler();
             }

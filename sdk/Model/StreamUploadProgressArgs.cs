@@ -13,9 +13,9 @@ namespace Aliyun.OSS
 {
     public class StreamTransferProgressArgs : EventArgs
     {
-        long _incrementTransferred;
-        long _total;
-        long _transferred;
+        private long _incrementTransferred;
+        private long _total;
+        private long _transferred;
 
         /// <summary>
         /// The constructor takes the number of

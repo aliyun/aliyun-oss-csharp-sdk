@@ -72,7 +72,7 @@ namespace Aliyun.OSS
         public string Callback { get; set; }
 
         /// <summary>
-        /// 获取或设置文件处理方式，base64后的值。
+        /// 获取或设置上传回调自定义参数，base64后的值。
         /// </summary>
         public string CallbackVar { get; set; }
 

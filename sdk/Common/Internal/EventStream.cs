@@ -18,7 +18,7 @@ namespace Aliyun.OSS.Common.Internal
     {
         internal delegate void ReadProgress(int bytesRead);
         internal event ReadProgress OnRead;
-        bool disableClose;
+        private bool disableClose;
 
         internal EventStream(Stream stream, bool disableClose)
             : base(stream)

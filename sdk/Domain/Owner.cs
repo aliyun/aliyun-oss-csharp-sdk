@@ -15,7 +15,7 @@ namespace Aliyun.OSS
     /// 表示OSS实体的所有者。
     /// </summary>
     [XmlRoot("Owner")]
-    public class Owner : ICloneable
+    public class Owner
     {
         /// <summary>
         /// 获取或设置所有者的ID。
@@ -56,15 +56,6 @@ namespace Aliyun.OSS
                                  "[Owner Id={0}, DisplayName={1}]",
                                  Id ?? string.Empty,
                                  DisplayName ?? string.Empty);
-        }
-
-        /// <summary>
-        /// 克隆一个<see cref="Owner"/>
-        /// </summary>
-        /// <returns>新的<see cref="Owner"/>对象</returns>
-        public object Clone()
-        {
-            return new Owner(Id, DisplayName);
         }
     }
 }

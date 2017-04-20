@@ -22,7 +22,7 @@ namespace Aliyun.OSS.Model
         private HttpStatusCode httpStatusCode;
         private string requestIdField;
         private long contentLength;
-        private IDictionary<string, string> _metadata;
+        private IDictionary<string, string> metadata;
 
         /// <summary>
         /// Returns the status code of the HTTP response.
@@ -59,11 +59,11 @@ namespace Aliyun.OSS.Model
         {
             get
             {
-                if (this._metadata == null)
+                if (this.metadata == null)
                 {
-                    this._metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    this.metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 }
-                return this._metadata;
+                return this.metadata;
             }
         }
     }

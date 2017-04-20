@@ -67,12 +67,12 @@ namespace Aliyun.OSS.Common.Internal
 
         #region Constructors
 
-        ///// <summary>
-        ///// Initializes an HashStream with a hash algorithm and a base stream.
-        ///// </summary>
-        ///// <param name="baseStream">Stream to calculate hash for.</param>
-        //protected HashStream(Stream baseStream)
-        //    : this(baseStream, null) { }
+        /// <summary>
+        /// Initializes an HashStream with a hash algorithm and a base stream.
+        /// </summary>
+        /// <param name="baseStream">Stream to calculate hash for.</param>
+        protected HashStream(Stream baseStream, long expectedLength)
+            : this(baseStream, null, expectedLength) { }
 
         /// <summary>
         /// Initializes an HashStream with a hash algorithm and a base stream.
