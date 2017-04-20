@@ -73,10 +73,10 @@
 
 ## 版本号：1.0.10 日期：2015/01/14
 ### 新增内容
-- OSS: 添加Copy Part、Delete Objects、Bucket Referer List等接口。
-- OSS: 添加ListBuckets分页功能。
-- OSS: 添加CNAME支持。
-- OSS: 添加若干Samples。
+- 添加Copy Part、Delete Objects、Bucket Referer List等接口。
+- 添加ListBuckets分页功能。
+- 添加CNAME支持。
+- 添加若干Samples。
 
 ### 修改内容
 - 程序集命名更改为Aliyun.OSS.dll

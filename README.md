@@ -110,8 +110,8 @@
 	client.DeleteObject(bucketName, key)
 ```
 
-#### 其他
-    上面的例子中，如果没有抛出异常则说明执行成功，否则失败，更详细的例子可以在aliyun-oss-sample项目中查看并运行。
+#### 其它
+ - 上面的例子中，如果没有抛出异常则说明执行成功，否则失败，更详细的例子可以在aliyun-oss-sample项目中查看并运行。
 	
 ## 注意事项
  - 如果要运行sample，需要将aliyun-oss-sdk-sample项目设为`启动项目`，并添加您自己的AccessKeyId，AccessKeySecret，bucket，key等后即可运行。
