@@ -5,12 +5,14 @@
  * 版权所有 （C）阿里云计算有限公司
  */
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {
     /// <summary>
     /// 表示追加<see cref="OssObject" />时的请求结果。
     /// </summary>
-    public class AppendObjectResult
+    public class AppendObjectResult : GenericResult
     {
         /// <summary>
         /// 获取一个值表示与Object相关的hex编码的128位MD5摘要。

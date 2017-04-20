@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Aliyun.OSS.Common.Communication;
+using Aliyun.OSS.Common.Handlers;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Transform;
 
@@ -69,8 +70,9 @@ namespace Aliyun.OSS.Commands
         {
             OssUtils.CheckBucketName(getObjectRequest.BucketName);
             OssUtils.CheckObjectKey(getObjectRequest.Key);
+
             return new GetObjectCommand(client, endpoint, context,
-                                 DeserializerFactory.GetFactory().CreateGetObjectResultDeserializer(getObjectRequest),
+                                 DeserializerFactory.GetFactory().CreateGetObjectResultDeserializer(getObjectRequest, client),
                                  getObjectRequest);
         }
     }

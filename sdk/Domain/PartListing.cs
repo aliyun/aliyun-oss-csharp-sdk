@@ -7,12 +7,14 @@
 
 using System.Collections.Generic;
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {
     /// <summary>
     /// 获取List Parts的结果.
     /// </summary>
-    public class PartListing
+    public class PartListing : GenericResult 
     {
         private readonly IList<Part> _parts = new List<Part>();
         

@@ -8,6 +8,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using Aliyun.OSS.Model;
 
 namespace Aliyun.OSS
 {
@@ -21,10 +22,8 @@ namespace Aliyun.OSS
     /// data是Object 的数据；user meta是用户对该object的描述。
     /// </para>
     /// </remarks>
-    public class OssObject : IDisposable
+    public class OssObject : StreamResult
     {
-        private bool _disposed;
-
         /// <summary>
         /// 获取或设置Object的Key。
         /// </summary>
@@ -43,7 +42,10 @@ namespace Aliyun.OSS
         /// <summary>
         /// 获取或设置Object内容的数据流。
         /// </summary>
-        public Stream Content { get; internal set; }
+        public Stream Content 
+        { 
+            get { return this.ResponseStream; } 
+        }
 
         /// <summary>
         /// 构造一个新的<see cref="OssObject" />实例。
@@ -63,25 +65,6 @@ namespace Aliyun.OSS
         {
             return string.Format(CultureInfo.InvariantCulture,
                 "[OSSObject Key={0}, targetBucket={1}]", Key, BucketName ?? string.Empty);
-        }
-
-        /// <summary>
-        /// 释放<see cref="OssObject.Content" />。
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (Content != null)
-                    Content.Dispose();
-                _disposed = true;
-            }
         }
     }
 }

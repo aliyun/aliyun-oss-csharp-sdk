@@ -8,12 +8,14 @@
 using System;
 using System.Collections.Generic;
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {
     /// <summary>
     /// 包含获取OSS的<see cref="Bucket" />中<see cref="OssObjectSummary" />列表的信息。
     /// </summary>
-    public class ObjectListing
+    public class ObjectListing : GenericResult
     {
         private readonly IList<OssObjectSummary> _objectSummaries = new List<OssObjectSummary>();
 

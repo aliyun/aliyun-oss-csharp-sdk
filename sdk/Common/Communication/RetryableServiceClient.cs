@@ -27,11 +27,6 @@ namespace Aliyun.OSS.Common.Communication
 
         private readonly IServiceClient _innerClient;
 
-        /// <summary>
-        /// 为了兼容.NET2.0，定义了OssFunc，等价于.NET4.0中的 System.Func.
-        /// </summary>
-        public delegate TResult OssFunc<T, TResult>(T t);
-
         public OssFunc<Exception, bool> ShouldRetryCallback { get; set; }
         public int MaxRetryTimes { get; set; }
 

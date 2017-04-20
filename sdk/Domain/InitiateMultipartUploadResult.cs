@@ -5,12 +5,14 @@
  * 版权所有 （C）阿里云计算有限公司
  */
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {
     /// <summary>
     /// 表示初始化MultipartUpload的结果。
     /// </summary>
-    public class InitiateMultipartUploadResult
+    public class InitiateMultipartUploadResult : GenericResult
     {
         /// <summary>
         /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。

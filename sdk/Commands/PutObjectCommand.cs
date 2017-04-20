@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.IO;
 
 using Aliyun.OSS.Common.Communication;
+using Aliyun.OSS.Common.Handlers;
+using Aliyun.OSS.Common.Internal;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Transform;
 
@@ -17,16 +19,16 @@ namespace Aliyun.OSS.Commands
 {
     internal class PutObjectCommand : OssCommand<PutObjectResult>
     {
-        private readonly OssObject _ossObject;
+        private readonly PutObjectRequest _putObjectRequest;
 
         protected override string Bucket
         {
-            get { return _ossObject.BucketName; }
+            get { return _putObjectRequest.BucketName; }
         } 
         
         protected override string Key
         {
-            get { return _ossObject.Key; }
+            get { return _putObjectRequest.Key; }
         } 
         
         protected override bool LeaveRequestOpen
@@ -34,12 +36,17 @@ namespace Aliyun.OSS.Commands
             get { return true; }
         }
 
+        protected override bool LeaveResponseOpen
+        {
+            get { return _putObjectRequest.IsNeedResponseStream(); }
+        }
+
         private PutObjectCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
                                  IDeserializer<ServiceResponse, PutObjectResult> deserializer,
-                                 OssObject ossObject)
+                                 PutObjectRequest putObjectRequest)
             : base(client, endpoint, context, deserializer)
         {
-            _ossObject = ossObject;
+            _putObjectRequest = putObjectRequest;
         }
 
         protected override HttpMethod Method
@@ -49,39 +56,68 @@ namespace Aliyun.OSS.Commands
 
         protected override Stream Content
         {
-            get { return _ossObject.Content; }
+            get { return _putObjectRequest.Content; }
         }
 
         protected override IDictionary<string, string> Headers
         {
             get
             {
-                var headers = new Dictionary<string, string>();
-                _ossObject.Metadata.Populate(headers);
+                var headers = base.Headers;
+                _putObjectRequest.Populate(headers);
                 return headers;
             }
         }
 
-        public static PutObjectCommand Create(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                              string bucketName, string key,
-                                              Stream content, ObjectMetadata metadata)
+        protected override IDictionary<string, string> Parameters
         {
-            OssUtils.CheckBucketName(bucketName);
-            OssUtils.CheckObjectKey(key);
+            get
+            {
+                var parameters = base.Parameters;
+                if (_putObjectRequest.Process != null)
+                {
+                    parameters[RequestParameters.OSS_PROCESS] = _putObjectRequest.Process;
+                }
+                return parameters;
+            }
+        }
 
-            if (content == null)
+        public static PutObjectCommand Create(IServiceClient client, Uri endpoint, 
+                                              ExecutionContext context, 
+                                              PutObjectRequest putObjectRequest)
+        {
+            OssUtils.CheckBucketName(putObjectRequest.BucketName);
+            OssUtils.CheckObjectKey(putObjectRequest.Key);
+
+            if (putObjectRequest.Content == null)
                 throw new ArgumentNullException("content");
 
-            var ossObject = new OssObject(key)
+            // handle upload callback error 203
+            if (putObjectRequest.IsCallbackRequest())
             {
-                BucketName = bucketName,
-                Content = content,
-                Metadata = metadata ?? new ObjectMetadata()
-            };
+                context.ResponseHandlers.Add(new CallbackResponseHandler());
+            }
 
+            var conf = OssUtils.GetClientConfiguration(client);
+            var originalStream = putObjectRequest.Content;
+            var streamLength = originalStream.Length;
+
+            // setup progress
+            var callback = putObjectRequest.StreamTransferProgress;
+            if (callback != null)
+                originalStream = OssUtils.SetupProgressListeners(originalStream, conf.ProgressUpdateInterval, client, callback);
+
+            // wrap input stream in MD5Stream
+            if (conf.EnalbeMD5Check) 
+            {
+                var hashStream = new MD5Stream(originalStream, null, streamLength);
+                putObjectRequest.Content = hashStream;
+                context.ResponseHandlers.Add(new MD5DigestCheckHandler(hashStream));
+            }
+            
             return new PutObjectCommand(client, endpoint, context,
-                                        DeserializerFactory.GetFactory().CreatePutObjectReusltDeserializer(),
-                                        ossObject);
+                                        DeserializerFactory.GetFactory().CreatePutObjectReusltDeserializer(putObjectRequest),
+                                        putObjectRequest);
         }
     }
 }

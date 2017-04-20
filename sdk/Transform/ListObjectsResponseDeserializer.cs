@@ -67,6 +67,9 @@ namespace Aliyun.OSS.Transform
                     }
                 }
             }
+
+            DeserializeGeneric(xmlStream, objectList);
+
             return objectList;
         }
 

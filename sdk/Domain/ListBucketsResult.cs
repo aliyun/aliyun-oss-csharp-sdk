@@ -7,12 +7,14 @@
 
 using System.Collections.Generic;
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {
     /// <summary>
     /// 列举Bucket的请求结果。
     /// </summary>
-    public class ListBucketsResult
+    public class ListBucketsResult : GenericResult
     {
         /// <summary>
         /// 获取一个值，限定返回的<see cref="Bucket" />的Key必须以该值作为前缀。

@@ -5,12 +5,14 @@
  * 版权所有 （C）阿里云计算有限公司
  */
 
+using Aliyun.OSS.Model;
+
 namespace Aliyun.OSS
 {
     /// <summary>
     /// Get Bucket Website 的请求结果。
     /// </summary>
-   public class BucketWebsiteResult
+   public class BucketWebsiteResult : GenericResult
     {
         /// <summary>
         /// 索引页面

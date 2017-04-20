@@ -24,12 +24,16 @@ namespace Aliyun.OSS.Transform
             string encodeType = result.EncodingType == null ?
                     string.Empty : result.EncodingType.ToLowerInvariant();
             
-            return new InitiateMultipartUploadResult
+            var initiateMultipartUploadResult = new InitiateMultipartUploadResult
             {
                 BucketName = result.Bucket,
                 Key = Decode(result.Key, encodeType),
                 UploadId = result.UploadId
             };
+
+            DeserializeGeneric(xmlStream, initiateMultipartUploadResult);
+
+            return initiateMultipartUploadResult;
         }
     }
 }

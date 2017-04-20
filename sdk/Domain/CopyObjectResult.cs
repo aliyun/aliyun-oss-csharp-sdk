@@ -4,15 +4,17 @@
  * 
  * 版权所有 （C）阿里云计算有限公司
  */
- 
- using System;
+
+using System;
+
+using Aliyun.OSS.Model;
 
 namespace Aliyun.OSS
 {
     /// <summary>
     /// 拷贝Object的请求结果。
     /// </summary>
-    public class CopyObjectResult
+    public class CopyObjectResult : GenericResult
     {
         /// <summary>
         /// 获取新Object最后更新时间。

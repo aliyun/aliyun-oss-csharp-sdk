@@ -6,7 +6,9 @@
  */
 
 using System.Xml.Serialization;
+
 using Aliyun.OSS.Util;
+using Aliyun.OSS.Model;
 
 namespace Aliyun.OSS
 {
@@ -14,7 +16,7 @@ namespace Aliyun.OSS
     /// Description of DeleteObjectsResult.
     /// </summary>
     [XmlRoot("DeleteResult")]
-    public class DeleteObjectsResult
+    public class DeleteObjectsResult : GenericResult
     {
         private DeletedObject[] _keys;
 

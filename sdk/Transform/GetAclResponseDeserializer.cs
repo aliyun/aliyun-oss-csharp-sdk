@@ -44,6 +44,7 @@ namespace Aliyun.OSS.Transform
                     acl.ACL = CannedAccessControlList.Default;
                 }
             }
+            DeserializeGeneric(xmlStream, acl);
             return acl;
         }
     }

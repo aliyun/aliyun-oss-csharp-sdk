@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Aliyun.OSS.Util;
+using Aliyun.OSS.Common.Internal;
 
 namespace Aliyun.OSS
 {
@@ -19,6 +20,8 @@ namespace Aliyun.OSS
     /// </summary>
     public class AppendObjectRequest
     {
+        private Stream _inputStream;
+
         /// <summary>
         /// 获取或者设置Object所在的Bucket的名称。
         /// </summary>
@@ -42,7 +45,16 @@ namespace Aliyun.OSS
         /// <summary>
         /// 需要追加的内容
         /// </summary>
-        public Stream Content { get; set; }
+        public Stream Content
+        {
+            get { return this._inputStream; }
+            set { this._inputStream = value; }
+        }
+
+        /// <summary>
+        /// 获取或设置进度回调
+        /// </summary>
+        public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
         
         /// <summary>
         /// 构造一个新的<see cref="AppendObjectRequest" /> 实例

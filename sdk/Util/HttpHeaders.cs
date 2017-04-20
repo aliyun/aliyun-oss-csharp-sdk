@@ -7,7 +7,7 @@
 
 namespace Aliyun.OSS.Util
 {
-    internal static class HttpHeaders
+    public static class HttpHeaders
     {
         public const string Authorization = "Authorization";
 
@@ -50,5 +50,11 @@ namespace Aliyun.OSS.Util
         public const string ObjectType = "x-oss-object-type";
 
         public const string RequestId = "x-oss-request-id";
+
+        public const string ServerElapsedTime = "x-oss-server-time";
+
+        public const string Callback = "x-oss-callback";
+
+        public const string CallbackVar = "x-oss-callback-var";
     }
 }

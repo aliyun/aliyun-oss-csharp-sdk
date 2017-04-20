@@ -24,7 +24,7 @@ namespace Aliyun.OSS.Samples
         static string endpoint = Config.Endpoint;
         static OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 
-        static string ComputeSignature(string key, string data)
+        private static string ComputeSignature(string key, string data)
         {
             using (var algorithm = KeyedHashAlgorithm.Create("HmacSHA1".ToUpperInvariant()))
             {
@@ -32,6 +32,34 @@ namespace Aliyun.OSS.Samples
                 return Convert.ToBase64String(
                     algorithm.ComputeHash(Encoding.UTF8.GetBytes(data.ToCharArray())));
             }
+        }
+
+        private static string BuildRequestUri(string endpoint, string bucketName)
+        {   
+            var requestUriBuilder = new StringBuilder();
+
+            if (endpoint.StartsWith("http://")) 
+            {
+                requestUriBuilder.Append("http://");
+                requestUriBuilder.Append(bucketName);
+                requestUriBuilder.Append('.');
+                requestUriBuilder.Append(endpoint.Substring("http://".Length));
+            }
+            else if (endpoint.StartsWith("https://"))
+            {
+                requestUriBuilder.Append("https://");
+                requestUriBuilder.Append(bucketName);
+                requestUriBuilder.Append('.');
+                requestUriBuilder.Append(endpoint.Substring("https://".Length));
+            }
+            else
+            {
+                requestUriBuilder.Append("http://");
+                requestUriBuilder.Append(bucketName);
+                requestUriBuilder.Append('.');
+                requestUriBuilder.Append(endpoint);
+            }
+            return requestUriBuilder.ToString();
         }
 
         public static void GenPostPolicy(string bucketName)
@@ -51,7 +79,8 @@ namespace Aliyun.OSS.Samples
                 var encPolicy = Convert.ToBase64String(Encoding.UTF8.GetBytes(postPolicy));
                 Console.WriteLine("Generated post policy: {0}", postPolicy);
 
-                var requestUri = endpoint + "/" + bucketName;
+                var requestUri = BuildRequestUri(endpoint, bucketName);
+                System.Console.WriteLine("RequestUri:" + requestUri);
                 var boundary = "9431149156168";
                 var webRequest = (HttpWebRequest)WebRequest.Create(requestUri);
                 webRequest.Timeout = -1;

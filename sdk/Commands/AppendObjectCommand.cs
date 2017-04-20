@@ -12,6 +12,8 @@ using System.IO;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Transform;
+using Aliyun.OSS.Common.Internal;
+using Aliyun.OSS.Common.Handlers;
 
 namespace Aliyun.OSS.Commands
 {
@@ -88,6 +90,23 @@ namespace Aliyun.OSS.Commands
             request.ObjectMetadata = request.ObjectMetadata ?? new ObjectMetadata();
             if (request.ObjectMetadata.ContentType == null)
                 request.ObjectMetadata.ContentType = HttpUtils.GetContentType(request.Key, null);
+
+            var conf = OssUtils.GetClientConfiguration(client);
+            var originalStream = request.Content;
+            var streamLength = request.Content.Length;
+
+            // setup progress
+            var callback = request.StreamTransferProgress;
+            if (callback != null)
+                originalStream = OssUtils.SetupProgressListeners(originalStream, conf.ProgressUpdateInterval, client, callback);
+
+            // wrap input stream in MD5Stream
+            if (conf.EnalbeMD5Check)
+            {
+                var hashStream = new MD5Stream(originalStream, null, streamLength);
+                request.Content = hashStream;
+                context.ResponseHandlers.Add(new MD5DigestCheckHandler(hashStream));
+            }
 
             return new AppendObjectCommand(client, endpoint, context,
                                            DeserializerFactory.GetFactory().CreateAppendObjectReusltDeserializer(),

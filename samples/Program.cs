@@ -92,7 +92,7 @@ namespace Aliyun.OSS.Samples
 
                 //MultipartUploadSample.ListMultipartUploads(bucketName);
 
-                ////CNameSample.CNameOperation(bucketName);
+                //CNameSample.CNameOperation(bucketName);
 
                 //PostPolicySample.GenPostPolicy(bucketName);
 
@@ -103,6 +103,10 @@ namespace Aliyun.OSS.Samples
                 //GetObjectAclSample.GetBucketAcl(bucketName);
                 
                 //ImageProcessSample.ImageProcess(bucketName);
+
+                //ProgressSample.Progress(bucketName);
+
+                //UploadCallbackSample.UploadCallback(bucketName);
             }
             catch (OssException ex)
             {

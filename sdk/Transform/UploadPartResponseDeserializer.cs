@@ -23,12 +23,15 @@ namespace Aliyun.OSS.Transform
         public override UploadPartResult Deserialize(ServiceResponse xmlStream)
         {
             var result = new UploadPartResult();
+
             if (xmlStream.Headers.ContainsKey(HttpHeaders.ETag))
             {
                 result.ETag = OssUtils.TrimQuotes(xmlStream.Headers[HttpHeaders.ETag]);
             }
             result.PartNumber = _partNumber;
-            
+
+            DeserializeGeneric(xmlStream, result);
+
             return result;
         }
     }

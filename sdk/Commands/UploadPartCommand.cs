@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using Aliyun.OSS.Transform;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Common.Communication;
+using Aliyun.OSS.Common.Internal;
+using Aliyun.OSS.Common.Handlers;
 
 namespace Aliyun.OSS.Commands
 {
@@ -93,10 +95,24 @@ namespace Aliyun.OSS.Commands
             if (!OssUtils.IsPartNumberInRange(uploadPartRequest.PartNumber))
                 throw new ArgumentException("partNumber not live in valid range");
 
-            if (uploadPartRequest.Md5Digest == null && uploadPartRequest.PartSize != null)
+            var conf = OssUtils.GetClientConfiguration(client);
+            var originalStream = uploadPartRequest.InputStream;
+            var streamLength = uploadPartRequest.PartSize.Value;
+
+            // wrap input stream in PartialWrapperStream
+            originalStream = new PartialWrapperStream(originalStream, streamLength);
+
+            // setup progress
+            var callback = uploadPartRequest.StreamTransferProgress;
+            if (callback != null)
+                originalStream = OssUtils.SetupProgressListeners(originalStream, conf.ProgressUpdateInterval, client, callback);
+
+            // wrap input stream in MD5Stream
+            if (conf.EnalbeMD5Check)
             {
-                uploadPartRequest.Md5Digest = OssUtils.ComputeContentMd5(uploadPartRequest.InputStream, 
-                                                                        (long)uploadPartRequest.PartSize);
+                var hashStream = new MD5Stream(originalStream, null, streamLength);
+                uploadPartRequest.InputStream = hashStream;
+                context.ResponseHandlers.Add(new MD5DigestCheckHandler(hashStream));
             }
 
             return new UploadPartCommand(client, endpoint, context, 

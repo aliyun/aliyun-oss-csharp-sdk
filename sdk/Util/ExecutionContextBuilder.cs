@@ -15,7 +15,7 @@ namespace Aliyun.OSS.Util
     internal class ExecutionContextBuilder
     {
         public ICredentials Credentials { get; set; }
-        
+
         public IList<IResponseHandler> ResponseHandlers { get; private set; }
         
         public HttpMethod Method { get; set; }

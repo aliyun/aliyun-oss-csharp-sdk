@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 
 namespace Aliyun.OSS.Test.Util
@@ -195,7 +196,7 @@ namespace Aliyun.OSS.Test.Util
             }
         }
 
-        private static void WriteTo(Stream src, Stream dest)
+        public static void WriteTo(Stream src, Stream dest)
         {
             var buffer = new byte[1024 * 1024];
             var bytesRead = 0;
@@ -230,6 +231,27 @@ namespace Aliyun.OSS.Test.Util
             }
             return partCount;
         }
+
+        public static char GetRandomChar(Random rnd)
+        {
+            int ret = rnd.Next(122);
+            while (ret < 48 || (ret > 57 && ret < 65) || (ret > 90 && ret < 97))
+            {
+                ret = rnd.Next(122);
+            }
+            return (char)ret;
+        }
+
+        public static string GetRandomString(int length)
+        {
+            Random rnd = new Random();
+            StringBuilder sb = new StringBuilder(length);
+            for (int i = 0; i < length; i++)
+            {
+                sb.Append(GetRandomChar(rnd));
+            }
+            return sb.ToString();
+        } 
 
         public static List<T> ToArray<T>(IEnumerable<T> source)
         {

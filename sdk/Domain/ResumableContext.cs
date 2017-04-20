@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Aliyun.OSS.Util;
 
 namespace Aliyun.OSS
 {
@@ -228,10 +229,39 @@ namespace Aliyun.OSS
             }
         }
 
+        public long GetUploadedBytes()
+        {
+            long uploadedBytes = 0;
+            foreach (var part in PartContextList)
+            {
+                if (part.IsCompleted)
+                {
+                    uploadedBytes += part.Length;
+                }  
+            }
+            return uploadedBytes;
+        }
+
         virtual protected string GenerateCheckpointFile()
         {
-            return CheckpointDir + Path.PathSeparator + Base64(BucketName) + "_" + Base64(Key);
+            return GetCheckpointFilePath(CheckpointDir, Base64(BucketName) + "_" + Base64(Key));
         }
+
+        protected string GetCheckpointFilePath(string checkpointDir, string checkpointFileName)
+        {
+            if (checkpointDir != null && (checkpointDir.Length > OssUtils.MaxPathLength - OssUtils.MinPathLength))
+            {
+                throw new ArgumentException("Invalid checkpoint directory {0}", CheckpointDir);
+            }
+
+            var maxFileNameSize = Math.Min(OssUtils.MaxPathLength - 1, checkpointFileName.Length);
+            if (checkpointDir != null)
+            {
+                maxFileNameSize = Math.Min(OssUtils.MaxPathLength - CheckpointDir.Length - 1, checkpointFileName.Length);
+            }
+            return CheckpointDir + Path.PathSeparator + checkpointFileName.Substring(0, maxFileNameSize);
+        }
+
 
         protected string Base64(string str)
         {
@@ -248,8 +278,8 @@ namespace Aliyun.OSS
 
         override protected string GenerateCheckpointFile()
         {
-            return base.CheckpointDir + Path.PathSeparator + Base64(SourceBucketName) + "_" + Base64(SourceKey) + "_" 
-                   + Base64(BucketName) + "_" + Base64(Key);
+            return GetCheckpointFilePath(CheckpointDir, Base64(SourceBucketName) + "_" + Base64(SourceKey) + "_"
+                   + Base64(BucketName) + "_" + Base64(Key));
         }
 
         public ResumableCopyContext (string sourceBucketName, string sourceKey, string destBucketName, 

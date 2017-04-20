@@ -22,11 +22,15 @@ namespace Aliyun.OSS.Transform
         public override CopyObjectResult Deserialize(ServiceResponse xmlStream)
         {
             var result = ContentDeserializer.Deserialize(xmlStream.Content);
-            return new CopyObjectResult
+            var copyObjectResult = new CopyObjectResult
             {
                 ETag = OssUtils.TrimQuotes(result.ETag),
                 LastModified = result.LastModified
             };
+
+            DeserializeGeneric(xmlStream, copyObjectResult);
+
+            return copyObjectResult;
         }
     }
 }

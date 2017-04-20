@@ -15,7 +15,7 @@ namespace Aliyun.OSS.Common
     /// <summary>
     /// 表示访问阿里云服务的配置信息。
     /// </summary>
-    public class ClientConfiguration : ICloneable
+    public class ClientConfiguration
     {
         private const string UserAgentPrefix = "aliyun-sdk-dotnet/";
         private static readonly string _userAgent = GetDefaultUserAgent();
@@ -26,8 +26,9 @@ namespace Aliyun.OSS.Common
         private int _connectionTimeout = -1;
         private int _maxErrorRetry = 3;
         private int _proxyPort = -1;
-
-        private bool _isCname = false; 
+        private bool _isCname = false;
+        private bool _enalbeMD5Check = false;
+        private long _progressUpdateInterval = 1024 * 8;
 
         /// <summary>
         /// HttpWebRequest最大的并发连接数目。
@@ -117,6 +118,24 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
+        /// 获取或设置上传/下载回调更新间隔，单位byte，默认4KB。
+        /// </summary>
+        public long ProgressUpdateInterval
+        {
+            get { return _progressUpdateInterval; }
+            set { _progressUpdateInterval = value; }
+        }
+
+        /// <summary>
+        /// 是否开启MD5校验，默认开启
+        /// </summary>
+        public bool EnalbeMD5Check
+        {
+            get { return _enalbeMD5Check; }
+            set { _enalbeMD5Check = value; }
+        }
+
+        /// <summary>
         /// <para>设置自定义基准时间。</para>
         /// <para>
         /// 由于OSS的token校验是时间相关的，可能会因为终端系统时间不准导致无法访问OSS服务。
@@ -137,25 +156,6 @@ namespace Aliyun.OSS.Common
         /// 获取自定义基准时间与本地时间的时差值，单位为秒。
         /// </summary>
         public long TickOffset { get; internal set; }
-
-        /// <summary>
-        /// 获取该实例的拷贝。
-        /// </summary>
-        /// <returns>该实例的拷贝。</returns>
-        public object Clone()
-        {
-            return new ClientConfiguration
-            {
-                ConnectionTimeout = ConnectionTimeout,
-                MaxErrorRetry = MaxErrorRetry,
-                ProxyDomain = ProxyDomain,
-                ProxyHost = ProxyHost,
-                ProxyPassword = ProxyPassword,
-                ProxyPort = ProxyPort,
-                ProxyUserName = ProxyUserName,
-                TickOffset = TickOffset
-            };
-        }
 
         /// <summary>
         /// 获取User-Agent信息。

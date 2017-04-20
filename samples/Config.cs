@@ -16,5 +16,7 @@ namespace Aliyun.OSS.Samples
         public static string FileToUpload = "<your local file to upload>";
 
         public static string BigFileToUpload = "<your local big file to upload>";
+        public static string ImageFileToUpload = "<your local image file to upload>";
+        public static string CallbackServer = "<your callback server uri>";
     }
 }

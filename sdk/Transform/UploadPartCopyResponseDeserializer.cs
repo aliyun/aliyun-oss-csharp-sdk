@@ -31,6 +31,8 @@ namespace Aliyun.OSS.Transform
                 PartNumber = _partNumber
             };
 
+            DeserializeGeneric(xmlStream, result);
+
             return result;
         }
     }

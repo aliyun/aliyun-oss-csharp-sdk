@@ -31,6 +31,11 @@ namespace Aliyun.OSS.Test.Util
             return CreateOssClientWithProxy(AccountSettings.Load());
         }
 
+        public static IOss CreateOssClientEnableMD5(bool enableMD5Check)
+        {
+            return CreateOssClientEnableMD5(AccountSettings.Load(), enableMD5Check);
+        }
+
         public static IOss CreateOssClient(AccountSettings settings)
         {
             return new OssClient(settings.OssEndpoint,
@@ -67,6 +72,16 @@ namespace Aliyun.OSS.Test.Util
                                             settings.ProxyPort, 
                                             settings.ProxyUser, 
                                             settings.ProxyPassword);
+        }
+
+        public static IOss CreateOssClientEnableMD5(AccountSettings settings, bool enableMD5Check)
+        {
+            var clientConfiguration = new ClientConfiguration();
+            clientConfiguration.EnalbeMD5Check = enableMD5Check;
+            return new OssClient(settings.OssEndpoint, 
+                                 settings.OssAccessKeyId, 
+                                 settings.OssAccessKeySecret, 
+                                 clientConfiguration);
         }
 
         public static IOss CreateOssClientWithProxy(string endpoint, 

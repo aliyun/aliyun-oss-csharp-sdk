@@ -10,6 +10,7 @@ using System.IO;
 using System.Collections.Generic;
 using Aliyun.OSS.Transform;
 using Aliyun.OSS.Common.Communication;
+using Aliyun.OSS.Common.Handlers;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Properties;
 
@@ -39,7 +40,17 @@ namespace Aliyun.OSS.Commands
         {
             get { return HttpMethod.Post; }
         }
-        
+
+        protected override IDictionary<string, string> Headers
+        {
+            get
+            {
+                var headers = base.Headers;
+                if (_completeMultipartUploadRequest.Metadata != null)
+                    _completeMultipartUploadRequest.Metadata.Populate(headers);
+                return headers;
+            }
+        }
         
         protected override IDictionary<string, string> Parameters
         {
@@ -59,6 +70,11 @@ namespace Aliyun.OSS.Commands
                     .Serialize(_completeMultipartUploadRequest); 
             }
         }
+
+        protected override bool LeaveResponseOpen
+        {
+            get { return _completeMultipartUploadRequest.IsNeedResponseStream(); }
+        }
         
         private CompleteMultipartUploadCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
                                  IDeserializer<ServiceResponse, CompleteMultipartUploadResult> deserializeMethod,
@@ -75,10 +91,16 @@ namespace Aliyun.OSS.Commands
             OssUtils.CheckObjectKey(completeMultipartUploadRequest.Key);
 
             if (string.IsNullOrEmpty(completeMultipartUploadRequest.UploadId))
-                throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "uploadId"); 
-            
-            return new CompleteMultipartUploadCommand(client, endpoint, context, 
-                                               DeserializerFactory.GetFactory().CreateCompleteUploadResultDeserializer(),
+                throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "uploadId");
+
+            // handle upload callback error 203
+            if (completeMultipartUploadRequest.IsCallbackRequest())
+            {
+                context.ResponseHandlers.Add(new CallbackResponseHandler());
+            }
+
+            return new CompleteMultipartUploadCommand(client, endpoint, context,
+                                               DeserializerFactory.GetFactory().CreateCompleteUploadResultDeserializer(completeMultipartUploadRequest),
                                                completeMultipartUploadRequest);
             
         }

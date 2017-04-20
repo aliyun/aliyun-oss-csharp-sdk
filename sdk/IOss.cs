@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Aliyun.OSS.Common.Authentication;
+using Aliyun.OSS.Common.Internal;
 
 namespace Aliyun.OSS 
 {
@@ -291,6 +292,13 @@ namespace Aliyun.OSS
         PutObjectResult PutObject(string bucketName, string key, Stream content, ObjectMetadata metadata);
 
         /// <summary>
+        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// </summary>
+        /// <param name="putObjectRequest"><see cref="PutObjectRequest" />的实例</param>
+        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        PutObjectResult PutObject(PutObjectRequest putObjectRequest);
+
+        /// <summary>
         /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
         /// </summary>
         /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
@@ -302,6 +310,15 @@ namespace Aliyun.OSS
         /// <returns>异步请求的对象引用。</returns>
         IAsyncResult BeginPutObject(string bucketName, string key, Stream content, ObjectMetadata metadata,
             AsyncCallback callback, Object state);
+
+        /// <summary>
+        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// </summary>
+        /// <param name="putObjectRequest"><see cref="PutObjectRequest" />的实例</param>
+        /// <param name="callback">用户自定义委托对象。</param>
+        /// <param name="state">用户自定义状态对象。</param>
+        /// <returns>异步请求的对象引用。</returns>
+        IAsyncResult BeginPutObject(PutObjectRequest putObjectRequest, AsyncCallback callback, object state);
 
         /// <summary>
         /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
@@ -405,6 +422,24 @@ namespace Aliyun.OSS
         PutObjectResult PutObject(Uri signedUrl, Stream content);
 
         /// <summary>
+        /// 使用URL签名方式上传指定文件。
+        /// </summary>
+        /// <param name="signedUrl">PUT请求类型的URL签名。</param>
+        /// <param name="fileToUpload">上传文件的路径。</param>
+        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
+        PutObjectResult PutObject(Uri signedUrl, string fileToUpload, ObjectMetadata metadata);
+
+        /// <summary>
+        /// 使用URL签名方式上传指定输入流。
+        /// </summary>
+        /// <param name="signedUrl">PUT请求类型的URL签名。</param>
+        /// <param name="content">请求输入流。</param>
+        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
+        PutObjectResult PutObject(Uri signedUrl, Stream content, ObjectMetadata metadata);
+
+        /// <summary>
         /// 自动分片后按片上传，支持断点续传。
         /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
         /// 如果上传文件大小大于分片大小，则会使用分片上传。
@@ -418,7 +453,8 @@ namespace Aliyun.OSS
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        PutObjectResult ResumableUploadObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null);
+        PutObjectResult ResumableUploadObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
+                                              EventHandler<StreamTransferProgressArgs> streamTransferProgress = null);
 
         /// <summary>
         /// 自动分片后按片上传，支持断点续传。
@@ -434,7 +470,8 @@ namespace Aliyun.OSS
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
-        PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null);
+        PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
+                                              EventHandler<StreamTransferProgressArgs> treamTransferProgress = null);
 
         /// <summary>
         /// 追加指定的内容到指定的<see cref="OssObject" />。
@@ -571,9 +608,10 @@ namespace Aliyun.OSS
         /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>。
         /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
         /// </param>
+        /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新拷贝</param>
         /// <returns><see cref="CopyObjectResult" />实例。</returns>
         [Obsolete("CopyBigObject is deprecated, please use ResumableCopyObject instead")]
-        CopyObjectResult CopyBigObject(CopyObjectRequest copyObjectRequest, long? partSize = null);
+        CopyObjectResult CopyBigObject(CopyObjectRequest copyObjectRequest, long? partSize = null, string checkpointDir = null);
 
         /// <summary>
         /// 自动分片后按片拷贝，支持断点续传。
@@ -593,8 +631,11 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
         /// <param name="key"><see cref="OssObject.Key" />。</param>
-        /// <param name="newMeta">修改后的文件元数据</param>
-        void ModifyObjectMeta(string bucketName, string key, ObjectMetadata newMeta);
+        /// <param name="newMeta">修改后的文件元数据</param> /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新上传</param>
+        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>
+        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// </param>
+        void ModifyObjectMeta(string bucketName, string key, ObjectMetadata newMeta, long? partSize = null, string checkpointDir = null);
 
         /// <summary>
         /// 判断指定的<see cref="Bucket"/>下是否存在指定的<see cref="OssObject" />。
