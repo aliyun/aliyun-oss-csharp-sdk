@@ -728,7 +728,11 @@ namespace Aliyun.OSS
             // 如果上传文件小于分片大小，直接上传即可
             if (content.Length <= actualPartSize)
             {
-                return PutObject(bucketName, key, content, metadata);
+                var putObjectRequest = new PutObjectRequest(bucketName, key, content, metadata)
+                {
+                    StreamTransferProgress = streamTransferProgress,
+                };
+                return PutObject(putObjectRequest);
             }
 
             var resumableContext = LoadResumableUploadContext(bucketName, key, content,

@@ -105,7 +105,10 @@ namespace Aliyun.OSS.Commands
             // setup progress
             var callback = uploadPartRequest.StreamTransferProgress;
             if (callback != null)
+            {
                 originalStream = OssUtils.SetupProgressListeners(originalStream, conf.ProgressUpdateInterval, client, callback);
+                uploadPartRequest.InputStream = originalStream;
+            }
 
             // wrap input stream in MD5Stream
             if (conf.EnalbeMD5Check)

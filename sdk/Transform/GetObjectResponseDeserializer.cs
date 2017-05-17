@@ -43,7 +43,10 @@ namespace Aliyun.OSS.Transform
             // setup progress
             var callback = _getObjectRequest.StreamTransferProgress;
             if (callback != null)
+            {
                 originalStream = OssUtils.SetupProgressListeners(originalStream, streamLength, conf.ProgressUpdateInterval, _serviceClient, callback);
+                ossObject.ResponseStream = originalStream;
+            }
 
             // wrap response stream in MD5Stream
             if (conf.EnalbeMD5Check)

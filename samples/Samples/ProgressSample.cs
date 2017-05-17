@@ -247,7 +247,7 @@ namespace Aliyun.OSS.Samples
 
             try
             {
-                client.ResumableUploadObject(bucketName, key, fileToUpload, null, null, 102410, streamProgressCallback);
+                client.ResumableUploadObject(bucketName, key, fileToUpload, null, null, 1024 * 1024, streamProgressCallback);
 
                 Console.WriteLine("Resumable upload object:{0} succeeded", key);
             }
@@ -327,7 +327,7 @@ namespace Aliyun.OSS.Samples
         #region private
         private static void streamProgressCallback(object sender, StreamTransferProgressArgs args)
         {
-            System.Console.WriteLine("ProgressCallback - TotalBytes:{0}, TransferredBytes:{1}, IncrementTransferred:{2}",
+            Console.WriteLine("ProgressCallback - TotalBytes:{0}, TransferredBytes:{1}, IncrementTransferred:{2}",
                 args.TotalBytes, args.TransferredBytes, args.IncrementTransferred);
         }
 
