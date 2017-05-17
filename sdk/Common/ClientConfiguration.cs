@@ -28,7 +28,7 @@ namespace Aliyun.OSS.Common
         private int _proxyPort = -1;
         private bool _isCname = false;
         private bool _enalbeMD5Check = false;
-        private long _progressUpdateInterval = 1024 * 8;
+        private long _progressUpdateInterval = 1024 * 4;
 
         /// <summary>
         /// HttpWebRequest最大的并发连接数目。
@@ -118,7 +118,7 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// 获取或设置上传/下载回调更新间隔，单位byte，默认4KB。
+        /// 获取或设置上传/下载回调更新间隔，单位byte，默认4096bytes。
         /// </summary>
         public long ProgressUpdateInterval
         {
