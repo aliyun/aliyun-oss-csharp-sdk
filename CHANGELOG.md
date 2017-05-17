@@ -1,5 +1,9 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.5.1  日期：2017/05/17
+### 变更内容
+- 修复：ResumableUploadObject上传小文件时进度条无效
+
 ## 版本号：2.5.0  日期：2017/04/20
 ### 变更内容
 - 增加：正常请求返回RequestId等
