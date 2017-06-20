@@ -41,7 +41,7 @@
 In the `Reference Manager` dialog box, click *Browse*, find the directory that the SDK is unzipped to, select the ***Aliyun.OSS.dll*** file in the *bin* directory, and click *OK*.
 
 #### Install the SDK through project introduction
- - If you have downloaded the SDK package or the source code from GitHub and you want to install the SDK package using the source code, you can right click ' `Solution Explorer`' and select `Add` > `Existing Projects` from the pop-up menu.
+ - If you have downloaded the SDK package or the source code from GitHub and you want to install the SDK package using the source code, you can right click `Solution Explorer` and select `Add` > `Existing Projects` from the pop-up menu.
  - In the pop-up dialog box, select the `aliyun-oss-sdk.csproj` file, and click *Open*.
  - Right click *Your Projects* and select `Add Reference`. In the `Reference Manager` dialog box, click the `Projects` tab, select the ***aliyun-oss-sdk*** project, and click *OK*.
 
