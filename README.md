@@ -1,65 +1,67 @@
-﻿# Aliyun OSS SDK for C# 
+﻿# Alibaba Cloud OSS SDK for C# 
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
-[![GitHub version](https://badge.fury.io/gh/aliyun%2Faliyun-oss-csharp-sdk.svg)](https://badge.fury.io/gh/aliyun%2Faliyun-oss-csharp-sdk)
+[![GitHub Version](https://badge.fury.io/gh/aliyun%2Faliyun-oss-csharp-sdk.svg)](https://badge.fury.io/gh/aliyun%2Faliyun-oss-csharp-sdk)
 [![Build Status](https://travis-ci.org/aliyun/aliyun-oss-csharp-sdk.svg?branch=master)](https://travis-ci.org/aliyun/aliyun-oss-csharp-sdk)
 
-## 关于
- - 阿里云对象存储（Object Storage Service，OSS），是[阿里云](https://www.aliyun.com)对外提供的海量，安全，低成本，高可靠的云存储服务。
- - OSS C# SDK基于[OSS REST API](https://help.aliyun.com/document_detail/31948.html)构建。
- - OSS C# SDK[在线文档](https://gosspublic.alicdn.com/AliyunNetSDK/latest/apidocs/index.html)。
+## [README of Chinese](https://github.com/aliyun/aliyun-oss-csharp-sdk/blob/master/README-CN.md)
 
-## 版本
- - 当前版本：2.5.2
+## About
+ Alibaba Cloud Object Storage Service (OSS) is a cloud storage service provided by [Alibaba Cloud](https://www.aliyun.com), featuring massive capacity, security, a low cost, and high reliability.
+ - The OSS C# SDK is built based on [OSS REST API](https://help.aliyun.com/document_detail/31948.html).
+ - OSS C# SDK[Online Documentation](https://gosspublic.alicdn.com/AliyunNetSDK/latest/apidocs/index.html). 
 
-## 运行环境
+## Version
+ - Current version: 2.5.2.
+
+## Run environment
 
 ### Windows
- - 适用于`.NET 2.0` 及以上版本
- - 适用于`Visual Studio 2010`及以上版本
+ - Applicable to `.NET 2.0` or above. 
+ - Applicable to `Visual Studio 2010` or above. 
 
 ### Linux/Mac
- - 适用于`Mono 3.12` 及以上版本
+ - Applicable to `Mono 3.12` or above. 
 
-## 安装方法
-### Windows环境安装
-#### NuGet安装
- - 如果您的Visual Studio没有安装NuGet，请先安装 [NuGet](http://docs.nuget.org/docs/start-here/installing-nuget).
- - 安装好NuGet后，先在`Visual Studio`中新建或者打开已有的项目，然后选择`<工具>`－`<NuGet程序包管理器>`－`<管理解决方案的NuGet程序包>`，
- - 搜索`aliyun.oss.sdk`，在结果中找到`Aliyun.OSS.SDK`，选择最新版本，点击安装，成功后添加到项目应用中。
+## Install OSS C# SDK
+### Install in Windows
+#### Install the SDK through NuGet
+ - If NuGet hasn't been installed for Visual Studio, install [NuGet](http://docs.nuget.org/docs/start-here/installing-nuget) first. 
+ - After NuGet is installed, access Visual Studio to create a project or open an existing project, and then select `TOOLS` > `NuGet Package Manager` > `Manage NuGet Packages for Solution`.
+ - Type `aliyun.oss.sdk` in the search box and click *Search*, find `Aliyun.OSS.SDK` in the search results, select the latest version, and click *Install*. After installation, the SDK is added to the project.
 
-#### GitHub安装
- - 如果没有安装git，请先安装 [git](https://git-scm.com/downloads) 
- - git clone https://github.com/aliyun/aliyun-oss-csharp-sdk.git
- - 下载好源码后，按照`项目引入方式安装`即可
+#### Install the SDK through GitHub
+ - If Git hasn't been installed, install [Git](https://git-scm.com/downloads) first. 
+ - Clone project via `git clone https://github.com/aliyun/aliyun-oss-csharp-sdk.git`. 
+ - After the source code is downloaded, install the SDK by entering `Install via Project Introduction`.
 
-#### DLL引用方式安装
- - 从阿里云OSS官网下载SDK包，解压后bin目录包括了Aliyun.OSS.dll文件。
- - 在Visual Studio的`<解决方案资源管理器>`中选择您的项目，然后右键`<项目名称>`-`<引用>`，在弹出的菜单中选择`<添加引用>`，
-在弹出`<添加引用>`对话框后，选择`<浏览>`，找到SDK包解压的目录，在bin目录下选中`<Aliyun.OSS.dll>`文件,点击确定即可
+#### Install the SDK through DLL reference
+ - Download the SDK packagefrom the Alibaba Cloud OSS official website. Unzip the package and you will find the ***Aliyun.OSS.dll*** file in the *bin* directory.
+ - In the Visual Studio, access `Solution Explorer`, select your project, right click *Project Name*, select `Add Reference` from the pop-up menu.
+In the `Reference Manager` dialog box, click *Browse*, find the directory that the SDK is unzipped to, select the ***Aliyun.OSS.dll*** file in the *bin* directory, and click *OK*.
 
-#### 项目引入方式安装
- - 如果是下载了SDK包或者从GitHub上下载了源码，希望源码安装，可以右键`<解决方案>`，在弹出的菜单中点击`<添加>`->`<现有项目>`。
- - 在弹出的对话框中选择`aliyun-oss-sdk.csproj`文件，点击打开。
- - 接下来右键`<您的项目>`－`<引用>`，选择`<添加引用>`，在弹出的对话框选择`<项目>`选项卡后选中`aliyun-oss-sdk`项目，点击确定即可。
+#### Install the SDK through project introduction
+ - If you have downloaded the SDK package or the source code from GitHub and you want to install the SDK package using the source code, you can right click `Solution Explorer` and select `Add` > `Existing Projects` from the pop-up menu.
+ - In the pop-up dialog box, select the `aliyun-oss-sdk.csproj` file, and click *Open*.
+ - Right click *Your Projects* and select `Add Reference`. In the `Reference Manager` dialog box, click the `Projects` tab, select the ***aliyun-oss-sdk*** project, and click *OK*.
 
-### Unix/Mac环境安装
-#### NuGet安装
- - 先在`Xamarin`中新建或者打开已有的项目，然后选择`<工具>`－`<Add NuGet Packages>`。
- - 搜索`aliyun.oss.sdk`，在结果中找到`Aliyun.OSS.SDK`，选择最新版本，点击`<Add Package>`，成功后添加到项目应用中。
+### Install in Unix/Mac
+#### Install the SDK through NuGet
+ - In `Xamarin`, create a project or open an existing project, and select `Tools` > `Add NuGet Packages`.
+ - Type `aliyun.oss.sdk` in the search box and click *Search*, find 'Aliyun.OSS.SDK' in the search results, select the latest version, and click `Add Package`. After installation, the SDK is added to the project.
 
-#### GitHub安装
- - 如果没有安装git，请先安装 [git](https://git-scm.com/downloads) 
- - git clone https://github.com/aliyun/aliyun-oss-csharp-sdk.git
- - 下载好源码后，使用Xamarin打开，在Release模式下编译aliyun-oss-sdk项目，生成Aliyun.OSS.dll，然后通过DLL引用方式安装
+#### Install the SDK through GitHub
+ - If Git hasn't been installed, install [Git](https://git-scm.com/downloads) first.
+ - Clone project via `git clone https://github.com/aliyun/aliyun-oss-csharp-sdk.git`.
+ - After the source code is downloaded, open it in *Xamarin*. Compile the *aliyun-oss-sdk* project in ***Release*** mode to generate the `Aliyun.OSS.dll` file. Then install the SDK through *DLL reference*.
 
-#### DLL引用方式安装
- - 从阿里云OSS官网下载SDK包，解压后bin目录包括了Aliyun.OSS.dll文件。
- - 在Xamarin的`<解决方案>`中选择您的项目，然后右键`<项目名称>`-`<引用>`，在弹出的菜单中选择`<Edit References>`，
-在弹出`<Edit References>`对话框后，选择`<.Net Assembly>-<浏览>`，找到SDK包解压的目录，在bin目录下选中`<Aliyun.OSS.dll>`文件,点击`<Open>`即可
+#### Install the SDK through DLL reference
+ - Download the SDK package from Alibaba Cloud OSS official website. Unzip the package and you will find the ***Aliyun.OSS.dll*** file in the *bin* directory.
+ - In the Xamarin, access `Solution`, select your project, right click *Project Name*, select `Reference`' > `Edit References` from the pop-up menu.
+In the `Edit References` dialog box, click `.Net Assembly` > `Browse`. Find the directory that the SDK is unzipped to, select the `Aliyun.OSS.dll` file in the *bin* directory, and click *Open*.
 
-## 快速使用
-#### 获取存储空间列表（List Bucket）
+## Quick use
+#### Get the bucket list (List Bucket)
 ```csharp
     OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);    
 	var buckets = client.ListBuckets();
@@ -70,31 +72,31 @@
     }
 ```
     
-#### 创建存储空间（Create Bucket）
+#### Create a bucket (Create Bucket)
 ```csharp
 	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 	client.CreateBucket(bucketName);
 ```
 	
-#### 删除存储空间（Delete Bucket）
+#### Delete a bucket (Delete Bucket)
 ```csharp
 	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret); 
 	client.DeleteBucket(bucketName);
 ```
 
-#### 上传文件（Put Object）
+#### Upload a file (Put Object)
 ```csharp
 	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret); 
 	client.PutObject(bucketName, key, filePathToUpload);
 ```
 
-#### 下载文件 (Get Object)
+#### Download an object (Get Object)
 ```csharp
 	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret); 
 	var object = ossClient.GetObject(bucketName, key);	
 ```
 
-#### 获取文件列表（List Objects）
+#### Get the object list (List Objects)
 ```csharp
 	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 	var listResult = client.ListObjects(bucketName);
@@ -104,20 +106,20 @@
 	}
 ```
 	
-#### 删除文件(Delete Object)
+#### Delete an object (Delete Object)
 ```csharp
 	OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
 	client.DeleteObject(bucketName, key)
 ```
 
-#### 其它
- - 上面的例子中，如果没有抛出异常则说明执行成功，否则失败，更详细的例子可以在aliyun-oss-sample项目中查看并运行。
+#### Others
+ - In the example above, if no exception was thrown, it indicates the execution was successful. Otherwise, it indicates the execution failed. More detailed examples can be found and run in the aliyun-oss-sample project. 
 	
-## 注意事项
- - 如果要运行sample，需要将aliyun-oss-sdk-sample项目设为`启动项目`，并添加您自己的AccessKeyId，AccessKeySecret，bucket，key等后即可运行。
+## Notes
+ - If you want to run a sample project, you must set the aliyun-oss-sdk-sample project as the 'Startup Project' and add your own AccessKeyId, AccessKeySecret, buckets and keys, and then run the project. 
 
-## 联系我们
-- [阿里云OSS官方网站](http://oss.aliyun.com)
-- [阿里云OSS官方论坛](http://bbs.aliyun.com)
-- [阿里云OSS官方文档中心](http://www.aliyun.com/product/oss#Docs)
-- 阿里云官方技术支持：[提交工单](https://workorder.console.aliyun.com/#/ticket/createIndex)
+## Contact us
+- [Alibaba Cloud OSS official website](http://oss.aliyun.com).
+- [Alibaba Cloud OSS official forum](http://bbs.aliyun.com).
+- [Alibaba Cloud OSS official documentation center](http://www.aliyun.com/product/oss#Docs).
+- Alibaba Cloud official technical support: [Submit a ticket](https://workorder.console.aliyun.com/#/ticket/createIndex).
