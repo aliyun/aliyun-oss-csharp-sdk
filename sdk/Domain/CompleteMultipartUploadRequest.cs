@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System.Collections.Generic;
@@ -12,29 +11,29 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 指定完成Multipart Upload的请求参数。
+    /// The request class of operation to complete a multipart upload
     /// </summary>
     public class CompleteMultipartUploadRequest
     {
         private readonly IList<PartETag> _partETags = new List<PartETag>();  
         
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Bucket name getter/setter
         /// </summary>
         public string BucketName { get; private set; }
         
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />的值。
+        /// Object key getter/setter
         /// </summary>
         public string Key { get; private set; }
         
         /// <summary>
-        /// 获取或设置上传Multipart上传事件的Upload ID。
+        /// Upload Id's getter/setter. 
         /// </summary>
         public string UploadId { get; private set; }
         
         /// <summary>
-        /// 获取或者设置标识Part上传结果的<see cref="PartETag" />对象列表。
+        /// <see cref="PartETag" /> list getter. 
         /// </summary>
         public IList<PartETag> PartETags
         {
@@ -42,16 +41,16 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置<see cref="ObjectMetadata" />
+        /// <see cref="ObjectMetadata" /> getter/setter
         /// </summary>
         public ObjectMetadata Metadata { get; set; }
         
         /// <summary>
-        /// 通过bucket名称，object名称和upload id构造本对象
+        /// Creates a <see cref="CompleteMultipartUploadRequest" /> instance by bucket name, object key and upload Id.
         /// </summary>
-        /// <param name="bucketName">bucket的名称</param>
-        /// <param name="key">object的名称</param>
-        /// <param name="uploadId">本次需要完成的上传的id，由<see cref="InitiateMultipartUploadResult"/>中获得</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key</param>
+        /// <param name="uploadId">Upload Id, which is got from <see cref="InitiateMultipartUploadResult"/></param>
         public CompleteMultipartUploadRequest(string bucketName, string key, string uploadId)
         {
             BucketName = bucketName;
@@ -60,7 +59,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 是否需要返回消息体，删除回调时返回
+        /// Flag of containing the http body in the response.
         /// </summary>
         internal bool IsNeedResponseStream()
         {
@@ -72,7 +71,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 请求是否携带有上传回调参数
+        /// Flag of containing the callback parameters in the request.
         /// </summary>
         internal bool IsCallbackRequest()
         {

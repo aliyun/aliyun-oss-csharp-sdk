@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -13,34 +12,34 @@ using Aliyun.OSS.Model;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 表示OSS中的Object。
+    /// Base class for OSS's object.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// 在 OSS 中，用户的每个文件都是一个 Object，每个文件需小于 5G。
-    /// Object包含key、data和user meta。其中，key是Object 的名字；
-    /// data是Object 的数据；user meta是用户对该object的描述。
+    /// In OSS, every file is an object, which should be less than 5G. 在 OSS 中，用户的每个文件都是一个 Object，每个文件需小于 5G。
+    /// Object consists of key, data and metadata. Key is the object name which must be unique under the bucket.
+    /// Data is the object's content. And user metadata is the key-value pair collection that has the object's additional description.
     /// </para>
     /// </remarks>
     public class OssObject : StreamResult
     {
         /// <summary>
-        /// 获取或设置Object的Key。
+        /// Gets or sets object key.
         /// </summary>
         public string Key { get; internal set; }
 
         /// <summary>
-        /// 获取或设置Object所在<see cref="Bucket" />的名称。
+        /// Gets or sets object's bucket name
         /// </summary>
         public string BucketName { get; internal set; }
 
         /// <summary>
-        /// 获取Object的元数据。
+        /// Gets or sets object's metadata.
         /// </summary>
         public ObjectMetadata Metadata { get; internal set; }
 
         /// <summary>
-        /// 获取或设置Object内容的数据流。
+        /// Gets or sets object's content stream.
         /// </summary>
         public Stream Content 
         { 
@@ -48,13 +47,13 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="OssObject" />实例。
+        /// Creates a new instance of <see cref="OssObject" />---internal only.
         /// </summary>
         internal OssObject()
         { }
 
         /// <summary>
-        /// 构造一个新的<see cref="OssObject" />实例。
+        /// Creates a new instance of <see cref="OssObject" /> with the key name.
         /// </summary>
         internal OssObject(string key)
         {

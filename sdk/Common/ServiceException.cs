@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -13,24 +12,23 @@ namespace Aliyun.OSS.Common
 {
     /// <summary>
     /// <para>
-    /// 表示阿里云服务返回的错误消息。
+    /// The exception returned from OSS server side.
     /// </para>
     /// <para>  
-    /// <see cref="ServiceException" />用于处理阿里云服务返回的错误消息。
-    /// 比如，用于身份验证的AccessKeyID不存在，则会抛出<see cref="ServiceException" />。
-    /// 异常中包含了错误代码，用于让调用者进行特定的处理。
+    /// <see cref="ServiceException" />is used for wrap the error messages from OSS server side.
+    /// For example, if Access key Id does not exist, it will throw <see cref="ServiceException" />.
+    /// The exception has the error codes for caller to handle.
     /// </para>
     /// <para>
-    /// <see cref="System.Net.WebException" />表示的则是在向阿里云服务发送请求时出现的错误。
-    /// 例如，在发送请求时网络连接不可用，则会抛出<see cref="System.Net.WebException" />的异常。
+    /// <see cref="System.Net.WebException" /> means there's network issue when OSS client sends request to OSS server.
+    /// For example, if the network is not available, it will throw <see cref="System.Net.WebException" />.
     /// </para>
     /// <para>
-    /// <see cref="InvalidOperationException" />表示客户端代码无法处理或解析返回结果。这种情况
-    /// 有可能是服务器返回的结果不完整，或不再符合SDK设计时的规范。如果持续遇到该错误，请考虑升级
-    /// SDK版本，或联系我们。
+    /// <see cref="InvalidOperationException" /> means the client code handnle parse or handle the response. In this case it might means the response is incomplete or the SDK 
+    /// does not match the OSS's response, in which case the SDK needs the upgrade.
     /// </para>
-    /// 通常来讲，调用者只需要处理<see cref="ServiceException" />。因为该异常表明请求被服务处理，
-    /// 但处理的结果表明存在错误。异常中包含了细节的信息，特别是错误代码，可以帮助调用者进行处理。
+    /// Generally speaking, caller only needs to handle <see cref="ServiceException" />. It means the request has been processed by OSS (so network is not an issue),
+    /// but the request could not be processed by OSS correctly. The error code of ServiceException could help to understand the issue and the caller could handle it properly.
     /// <para>
     /// 
     /// </para>
@@ -39,57 +37,57 @@ namespace Aliyun.OSS.Common
     public class ServiceException : Exception
     {
         /// <summary>
-        /// 获取错误代码。
+        /// The error code getter
         /// </summary>
         public virtual string ErrorCode { get; internal set; }
 
         /// <summary>
-        /// 获取Request ID。
+        /// The requestId getter
         /// </summary>
         public virtual string RequestId { get; internal set; }
 
         /// <summary>
-        /// 获取Host ID。
+        /// Host ID getter
         /// </summary>
         public virtual string HostId { get; internal set; }
         
         /// <summary>
-        /// 初始化新的<see cref="ServiceException"/>实例。
+        /// Creates a <see cref="ServiceException"/> instance.
         /// </summary>
         public ServiceException()
         { }
 
         /// <summary>
-        /// 初始化新的<see cref="ServiceException"/>实例。
+        /// Creates a new <see cref="ServiceException"/> instance.
         /// </summary>
-        /// <param name="message">解释异常原因的错误信息。</param>
+        /// <param name="message">The error messag</param>
         public ServiceException(string message)
             : base(message)
         { }
 
         /// <summary>
-        /// 初始化新的<see cref="ServiceException"/>实例。
+        /// Creates a new <see cref="ServiceException"/>instance.
         /// </summary>
-        /// <param name="message">解释异常原因的错误信息。</param>
-        /// <param name="innerException">导致当前异常的异常。</param>
+        /// <param name="message">Error messag</param>
+        /// <param name="innerException">internal exception</param>
         public ServiceException(string message, Exception innerException)
             : base(message, innerException)
         { }
 
         /// <summary>
-        /// 初始化新的<see cref="ServiceException"/>实例。
+        /// Creates a new <see cref="ServiceException"/> instance.
         /// </summary>
-        /// <param name="info">保存序列化对象数据的对象。</param>
-        /// <param name="context">有关源或目标的上下文信息。</param>
+        /// <param name="info">serialization information</param>
+        /// <param name="context">context information</param>
         protected ServiceException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         { }
 
         /// <summary>
-        /// 重载<see cref="ISerializable.GetObjectData"/>方法。
+        /// Overrides <see cref="ISerializable.GetObjectData"/> method
         /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/>，它存有有关所引发异常的序列化的对象数据。</param>
-        /// <param name="context"><see cref="StreamingContext"/>，它包含有关源或目标的上下文信息。</param>
+        /// <param name="info"><see cref="SerializationInfo"/>serialization information instance</param>
+        /// <param name="context"><see cref="StreamingContext"/>context information</param>
         [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

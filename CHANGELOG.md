@@ -1,140 +1,140 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
-## 版本号：2.5.1  日期：2017/05/17
-### 变更内容
-- 修复：ResumableUploadObject上传小文件时进度条无效
+## Version：2.5.1  Date：2017/05/17
+### Changes in the version
+- Fix：The progress bar in ResumableUploadObject does not work when uploading a small file
 
-## 版本号：2.5.0  日期：2017/04/20
-### 变更内容
-- 增加：正常请求返回RequestId等
-- 增加：支持上传回调
-- 增加：支持进度条
-- 增加：支持MD5校验
-- 修复：ModifyObjectMeta指定文件路径，文件名限定长度
-- 修复：GetObject(Uri)/PutObject(Uri)返回结果与正常请求相同
-- 修复：ComputeContentMd5占用大内存问题
-- 修复：GetObject.Metadata不能为空
+## Version：2.5.0  Date：2017/04/20
+### Changes in the version
+- Add：Request Id in the normal response
+- Add：Support upload progress callback
+- Add：Support progress bar
+- Add：Support MD5 checksum
+- Fix：ModifyObjectMeta can specify checkpoint file path and limit the file name's max length.
+- Fix：GetObject(Uri)/PutObject(Uri) return the full valid OssObject as other operations.
+- Fix：ComputeContentMd5 big memory footprint issue
+- Fix：GetObject.Metadata cannot be empty
 
-## 版本号：2.4.0  日期：2016/12/14
-### 变更内容
-- 增加：SetObjectAcl/GetObjectAcl接口
-- 增加：图片处理功能
-- 添加：OssClient的构造函数，方便使用
-- 修复：GetObject中使用MemoryStream占用大内存的问题
-- 修复：ObjectMetadata设置ContentLength时5G限制的问题
-- 修复：使用Proxy时，个别请求没有Proxy-Authorization头的问题
+## Version：2.4.0  Date：2016/12/14
+### Changes in the version
+- Add：SetObjectAcl/GetObjectAcl APIs
+- Add：Image processing feature
+- Add：More OssClient constructors to simplify the consume
+- Fix：GetObject uses MemoryStream and has big memory footprint
+- Fix：ObjectMetadata has 5G limit when setting the ContentLength
+- Fix：Some request does not have Proxy-Authorization header when proxy is used
 
-## 版本号：2.3.0  日期：2016/03/28
-### 变更内容
-- ObjectMetadata新增ContentMd5属性，支持上传文件时验证md5
-- 拷贝时验证目标bucket和object名称合法性
-- 解决无法从Metadata获取Expires的问题
-- 解决重试机制失效的问题
-- 解决设置Content-Encoding等值为null时抛异常的问题
-- 解决Endpoint头尾含空字符报错的问题
+## Version：2.3.0  Date：2016/03/28
+### Changes in the version
+- Add ContentMd5 property in class ObjectMetadata, for MD5 checksum when uploading files
+- Validates the target bucket and object name before copying object
+- Fix the problem that fails to retrieve Expires attribute from Metadata
+- Fix the broken retry mechanism.
+- Fix the null pointer exception when setting Content-Encoding with null
+- Fix the issue that exceptions are thrown when Endppoint has leading or trailing spaces.
 
-## 版本号：2.2.0  日期：2015/12/12
-### 新增内容
-- 支持Mono 3.12.0及其以上版本
-- 新增追加文件接口：AppendObject
-- 新增断点续传上传接口：ResumableUploadObject
-- 新增断点续传拷贝接口：ResumableCopyObject
-- 新增部分示例程序
+## Version：2.2.0  Date：2015/12/12
+### new features in the version
+- Support Mono 3.12.0 or higher version
+- Add object append API：AppendObject
+- Add resumable upload API：ResumableUploadObject
+- Add resumable copy API：ResumableCopyObject
+- Add more sample code
 
-### 修改内容
-- 移除对System.Web库的依赖
+### Fixes
+- Removes the dependency on System.web
 
-## 版本号：2.1.0  日期：2015/11/24
-### 新增内容
-- .NET Framework 2.0和.NET Framework 3.5支持
-- 大文件拷贝接口：CopyBigObject
-- 大文件上传接口：UploadBigObject
-- 文件meta修改接口：ModifyObjectMeta
+## Version：2.1.0  Date：2015/11/24
+### New features in the version
+- Support .NET Framework 2.0 and .NET Framework 3.5
+- Big file copy API：CopyBigObject
+- Big file upload API：UploadBigObject
+- Update object meta API：ModifyObjectMeta
 
-### 修改内容
-- 提升SDK健壮性
-- ContentType支持大多数MIME种类（226种）
-- 补齐SDK API速查文档中的缺失注释
-- 删除废弃的某些类中ObjectMetaData，请使用类中对应的的ObjectMetadata 
+### Fix
+- Improve the SDK's rubustness
+- ContentType supports most of MIME types, now it has 226 MIME types.
+- Add the missing comments in SDK API document
+- Delete ObjectMetaData property from some obsolete classes. Use ObjectMetadata instead.删除废弃的某些类中ObjectMetaData. 
 
-## 版本号：2.0.0  日期：2015/11/18
-### 新增内容
-- 自动根据对象key和上传文件名后缀判断ContentType
-- ListObjects，ListMultipartUploads，DeleteObjects接口默认增加EncodingType参数
-- UploadPart接口新增内容md5校验
-- 新增部分示例程序
+## Version：2.0.0  Date：2015/11/18
+### New features in the version
+- Automatic content-type detection according to the extension name in object's key and source file.
+- Add EncodingType parameter in ListObjects，ListMultipartUploads，DeleteObjects APIs
+- Add MD5 validation in UploadPart API
+- Add more sample code
 
-### 修改内容
-- 精简命名空间
-- 合并重复目录
-- 统一目录名称
-- 删除重复的测试项目
-- 修改cname支持形式
-- 当存储空间或者文件不存在时，DoesObjectExist不再抛出异常，而是返回false
+### Fix
+- Refine the namespace
+- Merge the duplicate directory
+- Unifiy directories name
+- Delete duplicate test items
+- Fix the way to support CName
+- When the bucket or file does not exist, DoesObjectExist returns false instead of throwing exceptions.
 
-### 注意事项
-- 此版本相对于1.0.* 版本，内部目录结构和命名空间有变动，如果需要从1.0.*版本升级到此版本，需要您修改现有程序。
+### Notes
+- The version changed the internal directory structure and name space, comparing to version 1.0.*. So it's not compatible to the older version. Some code changes are necessary to upload to this version.
 
-## 版本号：1.0.10 日期：2015/01/14
-### 新增内容
-- 添加Copy Part、Delete Objects、Bucket Referer List等接口。
-- 添加ListBuckets分页功能。
-- 添加CNAME支持。
-- 添加若干Samples。
+## Version：1.0.10 Date：2015/01/14
+### New features
+- Add Copy Part, Delete Objects, Bucket Referer List APIs
+- Add paging functionality in ListBuckets
+- Add CNAME support
+- Add some Samples
 
-### 修改内容
-- 程序集命名更改为Aliyun.OSS.dll
-- .NET Framework版本升至4.0及以上
+### Changes
+- The assembly name is changed to Aliyun.OSS.dll
+- .NET Framework version is upgraded to 4.0 or higher
 
-### 修复问题
-- 修复Put/GetObject流中断问题。
+### Fix
+- Fix the stream interruptions in Put/GetObject
 
-## 版本号：1.0.9 时间：2014/06/26
-### 新增内容
-- 添加对cors、Logging、website等接口的支持。
+## Version：1.0.9 Date：2014/06/26
+### New features
+- Support cors、Logging、website related APIs
 
-## 版本号：1.0.8 时间：2013/09/02容
-### 修复问题
-- 修复了某些情况下无法抛出正确的异常的Bug。
-- 优化了SDK的性能。
+## Version：1.0.8 Date：2013/09/02容
+### Fix
+- Fix the issue that in some cases the correct exceptions could not be thrown properly.
+- Improve the SDK performance
 
-## 版本号：1.0.7 时间：2013/06/04
-### 修改内容
-- 将默认OSS服务访问方式修改为三级域名方式。
+## Version：1.0.7 Date：2013/06/04
+### Updates
+- Use three level domain as the default way to access OSS
 
-## 版本号：1.0.6 时间：2013/05/20
-### 修复问题
-- 修复了SDK中的几处Bug，使其运行更稳定。
+## Version：1.0.6 Date：2013/05/20
+### Fix
+- Some bug fixes in SDK to stablize it
 
-## 版本号：1.0.5 时间：2013/04/10
-### 新增内容
-- 添加了Object分块上传（Multipart Upload）功能。
-- 添加了Copy Object功能。
-- 添加了生成预签名URL的功能。
+## Version：1.0.5 Date：2013/04/10
+### New features
+- Add Object Multipart Upload API
+- Add Copy Object API
+- Add presign URL API
 
-### 修改内容
-- 分离出IOss接口，并由OssClient继承此接口。
+### Fix
+- Create a IOSS interface and make OssClient implement it
 
-## 版本号：1.0.4 时间：2012/10/10
-### 修改内容
-- 将默认的OSS服务地址更新为：http://oss.aliyuncs.com
+## Version：1.0.4 Date：2012/10/10
+### Updates
+- Use http://oss.aliyuncs.com as default OSS endpoint
 
-## 版本号：1.0.3 时间：2012/09/05
-### 新增内容
-- 解决ListObjects时Prefix等参数无效的问题。
+## Version：1.0.3 Date：2012/09/05
+### New features
+- Fix the issue that the prefix in ListObjects does not take effect.
 
-## 版本号：1.0.2 时间：2012/06/15
-### 新增内容
-- 首次加入对OSS的支持。包含了OSS Bucket、ACL、Object的创建、修改、读取、删除等基本操作。
-- 加入对特定请求错误的自动处理机制。
-- 增加HTML格式的帮助文件。
+## Version：1.0.2 Date：2012/06/15
+### New features
+- Add OSS support, including Bucket, ACL, Object's CRUD (Create,Read,Update,Delete) operations.
+- Add the hanlding on some specific response errors
+- Add HTML help doc
 
-## 版本号：1.0.1 时间：2012/05/16
-### 新增内容
+## Version：1.0.1 Date：2012/05/16
+### New Features
 - OTSClient.GetRowsByRange支持反向读取。
 
-## 版本号：1.0.0 时间：2012/03/16
-### 新增内容
-- OTS访问接口，包括对表、表组的创建、修改和删除等操作，对数据的插入、修改、删除和查询等操作。
-- 访问的客户端设置，如果代理设置、HTTP连接属性设置等。
-- 统一的结构化异常处理。
+## Version：1.0.0 Date：2012/03/16
+### New features
+- OTS access APIs, including table and table group and data's CRUD(Create,Read,Update,Delete) operations.
+- The client side configuration, such as proxy and http connection settings.
+- United structured exception hanlding

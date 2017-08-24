@@ -2,28 +2,27 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// Complete Multipart Upload的请求结果。
+    /// The result class of operation to complete a multipart upload.
     /// </summary>
     public class CompleteMultipartUploadResult : PutObjectResult
     {
         /// <summary>
-        /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Bucket name getter/setter
         /// </summary>
         public string BucketName { get; internal set; }
         
         /// <summary>
-        /// 获取<see cref="OssObject" />的Key。
+        /// Object key's getter/setter.
         /// </summary>
         public string Key { get; internal set; }
         
         /// <summary>
-        /// 获取新创建Object的URL。
+        /// The new object' URL
         /// </summary>
         public string Location { get; internal set; }
         

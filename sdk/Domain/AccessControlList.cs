@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -15,9 +14,9 @@ using Aliyun.OSS.Model;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 表示OSS的访问控制列表（Access Control List， ACL），
-    /// 包含了一组为指定被授权者<see cref="IGrantee" />
-    /// 分配特定权限<see cref="Permission" />的集合。
+    /// The class defines "Access control list"(ACL).
+    /// It contains a list of <see cref="Grant"/> instances, each specifies a <see cref="IGrantee" /> and
+    /// a <see cref="Permission" />.
     /// </summary>
     public class AccessControlList : GenericResult
     {
@@ -25,7 +24,7 @@ namespace Aliyun.OSS
         private readonly Dictionary<Grant, bool> _grants = new Dictionary<Grant, bool>();
 
         /// <summary>
-        /// 获取所有<see cref="Grant" />实例的枚举。
+        /// Gets the iterator of <see cref="Grant" /> list.
         /// </summary>
         [Obsolete("Use ACL instead")]
         public IEnumerable<Grant> Grants
@@ -34,12 +33,12 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置所有者。
+        /// Owner getter and setter
         /// </summary>
         public Owner Owner { get; internal set; }
 
         /// <summary>
-        /// 获取或设置权限。
+        /// ACL getter or setter
         /// </summary>
         public CannedAccessControlList ACL { get; internal set; }
 
@@ -50,11 +49,11 @@ namespace Aliyun.OSS
         { }
 
         /// <summary>
-        /// 为指定<see cref="IGrantee" />授予特定的<see cref="Permission" />。
-        /// 目前只支持被授权者为<see cref="GroupGrantee.AllUsers" />。
+        /// Grants permission to a <see cref="IGrantee" /> instance with specified <see cref="Permission" />.
+        /// Currently the supported grantee is <see cref="GroupGrantee.AllUsers" />.
         /// </summary>
-        /// <param name="grantee">被授权者。</param>
-        /// <param name="permission">被授予的权限。</param>
+        /// <param name="grantee">The grantee</param>
+        /// <param name="permission">The permission</param>
         internal void GrantPermission(IGrantee grantee, Permission permission)
         {
             if (grantee == null)
@@ -64,14 +63,14 @@ namespace Aliyun.OSS
         }
         
         /**
-         * 取消指定{@link Grantee}已分配的所有权限。
+         * Revoke all permissions on a specific grantee.
          * @param grantee
-         *           被授权者。目前只支持被授权者为{@link GroupGrantee#AllUsers}。
+         *           The grantee, currently only <see cref="GroupGrantee.AllUsers" /> is supported.
          */
         /// <summary>
-        /// 取消指定<see cref="IGrantee" />已分配的所有权限。
+        /// Invoke the <see cref="IGrantee" /> instance's all permissions.
         /// </summary>
-        /// <param name="grantee">被授权者。</param>
+        /// <param name="grantee">The grantee instanc</param>
         internal void RevokeAllPermissions(IGrantee grantee)
         {
             if (grantee == null)
@@ -87,9 +86,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 返回该对象的字符串表示。
+        /// Return the string that has the owner and ACL list information.
         /// </summary>
-        /// <returns>对象的字符串表示形式</returns>
+        /// <returns>The serialized information in a string</returns>
         public override String ToString() {
             return string.Format(CultureInfo.InvariantCulture,
                 "[AccessControlList: Owner={0}, ACL={1}]", Owner, ACL);

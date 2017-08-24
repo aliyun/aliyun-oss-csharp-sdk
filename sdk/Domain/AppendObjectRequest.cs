@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -16,34 +15,35 @@ namespace Aliyun.OSS
 #pragma warning disable 618, 3005
 
     /// <summary>
-    /// 指定追加Object的请求参数
+    /// The request which is used to append data into an object (existing or non-existing)
     /// </summary>
     public class AppendObjectRequest
     {
         private Stream _inputStream;
 
         /// <summary>
-        /// 获取或者设置Object所在的Bucket的名称。
+        /// Bucket name getter/setter.
         /// </summary>
         public string BucketName { get; set; }
         
         /// <summary>
-        /// 获取或者设置Object的Key。
+        /// Object key getter/setter
         /// </summary>
         public string Key { get; set; }   
 
         /// <summary>
-        /// 获取或者设置目标Object的Metadata信息。
+        /// Object metadata getter/setter
         /// </summary>
         public ObjectMetadata ObjectMetadata { get; set; }
 
         /// <summary>
-        /// 设置或获取追加的位置。第一次可以通过GetObjectMeta获取，后续可以从前一次的AppendObjectResult中获取
+        /// Position getter/setter. The position is the start index for the appending. 
+        /// Initially it could be the length of the object (length could be got from the GetObjectmeta). Then it could be got from the previous result of AppendObjectRequest.
         /// </summary>
         public long Position { get; set; }
 
         /// <summary>
-        /// 需要追加的内容
+        /// The content to append
         /// </summary>
         public Stream Content
         {
@@ -52,15 +52,15 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置进度回调
+        /// Progress callback getter and setter
         /// </summary>
         public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
         
         /// <summary>
-        /// 构造一个新的<see cref="AppendObjectRequest" /> 实例
+        /// Creates a new instance of <see cref="AppendObjectRequest" />
         /// </summary>
-        /// <param name="bucketName">需要追加的<see cref="OssObject" />所在的Bucket</param>
-        /// <param name="key">需要追加的<see cref="OssObject" />名称</param>
+        /// <param name="bucketName"> bucket name</param>
+        /// <param name="key">object key</param>
         public AppendObjectRequest(string bucketName, string key)
         {
             BucketName = bucketName;

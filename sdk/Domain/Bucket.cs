@@ -2,7 +2,6 @@
 ///Copyright (C) Alibaba Cloud Computing
 ///All rights reserved.
 ///
-///版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -11,58 +10,58 @@ using System.Globalization;
 namespace Aliyun.OSS
 {
     ///<summary>
-    ///Bucket是OSS上的命名空间，可以理解为存储空间
+    ///Bucket is the OSS namespace, which could be thought as storage space.
     ///</summary>
     /// <remarks>
     ///<para>
-    ///Bucket名在整个 OSS 中具有全局唯一性，且不能修改；存储在OSS上的每个Object必须都包含在某个Bucket中。
-    ///一个应用，例如图片分享网站，可以对应一个或多个 Bucket。一个用户最多可创建 10 个Bucket，
-    ///但每个Bucket 中存放的Object的数量和大小总和没有限制，用户不需要考虑数据的可扩展性。
+    ///Bucket is globally unique across the whole OSS and is immutable. Every object must be stored at one and only one bucket.
+    ///An application, such as picture sharing website, could have one or more bucket. And each account could only create up to 10 buckets.
+    ///But in every bucket, there's no limit in terms of data size and object count.
     ///</para>
     ///<para>
-    ///Bucket 命名规范
+    ///Bucket naming rules
     ///<list type="">
-    /// <item>只能包括小写字母，数字和短横线（-）</item>
-    /// <item>必须以小写字母或者数字开头</item>
-    /// <item>长度必须在 3-63 字节之间</item>
+    /// <item>Can only have lowercase letter, number or dash (-)</item>
+    /// <item>Can only start with lowercase letter or number</item>
+    /// <item>The length must be between 3 and 63</item>
     ///</list>
     ///</para>
     /// </remarks>
     public class Bucket
     {
         /// <summary>
-        /// 获取/设置Bucket的Location。
+        /// Bucket location getter/setter
         /// </summary>
         public string Location { get; internal set; }
 
         /// <summary>
-        /// 获取/设置Bucket的名称。
+        /// Bucket name getter/setter
         /// </summary>
         public string Name { get; internal set; }
 
         /// <summary>
-        /// 获取/设置Bucket的<see cref="Owner" />
+        /// Bucket <see cref="Owner" /> getter/setter
         /// </summary>
         public Owner Owner { get; internal set; }
 
         /// <summary>
-        /// 获取/设置Bucket的创建时间。
+        /// Bucket creation time getter/setter
         /// </summary>
         public DateTime CreationDate { get; internal set; }
         
         /// <summary>
-        /// 使用指定的Bucket名称构造一个新的<see cref="Bucket" />实例。
+        /// Creats a new <see cref="Bucket" /> instance with the specified name.
         /// </summary>
-        /// <param name="name">Bucket的名称。</param>
+        /// <param name="name">Bucket name</param>
         internal Bucket(string name)
         {
             Name = name;
         }
 
         /// <summary>
-        /// 返回该对象的字符串表示。
+        /// Returns the bucket's serialization information in string.
         /// </summary>
-        /// <returns>对象的字符串表示形式</returns>
+        /// <returns>The serialization information in string</returns>
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture,

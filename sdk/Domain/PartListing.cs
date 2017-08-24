@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System.Collections.Generic;
@@ -12,51 +11,51 @@ using Aliyun.OSS.Model;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 获取List Parts的结果.
+    /// The result class of the operation to list the parts of a multipart upload.
     /// </summary>
     public class PartListing : GenericResult 
     {
         private readonly IList<Part> _parts = new List<Part>();
         
         /// <summary>
-        /// 获取Object所在的<see cref="Bucket" />的名称。
+        /// Gets bucket name.
         /// </summary>
         public string BucketName { get; internal set; }
                
         /// <summary>
-        /// 获取<see cref="OssObject" />的名称。
+        /// Gets target object key.
         /// </summary>
         public string Key { get; internal set; }
         
         /// <summary>
-        /// 获取请求参数<see cref="P:ListPartsRequest.UploadId" />的值。
+        /// Gets the value from <see cref="P:ListPartsRequest.UploadId" />.
         /// </summary>
         public string UploadId { get; internal set; }
         
         /// <summary>
-        /// 获取请求参数<see cref="P:ListPartsRequest.PartNumberMarker" />的值。
+        /// Gets the value from <see cref="P:ListPartsRequest.PartNumberMarker" />.
         /// </summary>
         public int PartNumberMarker { get; internal set; }
         
         /// <summary>
-        /// 如果本次没有返回全部结果，响应请求中将包含NextPartNumberMarker元素，
-        /// 用于标明接下来请求的PartNumberMarker值。
+        /// If the result does not have all data, the response will have the value of this property for the next call to start with
+        /// That is assign this value to the PartNumberMarker property in the next call.
         /// </summary>
         public int NextPartNumberMarker { get; internal set; }
         
         /// <summary>
-        /// 获取请求参数<see cref="P:ListPartsRequest.MaxParts" />的值。
+        /// The max parts to return. The value comes from <see cref="P:ListPartsRequest.MaxParts" />.
         /// </summary>
         public int MaxParts { get; internal set; }
         
         /// <summary>
-        /// 标明是否本次返回的List Part结果列表被截断。
-        /// “true”表示本次没有返回全部结果；“false”表示本次已经返回了全部结果。
+        /// Flag if the result is truncated.
+        /// “true” means it's truncated;“false” means the result is complete.
         /// </summary>
         public bool IsTruncated { get; internal set; }
         
         /// <summary>
-        /// 获取所有的Part
+        /// Gets the parts iterator.
         /// </summary>
         public IEnumerable<Part> Parts 
         {
@@ -64,16 +63,16 @@ namespace Aliyun.OSS
         }
         
         /// <summary>
-        /// 增加<see cref="Part"/>分片信息
+        /// Adds a <see cref="Part"/> information---internal only
         /// </summary>
-        /// <param name="part">分片信息</param>
+        /// <param name="part">one part instance</param>
         internal void AddPart(Part part)
         {
             _parts.Add(part);
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="PartListing" />实例。
+        /// Creates a new instance of <see cref="PartListing" />---internal only.
         /// </summary>
         internal PartListing()
         { }

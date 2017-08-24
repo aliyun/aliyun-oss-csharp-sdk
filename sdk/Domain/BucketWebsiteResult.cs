@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using Aliyun.OSS.Model;
@@ -10,17 +9,17 @@ using Aliyun.OSS.Model;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// Get Bucket Website 的请求结果。
+    /// The result class of the operation to get bucket's static website config.
     /// </summary>
    public class BucketWebsiteResult : GenericResult
     {
         /// <summary>
-        /// 索引页面
+        /// The index page for the static website.
         /// </summary>
        public string IndexDocument { get; internal set; }
 
         /// <summary>
-        /// 错误页面
+        /// The error page for the static website.
         /// </summary>
        public string ErrorDocument { get; internal set; }
     }

@@ -121,15 +121,15 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var initResult = _ossClient.InitiateMultipartUpload(initRequest);
                 Assert.AreEqual(newKey, initRequest.Key);
 
-                // 设置每块为 5M
+                // Sets the part size as 5M
                 const int partSize = 5 * 1024 * 1024;
 
                 var fileInfo = new FileInfo(Config.MultiUploadTestFile);
 
-                // 计算分块数目
+                // gets the count 
                 var partCount = OssTestUtils.CalculatePartCount(fileInfo.Length, partSize);
 
-                // 新建一个List保存每个分块上传后的ETag和PartNumber
+                // creates the list for the result
                 var partETags = new List<PartETag>();
 
                 //upload the file
@@ -137,21 +137,21 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 {
                     for (var i = 0; i < partCount; i++)
                     {
-                        // 跳到每个分块的开头
+                        // skip to the start position of each part
                         long skipBytes = partSize * i;
                         fs.Position = skipBytes;
 
-                        // 计算每个分块的大小
+                        // gets the part size
                         long size = partSize < fileInfo.Length - skipBytes ? partSize : fileInfo.Length - skipBytes;
 
-                        // 创建UploadPartRequest，上传分块
+                        // creates UploadPartRequest, uploading parts
                         var uploadPartRequest = new UploadPartRequest(_bucketName, newKey, initResult.UploadId);
                         uploadPartRequest.InputStream = fs;
                         uploadPartRequest.PartSize = size;
                         uploadPartRequest.PartNumber = (i + 1);
                         var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
 
-                        // 将返回的PartETag保存到List中。
+                        // saves the result 
                         partETags.Add(uploadPartResult.PartETag);
 
                         var multipartListing = _ossClient.ListMultipartUploads(new ListMultipartUploadsRequest(_bucketName));

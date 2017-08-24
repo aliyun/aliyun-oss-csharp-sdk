@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System.Xml.Serialization;
@@ -10,19 +9,19 @@ using System.Xml.Serialization;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// Referer反盗链相关配置。
+    /// Referer Configuration
     /// </summary>
   [XmlRoot("RefererConfiguration")]
   public  class RefererConfiguration
   {
         /// <summary>
-        /// 指定是否允许referer字段为空的请求访问。
+        /// Flag of allowing empty referer
         /// </summary>
         [XmlElement("AllowEmptyReferer")]
         public bool AllowEmptyReferer { get; set; }
 
         /// <summary>
-        /// 保存referer访问白名单列表。
+        /// Gets or sets the referer list
         /// </summary>
         [XmlElement("RefererList")]
         public RefererListModel RefererList { get; set; }
@@ -31,13 +30,13 @@ namespace Aliyun.OSS
         { }
 
         /// <summary>
-        /// referer列表的配置
+        /// referer list model
         /// </summary>
         [XmlRoot("RefererList")]
         public class RefererListModel 
         {
             /// <summary>
-            /// referer列表
+            /// referer list
             /// </summary>
             [XmlElement("Referer")]
             public string[] Referers { get; set; }

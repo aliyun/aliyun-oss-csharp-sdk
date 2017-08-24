@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
  
 using System;
@@ -11,27 +10,27 @@ using System.Globalization;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 获取MultipartUpload事件的信息。
+    /// The mutipart upload class definition.
     /// </summary>
     public class MultipartUpload
     {
         /// <summary>
-        /// 获取Object的key。
+        /// Gets or sets the target object's key.
         /// </summary>
         public string Key { get; internal set; }
         
         /// <summary>
-        /// 获取上传Id。
+        /// Gets or sets the upload Id.
         /// </summary>
         public string UploadId { get; internal set; }
         
         /// <summary>
-        /// 获取Object的存储类别。
+        /// Gets or sets the target object's storage class.
         /// </summary>
         public string StorageClass {get; internal set; }
         
         /// <summary>
-        /// Multipart Upload事件初始化的时间。
+        /// The initiated timestamp of the multipart upload.
         /// </summary>
         public DateTime Initiated {get; internal set;}
         
@@ -39,9 +38,9 @@ namespace Aliyun.OSS
         { }
         
         /// <summary>
-        /// 获取该实例的字符串表示。
+        /// Gets the serialization string
         /// </summary>
-        /// <returns>对象的字符串表示</returns>
+        /// <returns>the serilization string</returns>
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture,

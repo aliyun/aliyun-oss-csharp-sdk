@@ -112,21 +112,21 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BucketNameInvalid" xml:space="preserve">
-    <value>Bucket名称无效。Bucket 命名规范：
-1)只能包括小写字母，数字和短横线（-）；
-2)开头、结尾必须是小写字母或者数字；
-3)长度必须在 3-63 字节之间。</value>
+    <value>Invalid bucket name. The bucket naming rules:
+1) Can only contain lowercase letter, number or dash(-);
+2) Starts and ends with lowercase letter or number;
+3) The length must be between 3 to 63 bytes.</value>
   </data>
   <data name="EndpointNotSupportedProtocal" xml:space="preserve">
-    <value>不支持终结点给定的协议。仅支持HTTP/HTTPS协议，即终结点必须以"http://"或"https://"开头。</value>
+    <value>Not supported protocol in the endpoint. The supported protocols are HTTP or HTTPS. So the endpoint must start with "http://" or "https://".</value>
   </data>
   <data name="ObjectKeyInvalid" xml:space="preserve">
-    <value>Object Key无效，长度必须大于0且不超过1023个字节。</value>
+    <value>Invalid Object Key. Its length must be between 1 to 1023.</value>
   </data>
 </root>

@@ -2,13 +2,12 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 用于预签名URL的请求方法.
+    /// Sign HTTP method enum definition
     /// </summary>
     public enum SignHttpMethod
     {

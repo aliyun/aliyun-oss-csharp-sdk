@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Collections.Generic;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 包含了在发送OSS GET请求时可以重载的返回请求头。
+    /// The class to contains the headers the caller hopes to get from the OSS response.
     /// </summary>
     public class ResponseHeaderOverrides
     {
@@ -22,32 +21,32 @@ namespace Aliyun.OSS
         internal const string ResponseContentEncoding = "response-content-encoding";
 
         /// <summary>
-        /// 获取或设置重载的Content-Type返回请求头。如果未指定，则返回null。
+        /// Gets or sets content-type. If it's not specified, returns null.
         /// </summary>
         public string ContentType { get; set; }
 
         /// <summary>
-        /// 获取或设置返回重载的Content-Language返回请求头。如果未指定，则返回null。
+        /// Gets or sets content-language.If it's not specified, returns null.
         /// </summary>
         public string ContentLanguage { get; set; }
 
         /// <summary>
-        /// 获取或设置返回重载的Expires返回请求头。如果未指定，则返回null。
+        /// Gets or sets the expires header. If it's not specified, returns null.
         /// </summary>
         public string Expires { get; set; }
 
         /// <summary>
-        /// 获取或设置返回重载的Cache-Control返回请求头。如果未指定，则返回null。
+        /// Gets or sets the cache-control header.If it's not specified, returns null.
         /// </summary>
         public string CacheControl { get; set; }
 
         /// <summary>
-        /// 获取或设置返回重载的Content-Disposition返回请求头。如果未指定，则返回null。
+        /// Gets or sets the Content-Disposition header.
         /// </summary>
         public string ContentDisposition { get; set; }
 
         /// <summary>
-        /// 获取或设置返回重载的Content-Encoding返回请求头。如果未指定，则返回null。
+        /// Gets or sets the Content-Encoding header.
         /// </summary>
         public string ContentEncoding { get; set; }
 
