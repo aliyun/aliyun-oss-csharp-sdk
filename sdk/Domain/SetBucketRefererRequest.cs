@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System.Collections.Generic;
@@ -10,24 +9,24 @@ using System.Collections.Generic;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 设置指定Bucket的Referer白名单和是否允许referer字段为空的请求。
+    /// The request of the operation to set bucket referer.
     /// </summary>
     public class SetBucketRefererRequest
     {
         private readonly IList<string> _refererList = new List<string>();  
         
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets the bucket name.
         /// </summary>
         public string BucketName { get; private set; }
 
         /// <summary>
-        /// 指定是否允许referer字段为空的请求访问。
+        /// Gets the flag of allowing empty referer.
         /// </summary>
         public bool AllowEmptyReferer { get; private set; }
          
         /// <summary>
-        /// 获取或者设置需要删除的referer列表。
+        /// Gets the referer list.
         /// </summary>
         public IList<string> RefererList
         {
@@ -35,28 +34,28 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 使用空的referer列表、允许referer为空的请求访问的构造函数。
+        /// Creates the instance of SetBucketRefererRequest
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject"/></param>
+        /// <param name="bucketName">bucket name</param>
         public SetBucketRefererRequest(string bucketName)
             : this(bucketName, null, true)
         { }
 
         /// <summary>
-        /// 使用指定的referer列表、允许referer为空的请求访问的构造函数。
+        /// Creates the instance of <see cref="SetBucketRefererRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject"/></param>
-        /// <param name="refererList">referer列表</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="refererList">referer list </param>
         public SetBucketRefererRequest(string bucketName, IList<string> refererList)
             : this(bucketName, refererList, true)
         { }
 
         /// <summary>
-        /// 使用指定的referer列表、是否允许referer为空的请求访问的构造函数。
+        /// Creates the instance of <see cref="SetBucketRefererRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject"/></param>
-        /// <param name="refererList">referer列表</param>
-        /// <param name="allowEmptyReferer">是否允许referer为空的请求访问</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="refererList">referer list</param>
+        /// <param name="allowEmptyReferer">allowEmptyReferer flag</param>
         public SetBucketRefererRequest(string bucketName, IEnumerable<string> refererList, 
             bool allowEmptyReferer)
         {            
@@ -75,7 +74,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 清空referer列表。
+        /// Clears the referer list.
         /// </summary>
         public void ClearRefererList()
         {

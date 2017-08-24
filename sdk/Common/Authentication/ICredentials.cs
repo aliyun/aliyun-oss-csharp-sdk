@@ -2,33 +2,32 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 namespace Aliyun.OSS.Common.Authentication
 {
     /// <summary>
-    /// 鉴权的接口
+    /// ICredential interface
     /// </summary>
     public interface ICredentials
     {
         /// <summary>
-        /// OSS的访问ID
+        /// OSS access key Id
         /// </summary>
         string AccessKeyId { get; }
 
         /// <summary>
-        /// OSS的访问密钥
+        /// OSS access key secret
         /// </summary>
         string AccessKeySecret { get; }
 
         /// <summary>
-        /// STS提供的安全令牌
+        /// STS security token
         /// </summary>
         string SecurityToken { get; }
 
         /// <summary>
-        /// 是否使用了STS提供的安全令牌
+        /// FLag of using STS's SecurityToken
         /// </summary>
         bool UseToken { get; }
     }

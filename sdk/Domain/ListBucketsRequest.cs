@@ -2,29 +2,27 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 包含获取<see cref="Bucket" />列表的请求信息。
+    /// The request class of the operation to list <see cref="Bucket" /> of the current account.
     /// </summary>
     public class ListBucketsRequest
     {
         /// <summary>
-        /// 获取或设置一个值，限定返回的<see cref="Bucket" />的Key必须以该值作为前缀。
+        /// Gets or sets the bucket name prefix to list (optional)
         /// </summary>
         public string Prefix { get; set; }
 
         /// <summary>
-        /// 获取或设置一个值，用户设定结果从该值之后按字母排序的第一个开始返回。
+        /// Gets or sets the marker of the bucket name. The buckets to return whose names are greater than this value in lexicographic order.
         /// </summary>
         public string Marker { get; set; }
 
         /// <summary>
-        /// 获取或设置一个值，用于限定此次返回bucket的最大数。
-        /// 如果不设定，默认为100。
+        /// Gets or sets the max entries to return. By default is 100.
         /// </summary>
         public int? MaxKeys { get; set; }
     }

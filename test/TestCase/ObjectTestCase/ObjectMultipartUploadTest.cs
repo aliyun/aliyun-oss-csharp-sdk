@@ -53,33 +53,33 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var initRequest = new InitiateMultipartUploadRequest(_bucketName, targetObjectKey);
             var initResult = _ossClient.InitiateMultipartUpload(initRequest);
 
-            // 设置每块为 1M
+            // Set the part size 
             const int partSize = 1024 * 1024 * 1;
 
             var partFile = new FileInfo(sourceFile);
-            // 计算分块数目
+            // Calculate the part count
             var partCount = OssTestUtils.CalculatePartCount(partFile.Length, partSize);
 
             LogUtility.LogMessage("File {0} is splitted to {1} parts for multipart upload",
                 sourceFile, partCount);
 
-            // 新建一个List保存每个分块上传后的ETag和PartNumber
+            // Create a list to save result 
             var partETags = new List<PartETag>();
             //upload the file
             using (var fs = new FileStream(partFile.FullName, FileMode.Open))
             {
                 for (var i = 0; i < partCount; i++)
                 {
-                    // 跳到每个分块的开头
+                    // Skip to the start position
                     long skipBytes = partSize*i;
                     fs.Position = skipBytes;
 
-                    // 计算每个分块的大小
+                    // calculate the part size
                     var size = partSize < partFile.Length - skipBytes
                         ? partSize
                         : partFile.Length - skipBytes;
 
-                    // 创建UploadPartRequest，上传分块
+                    // Create a UploadPartRequest, uploading parts
                     var uploadPartRequest = new UploadPartRequest(_bucketName, targetObjectKey, initResult.UploadId)
                     {
                         InputStream = fs,
@@ -88,7 +88,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     };
                     var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
 
-                    // 将返回的PartETag保存到List中。
+                    // Save the result
                     partETags.Add(uploadPartResult.PartETag);
                 }
             }
@@ -127,18 +127,18 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var initRequest = new InitiateMultipartUploadRequest(_bucketName, targetObjectKey);
             var initResult = _ossClient.InitiateMultipartUpload(initRequest);
 
-            // 设置每块为 1M
+            // Set the part size 
             const int partSize = 1024 * 1024 * 1;
 
             var partFile = new FileInfo(sourceFile);
-            // 计算分块数目
+            // Calculate the part count
             var partCount = OssTestUtils.CalculatePartCount(partFile.Length, partSize);
 
             Assert.IsTrue(partCount > 1, "Source file is too small to perform multipart upload");
             LogUtility.LogMessage("File {0} is splitted to {1} parts for multipart upload",
                 sourceFile, partCount);
 
-            // 新建一个List保存每个分块上传后的ETag和PartNumber
+             // Create a list to save result 
             var partETags = new List<PartETag>();
             //upload the file
             using (var fs = new FileStream(partFile.FullName, FileMode.Open))
@@ -146,23 +146,23 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 //use partCount - 1, so that the last part is left
                 for (var i = 0; i < partCount - 1; i++)
                 {
-                    // 跳到每个分块的开头
+                    // Skip to the start position
                     long skipBytes = partSize * i;
                     fs.Position = skipBytes;
 
-                    // 计算每个分块的大小
+                    // calculate the part size
                     var size = partSize < partFile.Length - skipBytes
                         ? partSize
                         : partFile.Length - skipBytes;
 
-                    // 创建UploadPartRequest，上传分块
+                      // Create a UploadPartRequest, uploading parts
                     var uploadPartRequest = new UploadPartRequest(_bucketName, targetObjectKey, initResult.UploadId);
                     uploadPartRequest.InputStream = fs;
                     uploadPartRequest.PartSize = size;
                     uploadPartRequest.PartNumber = (i + 1);
                     var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
 
-                    // 将返回的PartETag保存到List中。
+                    // Save the result
                     partETags.Add(uploadPartResult.PartETag);
 
                     //list parts which are uploaded
@@ -186,30 +186,30 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var initRequest = new InitiateMultipartUploadRequest(_bucketName, targetObjectKey);
             var initResult = _ossClient.InitiateMultipartUpload(initRequest);
 
-            // 设置每块为 512K
+            // Set the part size 
             const int partSize = 1024 * 512 * 1;
 
             var sourceObjectMeta = _ossClient.GetObjectMetadata(_bucketName, _sourceObjectKey);
-            // 计算分块数目
+            // Calculate the part count
             var partCount = OssTestUtils.CalculatePartCount(sourceObjectMeta.ContentLength, partSize);
 
             LogUtility.LogMessage("Object {0} is splitted to {1} parts for multipart upload part copy",
                 _sourceObjectKey, partCount);
 
-            // 新建一个List保存每个分块上传后的ETag和PartNumber
+            // Create a list to save result 
             var partETags = new List<PartETag>();
 
             for (var i = 0; i < partCount; i++)
             {
-                // 跳到每个分块的开头
+                // Skip to the start position
                 long skipBytes = partSize * i;
 
-                // 计算每个分块的大小
+               // calculate the part size
                 var size = partSize < sourceObjectMeta.ContentLength - skipBytes
                     ? partSize
                     : sourceObjectMeta.ContentLength - skipBytes;
 
-                // 创建UploadPartRequest，上传分块
+                // Create a UploadPartRequest, uploading parts
                 var uploadPartCopyRequest = 
                     new UploadPartCopyRequest(_bucketName, targetObjectKey, _bucketName, _sourceObjectKey, initResult.UploadId)
                     {
@@ -221,7 +221,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 uploadPartCopyRequest.MatchingETagConstraints.Add(_objectETag);
                 var uploadPartCopyResult = _ossClient.UploadPartCopy(uploadPartCopyRequest);
 
-                // 将返回的PartETag保存到List中。
+                // Save the result
                 partETags.Add(uploadPartCopyResult.PartETag);
             }
 

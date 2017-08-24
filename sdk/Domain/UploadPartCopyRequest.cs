@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
  
 using System;
@@ -11,7 +10,7 @@ using System.Collections.Generic;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 指定以某一Object作为上传某分块数据源的请求。
+    /// The request class of the operation to upload the source object as a part of the target object.
     /// </summary>
     public class UploadPartCopyRequest
     {
@@ -19,57 +18,57 @@ namespace Aliyun.OSS
         private readonly IList<string> _nonmatchingETagConstraints = new List<string>();
 
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets the target bucket name
         /// </summary>
         public string TargetBucket { get; private set; }
         
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />的值。
+        /// Gets the target key
         /// </summary>
         public string TargetKey { get; private set; }
         
         /// <summary>
-        /// 获取或设置上传Multipart上传事件的Upload ID。
+        /// Gets the upload Id.
         /// </summary>
         public string UploadId { get; private set; }
         
         /// <summary>
-        /// 获取或设置返回上传分块（Part）的标识号码（Part Number）。
-        /// 每一个上传分块（Part）都有一个标识它的号码（范围1~10000）。
-        /// 对于同一个Upload ID，该号码不但唯一标识这一块数据，也标识了这块数据在整个文件中的
-        /// 相对位置。如果你用同一个Part号码上传了新的数据，那么OSS上已有的这个号码的Part数据将被覆盖。
+        /// Gets or sets the part number.
+        /// Every part upload will have a part number (from 1 to 10000).
+        /// For a given upload id, the part number is the Id of the part and determine the position of the part in the whole file.
+        /// If the same part number is uploaded with new data, the original data will be overwritten.
         /// </summary>
         public int? PartNumber { get; set; }
         
         /// <summary>
-        /// 获取或设置返回分块（Part）数据的字节数。
-        /// 除最后一个Part外，其他Part最小为5MB。
+        /// Gets or sets the part size
+        /// Except the last part, other parts' size should be at least 5MB.
         /// </summary>
         public long? PartSize { get; set; }
         
         /// <summary>
-        /// 获取或设置分块（Part）数据的MD5校验值。
+        /// Gets or sets the MD5 checksum for the part's data.
         /// </summary>
         public string Md5Digest { get; set; }
 
         /// <summary>
-        /// 获取或设置拷贝源Object。
+        /// Gets or sets the source object key.
         /// </summary>
         public string SourceKey { get; set; }
 
         /// <summary>
-        /// 获取或设置拷贝源Bucket。
+        /// Gets or sets the source bucket
         /// </summary>
         public string SourceBucket { get; set; }
 
         /// <summary>
-        /// 获取或设置拷贝源Object的起始位置。
+        /// Gets or sets the beginning index of the source object to copy from.
         /// </summary>
         public long? BeginIndex { get; set; }
 
         /// <summary>
-        /// 如果源Object的ETAG值和用户提供的ETAG相等，则执行拷贝操作；
-        /// 否则返回412 HTTP错误码（预处理失败）。
+        /// Gets the constraints of matching ETag. If the source object's ETag matches any one in the list, the copy will be proceeded.
+        /// Otherwise returns error code 412 (precondition failed).
         /// </summary>        
         public IList<string> MatchingETagConstraints
         {
@@ -77,8 +76,8 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 如果源Object的ETAG值和用户提供的ETAG不相等，则执行拷贝操作；
-        /// 否则返回412 HTTP错误码（预处理失败）。
+        /// Gets the constraints of non-matching ETag. If the source object's ETag does not match any one in the list, the copy will be proceeded.
+        /// Otherwise returns error code 412 (precondition failed).
         /// </summary>       
         public IList<string> NonmatchingETagConstraints
         {
@@ -86,14 +85,14 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 如果传入参数中的时间等于或者晚于文件实际修改时间，则正常传输文件，并返回200 OK；
-        /// 否则返回412 precondition failed错误
+        /// Gets or sets the constraints of unmodified timestamp threshold. If the value is same or greater than the actual last modified time, proceed the copy.
+        /// Otherwise returns 412 (precondition failed).
         /// </summary>
         public DateTime? UnmodifiedSinceConstraint { get; set; }
 
         /// <summary>
-        /// 如果源Object自从用户指定的时间以后被修改过，则执行拷贝操作；
-        /// 否则返回412 HTTP错误码（预处理失败）。    
+        /// Gets or sets the constraints of modified timestamp threshold. If the value is smaller than the actual last modified time,  proceed the copy.
+        /// Otherwise returns 412 (precondition failed).
         /// </summary>   
         public DateTime? ModifiedSinceConstraint { get; set; }
 

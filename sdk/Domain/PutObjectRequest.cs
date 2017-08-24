@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -14,24 +13,24 @@ using Aliyun.OSS.Common.Internal;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 指定上传Object的请求参数。
+    /// The request class of the operation to put an object to OSS.
     /// </summary>
     public class PutObjectRequest
     {
         private Stream _inputStream;
 
         /// <summary>
-        /// 获取或设置<see cref="Bucket" />的名称。
+        /// Gets or sets the bucket name
         /// </summary>
         public string BucketName { get; private set; }
 
         /// <summary>
-        /// 获取或设置要下载<see cref="OssObject" />的Key。
+        /// Gets or sets the object key
         /// </summary>
         public string Key { get; private set; }
 
         /// <summary>
-        /// 获取或设置Object内容的数据流。
+        /// Gets or sets object content stream
         /// </summary>
         public Stream Content
         {
@@ -40,36 +39,36 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置进度回调
+        /// Gets or sets the transfer progress callback
         /// </summary>
         public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
 
         /// <summary>
-        /// 获取或者设置Object的Metadata信息。
+        /// Gets or sets the object metadata.
         /// </summary>
         public ObjectMetadata Metadata { get; set; }
 
         /// <summary>
-        /// 获取或设置Object上传后的处理方法，处理结果<see cref="P:PutObjectResult.ResponseStream" />。
+        /// Gets or sets the process method.The result will be in <see cref="P:PutObjectResult.ResponseStream" />.
         /// </summary>
         public string Process { get; set; }
 
         /// <summary>
-        /// 构造一个新的<see cref="PutObjectRequest" /> 实例
+        /// Creates a new instance of <see cref="PutObjectRequest" />
         /// </summary>
-        /// <param name="bucketName">需要上传的<see cref="OssObject" />所在的Bucket</param>
-        /// <param name="key">需要上传的<see cref="OssObject" />名称</param>
-        /// <param name="content">需要上传的<see cref="OssObject" />内容</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key</param>
+        /// <param name="content">content to upload</param>
         public PutObjectRequest(string bucketName, string key, Stream content) 
             : this(bucketName, key, content, null) { }
 
         /// <summary>
-        /// 构造一个新的<see cref="PutObjectRequest" /> 实例
+        /// Creates a new instance of <see cref="PutObjectRequest" />
         /// </summary>
-        /// <param name="bucketName">需要上传的<see cref="OssObject" />所在的Bucket</param>
-        /// <param name="key">需要上传的<see cref="OssObject" />名称</param>
-        /// <param name="content">需要上传的<see cref="OssObject" />内容</param>
-        /// <param name="metadata">需要上传的<see cref="ObjectMetadata" />Metadata信息</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key</param>
+        /// <param name="content">content to upload</param>
+        /// <param name="metadata">metadata to set</param>
         public PutObjectRequest(string bucketName, string key, Stream content, ObjectMetadata metadata)
         {
             BucketName = bucketName;
@@ -87,7 +86,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 是否需要返回消息体，删除回调、UDF/Image时返回
+        /// Returns true if the request has the Process property or has the callback in metadata.
         /// </summary>
         internal bool IsNeedResponseStream()
         {
@@ -100,7 +99,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 请求是否携带有上传回调参数
+        /// Returns true if the request has the callback in Metadata property.
         /// </summary>
         internal bool IsCallbackRequest()
         {

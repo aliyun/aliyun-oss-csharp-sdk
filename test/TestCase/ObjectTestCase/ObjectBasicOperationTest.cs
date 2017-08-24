@@ -931,7 +931,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         #region modify object meta
 
         /// <summary>
-        /// 原先的meta中是A，新的里面是A->B
+        /// Modify the value in metadata from A to B
         /// </summary>
         [Test]
         public void ModifyObjectMetaWithA2B()
@@ -967,7 +967,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         /// <summary>
-        /// 原先的meta中是A，新的中仍然是A->A
+        /// Modify the metadata value from A to A
         /// </summary>
         [Test]
         public void ModifyObjectMetaWithA2A()
@@ -1002,7 +1002,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         /// <summary>
-        /// 原先有两个meta：A和B。新的meta里面只有：A->C
+        /// Adds a new metadata key C and remove one old key B.
         /// </summary>
         [Test]
         public void ModifyObjectMetaWithAB2C()
@@ -1040,7 +1040,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         /// <summary>
-        /// 原先有一个meta：A。新的meta里面有：A->C,新增B
+        /// Updates the metadata value of A to C and adds a new metadata key B
         /// </summary>
         [Test]
         public void ModifyObjectMetaWithA2CB()
@@ -1082,7 +1082,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         /// <summary>
-        /// Key长度超过路径最大长度
+        /// Update the metadata key which has more than max size key length.
         /// </summary>
         [Test]
         public void ModifyObjectMetaWithKeySizeTooLong()
@@ -1124,7 +1124,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         /// <summary>
-        /// 清空meta
+        /// Clear the metadata
         /// </summary>
         [Test]
         public void ModifyObjectMetaWithToEmpty() 
@@ -1161,7 +1161,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         /// <summary>
-        /// 新设置meta,Content-Type用的是默认值
+        /// Sets a new metadata, use default content-type.
         /// </summary>
         [Test]
         public void ModifyObjectMetaWithAddMeta() 
@@ -1197,7 +1197,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         /// <summary>
-        /// 验证是否可以设置空值
+        /// Validates if allowing empty value as the metadata value.
         /// </summary>
         [Test]
         public void ModifyObjectMetaWithSetEmptyValue()

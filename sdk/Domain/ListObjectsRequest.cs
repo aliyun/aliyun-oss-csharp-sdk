@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -11,7 +10,7 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 包含获取<see cref="OssObjectSummary" />列表的请求信息。
+    /// The request class of the operation to list objects' summary(<see cref="OssObjectSummary" />)
     /// </summary>
     public class ListObjectsRequest
     {
@@ -22,12 +21,13 @@ namespace Aliyun.OSS
         private string _encodingType;
 
         /// <summary>
-        /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets or sets bucket name
         /// </summary>
         public string BucketName { get; private set; }
 
         /// <summary>
-        /// 获取或设置一个值，限定返回的<see cref="OssObject" />的Key必须以该值作为前缀。
+        /// Gets or sets the object name prefix. The names of the returned object must be prefixed by this value.
+        /// It's optional. If it's not set, then there's no requirement on the object name.
         /// </summary>
         public string Prefix
         {
@@ -41,7 +41,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置一个值，用户设定结果从该值之后按字母排序的第一个开始返回。
+        /// Gets or sets the marker value. The name of returned objects must be greater than this value in lexicographic order.
         /// </summary>
         public string Marker
         {
@@ -55,8 +55,8 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置一个值，用于限定此次返回object的最大数。
-        /// 如果不设定，默认为100。
+        /// Gets or sets the max entries to return.
+        /// By default it's 100.
         /// </summary>
         public Int32? MaxKeys
         {
@@ -70,7 +70,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置用于对<see cref="OssObject" />按Key进行分组的字符。
+        /// Gets or sets the delimiter for grouping the returned objects based on their keys.
         /// </summary>
         public string Delimiter
         {
@@ -84,7 +84,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取encoding-type的值
+        /// Gets or sets encoding-type.
         /// </summary>
         public string EncodingType
         {
@@ -99,9 +99,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 使用给定的<see cref="Bucket" />名称构造一个新的<see cref="ListObjectsRequest" />实体。
+        /// Creates an instance of <see cref="ListObjectsRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
+        /// <param name="bucketName">bucket name</param>
         public ListObjectsRequest(string bucketName)
         {
             BucketName = bucketName;
