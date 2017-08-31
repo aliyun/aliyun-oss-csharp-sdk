@@ -277,10 +277,13 @@ namespace Aliyun.OSS.Samples
                 using (var stream = ossObject.Content)
                 {
                     var buffer = new byte[1024 * 1024];
+                    var bytesTotal = 0;
                     var bytesRead = 0;
                     while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
                     {
+                        bytesTotal += bytesRead;
                         // 处理读出的数据
+                        // TODO
                     }                    
                 }
                 
@@ -385,10 +388,13 @@ namespace Aliyun.OSS.Samples
                 using (var stream = result.Content)
                 {
                     var buffer = new byte[1024 * 1024];
+                    var bytesTotal = 0;
                     var bytesRead = 0;
                     while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
                     {
+                        bytesTotal += bytesRead;
                         // 处理读出的数据
+                        // TODO
                     }
                 }
 
