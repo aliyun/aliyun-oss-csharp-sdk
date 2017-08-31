@@ -1604,6 +1604,48 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        [Test]
+        public void ResumableUploadObjectCheckpointTest()
+        {
+            var key = "test/短板.mp4";
+
+            try
+            {
+                // checkpoint is null
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null, null);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                Assert.IsTrue(result.ETag.Length > 0);
+
+                // checkpoint is xx/
+                result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(),
+                                                        Config.DownloadFolder + Path.DirectorySeparatorChar);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                Assert.IsTrue(result.ETag.Length > 0);
+
+                // checkpoint is empty
+                result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null, "");
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                Assert.IsTrue(result.ETag.Length > 0);
+
+                // checkpoint is current directory
+                result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null, ".");
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                Assert.IsTrue(result.ETag.Length > 0);
+
+                // checkpoint is previous directory
+                result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null, "..");
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                Assert.IsTrue(result.ETag.Length > 0);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
         public class FakeClient : OssClient
         {
             public int beginFailedIndex = 0;

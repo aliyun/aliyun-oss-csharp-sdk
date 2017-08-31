@@ -471,7 +471,7 @@ namespace Aliyun.OSS
         /// </param>
         /// <returns><see cref="PutObjectResult" />实例。</returns>
         PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
-                                              EventHandler<StreamTransferProgressArgs> treamTransferProgress = null);
+                                              EventHandler<StreamTransferProgressArgs> streamTransferProgress = null);
 
         /// <summary>
         /// 追加指定的内容到指定的<see cref="OssObject" />。

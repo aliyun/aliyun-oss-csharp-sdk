@@ -1,5 +1,9 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.5.2  日期：2017/07/18
+### 变更内容
+- 修复：ResumableUploadObject文件名带汉字时上传路径无效
+
 ## 版本号：2.5.1  日期：2017/05/17
 ### 变更内容
 - 修复：ResumableUploadObject上传小文件时进度条无效

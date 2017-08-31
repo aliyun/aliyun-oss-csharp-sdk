@@ -259,14 +259,14 @@ namespace Aliyun.OSS
             {
                 maxFileNameSize = Math.Min(OssUtils.MaxPathLength - CheckpointDir.Length - 1, checkpointFileName.Length);
             }
-            return CheckpointDir + Path.PathSeparator + checkpointFileName.Substring(0, maxFileNameSize);
+            return CheckpointDir + Path.DirectorySeparatorChar + checkpointFileName.Substring(0, maxFileNameSize);
         }
-
 
         protected string Base64(string str)
         {
             var bytes = Encoding.UTF8.GetBytes(str);
-            return Convert.ToBase64String(bytes);
+            var base64Str = Convert.ToBase64String(bytes);
+            return base64Str.Replace("+", "_").Replace("/", "-");
         }
     }
 
