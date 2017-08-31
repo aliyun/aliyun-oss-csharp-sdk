@@ -149,33 +149,33 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void MultipartUploadProgressTest()
         {
-            // 初始化分片上传任务
+            // Initiate a multipart upload
             var initRequest = new InitiateMultipartUploadRequest(_bucketName, _bigObjectKey);
             var initResult = _ossClient.InitiateMultipartUpload(initRequest);
 
-            // 设置每块为 1M
+            // Set the part size
             const int partSize = 1024 * 1024 * 1;
             var partFile = new FileInfo(Config.MultiUploadTestFile);
-            // 计算分块数目
+            // Calculate the part count
             var partCount = OssTestUtils.CalculatePartCount(partFile.Length, partSize);
 
-            // 新建一个List保存每个分块上传后的ETag和PartNumber
+            // Create a list to save the result
             var partETags = new List<PartETag>();
             //upload the file
             using (var fs = new FileStream(partFile.FullName, FileMode.Open))
             {
                 for (var i = 0; i < partCount; i++)
                 {
-                    // 跳到每个分块的开头
+                    // Skip to the start position
                     long skipBytes = partSize * i;
                     fs.Position = skipBytes;
 
-                    // 计算每个分块的大小
+                    // Calculate the part size 
                     var size = partSize < partFile.Length - skipBytes
                         ? partSize
                         : partFile.Length - skipBytes;
 
-                    // 创建UploadPartRequest，上传分块
+                    // Create a UploadPartRequest, uploading the part
                     var uploadPartRequest = new UploadPartRequest(_bucketName, _bigObjectKey, initResult.UploadId)
                     {
                         InputStream = fs,
@@ -185,12 +185,12 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     uploadPartRequest.StreamTransferProgress += uploadProgressCallback;
                     var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
 
-                    // 将返回的PartETag保存到List中。
+                    // Save the result 
                     partETags.Add(uploadPartResult.PartETag);
                 }
             }
 
-            // 提交上传任务
+            // Complete the multipart upload  
             var completeRequest = new CompleteMultipartUploadRequest(_bucketName, _bigObjectKey, initResult.UploadId);
             foreach (var partETag in partETags)
             {
@@ -198,7 +198,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
             _ossClient.CompleteMultipartUpload(completeRequest);
 
-            // 校验文件内容
+            // Download the file to check the hash digest  
             OssTestUtils.DownloadObject(_ossClient, _bucketName, _bigObjectKey, _tmpLocalFile);
             var expectedHashDigest = FileUtils.ComputeContentMd5(Config.MultiUploadTestFile);
             var actualHashDigest = FileUtils.ComputeContentMd5(_tmpLocalFile);

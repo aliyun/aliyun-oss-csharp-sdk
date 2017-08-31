@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -282,7 +281,7 @@ namespace Aliyun.OSS.Samples
                     while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
                     {
                         bytesTotal += bytesRead;
-                        // 处理读出的数据
+                        // Process read data
                         // TODO
                     }                    
                 }
@@ -393,7 +392,7 @@ namespace Aliyun.OSS.Samples
                     while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
                     {
                         bytesTotal += bytesRead;
-                        // 处理读出的数据
+                        // Process read data
                         // TODO
                     }
                 }

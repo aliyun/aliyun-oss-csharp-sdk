@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using Aliyun.OSS.Model;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 获取List Multipart Upload的请求结果。
+    /// The result class of the operation to list ongoing multipart uploads.
     /// </summary>
     public class MultipartUploadListing : GenericResult
     {
@@ -20,55 +19,54 @@ namespace Aliyun.OSS
         private readonly IList<string> _commonPrefixes = new List<string>();
         
         /// <summary>
-        /// 获取Object所在的<see cref="Bucket" />的名称。
+        /// bucket name
         /// </summary>
         public string BucketName { get; internal set; }
         
         /// <summary>
-        /// 获取请求参数<see cref="P:ListMultipartUploadsRequest.KeyMarker" />的值。
+        /// The key marker from <see cref="P:ListMultipartUploadsRequest.KeyMarker" />.
         /// </summary>
         public string KeyMarker { get; internal set; }
         
         /// <summary>
-        /// 获取请求参数<see cref="P:ListMultipartUploadsRequest.Delimiter" />的值。
+        /// The delimiter from <see cref="P:ListMultipartUploadsRequest.Delimiter" />
         /// </summary>
         public string Delimiter { get; internal set; }
         
         /// <summary>
-        /// 获取请求参数<see cref="P:ListMultipartUploadsRequest.Prefix" />的值。
+        /// The prefix from <see cref="P:ListMultipartUploadsRequest.Prefix" />
         /// </summary>
         public string Prefix { get; internal set; }
         
         /// <summary>
-        /// 获取请求参数<see cref="P:ListMultipartUploadsRequest.UploadIdMarker" />的值。
+        /// The upload Id marker from <see cref="P:ListMultipartUploadsRequest.UploadIdMarker" />.
         /// </summary>
         public string UploadIdMarker { get; internal set; }
         
         /// <summary>
-        /// 获取请求参数<see cref="P:ListMultipartUploadsRequest.MaxUploads" />的值。
+        /// The max upload count from <see cref="P:ListMultipartUploadsRequest.MaxUploads" />
         /// </summary>
         public int MaxUploads { get; internal set; }
         
         /// <summary>
-        /// 标明是否本次返回的Multipart Upload结果列表被截断。
-        /// “true”表示本次没有返回全部结果；
-        /// “false”表示本次已经返回了全部结果。
+        /// The flag which indciates if there's more data to return in OSS server side.
+        /// “true” means there's more data to return.
+        /// “false” means no more data to return.
         /// </summary>
         public bool IsTruncated { get; internal set; }
         
         /// <summary>
-        /// 列表的起始Object位置。
+        /// Gets the next key marker value. If the IsTruncated is true, this could be the next list call's KeyMarker value.
         /// </summary>
         public string NextKeyMarker { get; internal set; }
         
         /// <summary>
-        /// 如果本次没有返回全部结果，响应请求中将包含NextUploadMarker元素，
-        /// 用于标明接下来请求的UploadMarker值。
+        /// Gets the next upload id marker value. If the IsTruncated is true, this value could be the next list call's UploadIdMarker value.
         /// </summary>
         public string NextUploadIdMarker { get; internal set; }
         
         /// <summary>
-        /// 所有Multipart Upload事件
+        /// The iterator of all multipart upload returned.
         /// </summary>
         public IEnumerable<MultipartUpload> MultipartUploads
         {
@@ -76,7 +74,7 @@ namespace Aliyun.OSS
         }
         
         /// <summary>
-        /// 获取返回结果中的CommonPrefixes部分。
+        /// Gets all the common prefixes (which could be thought as virtual 'folder').
         /// </summary>
         public IEnumerable<string> CommonPrefixes
         {
@@ -84,27 +82,27 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="MultipartUploadListing" />实例。
+        /// Creates a new instance of <see cref="MultipartUploadListing" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
+        /// <param name="bucketName">bucket name</param>
         public MultipartUploadListing(string bucketName)
         {
             BucketName = bucketName;
         }
         
         /// <summary>
-        /// 增加<see cref="MultipartUpload"/>事件
+        /// Adds a <see cref="MultipartUpload"/> instance---internal only.
         /// </summary>
-        /// <param name="multipartUpload">事件信息</param>
+        /// <param name="multipartUpload">a multipart upload instance</param>
         internal void AddMultipartUpload(MultipartUpload multipartUpload)
         {
             _multipartUploads.Add(multipartUpload);
         }
         
         /// <summary>
-        /// 增加公共前缀
+        /// Adds a prefix---internal only.
         /// </summary>
-        /// <param name="prefix">需要增加的前缀字符串</param>
+        /// <param name="prefix">The prefix</param>
         internal void AddCommonPrefix(string prefix)
         {
             _commonPrefixes.Add(prefix);

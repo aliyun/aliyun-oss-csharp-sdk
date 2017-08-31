@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -28,7 +27,7 @@ using ICredentials = Aliyun.OSS.Common.Authentication.ICredentials;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 访问阿里云对象存储服务（Object Storage Service， OSS）的入口类。
+    /// The OSS's access entry point interface's implementation.
     /// </summary>
     public class OssClient : IOss
     {
@@ -43,110 +42,104 @@ namespace Aliyun.OSS
         #region Constructors
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、阿里云颁发的Access Key Id/Access Key Secret构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance of <see cref="OssClient" /> with OSS endpoint, access key Id, access key secret (cound be found from web console).
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="accessKeyId">OSS的访问ID。</param>
-        /// <param name="accessKeySecret">OSS的访问密钥。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="accessKeyId">OSS access key Id</param>
+        /// <param name="accessKeySecret">OSS key secret</param>
         public OssClient(string endpoint, string accessKeyId, string accessKeySecret)
             : this(FormatEndpoint(endpoint), accessKeyId, accessKeySecret) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、STS提供的临时Token信息(Access Key Id/Access Key Secret/Security Token)
-        /// 构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance of <see cref="OssClient" /> with OSS endpoint, access key Id, access key secret (cound be found from web console) and STS token.
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="accessKeyId">STS提供的临时访问ID。</param>
-        /// <param name="accessKeySecret">STS提供的访问密钥。</param>
-        /// <param name="securityToken">STS提供的安全令牌。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="accessKeyId">STS's temp access key Id</param>
+        /// <param name="accessKeySecret">STS's temp access key secret</param>
+        /// <param name="securityToken">STS security token</param>
         public OssClient(string endpoint, string accessKeyId, string accessKeySecret, string securityToken)
             : this(FormatEndpoint(endpoint), accessKeyId, accessKeySecret, securityToken) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、阿里云颁发的Access Key Id/Access Key Secret、客户端配置
-        /// 构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance of <see cref="OssClient" /> with OSS endpoint, access key Id, access key secret and client configuration. 
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="accessKeyId">OSS的访问ID。</param>
-        /// <param name="accessKeySecret">OSS的访问密钥。</param>
-        /// <param name="configuration">客户端配置。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="accessKeyId">OSS access key Id</param>
+        /// <param name="accessKeySecret">OSS access key secret</param>
+        /// <param name="configuration">client side configuration</param>
         public OssClient(string endpoint, string accessKeyId, string accessKeySecret, ClientConfiguration configuration)
             : this(FormatEndpoint(endpoint), new DefaultCredentialsProvider(new DefaultCredentials(accessKeyId, accessKeySecret, null)), configuration) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、STS提供的临时Token信息(Access Key Id/Access Key Secret/Security Token)、
-        /// 客户端配置构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance of <see cref="OssClient" /> with OSS endpoint, access key Id, access key secret (cound be found from web console) and STS token.
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="accessKeyId">STS提供的临时访问ID。</param>
-        /// <param name="accessKeySecret">STS提供的临时访问密钥。</param>
-        /// <param name="securityToken">STS提供的安全令牌。</param>
-        /// <param name="configuration">客户端配置。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="accessKeyId">STS's temp access key Id</param>
+        /// <param name="accessKeySecret">STS's temp access key secret</param>
+        /// <param name="securityToken">STS security token</param>
+        /// <param name="configuration">client side configuration</param>
         public OssClient(string endpoint, string accessKeyId, string accessKeySecret, string securityToken, ClientConfiguration configuration)
             : this(endpoint, new DefaultCredentialsProvider(new DefaultCredentials(accessKeyId, accessKeySecret, securityToken)), configuration) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、Credentials提供者构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance with specified credential information.
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="credsProvider">Credentials提供者。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="credsProvider">Credentials information</param>
         public OssClient(string endpoint, ICredentialsProvider credsProvider)
             : this(FormatEndpoint(endpoint), credsProvider, new ClientConfiguration()) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、Credentials提供者构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance with specified credential information and client side configuration.
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="credsProvider">Credentials提供者。</param>
-        /// <param name="configuration">客户端配置。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="credsProvider">Credentials provider</param>
+        /// <param name="configuration">client side configuration</param>
         public OssClient(string endpoint, ICredentialsProvider credsProvider, ClientConfiguration configuration)
             : this(FormatEndpoint(endpoint), credsProvider, configuration) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、阿里云颁发的Access Key Id/Access Key Secret构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance with specified endpoint, access key Id and access key secret. 
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="accessKeyId">OSS的访问ID。</param>
-        /// <param name="accessKeySecret">OSS的访问密钥。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="accessKeyId">OSS access key Id</param>
+        /// <param name="accessKeySecret">OSS access key secret</param>
         public OssClient(Uri endpoint, string accessKeyId, string accessKeySecret)
             : this(endpoint, accessKeyId, accessKeySecret, null, new ClientConfiguration()) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、STS提供的临时Token信息(Access Key Id/Access Key Secret/Security Token)
-        /// 构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance with specified endpoint, access key Id and access key secret and STS token. 
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="accessKeyId">STS提供的临时访问ID。</param>
-        /// <param name="accessKeySecret">STS提供的临时访问密钥。</param>
-        /// <param name="securityToken">STS提供的安全令牌。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="accessKeyId">STS access key Id</param>
+        /// <param name="accessKeySecret">STS security token</param>
+        /// <param name="securityToken">STS security token</param>
         public OssClient(Uri endpoint, string accessKeyId, string accessKeySecret, string securityToken)
             : this(endpoint, accessKeyId, accessKeySecret, securityToken, new ClientConfiguration()) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、阿里云颁发的Access Key Id/Access Key Secret、客户端配置
-        /// 构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance with specified endpoint, access key Id and access key secret and configuration. 
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="accessKeyId">OSS的访问ID。</param>
-        /// <param name="accessKeySecret">OSS的访问密钥。</param>
-        /// <param name="configuration">客户端配置。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="accessKeyId">OSS access key id</param>
+        /// <param name="accessKeySecret">OSS access key secret</param>
+        /// <param name="configuration">client side configuration</param>
         public OssClient(Uri endpoint, string accessKeyId, string accessKeySecret, ClientConfiguration configuration)
             : this(endpoint, new DefaultCredentialsProvider(new DefaultCredentials(accessKeyId, accessKeySecret, null)), configuration) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、STS提供的临时Token信息(Access Key Id/Access Key Secret/Security Token)、
-        /// 客户端配置构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance with specified endpoint, access key Id, access key secret, STS security token and configuration. 
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="accessKeyId">STS提供的临时访问ID。</param>
-        /// <param name="accessKeySecret">STS提供的临时访问密钥。</param>
-        /// <param name="securityToken">STS提供的安全令牌。</param>
-        /// <param name="configuration">客户端配置。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="accessKeyId">STS access key</param>
+        /// <param name="accessKeySecret">STS access key secret</param>
+        /// <param name="securityToken">STS security token</param>
+        /// <param name="configuration">client side configuration</param>
         public OssClient(Uri endpoint, string accessKeyId, string accessKeySecret, string securityToken, ClientConfiguration configuration)
             : this(endpoint, new DefaultCredentialsProvider(new DefaultCredentials(accessKeyId, accessKeySecret, securityToken)), configuration) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、Credentials提供者构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance with specified endpoint and credential information. 
         /// </summary>
         /// <param name="endpoint">OSS的访问地址。</param>
         /// <param name="credsProvider">Credentials提供者。</param>
@@ -154,11 +147,11 @@ namespace Aliyun.OSS
             : this(endpoint, credsProvider, new ClientConfiguration()) { }
 
         /// <summary>
-        /// 由用户指定的OSS访问地址、Credentials提供者、客户端配置构造一个新的<see cref="OssClient" />实例。
+        /// Creates an instance with specified endpoint, credential information and credential information. 
         /// </summary>
-        /// <param name="endpoint">OSS的访问地址。</param>
-        /// <param name="credsProvider">Credentials提供者。</param>
-        /// <param name="configuration">客户端配置。</param>
+        /// <param name="endpoint">OSS endpoint</param>
+        /// <param name="credsProvider">Credentials information</param>
+        /// <param name="configuration">client side configuration</param>
         public OssClient(Uri endpoint, ICredentialsProvider credsProvider, ClientConfiguration configuration)
         {
             if (endpoint == null)
@@ -704,7 +697,7 @@ namespace Aliyun.OSS
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
                 throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
 
-            // 计算content-type
+            // calculates content-type
             metadata = metadata ?? new ObjectMetadata();
             SetContentTypeIfNull(key, fileToUpload, ref metadata);
 
@@ -718,14 +711,14 @@ namespace Aliyun.OSS
         public PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
                                                      EventHandler<StreamTransferProgressArgs> streamTransferProgress = null)
         {
-            // 计算content-type
+            // calculates content-type
             metadata = metadata ?? new ObjectMetadata();
             SetContentTypeIfNull(key, null, ref metadata);
 
-            // 调整实际的part size
+            // Adjust part size
             long actualPartSize = AdjustPartSize(partSize);
 
-            // 如果上传文件小于分片大小，直接上传即可
+            // If the file size is less than the part size, upload it directly.
             if (content.Length <= actualPartSize)
             {
                 var putObjectRequest = new PutObjectRequest(bucketName, key, content, metadata)
@@ -747,7 +740,7 @@ namespace Aliyun.OSS
 
             ResumableUploadWithRetry(bucketName, key, content, resumableContext, streamTransferProgress);
 
-            // 完成上传
+            // Completes the upload
             var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, resumableContext.UploadId);
             if (metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
             {
@@ -936,10 +929,10 @@ namespace Aliyun.OSS
         {
             ThrowIfNullRequest(copyObjectRequest);
 
-            // 调整实际的part size
+            // Adjusts part size
             long actualPartSize = AdjustPartSize(partSize);
 
-            // 获取拷贝文件大小
+            // Gets the file size
             var objectMeta = GetObjectMetadata(copyObjectRequest.SourceBucketName, copyObjectRequest.SourceKey);
             var fileSize = objectMeta.ContentLength;
 
@@ -959,10 +952,10 @@ namespace Aliyun.OSS
                 resumableCopyContext.UploadId = initResult.UploadId;
             }
             
-            //执行拷贝
+            // Executes the copy
             ResumableCopyWithRetry(copyObjectRequest, resumableCopyContext);
 
-            // 完成拷贝
+            // Completes the copy
             var completeRequest = new CompleteMultipartUploadRequest(copyObjectRequest.DestinationBucketName, 
                                                                      copyObjectRequest.DestinationKey, resumableCopyContext.UploadId);
             foreach (var part in resumableCopyContext.PartContextList)
@@ -973,7 +966,7 @@ namespace Aliyun.OSS
 
             resumableCopyContext.Clear();
 
-            // 获取目标文件上次修改时间
+            // Gets the last modified time
             objectMeta = GetObjectMetadata(copyObjectRequest.DestinationBucketName, copyObjectRequest.DestinationKey);
             return new CopyObjectResult() { ETag = result.ETag, LastModified = objectMeta.LastModified };
         }

@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -16,7 +15,7 @@ using Aliyun.OSS.Common.Internal;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 指定从OSS下载Object的请求参数。
+    /// The request class for getting object from OSS.
     /// </summary>
     public class GetObjectRequest
     {
@@ -25,55 +24,55 @@ namespace Aliyun.OSS
         private readonly ResponseHeaderOverrides _responseHeaders = new ResponseHeaderOverrides();
 
         /// <summary>
-        /// 获取或设置<see cref="Bucket" />的名称。
+        /// Gets or sets <see cref="Bucket" /> name.
         /// </summary>
         public string BucketName { get; private set; }
 
         /// <summary>
-        /// 获取或设置要下载<see cref="OssObject" />的Key。
+        /// Gets or sets <see cref="OssObject" /> key
         /// </summary>
         public string Key { get; private set; }
 
         /// <summary>
-        /// 获取表示请求应当返回<see cref="OssObject" />内容的字节范围。
+        /// Gets <see cref="OssObject" /> range to read
         /// </summary>
         /// <remarks>
-        /// 调用<see cref="SetRange" />方法进行设置，如果没有设置，则返回null。
+        /// Calls <see cref="SetRange" /> to set. If it's not set, returns null.
         /// </remarks>
         public long[] Range { get; private set; }
 
         /// <summary>
-        /// 获取或设置<see cref="OssObject" />内容的处理方法，下载的内容为处理后的结果。
+        /// Gets or sets <see cref="OssObject" />'s process method (such as resize, sharpen, etc)
         /// </summary>
         public string Process { get; set; }
 
         /// <summary>
-        /// 获取或设置“If-Unmodified-Since”参数。
+        /// Gets or sets "If-Unmodified-Since" parameter
         /// </summary>
         /// <remarks>
-        /// 该参数表示：如果传入参数中的时间等于或者晚于文件实际修改时间，则传送文件；
-        /// 如果早于实际修改时间，则返回错误。
+        /// It means if its value is same or later than the actual last modified time, the file will be downloaded. 
+        /// Otherwise, return precondition failed (412).
         /// </remarks>
         public DateTime? UnmodifiedSinceConstraint { get; set; }
 
         /// <summary>
-        /// 获取或设置“If-Modified-Since”参数。
+        /// Gets or sets "If-Modified-Since".
         /// </summary>
         /// <remarks>
-        /// 该参数表示：如果指定的时间早于实际修改时间，则正常传送文件，并返回 200 OK；
-        /// 如果参数中的时间和实际修改时间一样或者更晚，会返回错误。
+        /// It means if its value is smaller the actual last modified time, the file will be downloaded. 
+        /// Otherwise, return precondition failed (412).
         /// </remarks>
         public DateTime? ModifiedSinceConstraint { get; set; }
 
         /// <summary>
-        /// 获取或设置进度回调
+        /// Gets or sets the progress callback
         /// </summary>
         public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
 
         /// <summary>
-        /// 获取一个列表表示：如果传入期望的ETag和<see cref="OssObject" />的ETag匹配，则正常的发送文件。
-        /// 如果不符合，返回错误。
-        /// 对应“If-Match”参数，
+        /// Gets the ETag matching constraint list. If the actual ETag matches any one in the constraint list, the file will be downloaded.
+        /// Otherwise, returns precondition failed.
+        /// The corresponding http header is "If-Match".
         /// </summary>
         public IList<string> MatchingETagConstraints
         {
@@ -81,9 +80,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取一个列表表示：如果传入期望的ETag和<see cref="OssObject" />的ETag不匹配，则正常的发送文件。
-        /// 如果符合，返回错误。
-        /// 对应“If-None-Match”参数，
+        /// Gets the ETag non-matching constraint list. If the actual ETag does not match any one in the constraint list, the file will be downloaded.
+        /// Otherwise, returns precondition failed.
+        /// The corresponding http header is "If-None-Match".
         /// </summary>
         public IList<string> NonmatchingETagConstraints
         {
@@ -91,7 +90,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取的返回请求头重载<see cref="ResponseHeaderOverrides" />实例。
+        /// Gets the overrided response headers.
         /// </summary>
         public ResponseHeaderOverrides ResponseHeaders
         {
@@ -99,10 +98,10 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="GetObjectRequest" />实例。
+        /// Creates a new instance of <see cref="GetObjectRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="P:OssObject.Key" />。</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key</param>
         public GetObjectRequest(string bucketName, string key)
         {
             BucketName = bucketName;
@@ -110,11 +109,11 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="GetObjectRequest" />实例。
+        /// Creates a new instance of <see cref="GetObjectRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="P:OssObject.Key" />。</param>
-        /// <param name="process"><see cref="OssObject" />的内容的处理方法，下载的内容为处理后的结果。</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key name</param>
+        /// <param name="process">The process method for image file in OSS</param>
         public GetObjectRequest(string bucketName, string key, string process)
         {
             BucketName = bucketName;
@@ -123,23 +122,23 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 设置一个值表示请求应当返回Object内容的字节范围（可选）。
+        /// Sets the read range of the target object (optional).
+        /// It follows the HTTP header "Range"'s semantic 
         /// </summary>
         /// <param name="start">
-        /// 范围的起始值。
+        /// The start value in the range.
         /// <para>
-        /// 当值大于或等于0时，表示起始的字节位置。
-        /// 当值为-1时，表示不设置起始的字节位置，此时end参数不能-1，
-        /// 例如end为100，Range请求头的值为bytes=-100，表示获取最后100个字节。
+        /// If the value is non-negative, it means the start index of the object to read. 
+        /// If the value is -1, it means the start index is determined by end parameter and thus the end parameter must not be -1.
+        /// For example, if the end is 100, then the start is bytes=-100 (bytes is the total length of the object). It means to read the last 100 bytes of the object.
         /// </para>
         /// </param>
         /// <param name="end">
-        /// 范围的结束值，应当小于内容的字节数。（最大为内容的字节数-1）
+        /// The end value of the range. And it must be smaller than the total length of the object.
         /// <para>
-        /// 当值小于或等于0时，表示结束的字节位或最后的字节数。
-        /// 当值为-1时，表示不设置结束的字节位置，此时start参数不能为-1，
-        /// 例如start为99，Range请求头的值为bytes=99-，表示获取第100个字节及
-        /// 以后的所有内容。
+        /// If the value is non-negative, it means the end index of the object to read.
+        /// If the value is -1, it means the end is the object's last byte and start must not be -1.
+        /// For example, if the start is 99 and end is -1, it means to read the whole object except the first 99 bytes.
         /// </para>
         /// </param>
         public void SetRange(long start, long end)
@@ -148,9 +147,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 添加Header值
+        /// Populate the http headers according to the properties of this object.
         /// </summary>
-        /// <param name="headers">添加完Header之后的最终Header</param>
+        /// <param name="headers">The generated http headers</param>
         internal void Populate(IDictionary<string, string> headers)
         {
             if (Range != null && (Range[0] >= 0 || Range[1] >= 0))

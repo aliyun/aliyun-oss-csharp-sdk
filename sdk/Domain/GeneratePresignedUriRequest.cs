@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
  
  
@@ -13,7 +12,7 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 指定生成URL预签名的请求参数。
+    /// The request class of the operation to sign the URL
     /// </summary>
     public class GeneratePresignedUriRequest
     {
@@ -23,7 +22,7 @@ namespace Aliyun.OSS
         private ResponseHeaderOverrides _responseHeader = new ResponseHeaderOverrides();
 
         /// <summary>
-        /// 获取或者设置HttpMethod。
+        /// HTTP method getter/setter.
         /// </summary>
         public SignHttpMethod Method
         {
@@ -37,47 +36,50 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或者设置Object所在Bucket的名称。
+        /// Bucket name getter/setter
         /// </summary>
         public string BucketName { get; set; }
 
         /// <summary>
-        /// 获取或者设置Object的名称。
+        /// Object key getter/setter
         /// </summary>
         public string Key { get; set; }
 
         /// <summary>
-        /// 获取或设置签名URL对应的文件类型。
+        /// Getter/setter of the target file's content-type header.
         /// </summary>
         public string ContentType { get; set; }
 
         /// <summary>
-        /// 获取或设置签名URL对应的文件MD5。
+        /// Getter/setter of the target file's MD5.
+        /// Note that the setter should only be called by the SDK internally.
         /// </summary>
         public string ContentMd5 { get; set; }
 
         /// <summary>
-        /// 获取或者设置过期时间。
+        /// Getter/setter of the expiration time of the signed URL.
         /// </summary>
         public DateTime Expiration { get; set; }
 
         /// <summary>
-        /// 获取或设置文件处理方式。
+        /// Process getter/setter.
+        /// Process is specific to image files on which a specific operation (such as resize, sharpen,etc ) could be applied.
         /// </summary>
         public string Process { get; set; }
 
         /// <summary>
-        /// 获取或设置上传回调请求头，base64后的值。
+        /// Callback getter/setter, encoded in base64
         /// </summary>
         public string Callback { get; set; }
 
         /// <summary>
-        /// 获取或设置上传回调自定义参数，base64后的值。
+        /// Callback parameters, in base64
         /// </summary>
         public string CallbackVar { get; set; }
 
         /// <summary>
-        /// 获取或者设置要重载的返回请求头。
+        /// ResponseHeaders getter/setter
+        /// Response headers is to ask OSS service to return these headers (and their values) in the response.
         /// </summary>
         public ResponseHeaderOverrides ResponseHeaders
         {
@@ -91,7 +93,9 @@ namespace Aliyun.OSS
         }
         
         /// <summary>
-        /// 获取或者设置用户自定义的元数据，表示以x-oss-meta-为前缀的请求头。
+        /// Gets or sets the UserMetadata dictionary. 
+        /// The SDK will automatically add the x-oss-meta- as the prefix of the metadata. 
+        /// So the key in this property should not include x-oss-meta- prefix anymore.
         /// </summary>
         public IDictionary<string, string> UserMetadata 
         {
@@ -105,7 +109,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或者设置用户请求参数。
+        /// Gets or sets query parameters
         /// </summary>
         public IDictionary<string, string> QueryParams
         {
@@ -124,41 +128,42 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 添加用户Meta项
+        /// Add a user metadata
+        /// The metaItem should not start with 'x-oss-meta-'.
         /// </summary>
-        /// <param name="metaItem">meta的名称</param>
-        /// <param name="value">metal的值</param>
+        /// <param name="metaItem">meta name</param>
+        /// <param name="value">value of the metaItem</param>
         public void AddUserMetadata(string metaItem, string value)
         {
             _userMetadata.Add(metaItem, value);
         }
 
         /// <summary>
-        /// 添加用户参数
+        /// Add a query parameter
         /// </summary>
-        /// <param name="param">参数名称</param>
-        /// <param name="value">参数值</param>
+        /// <param name="param">param name</param>
+        /// <param name="value">param value</param>
         public void AddQueryParam(string param, string value)
         {
             _queryParams.Add(param, value);
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="GeneratePresignedUriRequest" />实例。
+        /// Creates a new instance of <see cref="GeneratePresignedUriRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="P:OssObject.Key" /></param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key</param>
         public GeneratePresignedUriRequest(string bucketName, string key)
             : this(bucketName, key, SignHttpMethod.Get)
         {
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="GeneratePresignedUriRequest" />实例。
+        /// Creates a <see cref="GeneratePresignedUriRequest" /> instance.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="P:OssObject.Key" /></param>
-        /// <param name="httpMethod">http传输方式</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key</param>
+        /// <param name="httpMethod">http method</param>
         public GeneratePresignedUriRequest(string bucketName, string key, SignHttpMethod httpMethod)
         {
             OssUtils.CheckBucketName(bucketName);

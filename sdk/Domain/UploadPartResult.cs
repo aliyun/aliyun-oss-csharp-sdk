@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using Aliyun.OSS.Model;
@@ -10,22 +9,22 @@ using Aliyun.OSS.Model;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 获取上传某分块的结果。
+    /// The result class of the operation to upload part.
     /// </summary>
     public class UploadPartResult : GenericResult
     {
         /// <summary>
-        /// 获取一个值表示与Object相关的hex编码的128位MD5摘要。
+        /// Gets or sets Object ETag
         /// </summary>
         public string ETag { get; internal set; }
 
         /// <summary>
-        /// 获取一个值表示分块的标识
+        /// Gets or sets Part number
         /// </summary>
         public int PartNumber { get; internal set; }
 
         /// <summary>
-        /// 获取包含Part标识号码和ETag值的<see cref="PartETag" />对象
+        /// Gets the PartEtag instance which consists of a part number and the part's ETag
         /// </summary>
         public PartETag PartETag
         {

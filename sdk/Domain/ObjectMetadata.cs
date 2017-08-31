@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -13,9 +12,9 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// OSS中Object的元数据。
+    /// OSS object's metadata, which is the collection of 'key,value' pair.
     /// <para>
-    /// 包含了用户自定义的元数据，也包含了OSS发送的标准HTTP头(如Content-Length, ETag等）。
+    /// It includes user's custom metadata, as well as standard HTTP headers such as Content-Length, ETag, etc.
     /// </para>
     /// </summary>
     public class ObjectMetadata
@@ -26,19 +25,18 @@ namespace Aliyun.OSS
             new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// 256位的Aes加密算法
+        /// 256 bit ASE encryption algorithm. 
         /// </summary>
         public const string Aes256ServerSideEncryption = "AES256";
 
         /// <summary>
-        /// 获取用户自定义的元数据。
+        /// Gets the user's custom metadata.
         /// </summary>
         /// <remarks>
-        /// OSS内部保存用户自定义的元数据时，会以x-oss-meta-为请求头的前缀。
-        /// 但用户通过该接口处理用户自定义元数据里，不需要加上前缀“x-oss-meta-”。
-        /// 同时，元数据字典的键名是不区分大小写的，并且在从服务器端返回时会全部以小写形式返回，
-        /// 即使在设置时给定了大写字母。比如键名为：MyUserMeta，通过GetObjectMetadata接口
-        /// 返回时键名会变为：myusermeta。
+        /// In OSS server side, it will add "x-oss-meta-" as the prefix for the keys of custom metadata. 
+        /// However, here the key in UserMetadata should not include "x-oss-meta-".
+        /// And the key is case insensitive--in fact all the keys returned from server will be in lowercase anyway.
+        /// For example, for a key MyUserMeta, it will be myusermeta from the result of GetObjectMetadata().
         /// </remarks>
         public IDictionary<string, string> UserMetadata
         {
@@ -46,7 +44,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取HTTP标准属性（HTTP Headers）。
+        /// Gets HTTP standard headers and their values.
         /// </summary>
         public IDictionary<string, object> HttpMetadata
         {
@@ -54,7 +52,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取Last-Modified请求头的值，表示Object最后一次修改的时间。
+        /// Gets or sets the last modified timestamp of the OSS object.
         /// </summary>
         public DateTime LastModified
         {
@@ -70,7 +68,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取Expires请求头，表示Object的过期时间。
+        /// Gets or sets the expiration time of the object.
         /// </summary>
         public DateTime ExpirationTime
         {
@@ -86,7 +84,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取Content-Length请求头，表示Object内容的大小。
+        /// Gets or sets the content length of the object.
         /// </summary>
         public long ContentLength
         {
@@ -102,7 +100,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置Content-Type请求头，表示Object内容的类型，为标准的MIME类型。
+        /// Gets or sets the content type of the objeft. It's the standard MIME type.
         /// </summary>
         public string ContentType
         {
@@ -121,7 +119,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置Content-Encoding请求头，表示Object内容的编码方式。
+        /// Gets or sets the content encoding of the object.
         /// </summary>
         public string ContentEncoding
         {
@@ -140,7 +138,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置Cache-Control请求头，表示用户指定的HTTP请求/回复链的缓存行为。
+        /// Gets or sets the value of HTTP Cache-Control header.
         /// </summary>
         public string CacheControl
         {
@@ -159,7 +157,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取Content-Disposition请求头，表示MIME用户代理如何显示附加的文件。
+        /// Gets or sets the value of HTTP Content-Disposition header.
         /// </summary>
         public string ContentDisposition
         {
@@ -178,7 +176,8 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或者设置ETAG值，如果要设置Content-Md5值，请使用Content-Md5属性。
+        /// Gets or sets the value of HTTP ETag header. Note that this is set by OSS server. 
+        /// To set the Content-MD5 value, use HTTP COntent-MD5 header instead.
         /// </summary>
         public string ETag
         {
@@ -197,7 +196,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置一个值表示与Object相关的hex编码的128位MD5摘要。
+        /// Gets or sets the HTTP Content-MD5 header, which is the MD5 summary in Hex string of the object.
         /// </summary>
         public string ContentMd5
         {
@@ -216,7 +215,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取和设置服务器端加密算法
+        /// Gets or sets the server side encryption algorithm. Only AES256 is support for now.
         /// </summary>
         public string ServerSideEncryption
         {
@@ -234,7 +233,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取文件类型[Normal/Appendable]
+        /// Gets the object type (Normal or Appendable)
         /// </summary>
         public string ObjectType
         {
@@ -246,7 +245,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 初始化一个新的<see cref="ObjectMetadata" />实例。
+        /// Creates a new instance of <see cref="ObjectMetadata" />.
         /// </summary>
         public ObjectMetadata()
         {
@@ -254,10 +253,10 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 增加HTTP header信息
+        /// Adds one HTTP header and its value.
         /// </summary>
-        /// <param name="key">header元素的名称</param>
-        /// <param name="value">header元素的值</param>
+        /// <param name="key">header name</param>
+        /// <param name="value">header value</param>
         public void AddHeader(string key, object value)
         {
             _metadata.Add(key, value);
@@ -311,9 +310,9 @@ namespace Aliyun.OSS
         }
         
         /// <summary>
-        /// 元数据中是否含有上传回调
+        /// Get the flag which indicates if the metadata specifies the callback.
         /// </summary>
-        /// <param name="metadata"></param>
+        /// <param name="metadata">The metadata object to check</param>
         /// <returns></returns>
         internal static bool HasCallbackHeader(ObjectMetadata metadata)
         {

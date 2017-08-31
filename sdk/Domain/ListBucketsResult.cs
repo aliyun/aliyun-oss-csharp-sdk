@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System.Collections.Generic;
@@ -12,38 +11,38 @@ using Aliyun.OSS.Model;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 列举Bucket的请求结果。
+    /// The result class of the operation to list buckets.
     /// </summary>
     public class ListBucketsResult : GenericResult
     {
         /// <summary>
-        /// 获取一个值，限定返回的<see cref="Bucket" />的Key必须以该值作为前缀。
+        /// Gets or sets the bucket name prefix(optional).
         /// </summary>
         public string Prefix { get; internal set; }
 
         /// <summary>
-        /// 获取一个值，用户设定结果从该值之后按字母排序的第一个开始返回。
+        /// Gets or sets the bucket name marker.Its value should be same as the ListBucketsRequest.Marker.
         /// </summary>
         public string Marker { get; internal set; }
 
         /// <summary>
-        /// 获取一个值，用于限定此次返回bucket的最大数。
-        /// 如果不设定，默认为100。
+        /// Gets or sets the max entries to return.
+        /// By default it's 100.
         /// </summary>
         public int? MaxKeys { get; internal set; }
 
         /// <summary>
-        /// 获取一个值，指明是否所有的结果都已经返回。
+        /// Gets or sets the flag of truncated. If it's true, means not all buckets have been returned.
         /// </summary>
         public bool? IsTruncated { get; internal set; }
 
         /// <summary>
-        /// 获取一个值，指明下一个Marker。
+        /// Gets the next marker's value. Assign this value to the next call's ListBucketRequest.marker.
         /// </summary>
         public string NextMaker { get; internal set; }
 
         /// <summary>
-        /// 获取一个值，指明Bucket请求列表。
+        /// Gets the bucket iterator.
         /// </summary>
         public IEnumerable<Bucket> Buckets { get; internal set; }
     }

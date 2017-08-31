@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -12,16 +11,16 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS.Common.Authentication
 {
     /// <summary>
-    /// 默认鉴权工厂类
+    /// Default ICredentialProvider implementation
     /// </summary>
     public class DefaultCredentialsProvider : ICredentialsProvider
     {
         private volatile ICredentials _creds;
 
         /// <summary>
-        /// 构造一个<see cref="DefaultCredentialsProvider"/>的实例
+        /// Creates a instance of <see cref="DefaultCredentialsProvider"/>
         /// </summary>
-        /// <param name="creds"><see cref="ICredentials"/>接口的实例</param>
+        /// <param name="creds"><see cref="ICredentials"/>ICredentials instance</param>
         public DefaultCredentialsProvider(ICredentials creds)
         {
             SetCredentials(creds);

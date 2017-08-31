@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -13,33 +12,33 @@ using System.Text;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// Conditions匹配方式。
+    /// The match mode enum
     /// </summary>
     public enum MatchMode
     {
         /// <summary>
-        /// 未知的
+        /// Unknown
         /// </summary>
         Unknown,
 
         /// <summary>
-        /// 精确匹配
+        /// Exactly match
         /// </summary>
         Exact,
 
         /// <summary>
-        /// 前缀匹配
+        /// Match the prefix only
         /// </summary>
         StartWith,
 
         /// <summary>
-        /// 范围匹配
+        /// Match the size range. For example, the policy could be applied the files of size between 1KB to 4KB.
         /// </summary>
         Range
     };
 
     /// <summary>
-    /// Conditions元组类型，目前支持二元组（{ ... }）、三元组（[ ... ]）。
+    /// Tuplre type enum.!-- Currently only two tuple {key:value} and three tuple type (tuple1,tuple2,tuple3) are supported.
     /// </summary>
     internal enum TupleType
     {
@@ -49,7 +48,7 @@ namespace Aliyun.OSS
     };
 
     /// <summary>
-    /// 抽象Condition项。
+    /// The abstract Condition Item.
     /// </summary>
     internal abstract class AbstractConditionItem
     {
@@ -68,7 +67,7 @@ namespace Aliyun.OSS
     }
 
     /// <summary>
-    /// Equal类型条件项。
+    /// EqualConditionItem definition
     /// </summary>
     internal class EqualConditionItem : AbstractConditionItem
     {
@@ -103,7 +102,7 @@ namespace Aliyun.OSS
     }
 
     /// <summary>
-    /// StartWith类型条件项。
+    /// StartwithConditionItem definition.
     /// </summary>
     internal class StartWithConditionItem : AbstractConditionItem
     {
@@ -122,7 +121,7 @@ namespace Aliyun.OSS
     }
 
     /// <summary>
-    /// ContentLengthRange类型条件项。
+    /// Content size's RangeConditionItem definition.
     /// </summary>
     internal class RangeConditionItem : AbstractConditionItem
     {
@@ -143,67 +142,67 @@ namespace Aliyun.OSS
     }
 
     /// <summary>
-    /// Conditions列表，用于指定 Post 请求表单域的合法值。
+    /// Conditions list. It specifies all valid fields in the post form.
     /// </summary>
     public class PolicyConditions
     {
         /// <summary>
-        /// 文件长度范围
+        /// Content length range
         /// </summary>
         public const string CondContentLengthRange = "content-length-range";
 
         /// <summary>
-        /// 文件被下载时的网页的缓存行为
+        /// The cache control behavior for downloading files
         /// </summary>
         public const string CondCacheControl = "Cache-Control";
 
         /// <summary>
-        /// RFC2616中定义的HTTP请求内容类型
+        /// Content types defined in RFC2616
         /// </summary>
         public const string CondContentType = "Content-Type";
 
         /// <summary>
-        /// 文件被下载时的名称
+        /// Content disposition behavior 
         /// </summary>
         public const string CondContentDisposition = "Content-Disposition";
 
         /// <summary>
-        /// 文件被下载时的内容编码格式
+        /// The content encoding
         /// </summary>
         public const string CondContentEncoding = "Content-Encoding";
 
         /// <summary>
-        /// 过期时间
+        /// Expiration time
         /// </summary>
         public const string CondExpires = "Expires";
 
         /// <summary>
-        /// 名称
+        /// object key
         /// </summary>
         public const string CondKey = "key";
 
         /// <summary>
-        /// 成功时的重定向
+        /// redirect upon success
         /// </summary>
         public const string CondSuccessActionRedirect = "success_action_redirect";
 
         /// <summary>
-        /// 成功时的状态
+        /// The action status upon success
         /// </summary>
         public const string CondSuccessActionStatus = "success_action_status";
 
         /// <summary>
-        /// 用户自定义meta元素的前缀x-oss-meta-
+        /// The custom metadata prefix
         /// </summary>
         public const string CondXOssMetaPrefix = "x-oss-meta-";
 
         private IList<AbstractConditionItem> _conds = new List<AbstractConditionItem>(); 
 
         /// <summary>
-        /// 采用默认匹配方式（精确匹配）添加Conditions项。
+        /// Adds a condition item with exact MatchMode
         /// </summary>
-        /// <param name="name">Condition名称。</param>
-        /// <param name="value">Condition数值。</param>
+        /// <param name="name">Condition name</param>
+        /// <param name="value">Condition value</param>
         public void AddConditionItem(string name, string value)
         {
             MatchRuleChecker.Check(MatchMode.Exact, name);
@@ -211,11 +210,11 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 采用指定匹配模式添加Conditions项。
+        /// Adds a condition item with specified MatchMode
         /// </summary>
-        /// <param name="matchMode">Conditions匹配方式。</param>
-        /// <param name="name">Condition名称。</param>
-        /// <param name="value">Condition数值。</param>
+        /// <param name="matchMode">Conditions match mode</param>
+        /// <param name="name">Condition name</param>
+        /// <param name="value">Condition value</param>
         public void AddConditionItem(MatchMode matchMode, string name, string value)
         {
             MatchRuleChecker.Check(matchMode, name);
@@ -236,11 +235,11 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 采用范围匹配模式添加Conditions项。
+        /// Adds a condition with range match mode.
         /// </summary>
-        /// <param name="name">Condition名称。</param>
-        /// <param name="min">范围最小值。</param>
-        /// <param name="max">范围最大值。</param>
+        /// <param name="name">Condition name</param>
+        /// <param name="min">Range's low end</param>
+        /// <param name="max">Range's high end</param>
         public void AddConditionItem(string name, long min, long max)
         {
             if (min > max)

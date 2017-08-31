@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -13,7 +12,7 @@ using Aliyun.OSS.Model;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 包含获取OSS的<see cref="Bucket" />中<see cref="OssObjectSummary" />列表的信息。
+    /// The result class of the operation to list objects.
     /// </summary>
     public class ObjectListing : GenericResult
     {
@@ -22,19 +21,18 @@ namespace Aliyun.OSS
         private readonly IList<string> _commonPrefixes = new List<string>();
 
         /// <summary>
-        /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets bucket name
         /// </summary>
         public string BucketName { get; private set; }
 
         /// <summary>
-        /// 获取一个值表示用于下一个<see cref="P:ListObjectRequest.Marker" />以读取
-        /// 结果列表的下一页。
-        /// 如果结果列表没有被截取掉，则该属性返回null。
+        /// Gets the next maker value for the value of <see cref="P:ListObjectRequest.Marker" /> in the next call.
+        /// If the result is not truncated, this value is null.
         /// </summary>
         public string NextMarker { get; internal set; }
 
         /// <summary>
-        /// 是否结果被截取掉了
+        /// Obsolete property.
         /// </summary>
         [Obsolete("misspelled, please use IsTruncated instead")]
         public bool IsTrunked
@@ -44,32 +42,34 @@ namespace Aliyun.OSS
         }
         
         /// <summary>
-        /// 是否结果被截取掉了
+        /// Flag of truncated result.
+        /// True: the result is truncated (there's more data to list).
+        /// False: no more data in server side to return.
         /// </summary>
         public bool IsTruncated { get; internal set; }
 
         /// <summary>
-        /// 获取请求参数<see cref="P:ListObjectRequest.Marker" />的值。
+        /// The object key's marker. The value comes from <see cref="P:ListObjectRequest.Marker" />.
         /// </summary>
         public string Marker { get; internal set; }
 
         /// <summary>
-        /// 获取请求参数<see cref="P:ListObjectRequest.MaxKeys" />的值。
+        /// The max keys to list. The value comes from <see cref="P:ListObjectRequest.MaxKeys" />.
         /// </summary>
         public int MaxKeys { get; internal set; }
 
         /// <summary>
-        /// 获取请求参数<see cref="P:ListObjectRequest.Prefix" />的值。
+        /// The object key's prefix. The value comes from <see cref="P:ListObjectRequest.Prefix" />.
         /// </summary>
         public string Prefix { get; internal set; }
 
         /// <summary>
-        /// 获取请求参数<see cref="P:ListObjectRequest.Delimiter" />的值。
+        /// The delimiter for grouping object. The value comes from <see cref="P:ListObjectRequest.Delimiter" />.
         /// </summary>
         public string Delimiter { get; internal set; }
 
         /// <summary>
-        /// 枚举满足查询条件的<see cref="OssObjectSummary" />。
+        /// The iterator of <see cref="OssObjectSummary" /> that meet the requirements in the ListOjectRequest.
         /// </summary>
         public IEnumerable<OssObjectSummary> ObjectSummaries
         {
@@ -77,7 +77,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取返回结果中的CommonPrefixes部分。
+        /// The common prefixes in the result. The objects returned do not include the objects under these common prefixes (folders).
         /// </summary>
         public IEnumerable<string> CommonPrefixes
         {
@@ -85,9 +85,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="ObjectListing" />实例。
+        /// Creates a new instance of <see cref="ObjectListing" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
         internal ObjectListing(string bucketName)
         {
             BucketName = bucketName;

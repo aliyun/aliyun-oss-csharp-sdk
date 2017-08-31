@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -14,17 +13,17 @@ using Aliyun.OSS.Common.Internal;
 namespace Aliyun.OSS 
 {
     /// <summary>
-    /// 阿里云对象存储服务（Object Storage Service， OSS）的访问接口。
+    /// The Object Storage Service (OSS) entry point interface.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// 阿里云对象存储服务（Object Storage Service，简称OSS），是阿里云对外提供的海量，安全，低成本，
-    /// 高可靠的云存储服务。用户可以通过简单的REST接口，在任何时间、任何地点上传和下载数据，
-    /// 也可以使用WEB页面对数据进行管理。
-    /// 基于OSS，用户可以搭建出各种多媒体分享网站、网盘、个人企业数据备份等基于大规模数据的服务。
+    /// OSS is the highly scalable, secure, inexpensive and reliable cloud storage service.
+    /// This interface is to access all the functionality OSS provides.
+    /// The same functionality could be done in web console.
+    /// Multimedia sharing web app, network disk, or enterprise data backup app could be easily built based on OSS.
     /// </para>
     /// <para>
-    /// OSS的web体验地址：http://www.aliyun.com/product/oss
+    /// OSS website：http://www.aliyun.com/product/oss
     /// </para>
     /// </remarks>
     public interface IOss
@@ -32,15 +31,15 @@ namespace Aliyun.OSS
         #region Switch Credentials & Endpoint
 
         /// <summary>
-        /// 更换用户账号信息。
+        /// Switches the user credentials
         /// </summary>
-        /// <param name="creds">用户账号信息。</param>
+        /// <param name="creds">The credential instance</param>
         void SwitchCredentials(ICredentials creds);
 
         /// <summary>
-        /// 设置访问OSS的Endpoint。
+        /// Sets the endpoint
         /// </summary>
-        /// <param name="endpoint">Endpoint值</param>
+        /// <param name="endpoint">Endpoint value</param>
         void SetEndpoint(Uri endpoint);
 
         #endregion
@@ -48,148 +47,147 @@ namespace Aliyun.OSS
         #region Bucket Operations
 
         /// <summary>
-        /// 在OSS中创建一个新的Bucket。
+        /// Creates a new bucket
         /// </summary>
-        /// <param name="bucketName">要创建的Bucket的名称。</param>
-        /// <returns><see cref="Bucket" />对象。</returns>
+        /// <param name="bucketName">The bucket name. It must be globably unique.</param>
+        /// <returns><see cref="Bucket" /> instance</returns>
         Bucket CreateBucket(string bucketName);
 
         /// <summary>
-        /// 在OSS中删除一个Bucket。
+        /// Deletes a empty bucket.If the bucket is not empty, this will fail.
         /// </summary>
-        /// <param name="bucketName">要删除的Bucket的名称。</param>
+        /// <param name="bucketName">The bucket name to delete</param>
         void DeleteBucket(string bucketName);
 
         /// <summary>
-        /// 返回请求者拥有的所有<see cref="Bucket" />的列表。
+        /// List all buckets under the current account.
         /// </summary>
-        /// <returns>请求者拥有的所有<see cref="Bucket" />的列表。</returns>
+        /// <returns>All <see cref="Bucket" /> instances</returns>
         IEnumerable<Bucket> ListBuckets();
 
         /// <summary>
-        /// 分页返回请求者拥有的<see cref="Bucket" />的列表。
+        /// Lists all buckets according to the ListBucketsRequest, which could have filters by prefix, marker, etc.
         /// </summary>
-        /// <param name="listBucketsRequest"><see cref="ListBucketsRequest"/>对象</param>
-        /// <returns><see cref="ListBucketsResult" /><see cref="Bucket"/>信息的列表</returns>
+        /// <param name="listBucketsRequest"><see cref="ListBucketsRequest"/> instance</param>
+        /// <returns><see cref="ListBucketsResult" /> instance</returns>
         ListBucketsResult ListBuckets(ListBucketsRequest listBucketsRequest);
 
         /// <summary>
-        /// 设置指定<see cref="Bucket" />的访问权限<see cref="AccessControlList" />。
+        /// Sets the bucket ACL
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="acl"><see cref="CannedAccessControlList" />枚举中的访问权限。</param>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="acl"><see cref="CannedAccessControlList" /> instance</param>
         void SetBucketAcl(string bucketName, CannedAccessControlList acl);
 
         /// <summary>
-        /// 设置指定<see cref="Bucket" />的访问权限<see cref="AccessControlList" />。
+        /// Sets the bucket ACL
         /// </summary>
         /// <param name="setBucketAclRequest"></param>
         void SetBucketAcl(SetBucketAclRequest setBucketAclRequest);
 
         /// <summary>
-        /// 获取指定<see cref="Bucket" />的访问权限<see cref="AccessControlList" />。
+        /// Gets the bucket ACL
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <returns>访问权限<see cref="AccessControlList" />的实例。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns>访问权限<see cref="AccessControlList" /> instance</returns>
         AccessControlList GetBucketAcl(string bucketName);
 
 
         /// <summary>
-        /// 设置指定<see cref="Bucket" />的跨域资源共享(CORS)的规则，并覆盖原先所有的CORS规则。
+        /// Sets the CORS rules for the <see cref="Bucket" />
         /// </summary>
         /// <param name="setBucketCorsRequest"></param>
         void SetBucketCors(SetBucketCorsRequest setBucketCorsRequest);
 
         /// <summary>
-        /// 获取指定<see cref="Bucket" />的CORS规则。
+        /// Gets the <see cref="Bucket" /> CORS rules.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
-        /// <returns>跨域资源共享规则列表</returns>
+        /// <param name="bucketName">bucket name</param>
+        /// <returns>CORS rules</returns>
         IList<CORSRule> GetBucketCors(string bucketName);
 
         /// <summary>
-        /// 关闭指定<see cref="Bucket" />对应的CORS功能并清空所有规则。
+        /// Deletes the CORS rules on the <see cref="Bucket" />
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
         void DeleteBucketCors(string bucketName);
 
         /// <summary>
-        /// 设置<see cref="Bucket" />的访问日志记录功能。
-        /// 这个功能开启后，OSS将自动记录访问这个<see cref="Bucket" />请求的详细信息，并按照用户指定的规则，
-        /// 以小时为单位，将访问日志作为一个Object写入用户指定的<see cref="Bucket" />。
+        /// Sets <see cref="Bucket" /> logging config
+        /// OSS will log the access information on this bucket, according to the logging config
+        /// The hourly log file will be stored in the target bucket.
         /// </summary>
         /// <param name="setBucketLoggingRequest"></param>
         void SetBucketLogging(SetBucketLoggingRequest setBucketLoggingRequest);
 
         /// <summary>
-        /// 查看<see cref="Bucket" />的访问日志配置。
+        /// Gets the bucket logging config
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <returns>访问日志记录信息</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns>The logging config result</returns>
         BucketLoggingResult GetBucketLogging(string bucketName);
         
         /// <summary>
-        /// 关闭<see cref="Bucket" />的访问日志记录功能。
+        /// Deletes the <see cref="Bucket" /> logging config
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
         void DeleteBucketLogging(string bucketName);
 
         /// <summary>
-        /// 将一个<see cref="Bucket" />设置成静态网站托管模式。
+        /// Sets <see cref="Bucket" /> static website config
         /// </summary>
-        /// <param name="setBucketWebSiteRequest">静态网站托管状态<see cref="SetBucketWebsiteRequest"/></param>
+        /// <param name="setBucketWebSiteRequest"><see cref="SetBucketWebsiteRequest"/> instance</param>
         void SetBucketWebsite(SetBucketWebsiteRequest setBucketWebSiteRequest);
         
 
         /// <summary>
-        /// 获取<see cref="Bucket" />的静态网站托管状态。
+        /// Gets <see cref="Bucket" /> static website config
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <returns>静态网站托管状态<see cref="BucketWebsiteResult"/></returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="BucketWebsiteResult"/> instance</returns>
         BucketWebsiteResult GetBucketWebsite(string bucketName);
 
 
         /// <summary>
-        /// 关闭<see cref="Bucket" />的静态网站托管模式。
+        /// Deletes the <see cref="Bucket" /> static website config
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
         void DeleteBucketWebsite(string bucketName);
 
 
         /// <summary>
-        /// 设置<see cref="Bucket" />的Referer访问白名单和是否允许referer字段为空。
+        /// Sets the <see cref="Bucket" /> referer config
         /// </summary>
-        /// <param name="setBucketRefererRequest">包含Referer白名单的<see cref="SetBucketRefererRequest"/>对象</param>
+        /// <param name="setBucketRefererRequest">The requests that contains the Referer whitelist</param>
         void SetBucketReferer(SetBucketRefererRequest setBucketRefererRequest);
 
         /// <summary>
-        /// 查看<see cref="Bucket" />的Referer配置。
+        /// Gets the <see cref="Bucket" /> referer config
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <returns>Referer配置</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns>Referer config</returns>
         RefererConfiguration GetBucketReferer(string bucketName);
 
         /// <summary>
-        /// 设置<see cref="Bucket" />的Lifecycle规则。
+        /// Sets <see cref="Bucket" /> lifecycle rule
         /// </summary>
-        /// <param name="setBucketLifecycleRequest">请求参数。</param>
+        /// <param name="setBucketLifecycleRequest">the <see cref="SetBucketLifecycleRequest" /> instance</param>
         void SetBucketLifecycle(SetBucketLifecycleRequest setBucketLifecycleRequest);
 
         /// <summary>
-        /// 查看<see cref="Bucket" />的Lifecycle规则列表。
+        /// Gets <see cref="Bucket" /> lifecycle instance. 
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
-        /// <returns>Lifecycle规则列表。</returns>
+        /// <param name="bucketName">bucket name</param>
+        /// <returns>Lifecycle list</returns>
         IList<LifecycleRule> GetBucketLifecycle(string bucketName);
 
         /// <summary>
-        /// 判断指定的<see cref="Bucket" />是否存在。
+        /// Checks if the bucket exists
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <returns>
-        /// 当Bucket存在且当前用户为该Bucket的拥有者，返回True；
-        /// 当Bucket存在且当前用户不是该Bucket的拥有者，返回True；
-        /// 否则返回False。
+        /// True when the bucket exists under the current user;
+        /// Otherwise returns false.
         /// </returns>
         bool DoesBucketExist(string bucketName);
 
@@ -198,473 +196,464 @@ namespace Aliyun.OSS
         #region Object Operations
 
         /// <summary>
-        /// 列出指定<see cref="Bucket" />下<see cref="OssObject" />的摘要信息<see cref="OssObjectSummary" />。
+        /// Lists all objects under the <see cref="Bucket" />
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <returns><see cref="OssObject" />的列表信息。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="OssObject" /> list</returns>
         ObjectListing ListObjects(string bucketName);
 
         /// <summary>
-        /// 开始异步列出指定<see cref="Bucket" />下<see cref="OssObject" />的摘要信息<see cref="OssObjectSummary" />。
+        /// Begins the async call to list objects.The returned object is type of OssObjectSummary.
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <returns><see cref="OssObject" />的列表信息。</returns>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="OssObject" />list</returns>
+        /// <param name="callback">callback when the list is done</param>
+        /// <param name="state">state object in the callback</param>
+        /// <returns>IAsyncResult instance.</returns>
         IAsyncResult BeginListObjects(string bucketName, AsyncCallback callback, object state);
 
         /// <summary>
-        /// 列出指定<see cref="Bucket" />下其Key以prefix为前缀<see cref="OssObject" />
-        /// 的摘要信息<see cref="OssObjectSummary" />。
+        /// Lists object with specified prefix
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="prefix">限定返回的<see cref="OssObject.Key" />必须以此作为前缀。</param>
-        /// <returns><see cref="OssObject" />的列表信息。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="prefix"><see cref="OssObject.Key" /> prefix</param>
+        /// <returns><see cref="OssObject" /> instances list</returns>
         ObjectListing ListObjects(string bucketName, string prefix);
 
         /// <summary>
-        /// 开始异步列出指定<see cref="Bucket" />下其Key以prefix为前缀<see cref="OssObject" />
-        /// 的摘要信息<see cref="OssObjectSummary" />。
+        /// Begins the async call to list objects under the specified bucket and prefix
+        /// The returned object is type of OssObjectSummary.
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="prefix">限定返回的<see cref="OssObject.Key" />必须以此作为前缀。</param>
-        /// <returns><see cref="OssObject" />的列表信息。</returns>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="prefix"><see cref="OssObject.Key" /> prefix</param>
+        /// <returns><see cref="OssObject" /> list</returns>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state</param>
+        /// <returns>IAsyncResult instance</returns>
         IAsyncResult BeginListObjects(string bucketName, string prefix, AsyncCallback callback, object state);
 
         /// <summary>
-        /// 列出指定<see cref="Bucket" />下<see cref="OssObject" />的摘要信息<see cref="OssObjectSummary" />。
+        /// Lists objects according to the ListObjectsRequest.
+        /// The returned object is type of OssObjectSummary.
         /// </summary>
-        /// <param name="listObjectsRequest">请求参数。</param>
-        /// <returns><see cref="OssObject" />的列表信息。</returns>
+        /// <param name="listObjectsRequest"><see cref="ListObjectsRequest" /> instance</param>
+        /// <returns><see cref="OssObject" /> list</returns>
         ObjectListing ListObjects(ListObjectsRequest listObjectsRequest);
 
         /// <summary>
-        /// 开始异步列出指定<see cref="Bucket" />下<see cref="OssObject" />的摘要信息<see cref="OssObjectSummary" />。
+        /// Begins the async call to list objects under the specified <see cref="Bucket" /> with specified filters in <see cref="ListObjectsRequest" />
         /// </summary>
-        /// <param name="listObjectsRequest">请求参数。</param>
-        /// <returns><see cref="OssObject" />的列表信息。</returns>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="listObjectsRequest"><see cref="ListObjectsRequest"/> instance</param>
+        /// <returns><see cref="OssObject" /> list</returns>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state object</param>
         IAsyncResult BeginListObjects(ListObjectsRequest listObjectsRequest, AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 等待挂起的异步列出指定<see cref="Bucket" />的摘要信息<see cref="OssObjectSummary" />操作的完成。
+        /// Ends the async call of listing objects.
         /// </summary>
-        /// <param name="asyncResult">对所等待的挂起异步请求的引用。</param>
-        /// <returns><see cref="ObjectListing"/>对象。</returns>
+        /// <param name="asyncResult">The asyncResult instance returned by BeginListObjects call</param>
+        /// <returns><see cref="ObjectListing"/> instance</returns>
         ObjectListing EndListObjects(IAsyncResult asyncResult);
 
 
         /// <summary>
-        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Puts object to the specified bucket with specified object key.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="content"><see cref="OssObject" />的<see cref="OssObject.Content" />。</param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <param name="bucketName">specified bucket name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
         PutObjectResult PutObject(string bucketName, string key, Stream content);
 
         /// <summary>
-        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Begins the async call of uploading object to specified bucket.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="content"><see cref="OssObject" />的<see cref="OssObject.Content" />。</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="bucketName">target <see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state</param>
+        /// <returns>The IAsyncResult instance for EndPutObject()</returns>
         IAsyncResult BeginPutObject(string bucketName, string key, Stream content,
             AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Uploads the content to object under the specified bucket and object key.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="content"><see cref="OssObject" />的<see cref="OssObject.Content" />。</param>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
         PutObjectResult PutObject(string bucketName, string key, Stream content, ObjectMetadata metadata);
 
         /// <summary>
-        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Upload a <see cref="OssObject" /> according to <see cref="PutObjectRequest" />.
         /// </summary>
-        /// <param name="putObjectRequest"><see cref="PutObjectRequest" />的实例</param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <param name="putObjectRequest"><see cref="PutObjectRequest" />instance</param>
+        /// <returns><see cref="PutObjectResult" />instance</returns>
         PutObjectResult PutObject(PutObjectRequest putObjectRequest);
 
         /// <summary>
-        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Begins the async call to upload object
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="content"><see cref="OssObject" />的<see cref="OssObject.Content" />。</param>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state</param>
+        /// <returns>IAsyncResult instance for EndPutObject()</returns>
         IAsyncResult BeginPutObject(string bucketName, string key, Stream content, ObjectMetadata metadata,
             AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Begins the async call to upload object
         /// </summary>
-        /// <param name="putObjectRequest"><see cref="PutObjectRequest" />的实例</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="putObjectRequest"><see cref="PutObjectRequest" /> instance</param>
+        /// <param name="callback">callback object</param>
+        /// <param name="state">state object</param>
+        /// <returns>IAsyncResult instance for EndPutObject()</returns>
         IAsyncResult BeginPutObject(PutObjectRequest putObjectRequest, AsyncCallback callback, object state);
 
         /// <summary>
-        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Uploads a local file to OSS under the specified bucket
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="fileToUpload">指定上传文件的路径。</param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="fileToUpload">local file path to upload</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
         PutObjectResult PutObject(string bucketName, string key, string fileToUpload);
 
         /// <summary>
-        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Begins the async call to upload local file to OSS under the specified bucket.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="fileToUpload">指定上传文件的路径。</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="fileToUpload">local file path to upload</param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state</param>
+        /// <returns>IAyncResult instance</returns>
         IAsyncResult BeginPutObject(string bucketName, string key, string fileToUpload,
             AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Uploads a local file with specified metadata to OSS.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="fileToUpload">指定上传文件的路径。</param>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="fileToUpload">local file path</param>
+        /// <param name="metadata"><see cref="OssObject" />metadata</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
         PutObjectResult PutObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata);
 
         /// <summary>
-        /// 开始异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />。
+        /// Begins the async call to upload object with specified metadata.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="fileToUpload">指定上传文件的路径。</param>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="fileToUpload">local file to upload</param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state</param>
+        /// <returns>IAsyncResult instance for EndPutObject</returns>
         IAsyncResult BeginPutObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata,
             AsyncCallback callback, Object state);
 
         /// <summary>
-        ///  等待挂起的异步上传指定的<see cref="OssObject" />到指定的<see cref="Bucket" />操作的完成。
+        ///  Ends the async call to upload the object.
+        ///  When it's called, the actual upload has already been done.
         /// </summary>
-        /// <param name="asyncResult">对所等待的挂起异步请求的引用。</param>
-        /// <returns><see cref="PutObjectResult"/>对象。</returns>
+        /// <param name="asyncResult">IAsyncResult instance</param>
+        /// <returns><see cref="PutObjectResult"/> instance</returns>
         PutObjectResult EndPutObject(IAsyncResult asyncResult);
 
         /// <summary>
-        /// 已废弃，请使用ResumableUploadObject。
-        /// 上传指定的大文件：<see cref="OssObject" />到指定的<see cref="Bucket" />。
-        /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
-        /// 如果上传文件大小大于分片大小，则会使用分片上传。
+        /// Deprecated method.Please use ResumableUploadObject.
+        /// Uploads the specified file with optional part size.
+        /// If the file size is not bigger than the part size, then use normal file upload.
+        /// Otherwise use multipart upload.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="fileToUpload">指定上传文件的路径。</param>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
-        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>,
-        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">target object key</param>
+        /// <param name="fileToUpload">local file path to upload</param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <param name="partSize">Part size.If it's not specified, then use <see cref="Util.OssUtils.DefaultPartSize"/>.
+        /// If the part size is less than <see cref="Util.OssUtils.PartSizeLowerLimit"/>, it will be changed to <see cref="Util.OssUtils.PartSizeLowerLimit"/> automatically.
         /// </param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
         [Obsolete("PutBigObject is deprecated, please use ResumableUploadObject instead")]
         PutObjectResult PutBigObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, long? partSize = null);
 
         /// <summary>
-        /// 已废弃，请使用ResumableUploadObject。
-        /// 上传指定的大文件：<see cref="OssObject" />到指定的<see cref="Bucket" />。
-        /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
-        /// 如果上传文件大小大于分片大小，则会使用分片上传。
+        /// Deprecated method. Use ResumableUploadObject instead.
+        /// Upload the specified file to OSS.
+        /// If the file size is same or less than the part size, use normal file upload instead.
+        /// Otherwise it will use multipart file upload.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="content"><see cref="OssObject" />的<see cref="OssObject.Content" />。</param>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
-        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>,
-        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <param name="partSize">Part size. If it's not specified or the value is less than <see cref="Util.OssUtils.PartSizeLowerLimit"/>, 
+        /// then use <see cref="Util.OssUtils.DefaultPartSize"/> instead.
         /// </param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
         [Obsolete("PutBigObject is deprecated, please use ResumableUploadObject instead")]
         PutObjectResult PutBigObject(string bucketName, string key, Stream content, ObjectMetadata metadata, long? partSize = null); 
 
         /// <summary>
-        /// 使用URL签名方式上传指定文件。
+        /// Uploads the file via the signed url.
         /// </summary>
-        /// <param name="signedUrl">PUT请求类型的URL签名。</param>
-        /// <param name="fileToUpload">上传文件的路径。</param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <param name="signedUrl">Signed url</param>
+        /// <param name="fileToUpload">File to upload</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
         PutObjectResult PutObject(Uri signedUrl, string fileToUpload);
 
         /// <summary>
-        /// 使用URL签名方式上传指定输入流。
+        /// Uploads the instream via the signed url.
         /// </summary>
-        /// <param name="signedUrl">PUT请求类型的URL签名。</param>
-        /// <param name="content">请求输入流。</param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <param name="signedUrl">Signed url</param>
+        /// <param name="content">content stream</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
         PutObjectResult PutObject(Uri signedUrl, Stream content);
 
         /// <summary>
-        /// 使用URL签名方式上传指定文件。
+        /// Uploads the file via the signed url with the metadata.
         /// </summary>
-        /// <param name="signedUrl">PUT请求类型的URL签名。</param>
-        /// <param name="fileToUpload">上传文件的路径。</param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
+        /// <param name="signedUrl">The signed url</param>
+        /// <param name="fileToUpload">Local file path</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
         PutObjectResult PutObject(Uri signedUrl, string fileToUpload, ObjectMetadata metadata);
 
         /// <summary>
-        /// 使用URL签名方式上传指定输入流。
+        /// Uploads the stream via the signed url with the metadata.
         /// </summary>
-        /// <param name="signedUrl">PUT请求类型的URL签名。</param>
-        /// <param name="content">请求输入流。</param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
+        /// <param name="signedUrl">Signed url</param>
+        /// <param name="content">content stream</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
         PutObjectResult PutObject(Uri signedUrl, Stream content, ObjectMetadata metadata);
 
         /// <summary>
-        /// 自动分片后按片上传，支持断点续传。
-        /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
-        /// 如果上传文件大小大于分片大小，则会使用分片上传。
+        /// Resumable file upload. It automaticlly uses multipart upload upon big file and also support resume upload after a failed upload.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="fileToUpload">指定上传文件的路径。</param>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
-        /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新上传</param>
-        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>
-        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// <param name="bucketName"><see cref="Bucket" /> instance</param>
+        /// <param name="key"><see cref="OssObject.Key" /> instance</param>
+        /// <param name="fileToUpload">file to upload</param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <param name="checkpointDir">Check point dir. If it's not specified, then no checkpoint file is saved and thus resumable file upload is not supported.</param>
+        /// <param name="partSize">Part size. If it's not specified, or the size is smaller than <see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// then <see cref="Util.OssUtils.DefaultPartSize"/> is used instead.
         /// </param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <returns><see cref="PutObjectResult" /> instance </returns>
         PutObjectResult ResumableUploadObject(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
                                               EventHandler<StreamTransferProgressArgs> streamTransferProgress = null);
 
         /// <summary>
-        /// 自动分片后按片上传，支持断点续传。
-        /// 如果上传的文件大小小于或等于分片大小，则会使用普通上传，只需上传一次即可。
-        /// 如果上传文件大小大于分片大小，则会使用分片上传。
+        /// Resumable file upload. It automaticlly uses multipart upload upon big file and also support resume upload after a failed upload.
         /// </summary>
-        /// <param name="bucketName">指定的<see cref="Bucket" />名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="OssObject.Key" />。</param>
-        /// <param name="content"><see cref="OssObject" />的<see cref="OssObject.Content" />。</param>
-        /// <param name="metadata"><see cref="OssObject" />的元信息。</param>
-        /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新上传</param>
-        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>,
-        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <param name="checkpointDir">Check point dir. If it's not specified, then no checkpoint file is saved and thus resumable file upload is not supported.</param>
+        /// <param name="partSize">Part size. If it's not specified, or the size is smaller than <see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// then <see cref="Util.OssUtils.DefaultPartSize"/> is used instead.
         /// </param>
-        /// <returns><see cref="PutObjectResult" />实例。</returns>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
         PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
                                               EventHandler<StreamTransferProgressArgs> streamTransferProgress = null);
 
         /// <summary>
-        /// 追加指定的内容到指定的<see cref="OssObject" />。
+        /// Appends object to OSS according to the <see cref="AppendObjectRequest" />
         /// </summary>
-        /// <param name="request"><see cref="AppendObjectRequest" />的实例</param>
-        /// <returns><see cref="AppendObjectResult" />实例</returns>
+        /// <param name="request"><see cref="AppendObjectRequest" /> instance</param>
+        /// <returns><see cref="AppendObjectResult" /> result</returns>
         AppendObjectResult AppendObject(AppendObjectRequest request);
 
         /// <summary>
-        /// 追加指定的内容到指定的<see cref="OssObject" />。
+        /// Begins the async call to append object to OSS.
         /// </summary>
-        /// <param name="request"><see cref="AppendObjectRequest" />的实例</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="request"><see cref="AppendObjectRequest" /> instance</param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">state object</param>
+        /// <returns>IAsyncResut instance for EndAppendObject call</returns>
         IAsyncResult BeginAppendObject(AppendObjectRequest request, AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 等待挂起的异步追加<see cref="OssObject" />操作的完成。
+        /// Ends the async call to append object to OSS. WHen it's called, the actual upload has been done.
         /// </summary>
-        /// <param name="asyncResult">对所等待的挂起异步请求的引用。</param>
-        /// <returns><see cref="AppendObjectResult"/>对象。</returns>
+        /// <param name="asyncResult">The IAsyncResult instance returned from BeginAppendObjet</param>
+        /// <returns><see cref="AppendObjectResult"/> instance</returns>
         AppendObjectResult EndAppendObject(IAsyncResult asyncResult);
 
         /// <summary>
-        /// 从指定的<see cref="Bucket" />中获取指定的<see cref="OssObject" />。
+        /// Gets object
         /// </summary>
-        /// <param name="bucketName">要获取的<see cref="OssObject"/>所在的<see cref="Bucket" />的名称。</param>
-        /// <param name="key">要获取的<see cref="OssObject"/>的<see cref="OssObject.Key"/>。</param>
-        /// <returns><see cref="OssObject" />实例。</returns>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key"><see cref="OssObject.Key"/></param>
+        /// <returns><see cref="OssObject" /> instance</returns>
         OssObject GetObject(string bucketName, string key);
 
         /// <summary>
-        /// 使用URL签名方式获取指定的<see cref="OssObject"/>
+        /// Gets object via signed url
         /// </summary>
-        /// <param name="signedUrl">GET请求类型的URL签名</param>
-        /// <returns><see cref="OssObject"/>实例。</returns>
+        /// <param name="signedUrl">The signed url of HTTP GET method</param>
+        /// <returns><see cref="OssObject"/> instance</returns>
         OssObject GetObject(Uri signedUrl);
 
         /// <summary>
-        /// 从指定的<see cref="Bucket" />中获取满足请求参数<see cref="GetObjectRequest"/>的<see cref="OssObject" />。
+        /// Gets object via the bucket name and key name in the <see cref="GetObjectRequest" /> instance.
         /// </summary>
-        /// <param name="getObjectRequest">请求参数。</param>
-        /// <returns><see cref="OssObject" />实例。使用后需要释放此对象以释放HTTP连接。</returns>
+        /// <param name="getObjectRequest"> The request parameter</param>
+        /// <returns><see cref="OssObject" /> instance. The caller needs to dispose the object.</returns>
         OssObject GetObject(GetObjectRequest getObjectRequest);
 
         /// <summary>
-        /// 开始从指定的<see cref="Bucket" />中异步获取满足请求参数<see cref="GetObjectRequest"/>的<see cref="OssObject" />。
+        /// Begins the async call to get object according to the <see cref="GetObjectRequest"/> instance.
         /// </summary>
-        /// <param name="getObjectRequest">请求参数。</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="getObjectRequest"> request parameter</param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state</param>
+        /// <returns>IAsyncResult instance for EndGetObject()</returns>
         IAsyncResult BeginGetObject(GetObjectRequest getObjectRequest, AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 开始获取满足Bucket Name, Object Key条件的<see cref="OssObject"/>
+        /// Begins the async call to get object by the bucket and key information.
         /// </summary>
-        /// <param name="bucketName">获取的bucket的名称</param>
-        /// <param name="key">获取的object的key</param>
-        /// <param name="callback">用户自定义委托对象</param>
-        /// <param name="state">用户自定义状态对象</param>
-        /// <returns>异步请求的对象引用</returns>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key</param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">state instance</param>
+        /// <returns>ISyncResult instance</returns>
         IAsyncResult BeginGetObject(string bucketName, string key, AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 等待挂起的异步获取<see cref="OssObject" />操作的完成。
+        /// Ends the async call to get the object.
         /// </summary>
-        /// <param name="asyncResult">对所等待的挂起异步请求的引用。</param>
-        /// <returns><see cref="OssObject"/>对象。</returns>
+        /// <param name="asyncResult">The AsyncResult instance returned from BeginGetObject()</param>
+        /// <returns><see cref="OssObject"/> instance</returns>
         OssObject EndGetObject(IAsyncResult asyncResult);
 
         /// <summary>
-        /// 从指定的<see cref="Bucket" />中获取指定的<see cref="OssObject" />，
-        /// 并导出到指定的输出流。
+        /// Gets the object and assign the data to the stream.
         /// </summary>
-        /// <param name="getObjectRequest">请求参数。</param>
-        /// <param name="output">输出流。</param>
-        /// <returns>导出<see cref="OssObject" />的元信息。</returns>
+        /// <param name="getObjectRequest">request parameter</param>
+        /// <param name="output">output stream</param>
+        /// <returns><see cref="OssObject" /> metadata</returns>
         ObjectMetadata GetObject(GetObjectRequest getObjectRequest, Stream output);
 
         /// <summary>
-        /// 获取<see cref="OssObject" />的元信息。
+        /// Gets <see cref="OssObject" /> metadata.
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject.Key" />。</param>
-        /// <returns><see cref="OssObject" />的元信息。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <returns><see cref="OssObject" />metadata</returns>
         ObjectMetadata GetObjectMetadata(string bucketName, string key);
 
         /// <summary>
-        /// 删除指定的<see cref="OssObject" />。
+        /// Deletes <see cref="OssObject" />。
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject.Key" />。</param>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
         void DeleteObject(string bucketName, string key);
 
         /// <summary>
-        /// 批量删除指定的<see cref="OssObject" />。
+        /// Deletes multiple objects
         /// </summary>
-        /// <param name="deleteObjectsRequest">请求参数</param>
-        /// <returns>返回结果</returns>
+        /// <param name="deleteObjectsRequest">the request parameter</param>
+        /// <returns>delete object result</returns>
         DeleteObjectsResult DeleteObjects(DeleteObjectsRequest deleteObjectsRequest);
         
         /// <summary>
-        /// 复制一个Object。
+        /// copy an object to another one in OSS.
         /// </summary>
-        /// <param name="copyObjectRequst">请求参数</param>
-        /// <returns>返回的结果</returns>
+        /// <param name="copyObjectRequst">The request parameter</param>
+        /// <returns>copy object result</returns>
         CopyObjectResult CopyObject(CopyObjectRequest copyObjectRequst);
 
         /// <summary>
-        /// 开始异步复制一个Object。
+        /// Begins the async call to copy an object
         /// </summary>
-        /// <param name="copyObjectRequst">请求参数</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="copyObjectRequst">the request parameter</param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state</param>
+        /// <returns>The IAsyncResult instance for EndCopyObject()</returns>
         IAsyncResult BeginCopyObject(CopyObjectRequest copyObjectRequst, AsyncCallback callback, Object state);
 
         /// <summary>
-        /// 等待挂起的异步复制指定的<see cref="OssObject" />操作的完成。
+        /// Ends the async call to copy an object.
         /// </summary>
-        /// <param name="asyncResult">对所等待的挂起异步请求的引用。</param>
-        /// <returns><see cref="CopyObjectResult"/>对象。</returns>
+        /// <param name="asyncResult">The IAsyncResult instance returned from BeginCopyObject()</param>
+        /// <returns><see cref="CopyObjectResult"/> instance</returns>
         CopyObjectResult EndCopyResult(IAsyncResult asyncResult);
 
         /// <summary>
-        /// 已废弃，请使用ResumableCopyObject。
-        /// 拷贝指定的大文件：<see cref="OssObject" />到指定的<see cref="Bucket" />。
-        /// 如果拷贝的文件大小小于或等于分片大小，则会使用普通拷贝，只需拷贝一次即可。
-        /// 如果拷贝文件大小大于分片大小，则会使用分片拷贝。
+        /// Deprecated. Use ResumableCopyObject instead.
+        /// Copy the specified file with optional checkpoint support.
         /// </summary>
-        /// <param name="copyObjectRequest">请求对象</param>
-        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>。
-        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// <param name="copyObjectRequest">the request parameter</param>
+        /// <param name="partSize">part size. If the part size is not specified, or less than <see cref="Util.OssUtils.DefaultPartSize"/>,
+        /// <see cref="Util.OssUtils.PartSizeLowerLimit"/> will be used instead.
         /// </param>
-        /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新拷贝</param>
-        /// <returns><see cref="CopyObjectResult" />实例。</returns>
+        /// <param name="checkpointDir">The checkpoint file folder. If it's not specified, checkpoint information is not stored and resumnable upload will not be supported in this case.</param>
+        /// <returns><see cref="CopyObjectResult" /> instance.</returns>
         [Obsolete("CopyBigObject is deprecated, please use ResumableCopyObject instead")]
         CopyObjectResult CopyBigObject(CopyObjectRequest copyObjectRequest, long? partSize = null, string checkpointDir = null);
 
         /// <summary>
-        /// 自动分片后按片拷贝，支持断点续传。
-        /// 如果拷贝的文件大小小于或等于分片大小，则会使用普通拷贝，只需拷贝一次即可。
-        /// 如果拷贝文件大小大于分片大小，则会使用分片拷贝。
+        /// Resumable object copy.
+        /// If the file size is less than part size, normal file upload is used; otherwise multipart upload is used.
         /// </summary>
-        /// <param name="copyObjectRequest">请求对象</param>
-        /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新拷贝</param>
-        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>。
-        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// <param name="copyObjectRequest">request parameter</param>
+        /// <param name="checkpointDir">checkpoint file folder </param>
+        /// <param name="partSize">The part size. 
         /// </param>
-        /// <returns><see cref="CopyObjectResult" />实例。</returns>
+        /// <returns><see cref="CopyObjectResult" /> instance</returns>
         CopyObjectResult ResumableCopyObject(CopyObjectRequest copyObjectRequest, string checkpointDir, long? partSize = null);
 
         /// <summary>
-        /// 修改文件的元数据
+        /// Modify the object metadata. 
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject.Key" />。</param>
-        /// <param name="newMeta">修改后的文件元数据</param> /// <param name="checkpointDir">保存断点续传中间状态文件的目录，如果指定了，则具有断点续传功能，否则每次都会重新上传</param>
-        /// <param name="partSize">分片大小，如果用户不指定，则使用<see cref="Util.OssUtils.DefaultPartSize"/>
-        /// 如果用户指定的partSize小于<see cref="Util.OssUtils.PartSizeLowerLimit"/>，这会调整到<see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="newMeta">new metadata</param>
+        /// <param name="checkpointDir">check point folder. It must be specified to store the checkpoint information</param>
+        /// <param name="partSize">Part size, it's no less than <see cref="Util.OssUtils.DefaultPartSize"/>
         /// </param>
         void ModifyObjectMeta(string bucketName, string key, ObjectMetadata newMeta, long? partSize = null, string checkpointDir = null);
 
         /// <summary>
-        /// 判断指定的<see cref="Bucket"/>下是否存在指定的<see cref="OssObject" />。
+        /// Checks if the object exists
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject.Key" />。</param>
-        /// <returns>如果存在则返回True，否则返回False。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <returns>true:object exists;false:otherwise</returns>
         bool DoesObjectExist(string bucketName, string key);
 
         /// <summary>
-        /// 设置文件的访问控制权限<see cref="CannedAccessControlList" />。
+        /// Sets the object ACL
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject.Key" />。</param>
-        /// <param name="acl"><see cref="CannedAccessControlList" />枚举中的访问权限。</param>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /> key</param>
+        /// <param name="acl"><see cref="CannedAccessControlList" /> instance</param>
         void SetObjectAcl(string bucketName, string key, CannedAccessControlList acl);
 
         /// <summary>
-        /// 设置文件的访问控制权限<see cref="CannedAccessControlList" />。
+        /// Sets the object ACL
         /// </summary>
         /// <param name="setObjectAclRequest"></param>
         void SetObjectAcl(SetObjectAclRequest setObjectAclRequest);
 
         /// <summary>
-        /// 获取文件的访问控制权限<see cref="AccessControlList" />。
+        /// Gets the object ACL 
         /// </summary>
-        /// <param name="bucketName"><see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject.Key" />。</param>
-        /// <returns>访问控制列表<see cref="AccessControlList" />的实例。</returns>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <returns><see cref="AccessControlList" /> instance</returns>
         AccessControlList GetObjectAcl(string bucketName, string key);
 
         #endregion
@@ -672,47 +661,47 @@ namespace Aliyun.OSS
         #region Generate URL
         
         /// <summary>
-        /// 生成一个签名的Uri。
+        /// Generates a signed url
         /// </summary>
-        /// <param name="generatePresignedUriRequest">请求参数</param>
-        /// <returns>访问<see cref="OssObject" />的Uri。</returns>
+        /// <param name="generatePresignedUriRequest">request parameter</param>
+        /// <returns>The signed url. The user could use this url to access the object directly</returns>
         Uri GeneratePresignedUri(GeneratePresignedUriRequest generatePresignedUriRequest);
         
         /// <summary>
-        /// 使用默认过期时间（自现在起15分钟后）生成一个用HTTP GET方法访问<see cref="OssObject" />的Uri。
+        /// Generates the signed url with default expiration time (15 min) that supports HTTP GET method.
         /// </summary>
-        /// <param name="bucketName">Bucket名称。</param>
-        /// <param name="key">Object的Key</param>
-        /// <returns>访问<see cref="OssObject" />的Uri。</returns>
+        /// <param name="bucketName">Bucket name</param>
+        /// <param name="key">Object key</param>
+        /// <returns>Signed uri</returns>
         Uri GeneratePresignedUri(string bucketName, string key);
 
         /// <summary>
-        /// 使用指定过期时间生成一个用HTTP GET方法访问<see cref="OssObject" />的Uri。
+        /// Generates the pre-signed GET url with specified expiration time
         /// </summary>
-        /// <param name="bucketName">Bucket名称。</param>
-        /// <param name="key">Object的Key</param>
-        /// <param name="expiration">Uri的超时时间。</param>
-        /// <returns>访问<see cref="OssObject" />的Uri。</returns>
+        /// <param name="bucketName">Bucket name</param>
+        /// <param name="key">Object key</param>
+        /// <param name="expiration">Uri expiration time</param>
+        /// <returns>signed url</returns>
         Uri GeneratePresignedUri(string bucketName, string key, DateTime expiration);
         
         
         /// <summary>
-        /// 使用默认过期时间（自现在起15分钟后）生成一个用指定方法访问<see cref="OssObject" />的Uri。
+        /// Generates the pre-signed url with specified expiration time that supports the specified HTTP method
         /// </summary>
-        /// <param name="bucketName">Bucket名称。</param>
-        /// <param name="key">Object的Key</param>
-        /// <param name="method">访问Uri的方法</param>
-        /// <returns>访问<see cref="OssObject" />的Uri。</returns>
+        /// <param name="bucketName">Bucket name</param>
+        /// <param name="key">Object key</param>
+        /// <param name="method">HTTP method</param>
+        /// <returns>signed url</returns>
         Uri GeneratePresignedUri(string bucketName, string key, SignHttpMethod method);
 
         /// <summary>
-        /// 使用指定过期时间生成一个用指定方法访问<see cref="OssObject" />的Uri。
+        /// Generates the presigned url with specified method and specified expiration time.
         /// </summary>
-        /// <param name="bucketName">Bucket名称。</param>
-        /// <param name="key">Object的Key</param>
-        /// <param name="expiration">Uri的超时时间。</param>
-        /// <param name="method">访问Uri的方法</param>
-        /// <returns>访问<see cref="OssObject" />的Uri。</returns>
+        /// <param name="bucketName">Bucket name</param>
+        /// <param name="key">Object key</param>
+        /// <param name="expiration">Uri expiration time</param>
+        /// <param name="method">HTTP method</param>
+        /// <returns>signed url</returns>
         Uri GeneratePresignedUri(string bucketName, string key, DateTime expiration, SignHttpMethod method);
         
         #endregion
@@ -720,96 +709,96 @@ namespace Aliyun.OSS
         #region Generate Post Policy
 
         /// <summary>
-        /// 生成Post请求的policy表单域。
+        /// Generates the post policy
         /// </summary>
-        /// <param name="expiration">policy过期时间。</param>
-        /// <param name="conds">policy条件列表。</param>
-        /// <returns>policy字符串。</returns>
+        /// <param name="expiration">policy expiration time</param>
+        /// <param name="conds">policy conditions</param>
+        /// <returns>policy string</returns>
         string GeneratePostPolicy(DateTime expiration, PolicyConditions conds);
 
         #endregion
 
         #region Multipart Operations
         /// <summary>
-        /// 列出所有执行中的Multipart Upload事件
+        /// Lists ongoing multipart uploads 
         /// </summary>
-        /// <param name="listMultipartUploadsRequest">请求参数</param>
-        /// <returns><see cref="MultipartUploadListing" />的列表信息。</returns>
+        /// <param name="listMultipartUploadsRequest">request parameter</param>
+        /// <returns><see cref="MultipartUploadListing" /> instance</returns>
         MultipartUploadListing ListMultipartUploads(ListMultipartUploadsRequest listMultipartUploadsRequest);
         
         /// <summary>
-        /// 初始化一个Multipart Upload事件
+        /// Initiate a multipart upload
         /// </summary>
-        /// <param name="initiateMultipartUploadRequest">请求参数</param>
-        /// <returns>初始化结果</returns>
+        /// <param name="initiateMultipartUploadRequest">request parameter</param>
+        /// <returns><see cref="InitiateMultipartUploadResult"/> instance</returns>
         InitiateMultipartUploadResult InitiateMultipartUpload(InitiateMultipartUploadRequest initiateMultipartUploadRequest);
         
         /// <summary>
-        /// 中止一个Multipart Upload事件
+        /// Aborts a multipart upload
         /// </summary>
-        /// <param name="abortMultipartUploadRequest">请求参数</param>
+        /// <param name="abortMultipartUploadRequest">request parameter</param>
         void AbortMultipartUpload(AbortMultipartUploadRequest abortMultipartUploadRequest);
         
         /// <summary>
-        /// 上传某分块的数据
+        /// Uploads a part
         /// </summary>
-        /// <param name="uploadPartRequest">请求参数</param>
-        /// <returns>分块上传结果</returns>
+        /// <param name="uploadPartRequest">request parameter</param>
+        /// <returns><see cref="UploadPartResult" /> instance</returns>
         UploadPartResult UploadPart(UploadPartRequest uploadPartRequest);
 
         /// <summary>
-        /// 开始异步上传某分块的数据。
+        /// Begins the async call to upload a part
         /// </summary>
-        /// <param name="uploadPartRequest">请求参数</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="uploadPartRequest">request parameter</param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state</param>
+        /// <returns>IAsyncResult instance for EndUploadPart()</returns>
         IAsyncResult BeginUploadPart(UploadPartRequest uploadPartRequest, AsyncCallback callback, object state);
 
         /// <summary>
-        /// 等待挂起的异步上传某分块的数据操作的完成。
+        /// Ends the async call to upload a part.
         /// </summary>
-        /// <param name="asyncResult">对所等待的挂起异步请求的引用。</param>
-        /// <returns>分块上传结果</returns>
+        /// <param name="asyncResult">IAsyncResult instance returned from BeginUploadPart()</param>
+        /// <returns><see cref="UploadPartResult" /> instance</returns>
         UploadPartResult EndUploadPart(IAsyncResult asyncResult);
 
 
         /// <summary>
-        /// 从某一已存在的Object中拷贝数据来上传某分块。
+        /// Copy an existing object as one part of a multipart upload.
         /// </summary>
-        /// <param name="uploadPartCopyRequest">请求参数</param>
-        /// <returns>分块上传结果。</returns>
+        /// <param name="uploadPartCopyRequest">request parameter</param>
+        /// <returns><see cref="UploadPartCopyResult"/> instance</returns>
         UploadPartCopyResult UploadPartCopy(UploadPartCopyRequest uploadPartCopyRequest);
 
         /// <summary>
-        /// 开始以某一已存在的Object中异步拷贝数据来上传某分块。
+        /// Begins the async call to copy an existing object as one part of a multipart upload.
         /// </summary>
-        /// <param name="uploadPartCopyRequest">请求参数</param>
-        /// <param name="callback">用户自定义委托对象。</param>
-        /// <param name="state">用户自定义状态对象。</param>
-        /// <returns>异步请求的对象引用。</returns>
+        /// <param name="uploadPartCopyRequest">request parameter</param>
+        /// <param name="callback">callback instance</param>
+        /// <param name="state">callback state</param>
+        /// <returns>IAsyncResult instance for EndUploadPartCopy()</returns>
         IAsyncResult BeginUploadPartCopy(UploadPartCopyRequest uploadPartCopyRequest, AsyncCallback callback, object state);
 
         /// <summary>
-        /// 等待挂起的异步拷贝某分块的数据操作的完成。
+        /// Ends the async call to copy an existing object as one part of a multipart upload.
         /// </summary>
-        /// <param name="asyncResult">对所等待的挂起异步请求的引用。</param>
-        /// <returns>分块上传结果。</returns>
+        /// <param name="asyncResult">IAsyncResult instance</param>
+        /// <returns>The upload result</returns>
         UploadPartCopyResult EndUploadPartCopy(IAsyncResult asyncResult);
 
 
         /// <summary>
-        /// 列出已经上传成功的Part
+        /// Lists successfully uploaded parts of a specific upload id
         /// </summary>
-        /// <param name="listPartsRequest">请求参数</param>
-        /// <returns><see cref="PartListing" />的列表信息。</returns>
+        /// <param name="listPartsRequest">request parameter</param>
+        /// <returns><see cref="PartListing" /> instance</returns>
         PartListing ListParts(ListPartsRequest listPartsRequest);
  
         /// <summary>
-        /// 完成分块上传
+        /// Completes a multipart upload. 
         /// </summary>
-        /// <param name="completeMultipartUploadRequest">请求参数</param>
-        /// <returns><see cref="CompleteMultipartUploadResult" />的列表信息。</returns>        
+        /// <param name="completeMultipartUploadRequest">the request parameter</param>
+        /// <returns><see cref="CompleteMultipartUploadResult" /> instance</returns>        
         CompleteMultipartUploadResult CompleteMultipartUpload(CompleteMultipartUploadRequest completeMultipartUploadRequest);
         
         #endregion

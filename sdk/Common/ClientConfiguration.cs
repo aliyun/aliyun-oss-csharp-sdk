@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -13,7 +12,7 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS.Common
 {
     /// <summary>
-    /// 表示访问阿里云服务的配置信息。
+    /// The client configuration that specifies the network parameters.
     /// </summary>
     public class ClientConfiguration
     {
@@ -31,14 +30,14 @@ namespace Aliyun.OSS.Common
         private long _progressUpdateInterval = 1024 * 4;
 
         /// <summary>
-        /// HttpWebRequest最大的并发连接数目。
+        /// Max Http connection connection count. By default it's 512.
         /// </summary>
         public const int ConnectionLimit = 512;
 
         private Protocol _protocol = Protocol.Http;
 
         /// <summary>
-        /// 获取访问请求的User-Agent。
+        /// User-Agent in requests to OSS
         /// </summary>
         public string UserAgent
         {
@@ -46,12 +45,12 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// 获取或设置代理服务器的地址。
+        /// Proxy host
         /// </summary>
         public string ProxyHost { get; set; }
 
         /// <summary>
-        /// 获取或设置代理服务器的端口。
+        /// Proxy port
         /// </summary>
         public int ProxyPort
         {
@@ -60,22 +59,22 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// 获取或设置用户名。
+        /// Proxy user name
         /// </summary>
         public string ProxyUserName { get; set; }
 
         /// <summary>
-        /// 获取或设置密码。
+        /// Proxy user password
         /// </summary>
         public string ProxyPassword { get; set; }
 
         /// <summary>
-        /// 获取或设置代理服务器授权用户所在的域。
+        /// The proxy user name's domain for authentication
         /// </summary>
         public string ProxyDomain { get; set; }
 
         /// <summary>
-        /// 获取或设置连接超时时间，单位为毫秒。
+        /// Connection timeout in milliseconds
         /// </summary>
         public int ConnectionTimeout
         {
@@ -84,7 +83,7 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// 获取或设置请求发生错误时最大的重试次数。
+        /// Max error retry count
         /// </summary>
         public int MaxErrorRetry
         {
@@ -93,7 +92,7 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// 获取或设置请求OSS服务时采用的通信协议。
+		/// Protocols used to access OSS (HTTP or HTTPS)
         /// </summary>
         public Protocol Protocol
         {
@@ -102,8 +101,8 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// 获取或设置请求的Endpoint是否是cname
-        /// 如果是cname，不支持ListBuckets操作
+        /// If the endpoint is the CName.
+        /// If it's CName, ListBuckets is not supported.
         /// </summary>
         public bool IsCname
         {
@@ -118,7 +117,7 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// 获取或设置上传/下载回调更新间隔，单位byte，默认4096bytes。
+        /// The progress update interval in terms of data upload/download's delta in bytes. By default it's 4096 bytes.
         /// </summary>
         public long ProgressUpdateInterval
         {
@@ -127,7 +126,7 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// 是否开启MD5校验，默认开启
+        /// Flag of enabling MD5 checksum.
         /// </summary>
         public bool EnalbeMD5Check
         {
@@ -136,14 +135,13 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// <para>设置自定义基准时间。</para>
+        /// <para>Sets the custom base time</para>
         /// <para>
-        /// 由于OSS的token校验是时间相关的，可能会因为终端系统时间不准导致无法访问OSS服务。
-        /// 通过该接口设置自定义Epoch秒数，SDK计算出本机当前时间与自定义时间的差值，之后的
-        /// 每次请求时间均加上该差值，以达到时间校验的目的。
+        /// OSS's token validation logic depends on the time. It requires that there's no more than 15 min time difference between client and OSS server.
+        /// This API calculates the difference between local time to epoch time. Later one other APIs use this difference to offset the local time before sending request to OSS. 
         /// </para>
         /// </summary>
-        /// <param name="epochTicks">自定义Epoch秒数。</param>
+        /// <param name="epochTicks">Custom Epoch ticks (in seconds)</param>
         public void SetCustomEpochTicks(long epochTicks)
         {
             var epochTime = new DateTime(1970, 1, 1);
@@ -153,12 +151,12 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// 获取自定义基准时间与本地时间的时差值，单位为秒。
+        /// Gets the difference between customized epoch time and local time, in seconds
         /// </summary>
         public long TickOffset { get; internal set; }
 
         /// <summary>
-        /// 获取User-Agent信息。
+        /// Gets the default user agent
         /// </summary>
         private static string GetDefaultUserAgent()
         {

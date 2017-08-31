@@ -176,33 +176,33 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void MultipartUploadCallbackVarTest()
         {
-            // 初始化分片上传任务
+            // Initiate a multipart upload
             var initRequest = new InitiateMultipartUploadRequest(_bucketName, _bigObjectKey);
             var initResult = _ossClient.InitiateMultipartUpload(initRequest);
 
-            // 设置每块为 1M
+            // Sets the part size as 1M
             const int partSize = 1024 * 1024 * 1;
             var partFile = new FileInfo(Config.MultiUploadTestFile);
-            // 计算分块数目
+            // Calculates the part count
             var partCount = OssTestUtils.CalculatePartCount(partFile.Length, partSize);
 
-            // 新建一个List保存每个分块上传后的ETag和PartNumber
+            // creates a list of PartETag
             var partETags = new List<PartETag>();
             //upload the file
             using (var fs = new FileStream(partFile.FullName, FileMode.Open))
             {
                 for (var i = 0; i < partCount; i++)
                 {
-                    // 跳到每个分块的开头
+                    // skip to the start of each part
                     long skipBytes = partSize * i;
                     fs.Position = skipBytes;
 
-                    // 计算每个分块的大小
+                    // calculates the part size 
                     var size = partSize < partFile.Length - skipBytes
                         ? partSize
                         : partFile.Length - skipBytes;
 
-                    // 创建UploadPartRequest，上传分块
+                    // uploads the part
                     var uploadPartRequest = new UploadPartRequest(_bucketName, _bigObjectKey, initResult.UploadId)
                     {
                         InputStream = fs,
@@ -211,7 +211,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     };
                     var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
 
-                    // 将返回的PartETag保存到List中。
+                    // adds the result to the list 
                     partETags.Add(uploadPartResult.PartETag);
                 }
             }
@@ -249,7 +249,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void MultipartUploadWithoutCallbackTest()
         {
-            // 初始化分片上传任务
+            // initiates a multipart upload
             var initRequest = new InitiateMultipartUploadRequest(_bucketName, _bigObjectKey);
             var initResult = _ossClient.InitiateMultipartUpload(initRequest);
             Assert.AreEqual(initResult.HttpStatusCode, HttpStatusCode.OK);
@@ -262,29 +262,29 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             Assert.IsTrue(initResult.ResponseMetadata[HttpHeaders.ServerElapsedTime].Length > 0);
             Assert.AreEqual(initResult.ResponseMetadata[HttpHeaders.Date].Length, "Wed, 29 Mar 2017 01:15:58 GMT".Length);
 
-            // 设置每块为 1M
+            // Sets part size 1M
             const int partSize = 1024 * 1024 * 1;
             var partFile = new FileInfo(Config.MultiUploadTestFile);
-            // 计算分块数目
+            // calculates the part count
             var partCount = OssTestUtils.CalculatePartCount(partFile.Length, partSize);
 
-            // 新建一个List保存每个分块上传后的ETag和PartNumber
+            // creats the list for PartETag 
             var partETags = new List<PartETag>();
             //upload the file
             using (var fs = new FileStream(partFile.FullName, FileMode.Open))
             {
                 for (var i = 0; i < partCount; i++)
                 {
-                    // 跳到每个分块的开头
+                    // Skips to the start position of each part
                     long skipBytes = partSize * i;
                     fs.Position = skipBytes;
 
-                    // 计算每个分块的大小
+                    // calculates the part size 
                     var size = partSize < partFile.Length - skipBytes
                         ? partSize
                         : partFile.Length - skipBytes;
 
-                    // 创建UploadPartRequest，上传分块
+                    // creates a UploadPartRequest, uploading parts
                     var uploadPartRequest = new UploadPartRequest(_bucketName, _bigObjectKey, initResult.UploadId)
                     {
                         InputStream = fs,
@@ -301,7 +301,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     Assert.IsTrue(uploadPartResult.ResponseMetadata[HttpHeaders.ServerElapsedTime].Length > 0);
                     Assert.AreEqual(uploadPartResult.ResponseMetadata[HttpHeaders.Date].Length, "Wed, 29 Mar 2017 01:15:58 GMT".Length);
 
-                    // 将返回的PartETag保存到List中。
+                    // saves the result to the list
                     partETags.Add(uploadPartResult.PartETag);
                 }
             }
@@ -330,33 +330,32 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void MultipartUploadCallbackUriInvalidNegativeTest()
         {
-            // 初始化分片上传任务
+            // initiates a multipart upload 
             var initRequest = new InitiateMultipartUploadRequest(_bucketName, _bigObjectKey);
             var initResult = _ossClient.InitiateMultipartUpload(initRequest);
 
-            // 设置每块为 1M
+            // set part size 1MB 
             const int partSize = 1024 * 1024 * 1;
             var partFile = new FileInfo(Config.MultiUploadTestFile);
-            // 计算分块数目
+            // sets part count 
             var partCount = OssTestUtils.CalculatePartCount(partFile.Length, partSize);
 
-            // 新建一个List保存每个分块上传后的ETag和PartNumber
             var partETags = new List<PartETag>();
             //upload the file
             using (var fs = new FileStream(partFile.FullName, FileMode.Open))
             {
                 for (var i = 0; i < partCount; i++)
                 {
-                    // 跳到每个分块的开头
+                    // skip to start position of each part
                     long skipBytes = partSize * i;
                     fs.Position = skipBytes;
 
-                    // 计算每个分块的大小
+                    // sets the part size
                     var size = partSize < partFile.Length - skipBytes
                         ? partSize
                         : partFile.Length - skipBytes;
 
-                    // 创建UploadPartRequest，上传分块
+                    // creates a UploadPartRequest, uploading parts
                     var uploadPartRequest = new UploadPartRequest(_bucketName, _bigObjectKey, initResult.UploadId)
                     {
                         InputStream = fs,
@@ -365,7 +364,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     };
                     var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
 
-                    // 将返回的PartETag保存到List中。
+                    // saves the result to the list 
                     partETags.Add(uploadPartResult.PartETag);
                 }
             }
@@ -410,7 +409,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             metadata.AddHeader(HttpHeaders.Callback, callbackHeaderBuilder);
             metadata.AddHeader(HttpHeaders.CallbackVar, CallbackVariableHeaderBuilder);
 
-            // 小文件使用PutObject上传
+            // use PutObject for small files
             var putObjectResult = _ossClient.ResumableUploadObject(_bucketName, _objectKey, Config.UploadTestFile, metadata, null);
             Assert.IsTrue(putObjectResult.IsSetResponseStream());
             Assert.AreEqual(_callbackOkResponse, GetCallbackResponse(putObjectResult));
@@ -426,7 +425,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             _ossClient.DeleteObject(_bucketName, _objectKey);
 
-            // 大文件使用MultipartUpload上传
+            // use Multipart upload for big files
             putObjectResult = _ossClient.ResumableUploadObject(_bucketName, _objectKey, Config.MultiUploadTestFile, metadata, null, 1024*1024);
             Assert.IsTrue(putObjectResult.IsSetResponseStream());
             Assert.AreEqual(_callbackOkResponse, GetCallbackResponse(putObjectResult));
@@ -453,7 +452,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                // 小文件使用PutObject上传
+                // use PutObject for small files
                 _ossClient.ResumableUploadObject(_bucketName, _objectKey, Config.UploadTestFile, metadata, null);
                 Assert.Fail("Put object callback should be not successfully with invald callback uri");
             }
@@ -465,7 +464,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                // 大文件使用MultipartUpload上传
+                // use Multipart upload for big files
                 _ossClient.ResumableUploadObject(_bucketName, _objectKey, Config.MultiUploadTestFile, metadata, null, 1024*1024);
                 Assert.Fail("Put object callback should be not successfully with invald callback uri");
             }

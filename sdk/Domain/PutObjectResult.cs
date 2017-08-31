@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using Aliyun.OSS.Model;
@@ -10,12 +9,12 @@ using Aliyun.OSS.Model;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 表示上传<see cref="OssObject" />时的请求结果。
+    /// The request class of the operatoin to upload an object
     /// </summary>
     public class PutObjectResult : StreamResult
     {
         /// <summary>
-        /// 获取一个值表示与Object相关的hex编码的128位MD5摘要。
+        /// Gets or sets the Etag.
         /// </summary>
         public string ETag { get; internal set; }
 

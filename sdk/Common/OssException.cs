@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -12,49 +11,49 @@ using System.Security.Permissions;
 namespace Aliyun.OSS.Common
 {
     /// <summary>
-    /// 该异常在对对象存储服务（Object Storage Service）访问失败时抛出。
+    /// This is the expected exception that is thrown when accessing OSS.
     /// </summary>
     /// <seealso cref="ServiceException" />
     [Serializable]
     public class OssException : ServiceException
     {
         /// <summary>
-        /// 初始化新的<see cref="OssException"/>实例。
+        /// Initializes a new <see cref="OssException"/> instance
         /// </summary>
         public OssException()
         { }
 
         /// <summary>
-        /// 初始化新的<see cref="OssException"/>实例。
+        /// Initializes a new <see cref="OssException"/>instance
         /// </summary>
-        /// <param name="message">解释异常原因的错误信息。</param>
+        /// <param name="message">Error message for the exception</param>
         public OssException(string message)
             : base(message)
         { }
 
         /// <summary>
-        /// 初始化新的<see cref="OssException"/>实例。
+        /// Initializes a <see cref="OssException"/> instance
         /// </summary>
-        /// <param name="info">保存序列化对象数据的对象。</param>
-        /// <param name="context">有关源或目标的上下文信息。</param>
+        /// <param name="info">Serialization information</param>
+        /// <param name="context">The context information</param>
         protected OssException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         { }
         
         /// <summary>
-        /// 初始化新的<see cref="OssException"/>实例。
+        /// Initializes a new <see cref="OssException"/> instance
         /// </summary>
-        /// <param name="message">解释异常原因的错误信息。</param>
-        /// <param name="innerException">导致当前异常的异常。</param>
+        /// <param name="message">Error Message</param>
+        /// <param name="innerException">Inner exceptions</param>
         public OssException(string message, Exception innerException)
             : base(message, innerException)
         { }
 
         /// <summary>
-        /// 重载<see cref="ISerializable.GetObjectData"/>方法。
+        /// Override the<see cref="ISerializable.GetObjectData"/>methods
         /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/>，它存有有关所引发异常的序列化的对象数据。</param>
-        /// <param name="context"><see cref="StreamingContext"/>，它包含有关源或目标的上下文信息。</param>
+        /// <param name="info"><see cref="SerializationInfo"/>，Serialization information about the object</param>
+        /// <param name="context"><see cref="StreamingContext"/> Context information</param>
         [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

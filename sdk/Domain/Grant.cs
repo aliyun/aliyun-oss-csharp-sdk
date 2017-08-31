@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -10,25 +9,25 @@ using System;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 访问控制的授权信息。
+    /// The access control grant class definition
     /// </summary>
     public class Grant {
 
         /// <summary>
-        /// 获取被授权者信息。
+        /// The grantee instance
         /// </summary>
         public IGrantee Grantee { get; private set; }
 
         /// <summary>
-        /// 获取被授权的权限。
+        /// The granted permission
         /// </summary>
         public Permission Permission { get; private set; }
 
         /// <summary>
-        /// 构造一个新的<see cref="Grant" />实体。
+        /// Creates a new instance of <see cref="Grant" />.
         /// </summary>
-        /// <param name="grantee">被授权者。目前只支持<see cref="GroupGrantee.AllUsers" />。</param>
-        /// <param name="permission">权限。</param>
+        /// <param name="grantee">the grantee instance----cannot be null</param>
+        /// <param name="permission">the permission instance</param>
         public Grant(IGrantee grantee, Permission permission)
         {
             if (grantee == null)
@@ -39,9 +38,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 判断两个<see cref="Grant" />是否相等
+        /// Checks if two <see cref="Grant" /> instances equal.
         /// </summary>
-        /// <param name="obj">需要比较的<see cref="Grant" /></param>
+        /// <param name="obj">The other grant instance to compare with</param>
         /// <returns></returns>
         public override bool Equals(Object obj)
         {
@@ -54,9 +53,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取HashCode值
+        /// Gets the hash code
         /// </summary>
-        /// <returns>hash code值</returns>
+        /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return (Grantee.Identifier + ":" + Permission).GetHashCode();
