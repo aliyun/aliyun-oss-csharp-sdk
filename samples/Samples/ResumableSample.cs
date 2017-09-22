@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -15,7 +14,7 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS.Samples
 {
     /// <summary>
-    /// 具有断点续传功能的上传和拷贝示例程序
+    /// Sample for resumbale upload and copy.
     /// </summary>
     public static class ResumbaleSample
     {

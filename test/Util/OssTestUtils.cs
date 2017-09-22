@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -118,30 +117,30 @@ namespace Aliyun.OSS.Test.Util
 
             var partFile = new FileInfo(originalFile);
 
-            // 新建一个List保存每个分块上传后的ETag和PartNumber
+            // Create a list to save the result
             var partETags = new List<PartETag>();
             //upload the file
             using (var fs = new FileStream(partFile.FullName, FileMode.Open))
             {
                 for (var i = 0; i < numberOfParts; i++)
                 {
-                    // 跳到每个分块的开头
+                    // Skip to the start position
                     long skipBytes = partSize * i;
                     fs.Position = skipBytes;
 
-                    // 计算每个分块的大小
+                    // Calculate the part size 
                     long size = partSize < partFile.Length - skipBytes
                         ? partSize
                         : partFile.Length - skipBytes;
 
-                    // 创建UploadPartRequest，上传分块
+                    // Create a UploadPartRequest, uploading the part
                     var uploadPartRequest = new UploadPartRequest(bucketName, objectKeyName, initResult.UploadId);
                     uploadPartRequest.InputStream = fs;
                     uploadPartRequest.PartSize = size;
                     uploadPartRequest.PartNumber = (i + 1);
                     var uploadPartResult = ossClient.UploadPart(uploadPartRequest);
 
-                    // 将返回的PartETag保存到List中。
+                    // Save the result 
                     partETags.Add(uploadPartResult.PartETag);
                 }
             }
@@ -223,7 +222,7 @@ namespace Aliyun.OSS.Test.Util
 
         public static int CalculatePartCount(long totalSize, int singleSize)
         {
-            // 计算分块数目
+            // Calculate the part count
             var partCount = (int)(totalSize / singleSize);
             if (totalSize % singleSize != 0)
             {

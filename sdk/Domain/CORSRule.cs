@@ -1,11 +1,17 @@
-﻿using System;
+﻿/*
+ * Copyright (C) Alibaba Cloud Computing
+ * All rights reserved.
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 
 
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 表示一条CORS规则。
+    /// Defining a cross origin resource sharing rule
     /// </summary>
     public class CORSRule
     {
@@ -16,8 +22,7 @@ namespace Aliyun.OSS
         private Int32 _maxAgeSeconds;
 
         /// <summary>
-        /// 指定允许的跨域请求的来源，允许使用多个元素来指定多个允许的来源。
-        /// 允许使用最多一个*通配符。如果指定为“ *”则表示允许所有的来源的跨域请求。
+        /// Allowed origins. One origin could contain at most one wildcard (*).
         /// </summary>
         public IList<String> AllowedOrigins
         {
@@ -31,7 +36,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 指定允许的跨域请求方法（GET,PUT,DELETE,POST,HEAD）。
+        /// Allowed HTTP Method. Valid values are GET,PUT,DELETE,POST,HEAD.
+        /// This property is to specify the value of Access-Control-Allow-Methods header in the preflight response.
+        /// It means the allowed methods in the actual CORS request. 
         /// </summary>
         public IList<String> AllowedMethods
         {
@@ -40,9 +47,10 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 控制在 OPTIONS 预取指令中 Access-Control-Request-Headers 头中指定的 header
-        /// 是否允许。在 Access-Control-Request-Headers 中指定的每个 header 都必须在
-        /// AllowedHeader 中有一条对应的项。允许使用最多一个*通配符。
+        /// Get or set Allowed Headers.
+        /// This property is to specify the value of Access-Control-Allowed-Headers in the preflight response.
+        /// It defines the allowed headers in the actual CORS request.
+        /// Each allowed header can have up to one wildcard (*).
         /// </summary>
         public IList<String> AllowedHeaders
         {
@@ -56,8 +64,8 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 指定允许用户从应用程序中访问的响应头（例如一个 Javascript 的
-        /// XMLHttpRequest 对象。不允许使用 *通配符。
+        /// Get or set exposed headers in the CORS response. Wildcard(*) is not allowed.
+        /// This property is to specify the value of Access-Control-Expose-Headers in the preflight response.
         /// </summary>
         public IList<String> ExposeHeaders
         {
@@ -71,8 +79,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 指定浏览器对特定资源的预取（ OPTIONS）请求返回结果的缓存时间，单位为秒，
-        /// 最大值不超过999999999，且一个 CORSRule 里面最多允许出现一个。
+        /// HTTP Access-Control-Max-Age's getter and setter, in seconds.
+        /// The Access-Control-Max-Age header indicates how long the results of a preflight request (OPTIONS) can be cached in a preflight result cache.
+        /// The max value is 999999999.
         /// </summary>
         public Int32 MaxAgeSeconds 
         {
@@ -86,9 +95,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 添加一条AllowedOrigin。
+        /// Adds one allowed origin.
         /// </summary>
-        /// <param name="allowedOrigin">指定允许的跨域请求的来源，允许使用最多一个“*”通配符。 </param>
+        /// <param name="allowedOrigin">Allowed origin </param>
         public void AddAllowedOrigin(String allowedOrigin)
         {
             if (allowedOrigin == null)
@@ -101,9 +110,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 添加一条AllowedMethod。
+        /// Adds one allowed HTTP method
         /// </summary>
-        /// <param name="allowedMethod">指定允许的跨域请求方法。 类型：GET,PUT,DELETE,POST,HEAD</param>
+        /// <param name="allowedMethod">allowed http method, such as GET,PUT,DELETE,POST,HEAD</param>
         public void AddAllowedMethod(String allowedMethod)
         {
             if (!InAllowedMethods(allowedMethod))
@@ -113,9 +122,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 添加一条AllowedHeader。
+        /// Adds a allowed header.
         /// </summary>
-        /// <param name="allowedHeader">控制在OPTIONS预取指令中Access-Control-Request-Headers头中指定的header是否允许 </param>
+        /// <param name="allowedHeader">allowed header</param>
         public void AddAllowedHeader(String allowedHeader)
         {
             if (allowedHeader == null)
@@ -128,9 +137,9 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 添加一条ExposeHeader。
+        /// adds an expose header.
         /// </summary>
-        /// <param name="exposedHeader">指定允许用户从应用程序中访问的响应头（例如一个Javascript的XMLHttpRequest对象）</param>
+        /// <param name="exposedHeader">an expose-header</param>
         public void AddExposeHeader(String exposedHeader)
         {
             if (exposedHeader == null)
@@ -143,10 +152,10 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取*通配符的个数。
+        /// Gets the wildcard count from the parameter items.
         /// </summary>
-        /// <param name="items">获取这些数据里的通配符个数</param>
-        /// <returns>通配符的个数</returns>
+        /// <param name="items">items to count wildcard from</param>
+        /// <returns>wildcard count</returns>
         private static int CountOfAsterisk(IEnumerable<string> items)
         {
             int count = 0;
@@ -161,10 +170,10 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 判断某个method是否被允许
+        /// Checks if a method is allowed.
         /// </summary>
-        /// <param name="allowedMethod">需要判断的method</param>
-        /// <returns>是否被允许</returns>
+        /// <param name="allowedMethod">the http method to check</param>
+        /// <returns>True:the method is allowed; False: The method is not allowed</returns>
         private static bool InAllowedMethods(string allowedMethod)
         {
             if (string.IsNullOrEmpty(allowedMethod))

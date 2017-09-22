@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -12,19 +11,19 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 设置存储空间的跨域资源共享的请求
+    /// The request class of the operation to set the bucket CORS
     /// </summary>
     public class SetBucketCorsRequest
     {
         private IList<CORSRule> _corsRules = new List<CORSRule>(); 
 
         /// <summary>
-        /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets bucket name
         /// </summary>
         public string BucketName { get; private set; }
 
         /// <summary>
-        /// CORS规则的容器，每个bucket最多允许10条规则。
+        /// Gets or sets the CORS list. Each bucket can have up to 10 rules.
         /// </summary>
         public IList<CORSRule> CORSRules 
         {
@@ -40,16 +39,16 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="SetBucketCorsRequest" />实例。
+        /// Creates a new instance of<see cref="SetBucketCorsRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
+        /// <param name="bucketName">bucket name</param>
         public SetBucketCorsRequest(string bucketName) 
         {
             BucketName = bucketName;
         }
 
         /// <summary>
-        /// 添加一条CORSRule。
+        /// Add a CORRule instance.
         /// </summary>
         /// <param name="corsRule"></param>
         public void AddCORSRule(CORSRule corsRule)

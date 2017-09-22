@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
  
 using System;
@@ -12,7 +11,7 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 指定完成Delete Multiple Objects的请求参数。
+    /// The request class of the operation to delete multiple objects in OSS.
     /// </summary>
     public class DeleteObjectsRequest
     {
@@ -20,17 +19,17 @@ namespace Aliyun.OSS
         private string _encodingType;
 
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets or sets the bucket name
         /// </summary>
         public string BucketName { get; private set; }
         
         /// <summary>
-        /// 获取或设置请求结果的返回模式（详细模式或静默模式）。
+        /// Gets quiet mode flag. By default it's true;
         /// </summary>
         public bool Quiet { get; private set; }
         
         /// <summary>
-        /// 获取或者设置需要删除的key列表。
+        /// Returns the keys list where the caller could add or remove key 
         /// </summary>
         public IList<string> Keys
         {
@@ -38,7 +37,7 @@ namespace Aliyun.OSS
         }
          
         /// <summary>
-        /// 获取或者设置encoding-type的值，默认是url。
+        /// Gets or sets encoding-type value. By default it's HttpUtils.UrlEncodingType.
         /// </summary>
         public string EncodingType
         {
@@ -53,20 +52,20 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 使用静默方式的构造函数。
+        /// Creates an instance with bucket name and keys. Quiet mode is true by default.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject"/></param>
-        /// <param name="keys">预删除的Object列表</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="keys">object lists to delete</param>
         public DeleteObjectsRequest(string bucketName, IList<string> keys)
             : this(bucketName, keys, true)
         { }
 
         /// <summary>
-        /// 使用指定的请求结果返回模式的构造函数。
+        /// Creates an instance with bucket name, keys and quiet flag.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject"/></param>
-        /// <param name="keys">预删除的Object列表</param>
-        /// <param name="quiet">true表示静默模式，false表示详细模式</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="keys">object keys to delete</param>
+        /// <param name="quiet">true: quiet mode; false: detail mode</param>
         public DeleteObjectsRequest(string bucketName, IList<string> keys, bool quiet)
         {
             if (keys == null)

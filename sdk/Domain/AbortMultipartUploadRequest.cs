@@ -2,37 +2,36 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 指定中止Multipart Upload事件的请求参数
+    /// The request to abort a multipart upload. It specifies all parameters needed for the operation.
     /// </summary>
     public class AbortMultipartUploadRequest
     {
         /// <summary>
-        /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets <see cref="OssObject" />'s <see cref="Bucket" /> name.
         /// </summary>
         public string BucketName { get; private set; }
         
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />的值。
+        ///<see cref="OssObject" /> getter
         /// </summary>
         public string Key { get; private set; }
         
         /// <summary>
-        /// 获取或者设置需要取消的UploadId。
+        /// UploadId getter
         /// </summary>
         public string UploadId { get; private set; }
 
         /// <summary>
-        /// 通过bucket name， object key和upload id构造AbortMultipartUploadRequest对象
+        /// Creates a new intance <see cref="AbortMultipartUploadRequest" /> with bucket name, object key and upload Id.
         /// </summary>
-        /// <param name="bucketName">bucket的名字</param>
-        /// <param name="key">object的名字</param>
-        /// <param name="uploadId">本次要取消的upload的id，由<see cref="InitiateMultipartUploadResult"/>中获取</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object name</param>
+        /// <param name="uploadId">Upload Id to cancel. It could be got from<see cref="InitiateMultipartUploadResult"/></param>
         public AbortMultipartUploadRequest(string bucketName, string key, string uploadId)
         {
             BucketName = bucketName;

@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExceptionEndOperationHasBeenCalled" xml:space="preserve">
-    <value>以前使用 asyncResult调用过此方法。</value>
+    <value>The EndOperation has been called on this asyncResult.</value>
   </data>
   <data name="ExceptionIfArgumentStringIsNullOrEmpty" xml:space="preserve">
-    <value>参数为空引用或值为长度是零的字符串。</value>
+    <value>The parameter is empty or null.</value>
   </data>
   <data name="ExceptionInvalidResponse" xml:space="preserve">
-    <value>返回结果无法解析。</value>
+    <value>The response is invalid or unable to parse.</value>
   </data>
   <data name="ExceptionUnknownError" xml:space="preserve">
-    <value>服务器返回未知错误。</value>
+    <value>Unknown error is returned from Server.</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="MimeData" type="System.Resources.ResXFileRef, System.Windows.Forms">

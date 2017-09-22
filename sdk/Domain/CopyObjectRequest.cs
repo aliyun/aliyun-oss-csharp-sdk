@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -14,7 +13,7 @@ namespace Aliyun.OSS
 #pragma warning disable 618, 3005
 
     /// <summary>
-    /// 指定拷贝Object的请求参数
+    /// The request class of the operation to copy an existing object to another one. The destination object could be a non-existing or existing object.
     /// </summary>
     public class CopyObjectRequest
     {
@@ -22,32 +21,33 @@ namespace Aliyun.OSS
         private readonly IList<string> _nonmatchingETagConstraints = new List<string>();
 
         /// <summary>
-        /// 获取或者设置源Object所在的Bucket的名称。
+        /// Source bucket name's getter/setter.
         /// </summary>
         public string SourceBucketName { get; set; }
         
         /// <summary>
-        /// 获取或者设置源Object的Key。
+        /// Source object key's getter/setter.
         /// </summary>
         public string SourceKey { get; set; }
         
         /// <summary>
-        /// 获取或者设置目标Object所在的Bucket的名称。
+        /// Destination bucket name's getter/setter.
         /// </summary>
         public string DestinationBucketName { get; set; }
         
         /// <summary>
-        /// 获取或者设置目标Object的Key。
+        /// Destination object key's getter/setter.
         /// </summary>
         public string DestinationKey { get; set; } 
 
         /// <summary>
-        /// 获取或者设置目标Object的Metadata信息。
+        /// Destination object's metadata getter/setter
         /// </summary>
         public ObjectMetadata NewObjectMetadata { get; set; }
 
         /// <summary>
-        /// 如果源Object的ETAG值和用户提供的ETAG相等，则执行拷贝操作；否则返回412 HTTP错误码（预处理失败）。
+        /// ETag maching contraints---that is for the copy operation to execute, the source object's ETag must match one of the ETags in this property. 
+        /// If not, return 412 as HTTP code (precondition failed)
         /// </summary>        
         public IList<string> MatchingETagConstraints
         {
@@ -55,7 +55,8 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 如果源Object的ETAG值和用户提供的ETAG不相等，则执行拷贝操作；否则返回412 HTTP错误码（预处理失败）。
+        /// ETag non-matching contraints---that is for the copy operation to execute, the source object's ETag must not match any of the ETags in this property. 
+        /// If matches any, return 412 as HTTP code (precondition failed)
         /// </summary>       
         public IList<string> NonmatchingETagConstraints
         {
@@ -63,24 +64,24 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 如果传入参数中的时间等于或者晚于文件实际修改时间，则正常传输文件，并返回200 OK；
-        /// 否则返回412 precondition failed错误
+        /// Unmodified timestamp threshold----that is for the copy operation to execute, the file's last modified time must be smaller than this property;
+        /// Otherwise return 412 as HTTP code (precondition failed)
         /// </summary>
         public DateTime? UnmodifiedSinceConstraint { get; set; }
 
         /// <summary>
-        /// 如果源Object自从用户指定的时间以后被修改过，则执行拷贝操作；
-        /// 否则返回412 HTTP错误码（预处理失败）。    
+        /// Modified timestamp threshold----that is for the copy operation to execute, the file's last modified time must be same or greater than this property;
+        /// Otherwise return 412 as HTTP code (precondition failed)
         /// </summary>   
         public DateTime? ModifiedSinceConstraint { get; set; }
         
         /// <summary>
-        /// 构造一个新的<see cref="CopyObjectRequest" /> 实例
+        /// Creates a new <see cref="CopyObjectRequest" /> instance
         /// </summary>
-        /// <param name="sourceBucketName">需要拷贝的<see cref="OssObject" />所在的Bucket</param>
-        /// <param name="sourceKey">需要拷贝的<see cref="OssObject" />名称</param>
-        /// <param name="destinationBucketName">要拷贝到的目的<see cref="OssObject" />所在的Bucket</param>
-        /// <param name="destinationKey">要拷贝到的目的<see cref="OssObject" />的名称</param>
+        /// <param name="sourceBucketName">source object's bucket name</param>
+        /// <param name="sourceKey">source object key</param>
+        /// <param name="destinationBucketName">destination object's bucket name</param>
+        /// <param name="destinationKey">destination object key</param>
         public CopyObjectRequest(string sourceBucketName, string sourceKey,
             string destinationBucketName, string destinationKey)
         {

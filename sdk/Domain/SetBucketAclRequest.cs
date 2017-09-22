@@ -2,31 +2,30 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 存储空间ACL权限的请求
+    /// The request class of the operation to set the bucket ACL.
     /// </summary>
     public class SetBucketAclRequest
     {
         /// <summary>
-        /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets the bucket name
         /// </summary>
         public string BucketName { get; private set; }
 
         /// <summary>
-        /// 获取用户访问权限。
+        /// Gets the ACL
         /// </summary>
         public CannedAccessControlList ACL { get; private set; }
 
         /// <summary>
-        /// 构造一个新的<see cref="SetBucketAclRequest" />实例。
+        /// Creates a instance of <see cref="SetBucketAclRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
-        /// <param name="acl">用户访问权限</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="acl">user acl</param>
         public SetBucketAclRequest(string bucketName, CannedAccessControlList acl) 
         {
             BucketName = bucketName;

@@ -2,52 +2,51 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 指定列出指定Upload ID所属的所有已经上传成功Part的请求参数。
+    /// The request class of operation to list parts of a ongoing multipart upload.
     /// </summary>
     public class ListPartsRequest
     {
         /// <summary>
-        /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets or sets the bucket name
         /// </summary>
         public string BucketName { get; private set; }
         
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />的值。
+        /// Gets or sets the target object key
         /// </summary>
         public string Key { get; private set; }
         
         /// <summary>
-        /// 获取或者设置响应中的最大Part数目。
+        /// Gets or sets the max parts to return.
         /// </summary>
         public int? MaxParts { get; set; }
         
         /// <summary>
-        /// 获取或者设置List的起始位置，只有Part Number数目大于该参数的Part会被列出。
+        /// Gets or sets the part number marker. It will only list the parts whose numbers are greater than the property.
         /// </summary>
         public int? PartNumberMarker { get; set; }
 
         /// <summary>
-        /// 获取encoding-type的值
+        /// Gets encoding-type.
         /// </summary>
         public string EncodingType { get; set; }
 
         /// <summary>
-        /// 获取或者设置UploadId。
+        /// Gets UploadId.
         /// </summary>
         public string UploadId { get; private set; }
 
         /// <summary>
-        /// 构造一个新的<see cref="ListPartsRequest" />实例。
+        /// Creates an instance of <see cref="ListPartsRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="P:OssObject.Key" />。</param>
-        /// <param name="uploadId"><see cref="InitiateMultipartUploadResult.UploadId"/></param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">target object key</param>
+        /// <param name="uploadId">upload Id</param>
         public ListPartsRequest(string bucketName, string key, string uploadId)
         {            
             BucketName = bucketName;

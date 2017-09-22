@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System.Xml.Serialization;
@@ -21,7 +20,7 @@ namespace Aliyun.OSS
         private DeletedObject[] _keys;
 
         /// <summary>
-        /// Deleted部分的解析和获取
+        /// gets or sets deleted keys
         /// </summary>
         [XmlElement("Deleted")]
         public DeletedObject[] Keys 
@@ -45,7 +44,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// EncodingType值的解析和获取
+        /// gets or sets EncodingType
         /// </summary>
         [XmlElement("EncodingType")]
         public string EncodingType { get; set; }
@@ -55,13 +54,13 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// Deleted部分的解析和获取
+        /// Deleted object class. Key is its only property.
         /// </summary>
         [XmlRoot("Deleted")]
         public class DeletedObject
         {
             /// <summary>
-            /// Deleted Key的解析和获取
+            /// Gets or sets deleted key
             /// </summary>
             [XmlElement("Key")]
             public string Key { get; set; }

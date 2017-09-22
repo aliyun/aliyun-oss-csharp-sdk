@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
  
 using System;
@@ -12,45 +11,45 @@ namespace Aliyun.OSS
 #pragma warning disable 618, 3005
 
     /// <summary>
-    /// 指定初始化Multipart Upload的请求参数。
+    /// The request class of the operation to initiate a multipart upload
     /// </summary>
     public class InitiateMultipartUploadRequest
     {
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets or sets the bucket name to upload files to.
         /// </summary>
         public string BucketName { get; set; }
         
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />的值。
+        /// Gets or sets the target <see cref="OssObject" /> key.
         /// </summary>
         public string Key { get; set; }
 
         /// <summary>
-        /// 获取encoding-type的值
+        /// Gets or sets the encoding-type value
         /// </summary>
         public string EncodingType { get; set; }
 
         /// <summary>
-        /// 获取或设置<see cref="ObjectMetadata" />
+        /// Gets or sets <see cref="ObjectMetadata" />
         /// </summary>
         public ObjectMetadata ObjectMetadata { get; set; }
 
         /// <summary>
-        /// 构造一个新的<see cref="InitiateMultipartUploadRequest" />实例。
+        /// Creates a new instance of <see cref="InitiateMultipartUploadRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="P:OssObject.Key" />。</param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key</param>
         public InitiateMultipartUploadRequest(string bucketName, string key) 
             : this(bucketName, key, null)
         { }
 
         /// <summary>
-        /// 构造一个新的<see cref="InitiateMultipartUploadRequest" />实例。
+        /// Creates a new instance of <see cref="InitiateMultipartUploadRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称。</param>
-        /// <param name="key"><see cref="OssObject" />的<see cref="P:OssObject.Key" />。</param>
-        /// <param name="objectMetadata">文件的元数据. <see cref="ObjectMetadata"/></param>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key">object key</param>
+        /// <param name="objectMetadata">Object's <see cref="ObjectMetadata"/></param>
         public InitiateMultipartUploadRequest(string bucketName, string key, 
             ObjectMetadata objectMetadata)
         {

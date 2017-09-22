@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -50,11 +49,11 @@ namespace Aliyun.OSS.Transform
         }
 
         /// <summary>
-        /// 为了兼容.NET2.0，实现了一个类似.NET4.0中Enum.TryParse的方法
+        /// TryParseEnum does not exist in .net 2.0. But we need to support .net 2.0
         /// </summary>
-        /// <param name="value">转换的枚举名称或基础值的字符串表示形式。</param>
-        /// <param name="status">此方法在返回时包含一个类型为 TEnum 的一个对象，其值由 value 表示。该参数未经初始化即被传递。</param>
-        /// <returns>是否解析成功</returns>
+        /// <param name="value">The string value to parse from.</param>
+        /// <param name="status">The parsed value </param>
+        /// <returns>True: the parse succeeds; False: the parse fails</returns>
         private bool TryParseEnum(string value, out RuleStatus status) 
         {
             if (!Enum.IsDefined(typeof(RuleStatus), value))

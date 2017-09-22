@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
  
 using System;
@@ -11,7 +10,7 @@ using System.Globalization;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 获取Multipart Upload事件中某块数据的信息。
+    /// The part's summary information in a multipart upload. It does not have the actual content data.
     /// </summary>
     public class Part
     {
@@ -19,29 +18,29 @@ namespace Aliyun.OSS
         { }
         
         /// <summary>
-        /// 获取分块的编号
+        /// Parts number.
         /// </summary>
         public int PartNumber { get; internal set; }
         
         /// <summary>
-        /// 获取分块上传的时间
+        /// Part's last updated time (typically it's just the upload time)
         /// </summary>
         public DateTime LastModified { get; internal set; }
         
         /// <summary>
-        /// 获取分块内容的ETag
+        /// The Etag of the part content.
         /// </summary>
         public string ETag { get; internal set; }
         
         /// <summary>
-        /// 获取分块的大小，单位字节
+        /// Size of the part content, in bytes.
         /// </summary>
         public long Size { get; internal set; }
         
         /// <summary>
-        /// 获取该实例的字符串表示。
+        /// The serialization string
         /// </summary>
-        /// <returns>实例的字符串形式</returns>
+        /// <returns>the serialization string</returns>
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture,
@@ -50,7 +49,7 @@ namespace Aliyun.OSS
         }
         
         /// <summary>
-        /// 获取包含Part标识号码和ETag值的<see cref="PartETag" />对象
+        /// Gets the <see cref="PartETag" /> instance which consists of the part number and the ETag.
         /// </summary>
         public PartETag PartETag
         {

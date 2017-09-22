@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -12,19 +11,19 @@ using Aliyun.OSS.Util;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 设置存储空间生命周期的请求
+    /// The request class of the operation to set the bucket's lifecycle configuration.
     /// </summary>
     public class SetBucketLifecycleRequest
     {
         private IList<LifecycleRule> _lifecycleRules = new List<LifecycleRule>(); 
 
         /// <summary>
-        /// 获取<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets the bucket name
         /// </summary>
         public string BucketName { get; private set; }
 
         /// <summary>
-        /// Lifecycle规则列表，每个bucket最多允许1000条规则。
+        /// Gets or sets the Lifecycle rule list.Each bucket can have up to 1000 rules.
         /// </summary>
         public IList<LifecycleRule> LifecycleRules 
         {
@@ -40,16 +39,16 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 构造一个新的<see cref="SetBucketLifecycleRequest" />实例。
+        /// Creates a new intance of <see cref="SetBucketLifecycleRequest" />.
         /// </summary>
-        /// <param name="bucketName"><see cref="OssObject" />所在<see cref="Bucket" />的名称</param>
+        /// <param name="bucketName">bucket name</param>
         public SetBucketLifecycleRequest(string bucketName) 
         {
             BucketName = bucketName;
         }
 
         /// <summary>
-        /// 添加一条LifecycleRule。
+        /// Adds a LifeCycle rule
         /// </summary>
         /// <param name="lifecycleRule"></param>
         public void AddLifecycleRule(LifecycleRule lifecycleRule)

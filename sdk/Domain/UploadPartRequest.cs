@@ -2,7 +2,6 @@
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
  * 
- * 版权所有 （C）阿里云计算有限公司
  */
 
 using System;
@@ -13,48 +12,47 @@ using Aliyun.OSS.Common.Internal;
 namespace Aliyun.OSS
 {
     /// <summary>
-    /// 指定上传某分块的请求。
+    /// The request class of the operation to upload part
     /// </summary>
     public class UploadPartRequest
     {
         private Stream _inputStream;
 
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />所在<see cref="Bucket" />的名称。
+        /// Gets the bucket name
         /// </summary>
         public string BucketName { get; private set; }
         
         /// <summary>
-        /// 获取或者设置<see cref="OssObject" />的值。
+        /// Gets the object key
         /// </summary>
         public string Key { get; private set; }
         
         /// <summary>
-        /// 获取或设置上传Multipart上传事件的Upload ID。
+        /// Gets the upload Id
         /// </summary>
         public string UploadId { get; private set; }
         
         /// <summary>
-        /// 获取或设置返回上传分块（Part）的标识号码（Part Number）。
-        /// 每一个上传分块（Part）都有一个标识它的号码（范围1~10000）。
-        /// 对于同一个Upload ID，该号码不但唯一标识这一块数据，也标识了这块数据在整个文件中的相对位置。
-        /// 如果你用同一个Part号码上传了新的数据，那么OSS上已有的这个号码的Part数据将被覆盖。
+        /// Gets the part number which is between 1 to 10000.
+        /// Each part has the Part number as its Id and for a given upload Id, the part number determine the part's position in the whole file.
+        /// If there's another part upload with the same part number under the same upload Id, the existing data will be overwritten.
         /// </summary>
         public int? PartNumber { get; set; }
         
         /// <summary>
-        /// 获取或设置返回分块（Part）数据的字节数。
-        /// 除最后一个Part外，其他Part最小为5MB。
+        /// Gets or sets the part size.
+        /// Except the last part, all other parts size are at least 5MB.
         /// </summary>
         public long? PartSize { get; set; }
         
         /// <summary>
-        /// 获取或设置分块（Part）数据的MD5校验值。
+        /// Gets or sets the part data's MD5.
         /// </summary>
         public string Md5Digest { get; set; }
         
         /// <summary>
-        /// 获取或设置包含上传分块内容的数据流。
+        /// Gets or sets the part's input stream.
         /// </summary>
         public Stream InputStream
         {
@@ -63,7 +61,7 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// 获取或设置进度回调。
+        /// Gets or sets the progress callback.
         /// </summary>
         public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
         
