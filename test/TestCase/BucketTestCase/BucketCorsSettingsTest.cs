@@ -76,7 +76,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             {
                 var sbcRequest = new SetBucketCorsRequest(_bucketName);
                 sbcRequest.AddCORSRule(ConstructDummyCorsRule());
-                sbcRequest.AddCORSRule(ConstructDummyCorsRule());
+                sbcRequest.AddCORSRule(ConstructDummyCorsRuleWithMultiAllowedMethod());
                 _ossClient.SetBucketCors(sbcRequest);
                 OssTestUtils.WaitForCacheExpire();
                 var rules = OssTestUtils.ToArray <CORSRule>(_ossClient.GetBucketCors(_bucketName));
@@ -118,6 +118,19 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             rule.AddAllowedMethod("GET");
             rule.AddAllowedHeader("HTTP");
             rule.AddExposeHeader("HTTP");
+            return rule;
+        }
+
+        private static CORSRule ConstructDummyCorsRuleWithMultiAllowedMethod()
+        {
+            var rule = new CORSRule();
+            rule.AddAllowedOrigin("Original " + Guid.NewGuid());
+            rule.AddAllowedMethod("GET");
+            rule.AddAllowedMethod("PUT");
+            rule.AddAllowedMethod("DELETE");
+            rule.AddAllowedMethod("POST");
+            rule.AddAllowedMethod("HEAD");
+            rule.MaxAgeSeconds = 120;
             return rule;
         }
     }
