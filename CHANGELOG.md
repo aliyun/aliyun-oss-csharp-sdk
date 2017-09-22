@@ -1,5 +1,10 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.5.3  日期：2017/09/22
+### 变更内容
+- 修复：SetBucketCors当AllowedMethod为DELETE时报错的问题
+- 变更：代码注释由中文变成英文
+
 ## 版本号：2.5.2  日期：2017/07/18
 ### 变更内容
 - 修复：ResumableUploadObject文件名带汉字时上传路径无效
