@@ -9,10 +9,10 @@
 ## 关于
  - 阿里云对象存储（Object Storage Service，OSS），是[阿里云](https://www.aliyun.com)对外提供的海量，安全，低成本，高可靠的云存储服务。
  - OSS C# SDK基于[OSS REST API](https://help.aliyun.com/document_detail/31948.html)构建。
- - OSS C# SDK[在线文档](https://gosspublic.alicdn.com/AliyunNetSDK/latest/apidocs/index.html)。
+ - OSS C# SDK[在线文档](http://gosspublic.alicdn.com/AliyunNetSDK/apidocs/latest/index.html)。
 
 ## 版本
- - 当前版本：2.5.2
+ - 当前版本：2.5.3
 
 ## 运行环境
 

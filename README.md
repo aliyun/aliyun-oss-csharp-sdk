@@ -9,10 +9,10 @@
 ## About
  Alibaba Cloud Object Storage Service (OSS) is a cloud storage service provided by [Alibaba Cloud](https://www.aliyun.com), featuring massive capacity, security, a low cost, and high reliability.
  - The OSS C# SDK is built based on [OSS REST API](https://help.aliyun.com/document_detail/31948.html).
- - OSS C# SDK[Online Documentation](https://gosspublic.alicdn.com/AliyunNetSDK/latest/apidocs/index.html). 
+ - OSS C# SDK[Online Documentation](http://gosspublic.alicdn.com/AliyunNetSDK/international/apidocs/latest/index.html). 
 
 ## Version
- - Current version: 2.5.2.
+ - Current version: 2.5.3.
 
 ## Run environment
 
