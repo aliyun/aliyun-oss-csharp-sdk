@@ -14,8 +14,6 @@ using System.Text.RegularExpressions;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Commands;
-using Aliyun.OSS.Domain;
-using Aliyun.OSS.Properties;
 using Aliyun.OSS.Common.Internal;
 
 namespace Aliyun.OSS.Util
@@ -148,14 +146,14 @@ namespace Aliyun.OSS.Util
             {
                 resourcePath = bucket + "/" + resourcePath;
             }
-            
+
             return UrlEncodeKey(resourcePath);
         }
 
         internal static Uri MakeBucketEndpoint(Uri endpoint, string bucket, ClientConfiguration conf)
         {
             var uri = new Uri(endpoint.Scheme + "://"
-                           + ((bucket != null && !conf.IsCname && !IsIp(endpoint)) 
+                           + ((bucket != null && !conf.IsCname && !IsIp(endpoint))
                                ? (bucket + "." + endpoint.Host) : endpoint.Host)
                            + ((endpoint.Port != 80) ? (":" + endpoint.Port) : ""));
             return uri;
@@ -180,7 +178,7 @@ namespace Aliyun.OSS.Util
         {
             const char separator = '/';
             var segments = key.Split(separator);
-            
+
             var encodedKey = new StringBuilder();
             encodedKey.Append(HttpUtils.EncodeUri(segments[0], CharsetName));
             for (var i = 1; i < segments.Length; i++)
@@ -227,7 +225,7 @@ namespace Aliyun.OSS.Util
                 var md5Value = md5Calculator.ComputeHash(partialStream);
                 input.Seek(position, SeekOrigin.Begin);
                 return Convert.ToBase64String(md5Value);
-            } 
+            }
         }
 
         /// <summary>
@@ -277,17 +275,20 @@ namespace Aliyun.OSS.Util
         internal static void CheckBucketName(string bucketName)
         {
             if (string.IsNullOrEmpty(bucketName))
-                throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "bucketName");
+                throw new ArgumentException("The parameter is empty or null.", "bucketName");
             if (!IsBucketNameValid(bucketName))
-                throw new ArgumentException(OssResources.BucketNameInvalid, "bucketName");
+                throw new ArgumentException(@"Invalid bucket name. The bucket naming rules:
+1) Can only contain lowercase letter, number or dash(-);
+2) Starts and ends with lowercase letter or number;
+3) The length must be between 3 to 63 bytes.", "bucketName");
         }
 
         internal static void CheckObjectKey(string key)
         {
             if (string.IsNullOrEmpty(key))
-                throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "key");
+                throw new ArgumentException("The parameter is empty or null.", "key");
             if (!IsObjectKeyValid(key))
-                throw new ArgumentException(OssResources.ObjectKeyInvalid, "key");
+                throw new ArgumentException("Invalid Object Key. Its length must be between 1 to 1023.", "key");
         }
 
         internal static string DetermineOsVersion()
@@ -326,7 +327,7 @@ namespace Aliyun.OSS.Util
 
         internal static ClientConfiguration GetClientConfiguration(IServiceClient serviceClient)
         {
-            var outerClient = (RetryableServiceClient) serviceClient;
+            var outerClient = (RetryableServiceClient)serviceClient;
             var innerClient = (ServiceClient)outerClient.InnerServiceClient();
             return innerClient.Configuration;
         }
@@ -368,9 +369,9 @@ namespace Aliyun.OSS.Util
         internal static void CheckCredentials(string accessKeyId, string accessKeySecret)
         {
             if (string.IsNullOrEmpty(accessKeyId))
-                throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "accessKeyId");
+                throw new ArgumentException("The parameter is empty or null.", "accessKeyId");
             if (string.IsNullOrEmpty(accessKeySecret))
-                throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "accessKeySecret");
+                throw new ArgumentException("The parameter is empty or null.", "accessKeySecret");
         }
 
         internal static Stream SetupProgressListeners(Stream originalStream,
