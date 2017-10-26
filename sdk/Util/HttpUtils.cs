@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System;
+using System.Reflection;
+using System.IO;
 
 namespace Aliyun.OSS.Util
 {
@@ -24,9 +26,15 @@ namespace Aliyun.OSS.Util
 
         static HttpUtils()
         {
-            char[] delimiterChars = { ' ', '\t'};
+            char[] delimiterChars = { ' ', '\t' };
 
-            var mimeLines = Properties.Resources.MimeData.ToString().Split('\n');
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Stream stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources.MimeData.txt");
+            byte[] buffer = new byte[stream.Length];
+            stream.Read(buffer, 0, buffer.Length);
+            string content = Encoding.ASCII.GetString(buffer);
+            var mimeLines = content.Split('\n');
+
             foreach (var mimeLine in mimeLines)
             {
                 var mimeParts = mimeLine.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
@@ -50,8 +58,8 @@ namespace Aliyun.OSS.Util
             foreach (var p in parameters)
             {
                 if (!isFirst)
-                    queryString.Append("&");                
-                
+                    queryString.Append("&");
+
                 isFirst = false;
 
                 queryString.Append(p.Key);
@@ -61,7 +69,7 @@ namespace Aliyun.OSS.Util
 
             return queryString.ToString();
         }
-        
+
         public static string EncodeUri(string uriToEncode, string charset)
         {
             if (string.IsNullOrEmpty(uriToEncode))
@@ -106,17 +114,18 @@ namespace Aliyun.OSS.Util
 
         public static string GetContentType(string key, string file)
         {
-            string fileType = ""; 
+            string fileType = "";
             if (file != null)
             {
                 fileType = System.IO.Path.GetExtension(file);
-            } else if (key != null)
+            }
+            else if (key != null)
             {
                 fileType = System.IO.Path.GetExtension(key);
             }
 
             fileType = fileType.Trim().TrimStart(new char[1] { '.' });
-            
+
             if (_mimeDict.ContainsKey(fileType))
             {
                 return _mimeDict[fileType];
