@@ -5,7 +5,6 @@
  */
 
 using System;
-using Aliyun.OSS.Properties;
 
 namespace Aliyun.OSS.Common.Authentication
 {
@@ -18,9 +17,9 @@ namespace Aliyun.OSS.Common.Authentication
         public string ComputeSignature(String key, String data)
         {
             if (string.IsNullOrEmpty(key))
-                throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "key");
+                throw new ArgumentException("The parameter is empty or null.", "key");
             if (string.IsNullOrEmpty(data))
-                throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "data");
+                throw new ArgumentException("The parameter is empty or null.", "data");
 
             return ComputeSignatureCore(key, data);
         }

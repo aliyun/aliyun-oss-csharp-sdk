@@ -5,7 +5,6 @@
  */
 
 using System;
-using Aliyun.OSS.Properties;
 using Aliyun.OSS.Common;
 
 namespace Aliyun.OSS.Util
@@ -19,7 +18,7 @@ namespace Aliyun.OSS.Util
         {
             return CreateException(errorCode, message, requestId, hostId, null);
         }
-        
+
         public static OssException CreateException(string errorCode,
                                                    string message,
                                                    string requestId,
@@ -36,10 +35,10 @@ namespace Aliyun.OSS.Util
 
             return exception;
         }
-        
+
         public static Exception CreateInvalidResponseException(Exception innerException)
         {
-            throw new InvalidOperationException(Resources.ExceptionInvalidResponse, innerException);
+            throw new InvalidOperationException("The response is invalid or unable to parse.", innerException);
         }
     }
 }

@@ -11,14 +11,13 @@ using Aliyun.OSS.Transform;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Common.Handlers;
 using Aliyun.OSS.Util;
-using Aliyun.OSS.Properties;
 
 namespace Aliyun.OSS.Commands
 {
     internal class CompleteMultipartUploadCommand : OssCommand<CompleteMultipartUploadResult>
     {
         private readonly CompleteMultipartUploadRequest _completeMultipartUploadRequest;
-        
+
         protected override string Bucket
         {
             get
@@ -26,7 +25,7 @@ namespace Aliyun.OSS.Commands
                 return _completeMultipartUploadRequest.BucketName;
             }
         }
-        
+
         protected override string Key
         {
             get
@@ -34,7 +33,7 @@ namespace Aliyun.OSS.Commands
                 return _completeMultipartUploadRequest.Key;
             }
         }
-        
+
         protected override HttpMethod Method
         {
             get { return HttpMethod.Post; }
@@ -50,23 +49,23 @@ namespace Aliyun.OSS.Commands
                 return headers;
             }
         }
-        
+
         protected override IDictionary<string, string> Parameters
         {
-            get 
+            get
             {
                 var parameters = base.Parameters;
                 parameters[RequestParameters.UPLOAD_ID] = _completeMultipartUploadRequest.UploadId;
                 return parameters;
             }
         }
-        
+
         protected override Stream Content
         {
-            get 
-            { 
+            get
+            {
                 return SerializerFactory.GetFactory().CreateCompleteUploadRequestSerializer()
-                    .Serialize(_completeMultipartUploadRequest); 
+                    .Serialize(_completeMultipartUploadRequest);
             }
         }
 
@@ -74,7 +73,7 @@ namespace Aliyun.OSS.Commands
         {
             get { return _completeMultipartUploadRequest.IsNeedResponseStream(); }
         }
-        
+
         private CompleteMultipartUploadCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
                                  IDeserializer<ServiceResponse, CompleteMultipartUploadResult> deserializeMethod,
                                  CompleteMultipartUploadRequest completeMultipartUploadRequest)
@@ -82,7 +81,7 @@ namespace Aliyun.OSS.Commands
         {
             _completeMultipartUploadRequest = completeMultipartUploadRequest;
         }
-        
+
         public static CompleteMultipartUploadCommand Create(IServiceClient client, Uri endpoint, ExecutionContext context,
                                   CompleteMultipartUploadRequest completeMultipartUploadRequest)
         {
@@ -90,7 +89,7 @@ namespace Aliyun.OSS.Commands
             OssUtils.CheckObjectKey(completeMultipartUploadRequest.Key);
 
             if (string.IsNullOrEmpty(completeMultipartUploadRequest.UploadId))
-                throw new ArgumentException(Resources.ExceptionIfArgumentStringIsNullOrEmpty, "uploadId");
+                throw new ArgumentException("The parameter is empty or null.", "uploadId");
 
             // handle upload callback error 203
             if (completeMultipartUploadRequest.IsCallbackRequest())
@@ -101,7 +100,7 @@ namespace Aliyun.OSS.Commands
             return new CompleteMultipartUploadCommand(client, endpoint, context,
                                                DeserializerFactory.GetFactory().CreateCompleteUploadResultDeserializer(completeMultipartUploadRequest),
                                                completeMultipartUploadRequest);
-            
+
         }
     }
 }
