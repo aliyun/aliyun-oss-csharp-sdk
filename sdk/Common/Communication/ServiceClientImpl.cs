@@ -33,7 +33,7 @@ namespace Aliyun.OSS.Common.Communication
         public class HttpAsyncResult : AsyncResult<ServiceResponse>
         {
             public HttpWebRequest WebRequest { get; set; }
-            
+
             public ExecutionContext Context { get; set; }
 
             public HttpAsyncResult(AsyncCallback callback, object state)
@@ -50,13 +50,13 @@ namespace Aliyun.OSS.Common.Communication
             private HttpWebResponse _response;
             private readonly Exception _failure;
             private IDictionary<string, string> _headers;
-            
+
             public override HttpStatusCode StatusCode
             {
                 get { return _response.StatusCode; }
             }
-            
-            public override Exception Failure 
+
+            public override Exception Failure
             {
                 get { return _failure; }
             }
@@ -176,7 +176,7 @@ namespace Aliyun.OSS.Common.Communication
 
             var asyncResult = new HttpAsyncResult(callback, state)
             {
-                WebRequest = request, 
+                WebRequest = request,
                 Context = context
             };
 
@@ -234,7 +234,7 @@ namespace Aliyun.OSS.Common.Communication
                 // Skip setting content body in this case.
                 if (async)
                     asyncCallback();
-                
+
                 return;
             }
 
@@ -244,7 +244,7 @@ namespace Aliyun.OSS.Common.Communication
                 userSetContentLength = long.Parse(serviceRequest.Headers[HttpHeaders.ContentLength]);
 
             long streamLength = data.Length - data.Position;
-            webRequest.ContentLength = (userSetContentLength >= 0 && 
+            webRequest.ContentLength = (userSetContentLength >= 0 &&
                 userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
 
             if (async)
@@ -317,7 +317,7 @@ namespace Aliyun.OSS.Common.Communication
             // with the WebHeaderCollection.Add method,
             // we have to call an internal method to skip validation.
             foreach (var h in serviceRequest.Headers)
-                HttpExtensions.AddInternal(webRequest.Headers, h.Key, h.Value);
+                webRequest.Headers.Add(h.Key, h.Value);
 
             // Set user-agent
             if (!string.IsNullOrEmpty(configuration.UserAgent))
@@ -332,7 +332,7 @@ namespace Aliyun.OSS.Common.Communication
             // it will try to load the IE proxy settings including auto proxy detection,
             // which is quite time consuming.
             webRequest.Proxy = null;
-            
+
 
             // Set proxy if proxy settings are specified.
             if (!string.IsNullOrEmpty(configuration.ProxyHost))
@@ -358,10 +358,11 @@ namespace Aliyun.OSS.Common.Communication
     internal static class HttpExtensions
     {
         private static MethodInfo _addInternalMethod;
-        private static readonly ICollection<PlatformID> MonoPlatforms = 
+        private static readonly ICollection<PlatformID> MonoPlatforms =
             new List<PlatformID> { PlatformID.MacOSX, PlatformID.Unix };
         private static bool? _isMonoPlatform;
 
+        [Obsolete("Don't support .net standard", true)]
         internal static void AddInternal(WebHeaderCollection headers, string key, string value)
         {
             if (_isMonoPlatform == null)
