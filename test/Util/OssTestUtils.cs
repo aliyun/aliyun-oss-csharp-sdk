@@ -104,6 +104,20 @@ namespace Aliyun.OSS.Test.Util
             }
         }
 
+        public static IAsyncResult BeginUploadObject(IOss ossClient, string bucketName, 
+                                                    string objectKeyName, string originalFile, AsyncCallback callback, object callbackObject)
+        {
+            var metadata = new ObjectMetadata();
+            metadata.CacheControl = "No-Cache";
+            metadata.ContentType = "text/html";
+            return ossClient.BeginPutObject(bucketName, objectKeyName, originalFile, metadata, callback, callbackObject);
+        }
+
+        public static PutObjectResult EndUploadObject(IOss ossClient, IAsyncResult ar)
+        {
+            return ossClient.EndPutObject(ar);
+        }
+
         public static void MultiPartUpload(IOss ossClient, string bucketName,
             string objectKeyName, string originalFile, int numberOfParts, int totalSize)
         {

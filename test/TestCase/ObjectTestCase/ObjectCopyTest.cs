@@ -355,7 +355,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
                 var sourceObjectMeta = _ossClient.GetObjectMetadata(_bucketName, _sourceBigObjectKey);
 
-                _ossClient.ResumableCopyObject(copyRequest, null);
+                _ossClient.ResumableCopyObject(copyRequest, Config.DownloadFolder);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, targetObjectKey));
 
                 var targetObjectMeta = _ossClient.GetObjectMetadata(_bucketName, targetObjectKey);

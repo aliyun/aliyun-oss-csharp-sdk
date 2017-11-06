@@ -36,9 +36,22 @@ namespace Aliyun.OSS.Common.Communication
             
             public ExecutionContext Context { get; set; }
 
+            internal ServiceRequest Request { get; set; }
+
             public HttpAsyncResult(AsyncCallback callback, object state)
                 : base(callback, state)
             { }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+
+                if (disposing && Request != null)
+                {
+                    Request.Dispose();
+                    Request = null;
+                }
+            }
         }
 
         /// <summary>
@@ -177,7 +190,8 @@ namespace Aliyun.OSS.Common.Communication
             var asyncResult = new HttpAsyncResult(callback, state)
             {
                 WebRequest = request, 
-                Context = context
+                Context = context,
+                Request = serviceRequest
             };
 
             SetRequestContent(request, serviceRequest, true,
