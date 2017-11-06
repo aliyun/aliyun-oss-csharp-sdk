@@ -345,10 +345,12 @@ namespace Aliyun.OSS.Util
         internal static TResult EndOperationHelper<TResult>(IServiceClient serviceClient, IAsyncResult asyncResult)
         {
             var response = EndOperationHelper(serviceClient, asyncResult);
-            var retryableAsyncResult = asyncResult as RetryableAsyncResult;
-            Debug.Assert(retryableAsyncResult != null);
-            OssCommand<TResult> cmd = (OssCommand<TResult>)retryableAsyncResult.Context.Command;
-            return cmd.DeserializeResponse(response);
+            using (RetryableAsyncResult retryableAsyncResult = asyncResult as RetryableAsyncResult)
+            {
+                Debug.Assert(retryableAsyncResult != null);
+                OssCommand<TResult> cmd = (OssCommand<TResult>)retryableAsyncResult.Context.Command;
+                return cmd.DeserializeResponse(response);
+            }
         }
 
         private static ServiceResponse EndOperationHelper(IServiceClient serviceClient, IAsyncResult asyncResult)

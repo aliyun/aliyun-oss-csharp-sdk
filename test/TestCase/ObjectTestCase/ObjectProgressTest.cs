@@ -215,7 +215,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         {
             var metadata = new ObjectMetadata();
             // resumable upload
-            _ossClient.ResumableUploadObject(_bucketName, _objectKey, Config.MultiUploadTestFile, metadata, null, 102410, uploadProgressCallback);
+            _ossClient.ResumableUploadObject(_bucketName, _objectKey, Config.MultiUploadTestFile, metadata, Config.DownloadFolder, 102410, uploadProgressCallback);
 
             // check md5
             OssTestUtils.DownloadObject(_ossClient, _bucketName, _objectKey, _tmpLocalFile);

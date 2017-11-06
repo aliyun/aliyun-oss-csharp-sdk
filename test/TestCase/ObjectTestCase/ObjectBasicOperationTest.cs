@@ -73,6 +73,35 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
+        public void UploadObjectBasicSettingsAsyncTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                PutObjectResult putObjectResult = null;
+                AutoResetEvent finished = new AutoResetEvent(false);
+                //upload the object
+                OssTestUtils.BeginUploadObject(_ossClient, _bucketName, key,
+                                               Config.UploadTestFile,
+                                               (ar) => { 
+                                                putObjectResult = OssTestUtils.EndUploadObject(_ossClient, ar); 
+                                                finished.Set();
+                                               },
+                                               null);
+                finished.WaitOne(1000 * 60); // wait for up to 1 min;
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
         public void UploadObjectNullMetadataTest()
         {
             var key = OssTestUtils.GetObjectKey(_className);
@@ -307,7 +336,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var fileInfo = new FileInfo(Config.MultiUploadTestFile);
                 var fileSize = fileInfo.Length;
 
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), null, 1);
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), Config.DownloadFolder, 1);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
             }
@@ -359,7 +388,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var fileInfo = new FileInfo(newFileName);
                 var fileSize = fileInfo.Length;
 
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, newFileName, new ObjectMetadata(), null, fileSize / 3);
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, newFileName, new ObjectMetadata(), Config.DownloadFolder, fileSize / 3);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
 
@@ -1526,7 +1555,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
-                    var request = new AppendObjectRequest(_bucketName, _objectKey)
+                    var request = new AppendObjectRequest(_bucketName, key)
                     {
                         ObjectMetadata = new ObjectMetadata(),
                         Content = fs,
@@ -1608,7 +1637,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void ResumableUploadObjectCheckpointTest()
         {
             var key = "test/短板.mp4";
-
+            // this test case requires to run under admin 
             try
             {
                 // checkpoint is null
@@ -1786,9 +1815,9 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 _ossClient.EndAppendObject(ar);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Assert.IsFalse(true);
+                Assert.IsFalse(true, e.ToString());
             }
             finally
             {
