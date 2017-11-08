@@ -169,7 +169,7 @@ namespace Aliyun.OSS.Common.Communication
                                                     ExecutionContext context)
         {
             var request = HttpFactory.CreateWebRequest(serviceRequest, Configuration);
-            SetRequestContent(request, serviceRequest, false, null);
+            SetRequestContent(request, serviceRequest, false, null, Configuration);
             try
             {
                 var response = request.GetResponse() as HttpWebResponse;
@@ -195,7 +195,7 @@ namespace Aliyun.OSS.Common.Communication
             };
 
             SetRequestContent(request, serviceRequest, true,
-                              () => request.BeginGetResponse(OnGetResponseCompleted, asyncResult));
+                              () => request.BeginGetResponse(OnGetResponseCompleted, asyncResult), Configuration);
 
             return asyncResult;
         }
@@ -237,7 +237,7 @@ namespace Aliyun.OSS.Common.Communication
         }
 
         private static void SetRequestContent(HttpWebRequest webRequest, ServiceRequest serviceRequest,
-                                              bool async, OssAction asyncCallback)
+                                              bool async, OssAction asyncCallback, ClientConfiguration clientConfiguration)
         {
             var data = serviceRequest.BuildRequestContent();
 
@@ -248,7 +248,7 @@ namespace Aliyun.OSS.Common.Communication
                 // Skip setting content body in this case.
                 if (async)
                     asyncCallback();
-                
+
                 return;
             }
 
@@ -258,8 +258,12 @@ namespace Aliyun.OSS.Common.Communication
                 userSetContentLength = long.Parse(serviceRequest.Headers[HttpHeaders.ContentLength]);
 
             long streamLength = data.Length - data.Position;
-            webRequest.ContentLength = (userSetContentLength >= 0 && 
+            webRequest.ContentLength = (userSetContentLength >= 0 &&
                 userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
+            if (webRequest.ContentLength > clientConfiguration.DirectWriteStreamThreshold)
+            {
+                webRequest.AllowWriteStreamBuffering = false;
+            }
 
             if (async)
             {
@@ -325,6 +329,7 @@ namespace Aliyun.OSS.Common.Communication
                                               ClientConfiguration configuration)
         {
             webRequest.Timeout = configuration.ConnectionTimeout;
+            webRequest.ReadWriteTimeout = configuration.ConnectionTimeout;
             webRequest.Method = serviceRequest.Method.ToString().ToUpperInvariant();
 
             // Because it is not allowed to set common headers
