@@ -595,10 +595,8 @@ namespace Aliyun.OSS
             SetContentTypeIfNull(key, fileToUpload, ref metadata);
 
             IAsyncResult result;
-            using (Stream content = File.OpenRead(fileToUpload))
-            {
-                result = BeginPutObject(bucketName, key, content, metadata, callback, state);
-            }
+            Stream content = File.OpenRead(fileToUpload); // content will be disposed after EndPutObject is called;
+            result = BeginPutObject(bucketName, key, content, metadata, callback, state);
             return result;
         }
 

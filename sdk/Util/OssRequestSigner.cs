@@ -32,8 +32,10 @@ namespace Aliyun.OSS.Util
             {
                 var canonicalString = SignUtils.BuildCanonicalString(httpMethod, resourcePath, request);
                 var signature = ServiceSignature.Create().ComputeSignature(accessKeySecret, canonicalString);
-                
-                request.Headers.Add(HttpHeaders.Authorization, "OSS " + accessKeyId + ":" + signature);
+
+                // request could be retried and the Authorization header may exist already.
+                // Fix for #OSS-1579/11349300 
+                request.Headers[HttpHeaders.Authorization] =  "OSS " + accessKeyId + ":" + signature;
             }
         }
     }
