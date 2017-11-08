@@ -28,6 +28,7 @@ namespace Aliyun.OSS.Common
         private bool _isCname = false;
         private bool _enalbeMD5Check = false;
         private long _progressUpdateInterval = 1024 * 4;
+        private long _directWriteStreamThreshold = 1024 * 1024 * 512;
 
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
@@ -154,6 +155,24 @@ namespace Aliyun.OSS.Common
         /// Gets the difference between customized epoch time and local time, in seconds
         /// </summary>
         public long TickOffset { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the direct write stream threshold.
+        /// The theshold is the file size threshold that when the uploading file size is more than this value, the HttpWebRequest will not use write buffer to save the memory.
+        /// </summary>
+        /// <value>The direct write stream threshold.</value>
+        public long DirectWriteStreamThreshold
+        {
+            get
+            {
+                return _directWriteStreamThreshold;
+            }
+
+            set
+            {
+                _directWriteStreamThreshold = value;
+            }
+        }
 
         /// <summary>
         /// Gets the default user agent

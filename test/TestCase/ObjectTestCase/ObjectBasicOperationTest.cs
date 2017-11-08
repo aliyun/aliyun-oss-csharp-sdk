@@ -79,13 +79,12 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                PutObjectResult putObjectResult = null;
                 AutoResetEvent finished = new AutoResetEvent(false);
                 //upload the object
                 OssTestUtils.BeginUploadObject(_ossClient, _bucketName, key,
                                                Config.UploadTestFile,
                                                (ar) => { 
-                                                putObjectResult = OssTestUtils.EndUploadObject(_ossClient, ar); 
+                                                OssTestUtils.EndUploadObject(_ossClient, ar); 
                                                 finished.Set();
                                                },
                                                null);
