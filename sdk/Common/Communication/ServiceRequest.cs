@@ -49,7 +49,18 @@ namespace Aliyun.OSS.Common.Communication
         {
             get { return Content == null || Content.CanSeek; }
         }
-        
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="T:Aliyun.OSS.Common.Communication.ServiceRequest"/>
+        /// use chunked encoding.
+        /// </summary>
+        /// <value><c>true</c> if use chunked encoding; otherwise, <c>false</c>.</value>
+        public bool UseChunkedEncoding
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Build the request URI from the request message.
         /// </summary>

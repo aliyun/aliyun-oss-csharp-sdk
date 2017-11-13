@@ -256,13 +256,21 @@ namespace Aliyun.OSS.Common.Communication
             long userSetContentLength = -1;
             if (serviceRequest.Headers.ContainsKey(HttpHeaders.ContentLength))
                 userSetContentLength = long.Parse(serviceRequest.Headers[HttpHeaders.ContentLength]);
-
-            long streamLength = data.Length - data.Position;
-            webRequest.ContentLength = (userSetContentLength >= 0 &&
-                userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
-            if (webRequest.ContentLength > clientConfiguration.DirectWriteStreamThreshold)
+            
+            if (serviceRequest.UseChunkedEncoding || !data.CanSeek) // when data cannot seek, we have to use chunked encoding as there's no way to set the length
             {
-                webRequest.AllowWriteStreamBuffering = false;
+                webRequest.SendChunked = true;
+                webRequest.AllowWriteStreamBuffering = false; // when using chunked encoding, the data is likely big and thus not use write buffer;
+            }
+            else
+            {
+                long streamLength = data.Length - data.Position;
+                webRequest.ContentLength = (userSetContentLength >= 0 &&
+                    userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
+                if (webRequest.ContentLength > clientConfiguration.DirectWriteStreamThreshold)
+                {
+                    webRequest.AllowWriteStreamBuffering = false;
+                }
             }
 
             if (async)
@@ -272,7 +280,14 @@ namespace Aliyun.OSS.Common.Communication
                     {
                         using (var requestStream = webRequest.EndGetRequestStream(ar))
                         {
-                            IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                            if (!webRequest.SendChunked)
+                            {
+                                IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                            }
+                            else
+                            {
+                                IoUtils.WriteTo(data, requestStream);   
+                            }
                         }
                         asyncCallback();
                     }, null);
@@ -281,7 +296,14 @@ namespace Aliyun.OSS.Common.Communication
             {
                 using (var requestStream = webRequest.GetRequestStream())
                 {
-                    IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                    if (!webRequest.SendChunked)
+                    {
+                        IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                    }
+                    else
+                    {
+                        IoUtils.WriteTo(data, requestStream);
+                    }
                 }
             }
         }

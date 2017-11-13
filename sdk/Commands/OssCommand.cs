@@ -57,11 +57,23 @@ namespace Aliyun.OSS.Commands
             get { return null; }
         }
 
+        protected bool UseChunkedEncoding
+        {
+            get;
+            private set;
+        }
+
         protected OssCommand(IServiceClient client, Uri endpoint, ExecutionContext context)
+            : this(client, endpoint, context, false)
+        {
+        }
+
+        protected OssCommand(IServiceClient client, Uri endpoint, ExecutionContext context, bool useChunkedEncoding)
         {
             Client = client;
             Endpoint = endpoint;
             Context = context;
+            UseChunkedEncoding = useChunkedEncoding;
         }
         
         public ServiceResponse Execute()
@@ -91,7 +103,8 @@ namespace Aliyun.OSS.Commands
             {
                 Method = Method,
                 Endpoint = OssUtils.MakeBucketEndpoint(Endpoint, Bucket, conf),
-                ResourcePath = OssUtils.MakeResourcePath(Endpoint, Bucket, Key)
+                ResourcePath = OssUtils.MakeResourcePath(Endpoint, Bucket, Key),
+                UseChunkedEncoding = UseChunkedEncoding
             };
 
             foreach (var p in Parameters) 
@@ -122,7 +135,14 @@ namespace Aliyun.OSS.Commands
 
         protected OssCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
                           IDeserializer<ServiceResponse, T> deserializer)
-            : base(client, endpoint, context)
+            : this(client, endpoint, context, deserializer, false)
+        {
+        }
+
+        protected OssCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
+                          IDeserializer<ServiceResponse, T> deserializer, bool useChunkedEncoding)
+            : base(client, endpoint, context, useChunkedEncoding)
+        
         {
             _deserializer = deserializer;
             Context.Command = this;

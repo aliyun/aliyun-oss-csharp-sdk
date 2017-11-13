@@ -17,6 +17,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
     public class ObjectBasicOperationTest
     {
         private static IOss _ossClient;
+        private static IOss _ossClientMd5;
         private static string _className;
         private static string _bucketName;
         private static string _objectKey;
@@ -28,6 +29,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         {
             //get a OSS client object
             _ossClient = OssClientFactory.CreateOssClient();
+            _ossClientMd5 = OssClientFactory.CreateOssClientEnableMD5(true);
             //get current class name, which is prefix of bucket/object
             _className = TestContext.CurrentContext.Test.FullName;
             _className = _className.Substring(_className.LastIndexOf('.') + 1).ToLowerInvariant();
@@ -90,6 +92,71 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                                                null);
                 finished.WaitOne(1000 * 60); // wait for up to 1 min;
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadUnSeekableStreamTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ms.Write(new byte[1024], 0, 1024);
+                    ms.Flush();
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    // upload the nonseekable stream, with MD5 enabled
+                    _ossClientMd5.PutObject(_bucketName, key, new NonSeekableStream(ms));
+                    Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadStreamWithChunkedEncodingTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ms.Write(new byte[1024], 0, 1024);
+                    ms.Flush();
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    PutObjectRequest putRequest = new PutObjectRequest(_bucketName, key, ms, null, true);
+                    // upload the nonseekable stream, with MD5 enabled
+                    _ossClient.PutObject(putRequest);
+                    Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                    OssObject obj = _ossClient.GetObject(_bucketName, key);
+                    Assert.AreEqual(obj.ContentLength, (long)1024);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
             finally
             {

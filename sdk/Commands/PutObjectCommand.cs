@@ -43,7 +43,7 @@ namespace Aliyun.OSS.Commands
         private PutObjectCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
                                  IDeserializer<ServiceResponse, PutObjectResult> deserializer,
                                  PutObjectRequest putObjectRequest)
-            : base(client, endpoint, context, deserializer)
+            : base(client, endpoint, context, deserializer, putObjectRequest.UseChunkedEncoding)
         {
             _putObjectRequest = putObjectRequest;
         }
@@ -99,7 +99,6 @@ namespace Aliyun.OSS.Commands
 
             var conf = OssUtils.GetClientConfiguration(client);
             var originalStream = putObjectRequest.Content;
-            var streamLength = originalStream.Length;
 
             // setup progress
             var callback = putObjectRequest.StreamTransferProgress;
@@ -112,6 +111,7 @@ namespace Aliyun.OSS.Commands
             // wrap input stream in MD5Stream
             if (conf.EnalbeMD5Check) 
             {
+                var streamLength = originalStream.CanSeek ? originalStream.Length : -1;
                 var hashStream = new MD5Stream(originalStream, null, streamLength);
                 putObjectRequest.Content = hashStream;
                 context.ResponseHandlers.Add(new MD5DigestCheckHandler(hashStream));
