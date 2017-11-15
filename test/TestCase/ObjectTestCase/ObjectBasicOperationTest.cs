@@ -107,7 +107,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
-
         public void UploadObjectNullMetadataTest()
         {
             var key = OssTestUtils.GetObjectKey(_className);

@@ -30,7 +30,8 @@ namespace Aliyun.OSS.Commands
         {
             get
             {
-                return SerializerFactory.GetFactory().CreateCreateBucketSerialization()
+
+                return StorageClass == StorageClass.Standard ? null : SerializerFactory.GetFactory().CreateCreateBucketSerialization()
                                         .Serialize(StorageClass);
             }
         }
