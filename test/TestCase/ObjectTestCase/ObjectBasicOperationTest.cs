@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
+using Aliyun.OSS.Model;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Test.Util;
 
@@ -21,6 +22,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _bucketName;
         private static string _objectKey;
         private static string _objectETag;
+        private static string _archiveBucketName;
         private static AutoResetEvent _event;
 
         [TestFixtureSetUp]
@@ -33,7 +35,9 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _className = _className.Substring(_className.LastIndexOf('.') + 1).ToLowerInvariant();
             //create the bucket
             _bucketName = OssTestUtils.GetBucketName(_className);
+            _archiveBucketName = _bucketName + "archive";
             _ossClient.CreateBucket(_bucketName);
+            _ossClient.CreateBucket(_archiveBucketName, StorageClass.Archive);
             //create sample object
             _objectKey = OssTestUtils.GetObjectKey(_className);
             var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
@@ -47,6 +51,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);
+            OssTestUtils.CleanBucket(_ossClient, _archiveBucketName);
         }
 
         #region stream upload
@@ -73,6 +78,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
+
         public void UploadObjectNullMetadataTest()
         {
             var key = OssTestUtils.GetObjectKey(_className);
@@ -1127,7 +1133,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         /// Clear the metadata
         /// </summary>
         [Test]
-        public void ModifyObjectMetaWithToEmpty() 
+        public void ModifyObjectMetaWithToEmpty()
         {
             var key = OssTestUtils.GetObjectKey(_className);
 
@@ -1164,7 +1170,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         /// Sets a new metadata, use default content-type.
         /// </summary>
         [Test]
-        public void ModifyObjectMetaWithAddMeta() 
+        public void ModifyObjectMetaWithAddMeta()
         {
             var key = OssTestUtils.GetObjectKey(_className);
             var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newfile";
@@ -1496,7 +1502,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
-                     var request = new AppendObjectRequest(_bucketName, key)
+                    var request = new AppendObjectRequest(_bucketName, key)
                     {
                         ObjectMetadata = new ObjectMetadata(),
                         Content = fs,
@@ -1584,7 +1590,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         #region resumable put object
 
         [Test]
-        public void ResumableUploadObjectTest() 
+        public void ResumableUploadObjectTest()
         {
             var key = OssTestUtils.GetObjectKey(_className);
 
@@ -1670,7 +1676,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         };
 
         [Test]
-        public void ResumableUploadObjectWithRetry() 
+        public void ResumableUploadObjectWithRetry()
         {
             var key = OssTestUtils.GetObjectKey(_className);
 
@@ -1695,7 +1701,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
-        public void ResumableUploadObjectWithFailedTimeMoreThanRetryTime() 
+        public void ResumableUploadObjectWithFailedTimeMoreThanRetryTime()
         {
             var key = OssTestUtils.GetObjectKey(_className);
 
@@ -1724,7 +1730,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
-        public void ResumableUploadObjectFirstFailedAndSecondSucceeded() 
+        public void ResumableUploadObjectFirstFailedAndSecondSucceeded()
         {
             var key = OssTestUtils.GetObjectKey(_className);
 
@@ -1763,6 +1769,58 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        #endregion
+
+        #region Restore object tests
+        [Test]
+        public void RestoreObjectBasicTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                //upload the object
+                OssTestUtils.UploadObject(_ossClient, _archiveBucketName, key,
+                    Config.UploadTestFile, new ObjectMetadata());
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _archiveBucketName, key));
+
+                RestoreObjectResult result = _ossClient.RestoreObject(_archiveBucketName, key);
+                Assert.IsTrue(result.HttpStatusCode == HttpStatusCode.Accepted);
+
+                try
+                {
+                    result = _ossClient.RestoreObject(_archiveBucketName, key);
+                }
+                catch(OssException e)
+                {
+                    Assert.AreEqual(e.ErrorCode, "RestoreAlreadyInProgress");
+                }
+
+                int wait = 60;
+                while (wait > 0)
+                {
+                    var meta = _ossClient.GetObjectMetadata(_archiveBucketName, key);
+                    string restoreStatus = meta.HttpMetadata["x-oss-restore"] as string;
+                    if (restoreStatus!= null && restoreStatus.StartsWith("ongoing-request=\"false\"", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        break;
+                    }
+
+                    Thread.Sleep(1000 * 30);
+                    wait--;
+                }
+
+                result = _ossClient.RestoreObject(_archiveBucketName, key);
+                Assert.IsTrue(result.HttpStatusCode == HttpStatusCode.OK);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _archiveBucketName, key))
+                {
+                    _ossClient.DeleteObject(_archiveBucketName, key);
+                }
+            }
+        }
         #endregion
 
         #region private

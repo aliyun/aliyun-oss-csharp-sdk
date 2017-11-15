@@ -58,6 +58,11 @@ namespace Aliyun.OSS.Transform
         {
             return new SetBucketLifecycleRequestSerializer(CreateContentSerializer<LifecycleConfiguration>());
         }
+
+        public ISerializer<StorageClass, Stream> CreateCreateBucketSerialization()
+        {
+            return new CreateBucketRequestSerializer(CreateContentSerializer<CreateBucketRequestModel>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory
