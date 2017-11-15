@@ -9,6 +9,7 @@ using System.IO;
 using System.Collections.Generic;
 using Aliyun.OSS.Common.Authentication;
 using Aliyun.OSS.Common.Internal;
+using Aliyun.OSS.Model;
 
 namespace Aliyun.OSS 
 {
@@ -53,6 +54,14 @@ namespace Aliyun.OSS
         /// <returns><see cref="Bucket" /> instance</returns>
         Bucket CreateBucket(string bucketName);
 
+        /// <summary>
+        /// Creates the bucket with specified storage class.
+        /// </summary>
+        /// <returns>The bucket.</returns>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="storageClass">Storage class.</param>
+        Bucket CreateBucket(string bucketName, StorageClass storageClass);
+       
         /// <summary>
         /// Deletes a empty bucket.If the bucket is not empty, this will fail.
         /// </summary>
@@ -655,6 +664,14 @@ namespace Aliyun.OSS
         /// <param name="key"><see cref="OssObject.Key" /></param>
         /// <returns><see cref="AccessControlList" /> instance</returns>
         AccessControlList GetObjectAcl(string bucketName, string key);
+
+        /// <summary>
+        /// Restores the object.
+        /// </summary>
+        /// <returns>The object.</returns>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="key">Key.</param>
+        RestoreObjectResult RestoreObject(string bucketName, string key);
 
         #endregion
         
