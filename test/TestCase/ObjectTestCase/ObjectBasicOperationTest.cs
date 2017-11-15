@@ -197,6 +197,35 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
+        public void DownloadAndUploadStreamWithImplicitChunkedEncodingTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var obj = _ossClient.GetObject(_bucketName, _objectKey);
+                Assert.IsNotNull(obj.Content);
+                PutObjectRequest putRequest = new PutObjectRequest(_bucketName, key, obj.Content, null); // user do not need to explictly use chunked enconding
+                _ossClient.PutObject(putRequest);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                OssObject obj2 = _ossClient.GetObject(_bucketName, key);
+                Assert.AreEqual(obj.ContentLength, obj2.ContentLength);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                Assert.Fail(e.ToString());
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
         public void UploadObjectNullMetadataTest()
         {
             var key = OssTestUtils.GetObjectKey(_className);
