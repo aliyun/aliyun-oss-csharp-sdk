@@ -57,6 +57,12 @@ namespace Aliyun.OSS.Commands
             get { return null; }
         }
 
+        protected bool ParametersInUri
+        {
+            get;
+            set;
+        }
+
         protected OssCommand(IServiceClient client, Uri endpoint, ExecutionContext context)
         {
             Client = client;
@@ -91,7 +97,8 @@ namespace Aliyun.OSS.Commands
             {
                 Method = Method,
                 Endpoint = OssUtils.MakeBucketEndpoint(Endpoint, Bucket, conf),
-                ResourcePath = OssUtils.MakeResourcePath(Endpoint, Bucket, Key)
+                ResourcePath = OssUtils.MakeResourcePath(Endpoint, Bucket, Key),
+                ParametersInUri = ParametersInUri
             };
 
             foreach (var p in Parameters) 

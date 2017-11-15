@@ -5,7 +5,9 @@
  */
 
 using System;
+using System.IO;
 using Aliyun.OSS.Common.Communication;
+using Aliyun.OSS.Transform;
 using Aliyun.OSS.Util;
 
 namespace Aliyun.OSS.Commands
@@ -24,19 +26,35 @@ namespace Aliyun.OSS.Commands
             get { return _bucketName; }
         }
 
+        protected override Stream Content
+        {
+            get
+            {
+                return SerializerFactory.GetFactory().CreateCreateBucketSerialization()
+                                        .Serialize(StorageClass);
+            }
+        }
+
+        protected StorageClass StorageClass
+        {
+            get;
+            set;
+        }
+
         private CreateBucketCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                    string bucketName)
+                                    string bucketName, StorageClass storageClass)
             : base(client, endpoint, context)
         {
             OssUtils.CheckBucketName(bucketName);
             _bucketName = bucketName;
+            StorageClass = storageClass;
         }
 
         public static CreateBucketCommand Create(IServiceClient client, Uri endpoint,
                                                  ExecutionContext context,
-                                                 string bucketName)
+                                                 string bucketName, StorageClass storageClass = StorageClass.Standard)
         {
-            return new CreateBucketCommand(client, endpoint, context, bucketName);
+            return new CreateBucketCommand(client, endpoint, context, bucketName, storageClass);
         }
     }
 }
