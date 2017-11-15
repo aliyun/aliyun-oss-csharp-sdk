@@ -28,7 +28,7 @@ namespace Aliyun.OSS.Common
         private bool _isCname = false;
         private bool _enalbeMD5Check = false;
         private long _progressUpdateInterval = 1024 * 4;
-        private long _directWriteStreamThreshold = 1024 * 1024 * 512;
+        private long _directWriteStreamThreshold = 1024 * 1024 * 8;
 
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
