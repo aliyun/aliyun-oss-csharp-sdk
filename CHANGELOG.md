@@ -1,5 +1,13 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.5.4  日期：2017/11/17
+### 变更内容
+- 修复：多线程调用BeginPutObject报ObjectDisposedException的问题
+- 修复：错误重试时报签名异常的问题
+- 修复：大文件上传Hang住的问题
+- 修复：非Seekable的Stream无法上传的问题
+- 修复：并发上传占用内存大的问题
+
 ## 版本号：2.5.3  日期：2017/09/22
 ### 变更内容
 - 修复：SetBucketCors当AllowedMethod为DELETE时报错的问题

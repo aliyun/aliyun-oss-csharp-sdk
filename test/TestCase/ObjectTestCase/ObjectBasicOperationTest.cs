@@ -17,6 +17,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
     public class ObjectBasicOperationTest
     {
         private static IOss _ossClient;
+        private static IOss _ossClientMd5;
         private static string _className;
         private static string _bucketName;
         private static string _objectKey;
@@ -28,6 +29,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         {
             //get a OSS client object
             _ossClient = OssClientFactory.CreateOssClient();
+            _ossClientMd5 = OssClientFactory.CreateOssClientEnableMD5(true);
             //get current class name, which is prefix of bucket/object
             _className = TestContext.CurrentContext.Test.FullName;
             _className = _className.Substring(_className.LastIndexOf('.') + 1).ToLowerInvariant();
@@ -62,6 +64,157 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key,
                     Config.UploadTestFile, new ObjectMetadata());
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadObjectBasicSettingsAsyncTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                AutoResetEvent finished = new AutoResetEvent(false);
+                //upload the object
+                OssTestUtils.BeginUploadObject(_ossClient, _bucketName, key,
+                                               Config.UploadTestFile,
+                                               (ar) => { 
+                                                OssTestUtils.EndUploadObject(_ossClient, ar); 
+                                                finished.Set();
+                                               },
+                                               null);
+                finished.WaitOne(1000 * 60); // wait for up to 1 min;
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadUnSeekableStreamTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ms.Write(new byte[1024], 0, 1024);
+                    ms.Flush();
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    // upload the nonseekable stream, with MD5 enabled
+                    _ossClientMd5.PutObject(_bucketName, key, new NonSeekableStream(ms));
+                    Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadStreamWithChunkedEncodingTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ms.Write(new byte[1024], 0, 1024);
+                    ms.Flush();
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    PutObjectRequest putRequest = new PutObjectRequest(_bucketName, key, ms, null, true);
+                    // upload the nonseekable stream, with MD5 enabled
+                    _ossClient.PutObject(putRequest);
+                    Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                    OssObject obj = _ossClient.GetObject(_bucketName, key);
+                    Assert.AreEqual(obj.ContentLength, (long)1024);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void DownloadAndUploadStreamWithChunkedEncodingTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var obj = _ossClient.GetObject(_bucketName, _objectKey);
+                Assert.IsNotNull(obj.Content);
+                PutObjectRequest putRequest = new PutObjectRequest(_bucketName, key, obj.Content, null, true);
+                _ossClient.PutObject(putRequest);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                OssObject obj2 = _ossClient.GetObject(_bucketName, key);
+                Assert.AreEqual(obj.ContentLength, obj2.ContentLength);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                Assert.Fail(e.ToString());
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void DownloadAndUploadStreamWithImplicitChunkedEncodingTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var obj = _ossClient.GetObject(_bucketName, _objectKey);
+                Assert.IsNotNull(obj.Content);
+                PutObjectRequest putRequest = new PutObjectRequest(_bucketName, key, obj.Content, null); // user do not need to explictly use chunked enconding
+                _ossClient.PutObject(putRequest);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                OssObject obj2 = _ossClient.GetObject(_bucketName, key);
+                Assert.AreEqual(obj.ContentLength, obj2.ContentLength);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                Assert.Fail(e.ToString());
             }
             finally
             {
@@ -307,7 +460,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var fileInfo = new FileInfo(Config.MultiUploadTestFile);
                 var fileSize = fileInfo.Length;
 
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), null, 1);
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), Config.DownloadFolder, 1);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
             }
@@ -359,7 +512,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var fileInfo = new FileInfo(newFileName);
                 var fileSize = fileInfo.Length;
 
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, newFileName, new ObjectMetadata(), null, fileSize / 3);
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, newFileName, new ObjectMetadata(), Config.DownloadFolder, fileSize / 3);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
 
@@ -1526,7 +1679,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
                 {
-                    var request = new AppendObjectRequest(_bucketName, _objectKey)
+                    var request = new AppendObjectRequest(_bucketName, key)
                     {
                         ObjectMetadata = new ObjectMetadata(),
                         Content = fs,
@@ -1608,7 +1761,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void ResumableUploadObjectCheckpointTest()
         {
             var key = "test/短板.mp4";
-
+            // this test case requires to run under admin 
             try
             {
                 // checkpoint is null
@@ -1786,9 +1939,9 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 _ossClient.EndAppendObject(ar);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Assert.IsFalse(true);
+                Assert.IsFalse(true, e.ToString());
             }
             finally
             {

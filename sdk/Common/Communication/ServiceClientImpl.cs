@@ -36,9 +36,22 @@ namespace Aliyun.OSS.Common.Communication
             
             public ExecutionContext Context { get; set; }
 
+            internal ServiceRequest Request { get; set; }
+
             public HttpAsyncResult(AsyncCallback callback, object state)
                 : base(callback, state)
             { }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+
+                if (disposing && Request != null)
+                {
+                    Request.Dispose();
+                    Request = null;
+                }
+            }
         }
 
         /// <summary>
@@ -156,7 +169,7 @@ namespace Aliyun.OSS.Common.Communication
                                                     ExecutionContext context)
         {
             var request = HttpFactory.CreateWebRequest(serviceRequest, Configuration);
-            SetRequestContent(request, serviceRequest, false, null);
+            SetRequestContent(request, serviceRequest, false, null, Configuration);
             try
             {
                 var response = request.GetResponse() as HttpWebResponse;
@@ -177,11 +190,12 @@ namespace Aliyun.OSS.Common.Communication
             var asyncResult = new HttpAsyncResult(callback, state)
             {
                 WebRequest = request, 
-                Context = context
+                Context = context,
+                Request = serviceRequest
             };
 
             SetRequestContent(request, serviceRequest, true,
-                              () => request.BeginGetResponse(OnGetResponseCompleted, asyncResult));
+                              () => request.BeginGetResponse(OnGetResponseCompleted, asyncResult), Configuration);
 
             return asyncResult;
         }
@@ -223,7 +237,7 @@ namespace Aliyun.OSS.Common.Communication
         }
 
         private static void SetRequestContent(HttpWebRequest webRequest, ServiceRequest serviceRequest,
-                                              bool async, OssAction asyncCallback)
+                                              bool async, OssAction asyncCallback, ClientConfiguration clientConfiguration)
         {
             var data = serviceRequest.BuildRequestContent();
 
@@ -234,7 +248,7 @@ namespace Aliyun.OSS.Common.Communication
                 // Skip setting content body in this case.
                 if (async)
                     asyncCallback();
-                
+
                 return;
             }
 
@@ -242,10 +256,22 @@ namespace Aliyun.OSS.Common.Communication
             long userSetContentLength = -1;
             if (serviceRequest.Headers.ContainsKey(HttpHeaders.ContentLength))
                 userSetContentLength = long.Parse(serviceRequest.Headers[HttpHeaders.ContentLength]);
-
-            long streamLength = data.Length - data.Position;
-            webRequest.ContentLength = (userSetContentLength >= 0 && 
-                userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
+            
+            if (serviceRequest.UseChunkedEncoding || !data.CanSeek) // when data cannot seek, we have to use chunked encoding as there's no way to set the length
+            {
+                webRequest.SendChunked = true;
+                webRequest.AllowWriteStreamBuffering = false; // when using chunked encoding, the data is likely big and thus not use write buffer;
+            }
+            else
+            {
+                long streamLength = data.Length - data.Position;
+                webRequest.ContentLength = (userSetContentLength >= 0 &&
+                    userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
+                if (webRequest.ContentLength > clientConfiguration.DirectWriteStreamThreshold)
+                {
+                    webRequest.AllowWriteStreamBuffering = false;
+                }
+            }
 
             if (async)
             {
@@ -254,7 +280,14 @@ namespace Aliyun.OSS.Common.Communication
                     {
                         using (var requestStream = webRequest.EndGetRequestStream(ar))
                         {
-                            IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                            if (!webRequest.SendChunked)
+                            {
+                                IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                            }
+                            else
+                            {
+                                IoUtils.WriteTo(data, requestStream);   
+                            }
                         }
                         asyncCallback();
                     }, null);
@@ -263,7 +296,14 @@ namespace Aliyun.OSS.Common.Communication
             {
                 using (var requestStream = webRequest.GetRequestStream())
                 {
-                    IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                    if (!webRequest.SendChunked)
+                    {
+                        IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                    }
+                    else
+                    {
+                        IoUtils.WriteTo(data, requestStream);
+                    }
                 }
             }
         }
@@ -311,6 +351,7 @@ namespace Aliyun.OSS.Common.Communication
                                               ClientConfiguration configuration)
         {
             webRequest.Timeout = configuration.ConnectionTimeout;
+            webRequest.ReadWriteTimeout = configuration.ConnectionTimeout;
             webRequest.Method = serviceRequest.Method.ToString().ToUpperInvariant();
 
             // Because it is not allowed to set common headers

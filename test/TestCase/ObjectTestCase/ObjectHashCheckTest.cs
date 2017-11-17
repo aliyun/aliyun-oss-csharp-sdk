@@ -343,7 +343,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void ResumableUploadEnableMD5Test()
         {
             // put little file
-            _ossClient.ResumableUploadObject(_bucketName, _objectKey, Config.UploadTestFile, null, null);
+            _ossClient.ResumableUploadObject(_bucketName, _objectKey, Config.UploadTestFile, null, Config.DownloadFolder);
             // check content md5
             OssTestUtils.DownloadObject(_ossClient, _bucketName, _objectKey, _tmpLocalFile);
             var expectedHashDigest = FileUtils.ComputeContentMd5(Config.UploadTestFile);
@@ -354,7 +354,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             File.Delete(_tmpLocalFile);
 
             // put big file
-            _ossClient.ResumableUploadObject(_bucketName, _bigObjectKey, Config.MultiUploadTestFile, null, null, 1024 * 1024);
+            _ossClient.ResumableUploadObject(_bucketName, _bigObjectKey, Config.MultiUploadTestFile, null, Config.DownloadFolder, 1024 * 1024);
             // check content md5
             OssTestUtils.DownloadObject(_ossClient, _bucketName, _bigObjectKey, _tmpLocalFile);
             expectedHashDigest = FileUtils.ComputeContentMd5(Config.MultiUploadTestFile);
@@ -369,7 +369,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         public void ResumableUploadDisableMD5Test()
         {
             // put little file
-            _ossClientDisableMD5.ResumableUploadObject(_bucketName, _objectKey, Config.UploadTestFile, null, null);
+            _ossClientDisableMD5.ResumableUploadObject(_bucketName, _objectKey, Config.UploadTestFile, null, Config.DownloadFolder);
             // check content md5
             OssTestUtils.DownloadObject(_ossClientDisableMD5, _bucketName, _objectKey, _tmpLocalFile);
             var expectedHashDigest = FileUtils.ComputeContentMd5(Config.UploadTestFile);
@@ -380,7 +380,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             File.Delete(_tmpLocalFile);
 
             // put big file
-            _ossClientDisableMD5.ResumableUploadObject(_bucketName, _bigObjectKey, Config.MultiUploadTestFile, null, null, 1024 * 1024);
+            _ossClientDisableMD5.ResumableUploadObject(_bucketName, _bigObjectKey, Config.MultiUploadTestFile, null, Config.DownloadFolder, 1024 * 1024);
             // check content md5
             OssTestUtils.DownloadObject(_ossClientDisableMD5, _bucketName, _bigObjectKey, _tmpLocalFile);
             expectedHashDigest = FileUtils.ComputeContentMd5(Config.MultiUploadTestFile);

@@ -39,6 +39,16 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="T:Aliyun.OSS.PutObjectRequest"/> use chunked encoding.
+        /// </summary>
+        /// <value><c>true</c> if use chunked encoding; otherwise, <c>false</c>.</value>
+        public bool UseChunkedEncoding
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets the transfer progress callback
         /// </summary>
         public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
@@ -70,11 +80,23 @@ namespace Aliyun.OSS
         /// <param name="content">content to upload</param>
         /// <param name="metadata">metadata to set</param>
         public PutObjectRequest(string bucketName, string key, Stream content, ObjectMetadata metadata)
+            : this(bucketName, key, content, metadata, false) {}
+        
+        /// <summary>
+        /// Puts the object result.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="content">Content.</param>
+        /// <param name="metadata">Metadata.</param>
+        /// <param name="useChunkedEncoding">If set to <c>true</c> use chunked encoding.</param>
+        public PutObjectRequest(string bucketName, string key, Stream content, ObjectMetadata metadata, bool useChunkedEncoding)
         {
             BucketName = bucketName;
             Key = key;
             Content = content;
             Metadata = metadata;
+            UseChunkedEncoding = useChunkedEncoding;
         }
 
         internal void Populate(IDictionary<string, string> headers)
