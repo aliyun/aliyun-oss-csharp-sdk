@@ -78,7 +78,10 @@ namespace osstestcsharp
             if (OssConfig.Multithread>=1)
             {
                 ManualResetEvent mre = (ManualResetEvent)obj;
-                mre.Set();
+                if (mre != null)
+                {
+                    mre.Set();
+                }
             }
         }
 
@@ -336,7 +339,7 @@ namespace osstestcsharp
                 }
                 else
                 {
-                    ManualResetEvent[] mre = new ManualResetEvent[OssConfig.Multithread];
+                    /*ManualResetEvent[] mre = new ManualResetEvent[OssConfig.Multithread];
                     for (int i = 1; i <= OssConfig.Multithread; i++)
                     {
                         OssTestRunner ossTestRunner = new OssTestRunner();
@@ -347,7 +350,13 @@ namespace osstestcsharp
                         ThreadPool.QueueUserWorkItem(new WaitCallback(ossTestRunner.runSingleTask), mre[i - 1]);
                     }
 
-                    WaitHandle.WaitAll(mre);
+                    WaitHandle.WaitAll(mre);*/
+                    Parallel.For(1, OssConfig.Multithread + 1, (i) =>{
+                        OssTestRunner ossTestRunner = new OssTestRunner();
+                        ossTestRunner.setTaskID(i);
+                        ossTestRunner.setLocalFileAndRemoteKey();
+                        ossTestRunner.runSingleTask(null);
+                    });
                 }
             }
             catch (OssException ex)
