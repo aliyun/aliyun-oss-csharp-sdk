@@ -195,11 +195,11 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public Bucket CreateBucket(string bucketName)
         {
-            return CreateBucket(bucketName, StorageClass.Standard);
+            return CreateBucket(bucketName, null);
         }
 
         /// <inheritdoc/>
-        public Bucket CreateBucket(string bucketName, StorageClass storageClass)
+        public Bucket CreateBucket(string bucketName, StorageClass? storageClass)
         {
             var cmd = CreateBucketCommand.Create(_serviceClient, _endpoint,
                                                  CreateContext(HttpMethod.Put, bucketName, null),
@@ -1066,7 +1066,7 @@ namespace Aliyun.OSS
             var cmd = RestoreObjectCommand.Create(_serviceClient,
                                                  _endpoint,
                                                   context,
-                                                 bucketName,
+                                                  bucketName,
                                                   key);
 
             return cmd.Execute();

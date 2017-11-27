@@ -57,6 +57,12 @@ namespace Aliyun.OSS.Commands
             get { return null; }
         }
 
+        protected bool UseChunkedEncoding
+        {
+            get;
+            private set;
+        }
+
         protected bool ParametersInUri
         {
             get;
@@ -98,6 +104,7 @@ namespace Aliyun.OSS.Commands
                 Method = Method,
                 Endpoint = OssUtils.MakeBucketEndpoint(Endpoint, Bucket, conf),
                 ResourcePath = OssUtils.MakeResourcePath(Endpoint, Bucket, Key),
+                UseChunkedEncoding = UseChunkedEncoding,
                 ParametersInUri = ParametersInUri
             };
 
