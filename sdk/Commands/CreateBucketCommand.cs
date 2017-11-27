@@ -30,19 +30,19 @@ namespace Aliyun.OSS.Commands
         {
             get
             {
-                return SerializerFactory.GetFactory().CreateCreateBucketSerialization()
-                                        .Serialize(StorageClass);
+                return StorageClass == null ? null : SerializerFactory.GetFactory().CreateCreateBucketSerialization()
+                                        .Serialize(StorageClass.Value);
             }
         }
 
-        protected StorageClass StorageClass
+        protected StorageClass? StorageClass
         {
             get;
             set;
         }
 
         private CreateBucketCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                    string bucketName, StorageClass storageClass)
+                                    string bucketName, StorageClass? storageClass)
             : base(client, endpoint, context)
         {
             OssUtils.CheckBucketName(bucketName);
@@ -52,7 +52,7 @@ namespace Aliyun.OSS.Commands
 
         public static CreateBucketCommand Create(IServiceClient client, Uri endpoint,
                                                  ExecutionContext context,
-                                                 string bucketName, StorageClass storageClass = StorageClass.Standard)
+                                                 string bucketName, StorageClass? storageClass = null)
         {
             return new CreateBucketCommand(client, endpoint, context, bucketName, storageClass);
         }

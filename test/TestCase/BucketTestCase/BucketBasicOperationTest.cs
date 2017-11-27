@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
@@ -88,6 +89,14 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
                 string.Format("Bucket {0} should exist after creation", bucketName));
 
+            var objectName = bucketName + "firstobject";
+            _ossClient.PutObject(bucketName, objectName, new MemoryStream());
+
+            var objMeta = _ossClient.GetObjectMetadata(bucketName, objectName);
+
+            Assert.AreEqual(objMeta.HttpMetadata["x-oss-storage-class"], StorageClass.IA.ToString());
+            _ossClient.DeleteObject(bucketName, objectName);
+
             //delete the new created bucket
             _ossClient.DeleteBucket(bucketName);
             OssTestUtils.WaitForCacheExpire();
@@ -110,6 +119,14 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             OssTestUtils.WaitForCacheExpire();
             Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
                 string.Format("Bucket {0} should exist after creation", bucketName));
+
+            var objectName = bucketName + "firstobject";
+            _ossClient.PutObject(bucketName, objectName, new MemoryStream());
+
+            var objMeta = _ossClient.GetObjectMetadata(bucketName, objectName);
+
+            Assert.AreEqual(objMeta.HttpMetadata["x-oss-storage-class"], StorageClass.Archive.ToString());
+            _ossClient.DeleteObject(bucketName, objectName);
 
             //delete the new created bucket
             _ossClient.DeleteBucket(bucketName);

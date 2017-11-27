@@ -6,10 +6,13 @@
 using System;
 namespace Aliyun.OSS
 {
+    /// <summary>
+    /// Storage class of OSS Bucket
+    /// </summary>
     public enum StorageClass
     {
-        Standard,
-        IA,
-        Archive
+        Standard, // Standard bucket
+        IA,       // IA bucket
+        Archive   // Archive bucket
     }
 }
