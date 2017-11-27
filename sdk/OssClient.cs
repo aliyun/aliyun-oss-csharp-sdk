@@ -19,6 +19,7 @@ using Aliyun.OSS.Common.Authentication;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Common.Handlers;
 using Aliyun.OSS.Common.Internal;
+using Aliyun.OSS.Model;
 using Aliyun.OSS.Properties;
 using Aliyun.OSS.Transform;
 using ExecutionContext = Aliyun.OSS.Common.Communication.ExecutionContext;
@@ -194,10 +195,16 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public Bucket CreateBucket(string bucketName)
         {
+            return CreateBucket(bucketName, StorageClass.Standard);
+        }
+
+        /// <inheritdoc/>
+        public Bucket CreateBucket(string bucketName, StorageClass storageClass)
+        {
             var cmd = CreateBucketCommand.Create(_serviceClient, _endpoint,
                                                  CreateContext(HttpMethod.Put, bucketName, null),
-                                                 bucketName);
-            using(cmd.Execute())
+                                                 bucketName, storageClass);
+            using (cmd.Execute())
             {
                 // Do nothing
             }
@@ -1049,6 +1056,19 @@ namespace Aliyun.OSS
                                                  CreateContext(HttpMethod.Get, bucketName, key),
                                                  bucketName, 
                                                  key);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public RestoreObjectResult RestoreObject(string bucketName, string key)
+        {
+            ExecutionContext context = CreateContext(HttpMethod.Post, bucketName, key);
+            var cmd = RestoreObjectCommand.Create(_serviceClient,
+                                                 _endpoint,
+                                                  context,
+                                                 bucketName,
+                                                  key);
+
             return cmd.Execute();
         }
 
