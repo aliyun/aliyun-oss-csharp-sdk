@@ -1,8 +1,15 @@
-﻿using System;
+﻿/*
+ * Copyright (C) Alibaba Cloud Computing
+ * All rights reserved.
+ * 
+ */
+
+using System;
 using System.Net;
 using System.Threading;
 using Aliyun.OSS.Model;
 using Aliyun.OSS.Common;
+
 namespace Aliyun.OSS.Samples
 {
     /// <summary>

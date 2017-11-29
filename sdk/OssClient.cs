@@ -1064,11 +1064,10 @@ namespace Aliyun.OSS
         {
             ExecutionContext context = CreateContext(HttpMethod.Post, bucketName, key);
             var cmd = RestoreObjectCommand.Create(_serviceClient,
-                                                 _endpoint,
+                                                  _endpoint,
                                                   context,
                                                   bucketName,
                                                   key);
-
             return cmd.Execute();
         }
 

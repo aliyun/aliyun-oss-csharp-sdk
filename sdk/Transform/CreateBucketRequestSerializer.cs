@@ -8,6 +8,7 @@ using System.IO;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Model;
 using Aliyun.OSS.Util;
+
 namespace Aliyun.OSS.Transform
 {
     internal class CreateBucketRequestSerializer : RequestSerializer<StorageClass, CreateBucketRequestModel>
