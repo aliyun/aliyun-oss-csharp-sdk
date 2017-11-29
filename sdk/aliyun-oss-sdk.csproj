@@ -395,6 +395,6 @@
   <ItemGroup>
     <None Include="Resources\MimeData.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup /> 
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
