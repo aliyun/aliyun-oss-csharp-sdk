@@ -358,7 +358,14 @@ namespace Aliyun.OSS.Common.Communication
             // with the WebHeaderCollection.Add method,
             // we have to call an internal method to skip validation.
             foreach (var h in serviceRequest.Headers)
+            {
+                if ((serviceRequest.UseChunkedEncoding || serviceRequest.Content != null && !serviceRequest.Content.CanSeek) && h.Key.Equals(HttpHeaders.ContentLength))
+                {
+                    continue;
+                }
+
                 HttpExtensions.AddInternal(webRequest.Headers, h.Key, h.Value);
+            }
 
             // Set user-agent
             if (!string.IsNullOrEmpty(configuration.UserAgent))

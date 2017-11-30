@@ -159,10 +159,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     Assert.AreEqual(obj.ContentLength, (long)1024);
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
             finally
             {
                 if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
@@ -186,11 +182,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 OssObject obj2 = _ossClient.GetObject(_bucketName, key);
                 Assert.AreEqual(obj.ContentLength, obj2.ContentLength);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                Assert.Fail(e.ToString());
             }
             finally
             {
