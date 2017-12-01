@@ -421,6 +421,10 @@ namespace Aliyun.OSS
         public void SetBucketLifecycle(SetBucketLifecycleRequest setBucketLifecycleRequest)
         {
             ThrowIfNullRequest(setBucketLifecycleRequest);
+            if (setBucketLifecycleRequest.LifecycleRules.Count == 0)
+            {
+                throw new ArgumentException("SetBucketLifecycleRequest must have at least one LifecycleRule.");
+            }
 
             var cmd = SetBucketLifecycleCommand.Create(_serviceClient, _endpoint,
                                                       CreateContext(HttpMethod.Put, setBucketLifecycleRequest.BucketName, null),

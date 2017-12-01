@@ -14,6 +14,33 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
     public partial class BucketSettingsTest
     {
         [Test]
+        public void LifecycleEmptySettingTest()
+        {
+            SetBucketLifecycleRequest req = new SetBucketLifecycleRequest(_bucketName);
+            try
+            {
+                _ossClient.SetBucketLifecycle(req);
+                Assert.Fail();
+            }
+            catch(ArgumentException)
+            {}
+
+            try
+            {
+                var obj = new SetBucketLifecycleRequest(null);
+                Assert.Fail();
+            }
+            catch(ArgumentException){}
+
+            try
+            {
+                var obj = new SetBucketLifecycleRequest(string.Empty);
+                Assert.Fail();
+            }
+            catch (ArgumentException) { }
+        }
+
+        [Test]
         public void LifecycleBasicSettingTest()
         {
             LifecycleRule rule = new LifecycleRule();

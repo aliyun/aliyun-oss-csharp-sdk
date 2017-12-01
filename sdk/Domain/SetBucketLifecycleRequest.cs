@@ -44,6 +44,11 @@ namespace Aliyun.OSS
         /// <param name="bucketName">bucket name</param>
         public SetBucketLifecycleRequest(string bucketName) 
         {
+            if (string.IsNullOrEmpty(bucketName))
+            {
+                throw new ArgumentNullException(nameof(bucketName));
+            }
+
             BucketName = bucketName;
         }
 
@@ -68,5 +73,4 @@ namespace Aliyun.OSS
         }
 
     }
-
 }
