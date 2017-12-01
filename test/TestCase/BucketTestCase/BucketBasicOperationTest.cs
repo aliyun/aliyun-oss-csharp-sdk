@@ -43,7 +43,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 }
             }
 
-            foreach(var bucket in testBuckets)
+            foreach (var bucket in testBuckets)
             {
                 OssTestUtils.CleanBucket(_ossClient, bucket);
             }
@@ -237,7 +237,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             {
                 _ossClient.DeleteBucket(bucketName);
             }
-            
+
         }
 
         //bucket number max to 10
@@ -271,7 +271,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                     _ossClient.CreateBucket(bucketName);
                     Assert.Fail("Bucket creation should fail when number of existing Bucketes reaches limit");
                 }
-                catch(OssException e)
+                catch (OssException e)
                 {
                     Assert.AreEqual(OssErrorCode.TooManyBuckets, e.ErrorCode);
                 }
@@ -341,7 +341,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         public void DoesBucketExistTestWithBucketExist()
         {
             const string bucketName = "exist-bucket";
-            try {
+            try
+            {
                 var result = _ossClient.CreateBucket(bucketName);
                 Assert.AreEqual(bucketName, result.Name);
 
@@ -364,9 +365,11 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             try
             {
                 const string bucketName = "not-exist-bucket";
-                try {
+                try
+                {
                     _ossClient.DeleteBucket(bucketName);
-                } catch(Exception)
+                }
+                catch (Exception)
                 {
                     //nothing
                 }
@@ -403,6 +406,171 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 {
                     break;
                 }
+            }
+        }
+
+        /*[Test]
+        public void DeleteTestBuckets()
+        {
+            ListBucketsRequest bucketReq = new ListBucketsRequest()
+            {
+                Prefix = "object"
+            };
+            var buckets = _ossClient.ListBuckets(bucketReq);
+            foreach(Bucket bucket in buckets.Buckets)
+            {
+                var objList = _ossClient.ListObjects(bucket.Name);
+                foreach(var obj in objList.ObjectSummaries)
+                {
+                    _ossClient.DeleteObject(obj.BucketName, obj.Key);
+                }
+
+                var uploads = _ossClient.ListMultipartUploads(new ListMultipartUploadsRequest(bucket.Name));
+                foreach(var upload in uploads.MultipartUploads)
+                {
+                    AbortMultipartUploadRequest req = new AbortMultipartUploadRequest(bucket.Name, upload.Key, upload.UploadId);
+                    _ossClient.AbortMultipartUpload(req);
+                }
+
+                _ossClient.DeleteBucket(bucket.Name);
+            }
+        }*/
+        #endregion
+
+        #region GetBucketInfo
+        [Test]
+        public void GetBucketInfoTest()
+        {
+            var bucketName = OssTestUtils.GetBucketName(_className);
+            try
+            {
+                //assert bucket does not exist
+                Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                    string.Format("Bucket {0} should not exist before creation", bucketName));
+
+                //create a new bucket
+                _ossClient.CreateBucket(bucketName, StorageClass.IA);
+                OssTestUtils.WaitForCacheExpire();
+
+                BucketInfo bucketInfo = _ossClient.GetBucketInfo(bucketName);
+                Assert.AreEqual(bucketInfo.Bucket.AccessControlList.Grant, CannedAccessControlList.Private);
+
+                _ossClient.SetBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+                bucketInfo = _ossClient.GetBucketInfo(bucketName);
+                Assert.AreEqual(bucketInfo.Bucket.AccessControlList.Grant, CannedAccessControlList.PublicRead);
+
+                _ossClient.SetBucketAcl(bucketName, CannedAccessControlList.PublicReadWrite);
+                bucketInfo = _ossClient.GetBucketInfo(bucketName);
+                Assert.AreEqual(bucketInfo.Bucket.AccessControlList.Grant, CannedAccessControlList.PublicReadWrite);
+
+                Assert.IsNotNull(bucketInfo.Bucket.Location);
+                Assert.IsNotNull(bucketInfo.Bucket.ExtranetEndpoint);
+                Assert.IsNotNull(bucketInfo.Bucket.IntranetEndpoint);
+
+                Assert.AreEqual(bucketInfo.Bucket.StorageClass, StorageClass.IA);
+                Assert.AreEqual(bucketInfo.Bucket.Name, bucketName);
+
+            }
+            finally
+            {
+                _ossClient.DeleteBucket(bucketName);
+            }
+        }
+
+        [Test]
+        public void GetNonExistBucketInfoTest()
+        {
+            var bucketName = OssTestUtils.GetBucketName(_className);
+
+            //assert bucket does not exist
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist before creation", bucketName));
+
+            try
+            {
+                _ossClient.GetBucketInfo(bucketName);
+                Assert.Fail();
+            }
+            catch(OssException exception)
+            {
+                Assert.AreEqual(exception.ErrorCode, "NoSuchBucket");
+            }
+        }
+
+        [Test]
+        public void GetNullBucketInfoTest()
+        {
+            try{
+                _ossClient.GetBucketInfo(null);
+                Assert.Fail();
+            }
+            catch(ArgumentException)
+            {
+            }
+        }
+        #endregion
+
+        #region GetBucketStat
+        [Test]
+        public void GetBucketStatTest()
+        {
+            var bucketName = OssTestUtils.GetBucketName(_className);
+            var objName = OssTestUtils.GetObjectKey(_className);
+            try
+            {
+                //assert bucket does not exist
+                Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                    string.Format("Bucket {0} should not exist before creation", bucketName));
+
+                //create a new bucket
+                _ossClient.CreateBucket(bucketName);
+                OssTestUtils.WaitForCacheExpire();
+
+                _ossClient.PutObject(bucketName, objName, new MemoryStream(new byte[] { 1, 2, 3 }));
+
+                BucketStat bucketStat = _ossClient.GetBucketStat(bucketName);
+                Assert.AreEqual(bucketStat.Storage, 3);
+                Assert.AreEqual(bucketStat.ObjectCount, 1);
+                Assert.AreEqual(bucketStat.MultipartUploadCount, 0);
+
+                _ossClient.DeleteObject(bucketName, objName);
+            }
+            finally
+            {
+                _ossClient.DeleteBucket(bucketName);
+            }
+        }
+
+        [Test]
+        public void GetNonExistBucketStatTest()
+        {
+            var bucketName = OssTestUtils.GetBucketName(_className);
+
+            //assert bucket does not exist
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist before creation", bucketName));
+
+            try
+            {
+                _ossClient.GetBucketStat(bucketName);
+                Assert.Fail();
+            }
+            catch (OssException exception)
+            {
+                Assert.AreEqual(exception.ErrorCode, "NoSuchBucket");
+            }
+        }
+
+        [Test]
+        public void GetNullBucketStatTest()
+        {
+            try
+            {
+                _ossClient.GetBucketStat(null);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            {
             }
         }
         #endregion

@@ -59,8 +59,7 @@ namespace Aliyun.OSS
             if (_lifecycleRules.Count >= OssUtils.LifecycleRuleLimit)
                 throw new ArgumentException("One bucket not allow exceed one thousand item of LifecycleRules.");
 
-            if ((!lifecycleRule.ExpirationTime.HasValue && !lifecycleRule.ExpriationDays.HasValue)
-                || (lifecycleRule.ExpirationTime.HasValue && lifecycleRule.ExpriationDays.HasValue))
+            if (!lifecycleRule.Validate())
             {
                 throw new ArgumentException("Only one expiration property should be specified.");
             }

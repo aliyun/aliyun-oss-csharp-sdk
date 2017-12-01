@@ -365,6 +365,13 @@
     <Compile Include="Commands\RestoreObjectCommand.cs" />
     <Compile Include="Model\RestoreObjectResult.cs" />
     <Compile Include="Transform\RestoreObjectResultDeserializer.cs" />
+    <Compile Include="Commands\DeleteBucketLifecycleCommand.cs" />
+    <Compile Include="Domain\BucketInfo.cs" />
+    <Compile Include="Commands\GetBucketInfoCommand.cs" />
+    <Compile Include="Transform\GetBucketInfoDeserializer.cs" />
+    <Compile Include="Domain\BucketStat.cs" />
+    <Compile Include="Commands\GetBucketStatCommand.cs" />
+    <Compile Include="Transform\GetBucketStatDeserializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />

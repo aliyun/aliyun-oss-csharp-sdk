@@ -41,7 +41,19 @@ namespace Aliyun.OSS.Transform
                 if (lcc.Expiration.IsSetDays())
                     rule.ExpriationDays = lcc.Expiration.Days;
                 else if (lcc.Expiration.IsSetDate())
-                    rule.ExpirationTime = DateTime.Parse(lcc.Expiration.Date);
+                    rule.ExpirationTime = DateTime.Parse(lcc.Expiration.Date).ToUniversalTime();
+
+                if (lcc.AbortMultipartUpload != null)
+                {
+                    rule.AbortMultipartUpload = new LifecycleRule.LifeCycleExpiration();
+                    ConvertExpiration(lcc.AbortMultipartUpload, rule.AbortMultipartUpload);
+                }
+
+                if (lcc.Transition != null)
+                {
+                    rule.Transition = new LifecycleRule.LifeCycleTransition();
+                    ConvertTransition(lcc.Transition, rule.Transition);
+                }
 
                 rules.Add(rule);
             }
@@ -64,6 +76,21 @@ namespace Aliyun.OSS.Transform
 
             status = (RuleStatus)Enum.Parse(typeof(RuleStatus), value);
             return true;
+        }
+
+        internal static void ConvertExpiration(Expiration expiration, LifecycleRule.LifeCycleExpiration lifeCycleExpiration)
+        {
+            lifeCycleExpiration.Days = expiration.Days;
+            if (!String.IsNullOrEmpty(expiration.Date))
+            {
+                lifeCycleExpiration.ExpirationTime = DateTime.Parse(expiration.Date).ToUniversalTime();
+            }
+        }
+
+        internal static void ConvertTransition(LifecycleRuleTransition transition, LifecycleRule.LifeCycleTransition lifeCycleTransition)
+        {
+            ConvertExpiration(transition, lifeCycleTransition);
+            lifeCycleTransition.StorageClass = transition.StorageClass;
         }
     }
 }

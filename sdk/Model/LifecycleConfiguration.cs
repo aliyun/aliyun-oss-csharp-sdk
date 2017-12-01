@@ -30,6 +30,12 @@ namespace Aliyun.OSS.Model
 
         [XmlElement("Expiration")]
         public Expiration Expiration { get; set; }
+
+        [XmlElement("AbortMultipartUpload")]
+        public Expiration AbortMultipartUpload { get; set; }
+
+        [XmlElement("Transition")]
+        public LifecycleRuleTransition Transition { get; set; }
     }
 
     public class Expiration
@@ -47,7 +53,7 @@ namespace Aliyun.OSS.Model
             return Days.HasValue;
         }
 
-        [XmlElement("Date", IsNullable = true)]
+        [XmlElement("CreatedBeforeDate", IsNullable = true)]
         public string Date { get; set; }
 
         public bool ShouldSerializeDate()
@@ -59,5 +65,11 @@ namespace Aliyun.OSS.Model
         {
             return Date != null;
         }
+    }
+
+    public class LifecycleRuleTransition : Expiration
+    {
+        [XmlElement("StorageClass")]
+        public StorageClass StorageClass { get; set; }
     }
 }

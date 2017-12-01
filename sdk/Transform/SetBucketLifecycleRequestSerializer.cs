@@ -47,9 +47,43 @@ namespace Aliyun.OSS.Transform
                     lcc.LifecycleRules[i].Expiration.Date = DateUtils.FormatIso8601Date(rules[i].ExpirationTime.Value);
                 else if (rules[i].ExpriationDays.HasValue)
                     lcc.LifecycleRules[i].Expiration.Days = rules[i].ExpriationDays.Value;
+
+                if(rules[i].Transition != null)
+                {
+                    lcc.LifecycleRules[i].Transition = ConvertTransition(rules[i].Transition);
+                }
+
+                if (rules[i].AbortMultipartUpload != null)
+                {
+                    lcc.LifecycleRules[i].AbortMultipartUpload = ConvertExpiration(rules[i].AbortMultipartUpload);
+                }
             }
 
             return ContentSerializer.Serialize(lcc);
+        }
+
+        internal static LifecycleRuleTransition ConvertTransition(LifecycleRule.LifeCycleTransition transition)
+        {
+            LifecycleRuleTransition lifecycleRuleTransition = new LifecycleRuleTransition();
+            lifecycleRuleTransition.Days = transition.Days;
+            lifecycleRuleTransition.Date = transition.ExpirationTime != null ?
+                DateUtils.FormatIso8601Date(transition.ExpirationTime.Value) : null;
+            lifecycleRuleTransition.StorageClass = transition.StorageClass;
+
+            return lifecycleRuleTransition;
+        }
+
+        internal static Expiration ConvertExpiration(LifecycleRule.LifeCycleExpiration lifeCycleExpiration)
+        {
+            Expiration expiration = new Expiration()
+            {
+                Days = lifeCycleExpiration.Days
+            };
+
+            expiration.Date = lifeCycleExpiration.ExpirationTime != null ? 
+                DateUtils.FormatIso8601Date(lifeCycleExpiration.ExpirationTime.Value) : null;
+
+            return expiration;
         }
     }
 }

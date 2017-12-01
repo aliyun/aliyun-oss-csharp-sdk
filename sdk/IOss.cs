@@ -82,6 +82,20 @@ namespace Aliyun.OSS
         ListBucketsResult ListBuckets(ListBucketsRequest listBucketsRequest);
 
         /// <summary>
+        /// Gets the bucket information.
+        /// </summary>
+        /// <returns>The bucket information.</returns>
+        /// <param name="bucketName">Bucket name.</param>
+        BucketInfo GetBucketInfo(string bucketName);
+
+        /// <summary>
+        /// Gets the bucket stat.
+        /// </summary>
+        /// <returns>The bucket stat.</returns>
+        /// <param name="bucketName">Bucket name.</param>
+        BucketStat GetBucketStat(string bucketName);
+
+        /// <summary>
         /// Sets the bucket ACL
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
@@ -182,6 +196,12 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="setBucketLifecycleRequest">the <see cref="SetBucketLifecycleRequest" /> instance</param>
         void SetBucketLifecycle(SetBucketLifecycleRequest setBucketLifecycleRequest);
+
+        /// <summary>
+        /// Deletes the bucket's all lifecycle rules.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        void DeleteBucketLifecycle(string bucketName);
 
         /// <summary>
         /// Gets <see cref="Bucket" /> lifecycle instance. 
