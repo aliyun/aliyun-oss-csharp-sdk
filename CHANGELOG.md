@@ -1,5 +1,10 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.6.0  日期：2017/11/30
+### 变更内容
+- 增加：CreateBucket支持StorageClass
+- 增加：支持RestoreObject
+
 ## 版本号：2.5.4  日期：2017/11/17
 ### 变更内容
 - 修复：多线程调用BeginPutObject报ObjectDisposedException的问题

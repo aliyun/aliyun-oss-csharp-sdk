@@ -27,7 +27,7 @@ namespace Aliyun.OSS.Util
         private static readonly IList<string> ParamtersToSign = new List<string> {
             "acl", "uploadId", "partNumber", "uploads", "cors", "logging", 
             "website", "delete", "referer", "lifecycle", "security-token","append", 
-            "position", "x-oss-process",
+            "position", "x-oss-process", "restore", 
             ResponseHeaderOverrides.ResponseCacheControl,
             ResponseHeaderOverrides.ResponseContentDisposition,
             ResponseHeaderOverrides.ResponseContentEncoding,

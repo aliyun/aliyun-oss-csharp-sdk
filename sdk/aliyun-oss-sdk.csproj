@@ -359,6 +359,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Common\ServiceException.cs" />
+    <Compile Include="Model\CreateBucketRequestModel.cs" />
+    <Compile Include="Enums\StorageClass.cs" />
+    <Compile Include="Transform\CreateBucketRequestSerializer.cs" />
+    <Compile Include="Commands\RestoreObjectCommand.cs" />
+    <Compile Include="Model\RestoreObjectResult.cs" />
+    <Compile Include="Transform\RestoreObjectResultDeserializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />

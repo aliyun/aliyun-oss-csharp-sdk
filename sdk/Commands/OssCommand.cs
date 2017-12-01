@@ -63,6 +63,12 @@ namespace Aliyun.OSS.Commands
             private set;
         }
 
+        protected bool ParametersInUri
+        {
+            get;
+            set;
+        }
+
         protected OssCommand(IServiceClient client, Uri endpoint, ExecutionContext context)
             : this(client, endpoint, context, false)
         {
@@ -104,7 +110,8 @@ namespace Aliyun.OSS.Commands
                 Method = Method,
                 Endpoint = OssUtils.MakeBucketEndpoint(Endpoint, Bucket, conf),
                 ResourcePath = OssUtils.MakeResourcePath(Endpoint, Bucket, Key),
-                UseChunkedEncoding = UseChunkedEncoding
+                UseChunkedEncoding = UseChunkedEncoding,
+                ParametersInUri = ParametersInUri
             };
 
             foreach (var p in Parameters) 

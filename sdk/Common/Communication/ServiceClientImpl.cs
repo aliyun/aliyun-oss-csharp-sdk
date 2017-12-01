@@ -358,7 +358,16 @@ namespace Aliyun.OSS.Common.Communication
             // with the WebHeaderCollection.Add method,
             // we have to call an internal method to skip validation.
             foreach (var h in serviceRequest.Headers)
+            {
+                // Nginx does not accept a chunked encoding request with Content-Length, as detailed in #OSS-2848
+                if (h.Key.Equals(HttpHeaders.ContentLength) && (serviceRequest.UseChunkedEncoding || 
+                    (serviceRequest.Content != null && !serviceRequest.Content.CanSeek)))
+                {
+                    continue;
+                }
+
                 HttpExtensions.AddInternal(webRequest.Headers, h.Key, h.Value);
+            }
 
             // Set user-agent
             if (!string.IsNullOrEmpty(configuration.UserAgent))

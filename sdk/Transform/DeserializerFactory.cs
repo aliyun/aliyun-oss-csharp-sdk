@@ -141,6 +141,11 @@ namespace Aliyun.OSS.Transform
         {
             return new GetBucketLifecycleDeserializer(CreateContentDeserializer<LifecycleConfiguration>());
         }
+
+        public IDeserializer<ServiceResponse, RestoreObjectResult> CreateRestoreObjectResultDeserializer()
+        {
+            return new RestoreObjectResultDeserializer(CreateContentDeserializer<ErrorResult>());
+        }
     }
 
     internal class XmlDeserializerFactory : DeserializerFactory

@@ -62,6 +62,17 @@ namespace Aliyun.OSS.Common.Communication
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="T:Aliyun.OSS.Common.Communication.ServiceRequest"/>
+        /// parameters in URL.
+        /// </summary>
+        /// <value><c>true</c> if parameters in URL; otherwise, <c>false</c>.</value>
+        public bool ParametersInUri
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Build the request URI from the request message.
         /// </summary>
         /// <returns></returns>
@@ -112,7 +123,7 @@ namespace Aliyun.OSS.Common.Communication
         {
             var requestHasPayload = Content != null;
             var requestIsPost = Method == HttpMethod.Post;
-            var putParamsInUri = !requestIsPost || requestHasPayload;
+            var putParamsInUri = !requestIsPost || requestHasPayload || ParametersInUri;
             return putParamsInUri;
         }
         

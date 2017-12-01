@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
@@ -64,6 +65,68 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             OssTestUtils.WaitForCacheExpire();
             Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
                 string.Format("Bucket {0} should exist after creation", bucketName));
+
+            //delete the new created bucket
+            _ossClient.DeleteBucket(bucketName);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist after deletion", bucketName));
+        }
+
+        [Test]
+        public void CreateAndDeleteIABucketTest()
+        {
+            //get a random bucketName
+            var bucketName = OssTestUtils.GetBucketName(_className);
+
+            //assert bucket does not exist
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist before creation", bucketName));
+
+            //create a new bucket
+            _ossClient.CreateBucket(bucketName, StorageClass.IA);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should exist after creation", bucketName));
+
+            var objectName = bucketName + "firstobject";
+            _ossClient.PutObject(bucketName, objectName, new MemoryStream());
+
+            var objMeta = _ossClient.GetObjectMetadata(bucketName, objectName);
+
+            Assert.AreEqual(objMeta.HttpMetadata["x-oss-storage-class"], StorageClass.IA.ToString());
+            _ossClient.DeleteObject(bucketName, objectName);
+
+            //delete the new created bucket
+            _ossClient.DeleteBucket(bucketName);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist after deletion", bucketName));
+        }
+
+        [Test]
+        public void CreateAndDeleteArchiveBucketTest()
+        {
+            //get a random bucketName
+            var bucketName = OssTestUtils.GetBucketName(_className);
+
+            //assert bucket does not exist
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist before creation", bucketName));
+
+            //create a new bucket
+            _ossClient.CreateBucket(bucketName, StorageClass.Archive);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should exist after creation", bucketName));
+
+            var objectName = bucketName + "firstobject";
+            _ossClient.PutObject(bucketName, objectName, new MemoryStream());
+
+            var objMeta = _ossClient.GetObjectMetadata(bucketName, objectName);
+
+            Assert.AreEqual(objMeta.HttpMetadata["x-oss-storage-class"], StorageClass.Archive.ToString());
+            _ossClient.DeleteObject(bucketName, objectName);
 
             //delete the new created bucket
             _ossClient.DeleteBucket(bucketName);
