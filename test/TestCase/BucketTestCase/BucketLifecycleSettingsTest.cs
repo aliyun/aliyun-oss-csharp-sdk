@@ -70,10 +70,11 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 
         private void Test(LifecycleRule rule)
         {
-            string bucket = "qibucket2";
+            string bucket = _bucketName;
             SetBucketLifecycleRequest req = new SetBucketLifecycleRequest(bucket);
             req.AddLifecycleRule(rule);
             _ossClient.SetBucketLifecycle(req);
+            OssTestUtils.WaitForCacheExpire();
             var rules = _ossClient.GetBucketLifecycle(bucket);
             Assert.IsTrue(rules.Count == 1);
             Assert.AreEqual(rules[0], rule);
