@@ -27,14 +27,14 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 
             try
             {
-                var obj = new SetBucketLifecycleRequest(null);
+                new SetBucketLifecycleRequest(null);
                 Assert.Fail();
             }
             catch(ArgumentException){}
 
             try
             {
-                var obj = new SetBucketLifecycleRequest(string.Empty);
+                new SetBucketLifecycleRequest(string.Empty);
                 Assert.Fail();
             }
             catch (ArgumentException) { }
