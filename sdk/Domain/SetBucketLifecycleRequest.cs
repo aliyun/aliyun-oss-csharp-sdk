@@ -46,7 +46,7 @@ namespace Aliyun.OSS
         {
             if (string.IsNullOrEmpty(bucketName))
             {
-                throw new ArgumentNullException(nameof(bucketName));
+                throw new ArgumentNullException("bucketName");
             }
 
             BucketName = bucketName;
