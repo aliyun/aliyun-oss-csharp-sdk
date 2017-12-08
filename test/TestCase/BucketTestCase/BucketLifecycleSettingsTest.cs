@@ -47,7 +47,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             rule.ID = "StandardExpireRule" + Guid.NewGuid();
             rule.Prefix = "test";
             rule.Status = RuleStatus.Enabled;
-            rule.ExpirationTime = DateTime.UtcNow.Date.AddDays(365);
+            rule.ExpriationDays = 200;
             Test(rule);
 
             rule = new LifecycleRule();
@@ -65,16 +65,23 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             rule.ID = "StandardExpireRule" + Guid.NewGuid();
             rule.Prefix = "test";
             rule.Status = RuleStatus.Enabled;
-            rule.ExpirationTime = DateTime.UtcNow.Date.AddDays(365);
+            rule.ExpriationDays = 400;
+
             rule.AbortMultipartUpload = new LifecycleRule.LifeCycleExpiration()
             {
-                ExpirationTime = DateTime.UtcNow.Date.AddDays(200)
+                CreatedBeforeDate = DateTime.UtcNow.Date.AddDays(400)
             };
-            rule.Transition = new LifecycleRule.LifeCycleTransition()
+            rule.Transitions = new LifecycleRule.LifeCycleTransition[2]
             {
-                ExpirationTime = DateTime.UtcNow.Date.AddDays(180),
-                StorageClass = StorageClass.IA                                         
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.IA
+                },
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.Archive
+                }
             };
+            rule.Transitions[0].LifeCycleExpiration.Days = 180;
+            rule.Transitions[1].LifeCycleExpiration.Days = 365;
             Test(rule);
 
             rule = new LifecycleRule();
@@ -87,11 +94,14 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             {
                 Days = 200
             };
-            rule.Transition = new LifecycleRule.LifeCycleTransition()
+            rule.Transitions = new LifecycleRule.LifeCycleTransition[1]
             {
-                Days = 250,
-                StorageClass = StorageClass.Archive
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.Archive
+                }
             };
+
+            rule.Transitions[0].LifeCycleExpiration.Days = 250;
             Test(rule);
         }
 

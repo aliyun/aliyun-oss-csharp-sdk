@@ -41,7 +41,7 @@ namespace Aliyun.OSS.Transform
                 if (lcc.Expiration.IsSetDays())
                     rule.ExpriationDays = lcc.Expiration.Days;
                 else if (lcc.Expiration.IsSetDate())
-                    rule.ExpirationTime = DateTime.Parse(lcc.Expiration.Date).ToUniversalTime();
+                    rule.CreatedBeforeDate = DateTime.Parse(lcc.Expiration.Date).ToUniversalTime();
 
                 if (lcc.AbortMultipartUpload != null)
                 {
@@ -51,8 +51,12 @@ namespace Aliyun.OSS.Transform
 
                 if (lcc.Transition != null)
                 {
-                    rule.Transition = new LifecycleRule.LifeCycleTransition();
-                    ConvertTransition(lcc.Transition, rule.Transition);
+                    rule.Transitions = new LifecycleRule.LifeCycleTransition[lcc.Transition.Length];
+                    for (int i = 0; i < rule.Transitions.Length; i++)
+                    {
+                        rule.Transitions[i] = new LifecycleRule.LifeCycleTransition();
+                        ConvertTransition(lcc.Transition[i], rule.Transitions[i]);
+                    }
                 }
 
                 rules.Add(rule);
@@ -83,13 +87,13 @@ namespace Aliyun.OSS.Transform
             lifeCycleExpiration.Days = expiration.Days;
             if (!String.IsNullOrEmpty(expiration.Date))
             {
-                lifeCycleExpiration.ExpirationTime = DateTime.Parse(expiration.Date).ToUniversalTime();
+                lifeCycleExpiration.CreatedBeforeDate = DateTime.Parse(expiration.Date).ToUniversalTime();
             }
         }
 
         internal static void ConvertTransition(LifecycleRuleTransition transition, LifecycleRule.LifeCycleTransition lifeCycleTransition)
         {
-            ConvertExpiration(transition, lifeCycleTransition);
+            ConvertExpiration(transition, lifeCycleTransition.LifeCycleExpiration);
             lifeCycleTransition.StorageClass = transition.StorageClass;
         }
     }

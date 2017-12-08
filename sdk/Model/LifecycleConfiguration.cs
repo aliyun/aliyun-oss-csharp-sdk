@@ -35,7 +35,7 @@ namespace Aliyun.OSS.Model
         public Expiration AbortMultipartUpload { get; set; }
 
         [XmlElement("Transition")]
-        public LifecycleRuleTransition Transition { get; set; }
+        public LifecycleRuleTransition[] Transition { get; set; }
     }
 
     public class Expiration

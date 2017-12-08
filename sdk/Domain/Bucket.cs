@@ -32,46 +32,22 @@ namespace Aliyun.OSS
         /// <summary>
         /// Bucket location getter/setter
         /// </summary>
-        public string Location { get; set; }
+        public string Location { get; internal set; }
 
         /// <summary>
         /// Bucket name getter/setter
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; internal set; }
 
         /// <summary>
         /// Bucket <see cref="Owner" /> getter/setter
         /// </summary>
-        public Owner Owner { get; set; }
+        public Owner Owner { get; internal set; }
 
         /// <summary>
         /// Bucket creation time getter/setter
         /// </summary>
-        public DateTime CreationDate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the extranet endpoint.
-        /// </summary>
-        /// <value>The extranet endpoint.</value>
-        public string ExtranetEndpoint { get; set; }
-
-        /// <summary>
-        /// Gets or sets the intranet endpoint.
-        /// </summary>
-        /// <value>The intranet endpoint.</value>
-        public string IntranetEndpoint { get; set; }
-
-        /// <summary>
-        /// Gets or sets the storage class.
-        /// </summary>
-        /// <value>The storage class.</value>
-        public StorageClass StorageClass { get; set; }
-
-        /// <summary>
-        /// Gets or sets the access control list.
-        /// </summary>
-        /// <value>The access control list.</value>
-        public BucketACL AccessControlList { get; set; }
+        public DateTime CreationDate { get; internal set; }
 
         /// <summary>
         /// Creats a new <see cref="Bucket" /> instance with the specified name.
@@ -83,11 +59,6 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Aliyun.OSS.Bucket"/> class.
-        /// </summary>
-        internal Bucket() {}
-
-        /// <summary>
         /// Returns the bucket's serialization information in string.
         /// </summary>
         /// <returns>The serialization information in string</returns>
@@ -96,11 +67,6 @@ namespace Aliyun.OSS
             return string.Format(CultureInfo.InvariantCulture,
                                  "OSS Bucket [Name={0}], [Location={1}] [Owner={2}], [CreationTime={3}]",
                                  Name, Location, Owner, CreationDate);
-        }
-
-        public class BucketACL
-        {
-            public CannedAccessControlList Grant { get; set; }
         }
     }
 }

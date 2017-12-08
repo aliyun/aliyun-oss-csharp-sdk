@@ -5,7 +5,7 @@
  */
 
 using System;
-
+using System.Collections;
 namespace Aliyun.OSS
 {
     /// <summary>
@@ -56,10 +56,16 @@ namespace Aliyun.OSS
         public DateTime? ExpirationTime { get; set; }
 
         /// <summary>
+        /// Gets or sets the created before date.
+        /// </summary>
+        /// <value>The created before date.</value>
+        public DateTime? CreatedBeforeDate { get; set;}
+
+        /// <summary>
         /// Gets or sets the transition.
         /// </summary>
         /// <value>The transition.</value>
-        public LifeCycleTransition Transition { get; set; }
+        public LifeCycleTransition[] Transitions { get; set; }
 
         /// <summary>
         /// Gets or sets the abort multipart upload.
@@ -87,6 +93,8 @@ namespace Aliyun.OSS
 
             if (this.ExpirationTime != obj.ExpirationTime) return false;
 
+            if (this.CreatedBeforeDate != obj.CreatedBeforeDate) return false;
+
             if (this.Status != obj.Status) return false;
 
             if (this.AbortMultipartUpload == null && obj.AbortMultipartUpload != null) return false;
@@ -96,10 +104,23 @@ namespace Aliyun.OSS
                 return false;
             }
 
-            if (this.Transition == null && obj.Transition != null) return false;
-            if (this.Transition != null && !this.Transition.Equals(obj.Transition))
+            if (this.Transitions == null && obj.Transitions != null
+                || this.Transitions != null && obj.Transitions == null)
+            { 
+                return false; 
+            }
+
+            if (this.Transitions != null && obj.Transitions != null)
             {
-                return false;
+                if (this.Transitions.Length != obj.Transitions.Length) return false;
+
+                for (int i = 0; i < this.Transitions.Length; i++)
+                {
+                    if (!this.Transitions[i].Equals(obj.Transitions[i]))
+                    {
+                        return false;
+                    }
+                }
             }
 
             return true;
@@ -112,9 +133,15 @@ namespace Aliyun.OSS
         internal bool Validate()
         {
             bool ret = true;
-            if (Transition != null)
+            if (Transitions != null)
             {
-                ret &= Transition.Validate();
+                for (int i = 0; i < Transitions.Length; i++)
+                {
+                    if (Transitions[i].LifeCycleExpiration != null)
+                    {
+                        ret &= Transitions[i].LifeCycleExpiration.Validate();
+                    }
+                }
             }
 
             if (AbortMultipartUpload != null)
@@ -122,7 +149,7 @@ namespace Aliyun.OSS
                 ret &= AbortMultipartUpload.Validate();
             }
 
-            ret &= (ExpriationDays != null && ExpirationTime == null || ExpriationDays == null && ExpirationTime != null);
+            ret &= (ExpriationDays != null && CreatedBeforeDate == null || ExpriationDays == null && CreatedBeforeDate != null);
 
             return ret;
         }
@@ -142,7 +169,7 @@ namespace Aliyun.OSS
             /// Gets or sets the expiration time.
             /// </summary>
             /// <value>The expiration time.</value>
-            public DateTime? ExpirationTime { get; set; }
+            public DateTime? CreatedBeforeDate { get; set; }
 
             /// <summary>
             /// Validate this instance.
@@ -150,7 +177,7 @@ namespace Aliyun.OSS
             /// <returns>The validate result.</returns>
             public bool Validate()
             {
-                return Days != null && ExpirationTime == null || Days == null && ExpirationTime != null;
+                return Days != null &&  CreatedBeforeDate == null || Days == null && CreatedBeforeDate != null;
             }
 
             public bool Equals(LifeCycleExpiration obj)
@@ -159,24 +186,54 @@ namespace Aliyun.OSS
 
                 if (obj == null) return false;
 
-                return this.Days == obj.Days && this.ExpirationTime == obj.ExpirationTime;
+                return this.Days == obj.Days && this.CreatedBeforeDate == obj.CreatedBeforeDate;
             }
         }
 
         /// <summary>
         /// Life cycle transition.
         /// </summary>
-        public class LifeCycleTransition : LifeCycleExpiration, IEquatable<LifeCycleTransition>
+        public class LifeCycleTransition : IEquatable<LifeCycleTransition>
         {
+            private LifeCycleExpiration lifeCycleExpiration = new LifeCycleExpiration();
+
+            /// <summary>
+            /// Gets or sets the life cycle expiration.
+            /// </summary>
+            /// <value>The life cycle expiration.</value>
+            public LifeCycleExpiration LifeCycleExpiration
+            {
+                get
+                {
+                    return lifeCycleExpiration;
+                }
+            }
+
             /// <summary>
             /// Gets or sets the storage class.
             /// </summary>
             /// <value>The storage class.</value>
             public StorageClass StorageClass { get; set; }
 
+            /// <summary>
+            /// Determines whether the specified <see cref="Aliyun.OSS.LifecycleRule.LifeCycleTransition"/> is equal to
+            /// the current <see cref="T:Aliyun.OSS.LifecycleRule.LifeCycleTransition"/>.
+            /// </summary>
+            /// <param name="transition">The <see cref="Aliyun.OSS.LifecycleRule.LifeCycleTransition"/> to compare with the current <see cref="T:Aliyun.OSS.LifecycleRule.LifeCycleTransition"/>.</param>
+            /// <returns><c>true</c> if the specified <see cref="Aliyun.OSS.LifecycleRule.LifeCycleTransition"/> is equal to the
+            /// current <see cref="T:Aliyun.OSS.LifecycleRule.LifeCycleTransition"/>; otherwise, <c>false</c>.</returns>
             public bool Equals(LifeCycleTransition transition)
             {
-                return base.Equals(transition) && this.StorageClass == transition.StorageClass;
+                if (transition == null) return false;
+
+                if (this.StorageClass != transition.StorageClass) return false;
+                    
+                if (LifeCycleExpiration == null)
+                {
+                    return transition.LifeCycleExpiration == null;
+                }
+
+                return LifeCycleExpiration.Equals(transition.LifeCycleExpiration);
             }
         }
     }

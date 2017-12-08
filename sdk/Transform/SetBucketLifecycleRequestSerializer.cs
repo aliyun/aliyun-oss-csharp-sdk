@@ -43,14 +43,18 @@ namespace Aliyun.OSS.Transform
                 }
 
                 lcc.LifecycleRules[i].Expiration = new Expiration();
-                if (rules[i].ExpirationTime.HasValue)
-                    lcc.LifecycleRules[i].Expiration.Date = DateUtils.FormatIso8601Date(rules[i].ExpirationTime.Value);
+                if (rules[i].CreatedBeforeDate.HasValue)
+                    lcc.LifecycleRules[i].Expiration.Date = DateUtils.FormatIso8601Date(rules[i].CreatedBeforeDate.Value);
                 else if (rules[i].ExpriationDays.HasValue)
                     lcc.LifecycleRules[i].Expiration.Days = rules[i].ExpriationDays.Value;
 
-                if(rules[i].Transition != null)
+                if(rules[i].Transitions != null)
                 {
-                    lcc.LifecycleRules[i].Transition = ConvertTransition(rules[i].Transition);
+                    lcc.LifecycleRules[i].Transition = new LifecycleRuleTransition[rules[i].Transitions.Length];
+                    for (int j = 0; j < lcc.LifecycleRules[i].Transition.Length; j++)
+                    {
+                        lcc.LifecycleRules[i].Transition[j] = ConvertTransition(rules[i].Transitions[j]);
+                    }
                 }
 
                 if (rules[i].AbortMultipartUpload != null)
@@ -65,9 +69,13 @@ namespace Aliyun.OSS.Transform
         internal static LifecycleRuleTransition ConvertTransition(LifecycleRule.LifeCycleTransition transition)
         {
             LifecycleRuleTransition lifecycleRuleTransition = new LifecycleRuleTransition();
-            lifecycleRuleTransition.Days = transition.Days;
-            lifecycleRuleTransition.Date = transition.ExpirationTime != null ?
-                DateUtils.FormatIso8601Date(transition.ExpirationTime.Value) : null;
+            if (transition.LifeCycleExpiration != null)
+            {
+                lifecycleRuleTransition.Days = transition.LifeCycleExpiration.Days;
+                lifecycleRuleTransition.Date = transition.LifeCycleExpiration.CreatedBeforeDate != null ?
+                    DateUtils.FormatIso8601Date(transition.LifeCycleExpiration.CreatedBeforeDate.Value) : null;
+            }
+
             lifecycleRuleTransition.StorageClass = transition.StorageClass;
 
             return lifecycleRuleTransition;
@@ -80,8 +88,9 @@ namespace Aliyun.OSS.Transform
                 Days = lifeCycleExpiration.Days
             };
 
-            expiration.Date = lifeCycleExpiration.ExpirationTime != null ? 
-                DateUtils.FormatIso8601Date(lifeCycleExpiration.ExpirationTime.Value) : null;
+            expiration.Date = lifeCycleExpiration.CreatedBeforeDate != null ? 
+                DateUtils.FormatIso8601Date(lifeCycleExpiration.CreatedBeforeDate.Value) : null;
+
 
             return expiration;
         }
