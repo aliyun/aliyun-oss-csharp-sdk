@@ -1,0 +1,1 @@
+dotnet pack sdk/aliyun-oss-sdk.csproj -o ../nupkgs -c Release
