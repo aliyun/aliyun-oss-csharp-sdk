@@ -68,7 +68,6 @@ namespace Aliyun.OSS.Model
         [XmlElement("Date", IsNullable = true)] 
         public string Date { get; set; }
 
-
         public bool ShouldSerializeDate()
         {
             return Date != null;

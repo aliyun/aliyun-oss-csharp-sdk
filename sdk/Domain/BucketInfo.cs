@@ -29,7 +29,7 @@ namespace Aliyun.OSS
 
     public class BucketInfoEntry
     {
-          /// <summary>
+        /// <summary>
         /// Bucket location getter/setter
         /// </summary>
         public string Location { get; set; }

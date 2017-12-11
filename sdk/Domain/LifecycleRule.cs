@@ -177,7 +177,7 @@ namespace Aliyun.OSS
             /// <returns>The validate result.</returns>
             public bool Validate()
             {
-                return Days != null &&  CreatedBeforeDate == null || Days == null && CreatedBeforeDate != null;
+                return (Days != null && CreatedBeforeDate == null) || (Days == null && CreatedBeforeDate != null);
             }
 
             public bool Equals(LifeCycleExpiration obj)

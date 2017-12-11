@@ -43,7 +43,7 @@ namespace Aliyun.OSS
         public CannedAccessControlList ACL { get; internal set; }
 
         /// <summary>
-        /// 构造函数。
+        /// Constructor.
         /// </summary>
         internal AccessControlList()
         { }
