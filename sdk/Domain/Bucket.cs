@@ -48,7 +48,7 @@ namespace Aliyun.OSS
         /// Bucket creation time getter/setter
         /// </summary>
         public DateTime CreationDate { get; internal set; }
-        
+
         /// <summary>
         /// Creats a new <see cref="Bucket" /> instance with the specified name.
         /// </summary>
@@ -68,6 +68,5 @@ namespace Aliyun.OSS
                                  "OSS Bucket [Name={0}], [Location={1}] [Owner={2}], [CreationTime={3}]",
                                  Name, Location, Owner, CreationDate);
         }
-
     }
 }

@@ -43,13 +43,57 @@ namespace Aliyun.OSS.Transform
                 }
 
                 lcc.LifecycleRules[i].Expiration = new Expiration();
-                if (rules[i].ExpirationTime.HasValue)
-                    lcc.LifecycleRules[i].Expiration.Date = DateUtils.FormatIso8601Date(rules[i].ExpirationTime.Value);
+                if (rules[i].CreatedBeforeDate.HasValue)
+                    lcc.LifecycleRules[i].Expiration.CreatedBeforeDate = DateUtils.FormatIso8601Date(rules[i].CreatedBeforeDate.Value);
                 else if (rules[i].ExpriationDays.HasValue)
                     lcc.LifecycleRules[i].Expiration.Days = rules[i].ExpriationDays.Value;
+                else if (rules[i].ExpirationTime.HasValue)
+                    lcc.LifecycleRules[i].Expiration.Date = DateUtils.FormatIso8601Date(rules[i].ExpirationTime.Value);
+
+                if(rules[i].Transitions != null)
+                {
+                    lcc.LifecycleRules[i].Transition = new LifecycleRuleTransition[rules[i].Transitions.Length];
+                    for (int j = 0; j < lcc.LifecycleRules[i].Transition.Length; j++)
+                    {
+                        lcc.LifecycleRules[i].Transition[j] = ConvertTransition(rules[i].Transitions[j]);
+                    }
+                }
+
+                if (rules[i].AbortMultipartUpload != null)
+                {
+                    lcc.LifecycleRules[i].AbortMultipartUpload = ConvertExpiration(rules[i].AbortMultipartUpload);
+                }
             }
 
             return ContentSerializer.Serialize(lcc);
+        }
+
+        internal static LifecycleRuleTransition ConvertTransition(LifecycleRule.LifeCycleTransition transition)
+        {
+            LifecycleRuleTransition lifecycleRuleTransition = new LifecycleRuleTransition();
+            if (transition.LifeCycleExpiration != null)
+            {
+                lifecycleRuleTransition.Days = transition.LifeCycleExpiration.Days;
+                lifecycleRuleTransition.CreatedBeforeDate = transition.LifeCycleExpiration.CreatedBeforeDate != null ?
+                    DateUtils.FormatIso8601Date(transition.LifeCycleExpiration.CreatedBeforeDate.Value) : null;
+            }
+
+            lifecycleRuleTransition.StorageClass = transition.StorageClass;
+
+            return lifecycleRuleTransition;
+        }
+
+        internal static Expiration ConvertExpiration(LifecycleRule.LifeCycleExpiration lifeCycleExpiration)
+        {
+            Expiration expiration = new Expiration()
+            {
+                Days = lifeCycleExpiration.Days
+            };
+
+            expiration.CreatedBeforeDate = lifeCycleExpiration.CreatedBeforeDate != null ? 
+                DateUtils.FormatIso8601Date(lifeCycleExpiration.CreatedBeforeDate.Value) : null;
+
+            return expiration;
         }
     }
 }

@@ -17,6 +17,8 @@ namespace Aliyun.OSS.Util
         public const string SUBRESOURCE_DELETE = "delete";
         public const string SUBRESOURCE_CORS = "cors";
         public const string SUBRESOURCE_RESTORE = "restore";
+        public const string SUBRESOURCE_BUCKETINFO = "bucketInfo";
+        public const string SUBRESOURCE_BUCKETSTAT = "stat";
     
         public const string PREFIX = "prefix";
         public const string DELIMITER = "delimiter";

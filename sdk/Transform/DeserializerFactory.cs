@@ -43,6 +43,16 @@ namespace Aliyun.OSS.Transform
             return new ListBucketsResultDeserializer(CreateContentDeserializer<ListAllMyBucketsResult>());
         }
 
+        public IDeserializer<ServiceResponse, BucketInfo> CreateGetBucketInfoDeserializer()
+        {
+            return new GetBucketInfoDeserializer(CreateContentDeserializer<BucketInfo>());
+        }
+
+        public IDeserializer<ServiceResponse, BucketStat> CreateGetBucketStatDeserializer()
+        {
+            return new GetBucketStatDeserializer(CreateContentDeserializer<BucketStat>());
+        }
+
         public IDeserializer<ServiceResponse, AccessControlList> CreateGetAclResultDeserializer()
         {
             return new GetAclResponseDeserializer(CreateContentDeserializer<AccessControlPolicy>());

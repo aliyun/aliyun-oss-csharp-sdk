@@ -41,7 +41,25 @@ namespace Aliyun.OSS.Transform
                 if (lcc.Expiration.IsSetDays())
                     rule.ExpriationDays = lcc.Expiration.Days;
                 else if (lcc.Expiration.IsSetDate())
-                    rule.ExpirationTime = DateTime.Parse(lcc.Expiration.Date);
+                    rule.ExpirationTime = DateTime.Parse(lcc.Expiration.Date).ToUniversalTime();
+                else if (!String.IsNullOrEmpty(lcc.Expiration.CreatedBeforeDate))
+                    rule.CreatedBeforeDate = DateTime.Parse(lcc.Expiration.CreatedBeforeDate).ToUniversalTime();
+
+                if (lcc.AbortMultipartUpload != null)
+                {
+                    rule.AbortMultipartUpload = new LifecycleRule.LifeCycleExpiration();
+                    ConvertExpiration(lcc.AbortMultipartUpload, rule.AbortMultipartUpload);
+                }
+
+                if (lcc.Transition != null)
+                {
+                    rule.Transitions = new LifecycleRule.LifeCycleTransition[lcc.Transition.Length];
+                    for (int i = 0; i < rule.Transitions.Length; i++)
+                    {
+                        rule.Transitions[i] = new LifecycleRule.LifeCycleTransition();
+                        ConvertTransition(lcc.Transition[i], rule.Transitions[i]);
+                    }
+                }
 
                 rules.Add(rule);
             }
@@ -64,6 +82,21 @@ namespace Aliyun.OSS.Transform
 
             status = (RuleStatus)Enum.Parse(typeof(RuleStatus), value);
             return true;
+        }
+
+        internal static void ConvertExpiration(Expiration expiration, LifecycleRule.LifeCycleExpiration lifeCycleExpiration)
+        {
+            lifeCycleExpiration.Days = expiration.Days;
+            if (!String.IsNullOrEmpty(expiration.CreatedBeforeDate))
+            {
+                lifeCycleExpiration.CreatedBeforeDate = DateTime.Parse(expiration.CreatedBeforeDate).ToUniversalTime();
+            }
+        }
+
+        internal static void ConvertTransition(LifecycleRuleTransition transition, LifecycleRule.LifeCycleTransition lifeCycleTransition)
+        {
+            ConvertExpiration(transition, lifeCycleTransition.LifeCycleExpiration);
+            lifeCycleTransition.StorageClass = transition.StorageClass;
         }
     }
 }
