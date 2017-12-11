@@ -520,6 +520,28 @@ namespace Aliyun.OSS
         AppendObjectResult EndAppendObject(IAsyncResult asyncResult);
 
         /// <summary>
+        /// Creates the symlink of the target object
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="symlink">Symlink.</param>
+        /// <param name="target">Target.</param>
+        void CreateSymlink(string bucketName, string symlink, string target);
+
+        /// <summary>
+        /// Creates the symlink of the target object
+        /// </summary>
+        /// <param name="createSymlinkRequest">Create symlink request.</param>
+        void CreateSymlink(CreateSymlinkRequest createSymlinkRequest);
+
+        /// <summary>
+        /// Gets the target file of the symlink.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="symlink">Symlink </param>
+        /// <returns>OssSymlink object</returns>
+        OssSymlink GetSymlink(string bucketName, string symlink);
+
+        /// <summary>
         /// Gets object
         /// </summary>
         /// <param name="bucketName">bucket name</param>

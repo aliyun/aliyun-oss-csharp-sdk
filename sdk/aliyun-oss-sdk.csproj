@@ -372,6 +372,11 @@
     <Compile Include="Domain\BucketStat.cs" />
     <Compile Include="Commands\GetBucketStatCommand.cs" />
     <Compile Include="Transform\GetBucketStatDeserializer.cs" />
+    <Compile Include="Commands\CreateSymlinkCommand.cs" />
+    <Compile Include="Domain\CreateSymlinkRequest.cs" />
+    <Compile Include="Commands\GetSymlinkCommand.cs" />
+    <Compile Include="Domain\OssSymlink.cs" />
+    <Compile Include="Transform\GetSymlinkResultDeserializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />

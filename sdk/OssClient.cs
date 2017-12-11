@@ -825,6 +825,41 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
+        public void CreateSymlink(string bucketName, string symlink, string target)
+        {
+            var cmd = CreateSymlinkCommand.Create(_serviceClient, _endpoint,
+                                                  CreateContext(HttpMethod.Put, bucketName, symlink),
+                                                  bucketName, symlink, target);
+            using(cmd.Execute())
+            {
+                // do nothing;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void CreateSymlink(CreateSymlinkRequest createSymlinkRequest)
+        {
+            var cmd = CreateSymlinkCommand.Create(_serviceClient, _endpoint,
+                                                  CreateContext(HttpMethod.Put, createSymlinkRequest.BucketName, createSymlinkRequest.Symlink),
+                                                  createSymlinkRequest);
+            using (cmd.Execute())
+            {
+                // do nothing;
+            }
+        }
+
+        /// <inheritdoc/>
+        public OssSymlink GetSymlink(string bucketName, string symlink)
+        {
+            var cmd = GetSymlinkCommand.Create(_serviceClient, _endpoint,
+                                               CreateContext(HttpMethod.Put, bucketName, symlink),
+                                               new GetSymlinkResultDeserializer(),
+                                               bucketName, symlink);
+            return cmd.Execute();
+        }
+
+
+        /// <inheritdoc/>
         public OssObject GetObject(Uri signedUrl)
         {
             // prepare request

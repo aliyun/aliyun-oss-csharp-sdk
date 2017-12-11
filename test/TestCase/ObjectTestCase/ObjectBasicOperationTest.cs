@@ -1966,6 +1966,145 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
         #endregion
 
+        #region Symlink tests
+        [Test]
+        public void CreateAndGetSymlinkTest()
+        {
+            string symlink = _objectKey + "_link";
+            _ossClient.CreateSymlink(_bucketName, symlink, _objectKey);
+            OssObject obj = _ossClient.GetObject(_bucketName, symlink);
+            Assert.IsNotNull(obj);
+            Assert.IsTrue(obj.ContentLength > 0);
+            Assert.AreEqual(obj.HttpStatusCode, HttpStatusCode.OK);
+            obj.Dispose();
+
+            OssSymlink ossSymlink = _ossClient.GetSymlink(_bucketName, symlink);
+            Assert.AreEqual(ossSymlink.Target, _objectKey);
+        }
+
+        [Test]
+        public void CreateSymlinkInvalidParameters()
+        {
+            try
+            {
+                _ossClient.CreateSymlink(null, _objectKey + "_link", _objectKey);
+                Assert.Fail();
+            }
+            catch(ArgumentException)
+            {}
+
+            try
+            {
+                _ossClient.CreateSymlink(_bucketName, null, _objectKey);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+
+            try
+            {
+                _ossClient.CreateSymlink(_bucketName, _objectKey + "_link", null);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+
+            try
+            {
+                _ossClient.CreateSymlink(_bucketName, _objectKey, _objectKey);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+        }
+
+        [Test]
+        public void GetSymlinkInvalidParameters()
+        {
+            try
+            {
+                _ossClient.GetSymlink(null, _objectKey + "_link");
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+
+            try
+            {
+                _ossClient.GetSymlink(_bucketName, null);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+
+            try
+            {
+                _ossClient.GetSymlink(_bucketName, _objectKey);
+                Assert.Fail();
+            }
+            catch(OssException ex)
+            {
+                Assert.AreEqual(ex.ErrorCode, "NotSymlink");
+            }
+        }
+
+        [Test]
+        public void CreateAndGetSymlinkWithSpecialNameTest()
+        {
+            string symlink = _objectKey + " +\t#_link";
+            _ossClient.CreateSymlink(_bucketName, symlink, _objectKey);
+            OssObject obj = _ossClient.GetObject(_bucketName, symlink);
+            Assert.IsNotNull(obj);
+            Assert.IsTrue(obj.ContentLength > 0);
+            Assert.AreEqual(obj.HttpStatusCode, HttpStatusCode.OK);
+
+            OssSymlink ossSymlink = _ossClient.GetSymlink(_bucketName, symlink);
+            Assert.AreEqual(ossSymlink.Target, _objectKey);
+            obj.Dispose();
+        }
+
+        [Test]
+        public void CreateAndGetSymlinkWithUserMetadataTest()
+        {
+            string symlink = _objectKey + " +\t#_link";
+            ObjectMetadata metadata = new ObjectMetadata();
+            //metadata.HttpMetadata.Clear();
+            metadata.HttpMetadata.Add("x-oss-header1", "value1");
+            metadata.UserMetadata.Add("meta1", "value1");
+            metadata.UserMetadata.Add("meta2", "value2");
+            CreateSymlinkRequest req = new CreateSymlinkRequest(_bucketName, symlink, _objectKey, metadata);
+            _ossClient.CreateSymlink(req);
+            OssObject obj = _ossClient.GetObject(_bucketName, symlink);
+            Assert.IsNotNull(obj);
+            Assert.IsTrue(obj.ContentLength > 0);
+            Assert.AreEqual(obj.HttpStatusCode, HttpStatusCode.OK);
+            Assert.AreEqual(obj.Metadata.UserMetadata.Count, metadata.UserMetadata.Count);
+            Assert.AreEqual(obj.Metadata.UserMetadata["meta1"], metadata.UserMetadata["meta1"]);
+            Assert.AreEqual(obj.Metadata.UserMetadata["meta2"], metadata.UserMetadata["meta2"]);
+            Assert.AreEqual(obj.Metadata.ObjectType, "Symlink");
+            obj.Dispose();
+
+            OssSymlink ossSymlink = _ossClient.GetSymlink(_bucketName, symlink);
+            Assert.AreEqual(ossSymlink.Target, _objectKey);
+            Assert.AreEqual(ossSymlink.ObjectMetadata.UserMetadata["meta1"], metadata.UserMetadata["meta1"]);
+            Assert.AreEqual(ossSymlink.ObjectMetadata.UserMetadata["meta2"], metadata.UserMetadata["meta2"]);
+        }
+
+        [Test]
+        public void CreateSymlinkWithNullUserMetadataTest()
+        {
+            string symlink = _objectKey + " +\t#_link";
+            CreateSymlinkRequest req = new CreateSymlinkRequest(_bucketName, symlink, _objectKey);
+            _ossClient.CreateSymlink(req);
+            OssObject obj = _ossClient.GetObject(_bucketName, symlink);
+            Assert.IsNotNull(obj);
+            Assert.IsTrue(obj.ContentLength > 0);
+            Assert.AreEqual(obj.HttpStatusCode, HttpStatusCode.OK);
+            Assert.AreEqual(obj.Metadata.UserMetadata.Count, 0);
+            obj.Dispose();
+        }
+
+        #endregion
         #region private
         private static List<string> CreateMultiObjects(int objectsCount)
         {
