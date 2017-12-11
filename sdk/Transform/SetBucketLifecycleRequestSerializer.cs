@@ -44,9 +44,11 @@ namespace Aliyun.OSS.Transform
 
                 lcc.LifecycleRules[i].Expiration = new Expiration();
                 if (rules[i].CreatedBeforeDate.HasValue)
-                    lcc.LifecycleRules[i].Expiration.Date = DateUtils.FormatIso8601Date(rules[i].CreatedBeforeDate.Value);
+                    lcc.LifecycleRules[i].Expiration.CreatedBeforeDate = DateUtils.FormatIso8601Date(rules[i].CreatedBeforeDate.Value);
                 else if (rules[i].ExpriationDays.HasValue)
                     lcc.LifecycleRules[i].Expiration.Days = rules[i].ExpriationDays.Value;
+                else if (rules[i].ExpirationTime.HasValue)
+                    lcc.LifecycleRules[i].Expiration.Date = DateUtils.FormatIso8601Date(rules[i].ExpirationTime.Value);
 
                 if(rules[i].Transitions != null)
                 {
@@ -72,7 +74,7 @@ namespace Aliyun.OSS.Transform
             if (transition.LifeCycleExpiration != null)
             {
                 lifecycleRuleTransition.Days = transition.LifeCycleExpiration.Days;
-                lifecycleRuleTransition.Date = transition.LifeCycleExpiration.CreatedBeforeDate != null ?
+                lifecycleRuleTransition.CreatedBeforeDate = transition.LifeCycleExpiration.CreatedBeforeDate != null ?
                     DateUtils.FormatIso8601Date(transition.LifeCycleExpiration.CreatedBeforeDate.Value) : null;
             }
 
@@ -88,9 +90,8 @@ namespace Aliyun.OSS.Transform
                 Days = lifeCycleExpiration.Days
             };
 
-            expiration.Date = lifeCycleExpiration.CreatedBeforeDate != null ? 
+            expiration.CreatedBeforeDate = lifeCycleExpiration.CreatedBeforeDate != null ? 
                 DateUtils.FormatIso8601Date(lifeCycleExpiration.CreatedBeforeDate.Value) : null;
-
 
             return expiration;
         }

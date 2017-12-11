@@ -41,7 +41,9 @@ namespace Aliyun.OSS.Transform
                 if (lcc.Expiration.IsSetDays())
                     rule.ExpriationDays = lcc.Expiration.Days;
                 else if (lcc.Expiration.IsSetDate())
-                    rule.CreatedBeforeDate = DateTime.Parse(lcc.Expiration.Date).ToUniversalTime();
+                    rule.ExpirationTime = DateTime.Parse(lcc.Expiration.Date).ToUniversalTime();
+                else if (!String.IsNullOrEmpty(lcc.Expiration.CreatedBeforeDate))
+                    rule.CreatedBeforeDate = DateTime.Parse(lcc.Expiration.CreatedBeforeDate).ToUniversalTime();
 
                 if (lcc.AbortMultipartUpload != null)
                 {
@@ -85,9 +87,9 @@ namespace Aliyun.OSS.Transform
         internal static void ConvertExpiration(Expiration expiration, LifecycleRule.LifeCycleExpiration lifeCycleExpiration)
         {
             lifeCycleExpiration.Days = expiration.Days;
-            if (!String.IsNullOrEmpty(expiration.Date))
+            if (!String.IsNullOrEmpty(expiration.CreatedBeforeDate))
             {
-                lifeCycleExpiration.CreatedBeforeDate = DateTime.Parse(expiration.Date).ToUniversalTime();
+                lifeCycleExpiration.CreatedBeforeDate = DateTime.Parse(expiration.CreatedBeforeDate).ToUniversalTime();
             }
         }
 

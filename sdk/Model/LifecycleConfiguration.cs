@@ -54,7 +54,20 @@ namespace Aliyun.OSS.Model
         }
 
         [XmlElement("CreatedBeforeDate", IsNullable = true)]
+        public string CreatedBeforeDate
+        {
+            get;
+            set;
+        }
+
+        public bool ShouldSerializeCreatedBeforeDate()
+        {
+            return CreatedBeforeDate != null;
+        }
+
+        [XmlElement("Date", IsNullable = true)] 
         public string Date { get; set; }
+
 
         public bool ShouldSerializeDate()
         {
