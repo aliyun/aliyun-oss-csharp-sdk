@@ -32,6 +32,7 @@ namespace Aliyun.OSS.Common
         private long _maxPartCachingSize = 1024 * 1024 * 200;
         private int _maxResumableUploadThreads = 8;
         private int _maxResumableDownloadThreads = 8;
+        private int _preReadBufferCount = 8;
 
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
@@ -211,6 +212,23 @@ namespace Aliyun.OSS.Common
             {
                  _maxResumableUploadThreads = value;
 
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the pre read buffer count in resumable upload.
+        /// The max value could be the same size of MaxResumableUploadThreads;
+        /// </summary>
+        /// <value>The pre read buffer count.</value>
+        public int PreReadBufferCount
+        {
+            get
+            {
+                return _preReadBufferCount;
+            }
+            set
+            {
+                _preReadBufferCount = value;
             }
         }
 

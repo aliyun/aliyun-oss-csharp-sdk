@@ -28,28 +28,20 @@ namespace Aliyun.OSS.Util
             var buffer = new byte[BufferSize];
 
             long alreadyRead = 0;
-            try
+            while (alreadyRead < totalSize)
             {
-                while (alreadyRead < totalSize)
-                {
-                    var readSize = orignStream.Read(buffer, 0, BufferSize);
-                    if (readSize <= 0)
-                        break;
+                var readSize = orignStream.Read(buffer, 0, BufferSize);
+                if (readSize <= 0)
+                    break;
 
-                    if (alreadyRead + readSize > totalSize)
-                        readSize = (int)(totalSize - alreadyRead);
-                    alreadyRead += readSize;
-                    destStream.Write(buffer, 0, readSize);
-                }
-                destStream.Flush();
+                if (alreadyRead + readSize > totalSize)
+                    readSize = (int)(totalSize - alreadyRead);
+                alreadyRead += readSize;
+                destStream.Write(buffer, 0, readSize);
+            }
+            destStream.Flush();
 
-                return alreadyRead;
-            }
-            catch(System.ObjectDisposedException e)
-            {
-                System.Console.WriteLine("Here it is:" + alreadyRead +  e.ToString());
-                throw;
-            }
+            return alreadyRead;
         }
     }
 }

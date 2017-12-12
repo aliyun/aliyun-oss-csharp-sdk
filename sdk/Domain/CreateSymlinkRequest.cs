@@ -25,6 +25,10 @@ namespace Aliyun.OSS
 
         public string Target { get; set; }
 
+        /// <summary>
+        /// Gets or sets the object metadata of the Symlink (not the target object).
+        /// </summary>
+        /// <value>The object metadata.</value>
         public ObjectMetadata ObjectMetadata { get; set; }
     }
 }

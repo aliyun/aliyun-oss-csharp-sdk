@@ -18,9 +18,8 @@ namespace Aliyun.OSS.Commands
 {
     internal class GetSymlinkCommand : OssCommand<OssSymlink>
     {
-        private string _bucketName;
-        private string _symlink;
-
+        private readonly string _bucketName;
+        private readonly string _symlink;
 
         protected override string Bucket
         {

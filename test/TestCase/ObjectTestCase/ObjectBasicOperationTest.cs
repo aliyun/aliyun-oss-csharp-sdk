@@ -2141,7 +2141,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
 
             try
             {

@@ -22,6 +22,11 @@ namespace Aliyun.OSS
         private OssClient _ossClient;
         private int _maxRetryTimes;
         private ClientConfiguration _conf;
+        private long _uploadedBytes;
+        private long _totalBytes;
+        private EventHandler<StreamTransferProgressArgs> _uploadProgressCallback;
+        private long _incrementalUploadedBytes;
+        private object _callbackLock = new object();
         public ResumableUploadManager(OssClient ossClient, int maxRetryTimes, ClientConfiguration conf)
         {
             this._ossClient = ossClient;
@@ -108,72 +113,251 @@ namespace Aliyun.OSS
             }
         }
 
+        private void ProcessCallbackInternal(object sender, StreamTransferProgressArgs e)
+        {
+            Interlocked.Add(ref _uploadedBytes, e.IncrementTransferred);
+            Interlocked.Add(ref _incrementalUploadedBytes, e.IncrementTransferred);
+            if (_uploadProgressCallback != null && _incrementalUploadedBytes >= _conf.ProgressUpdateInterval)
+            {
+                lock (this._callbackLock)
+                {
+                    if (_incrementalUploadedBytes >= _conf.ProgressUpdateInterval)
+                    {
+                        long incrementalUploadedBytes = _incrementalUploadedBytes;
+                        StreamTransferProgressArgs progress = new StreamTransferProgressArgs(incrementalUploadedBytes, _uploadedBytes, _totalBytes);
+                        _uploadProgressCallback.Invoke(this, progress);
+                        Interlocked.Add(ref _incrementalUploadedBytes, -incrementalUploadedBytes);
+                    }
+                }
+            }
+        }
+
+        internal class PreReadThreadParam
+        {
+            public Stream Fs;
+
+            public ResumableContext ResumableContext;
+
+            public Exception PreReadError;
+
+            private Queue<UploadTaskParam> Queue = new Queue<UploadTaskParam>();
+
+            private Queue<MemoryStream> BufferPool = new Queue<MemoryStream>();
+
+            private object _bufferLock = new object();
+
+            private object _taskLock = new object();
+
+            private ManualResetEvent _taskAvailable = new ManualResetEvent(false);
+            private ManualResetEvent _bufferAvailable = new ManualResetEvent(false);
+
+            public MemoryStream TakeBuffer()
+            {
+                if (!_bufferAvailable.WaitOne(1000 * 10))
+                {
+                    return null;
+                }
+               
+                lock(_bufferLock)
+                {
+                    MemoryStream buffer = BufferPool.Dequeue();
+                    if (BufferPool.Count == 0)
+                    {
+                        _bufferAvailable.Reset();
+                    }
+
+                    return buffer;
+                }
+            }
+
+            public void ReturnBuffer(MemoryStream ms)
+            {
+                lock(_bufferLock)
+                {
+                    BufferPool.Enqueue(ms);
+                    if (BufferPool.Count == 1)
+                    {
+                        _bufferAvailable.Set();
+                    }
+                }
+            }
+
+            public UploadTaskParam TakeTask()
+            {
+                if (!_taskAvailable.WaitOne(1000 * 10))
+                {
+                    return null;
+                }
+
+                lock(_taskLock)
+                {
+                    UploadTaskParam param = Queue.Dequeue();
+                    if (Queue.Count == 0)
+                    {
+                        _taskAvailable.Reset();
+                    }
+
+                    return param;
+                }
+            }
+
+            public void CreateTask(UploadTaskParam task)
+            {
+                lock(_taskLock)
+                {
+                    Queue.Enqueue(task);
+                    if (Queue.Count == 1)
+                    {
+                        _taskAvailable.Set();
+                    }
+                }
+            }
+
+            public int GetTaskLength()
+            {
+                return Queue.Count;
+            }
+
+            public int GetBufferLength()
+            {
+                return BufferPool.Count;
+            }
+        }
+
+        private void StartPreRead(object state)
+        {
+            PreReadThreadParam preReadThreadParam = state as PreReadThreadParam;
+            if (preReadThreadParam == null)
+            {
+                throw new ClientException("Internal error: the state must be type of PreReadThreadParam");
+            }
+
+            int nextPart = 0;
+            try
+            {
+                while (nextPart < preReadThreadParam.ResumableContext.PartContextList.Count)
+                {
+                    MemoryStream buffer = preReadThreadParam.TakeBuffer();
+                    if (buffer == null)
+                    {
+                        continue;
+                    }
+
+                    UploadTaskParam param = new UploadTaskParam();
+                    param.UploadFileStream = preReadThreadParam.Fs;
+                    param.InputStream = buffer;
+                    param.ResumableUploadContext = preReadThreadParam.ResumableContext;
+                    param.ResumableUploadPartContext = preReadThreadParam.ResumableContext.PartContextList[nextPart++];
+                    param.UploadProgressCallback = _uploadProgressCallback;
+                    param.ProgressUpdateInterval = _conf.ProgressUpdateInterval;
+                    param.Finished = new ManualResetEvent(false);
+
+                    int readCount = 0;
+                    while (readCount != param.ResumableUploadPartContext.Length)
+                    {
+                        int count = preReadThreadParam.Fs.Read(param.InputStream.GetBuffer(), readCount, (int)param.ResumableUploadPartContext.Length - readCount);
+                        if (count == 0)
+                        {
+                            throw new System.IO.IOException(string.Format("Unable to read data with expected size. Expected size:{0}, actual read size: {1}", param.ResumableUploadPartContext.Length, readCount));
+                        }
+                        readCount += count;
+                    }
+
+                    param.InputStream.SetLength(readCount);
+
+                    preReadThreadParam.CreateTask(param);
+                }
+            }
+            catch(Exception e)
+            {
+                preReadThreadParam.PreReadError = e;
+            }
+        }
+
         private void DoResumableUploadMultiThread(string bucketName, string key, ResumableContext resumableContext, Stream fs,
                                        EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
         {
-
-            var uploadedBytes = resumableContext.GetUploadedBytes();
+            _uploadProgressCallback = uploadProgressCallback;
+            _uploadedBytes = resumableContext.GetUploadedBytes();
+            _totalBytes = fs.Length;
+            _incrementalUploadedBytes = 0;
 
             Exception e = null;
-            int parallel = Math.Min(Math.Min(_conf.MaxResumableUploadThreads, resumableContext.PartContextList.Count), Environment.ProcessorCount);
-            MemoryStream[] mss = new MemoryStream[parallel];
-            MemoryStream preReadBuffer = new MemoryStream((int)resumableContext.PartContextList[0].Length);
+            int parallel = Math.Min(_conf.MaxResumableUploadThreads, resumableContext.PartContextList.Count);
+            Queue<UploadTaskParam> preReadItems = new Queue<UploadTaskParam>();
+
+            int preReadPartCount = Math.Min(parallel, _conf.PreReadBufferCount) + parallel;
+
             ManualResetEvent[] taskFinishEvents = new ManualResetEvent[parallel];
-            UploadTaskParam[] taskParams = new UploadTaskParam[parallel];
+            UploadTaskParam[] runningTasks = new UploadTaskParam[parallel];
             Console.WriteLine("Starting {0} Thread. Total Parts:{1}", parallel, resumableContext.PartContextList.Count);
             fs.Seek(0, SeekOrigin.Begin);
-            for (int i = 0; i < parallel; i++)
+
+            // init the buffer pool
+            PreReadThreadParam param = new PreReadThreadParam();
+            param.Fs = fs;
+            param.ResumableContext = resumableContext;
+            for (int i = 0; i < preReadPartCount && i < resumableContext.PartContextList.Count; i++)
             {
                 var part = resumableContext.PartContextList[i];
-                mss[i] = new MemoryStream((int)part.Length);
-                taskFinishEvents[i] = new ManualResetEvent(false);
-                UploadTaskParam param = new UploadTaskParam();
-                taskParams[i] = param;
-                param.UploadFileStream = fs;
-                param.InputStream = mss[i];
-                param.ResumableUploadContext = resumableContext;
-                param.ResumableUploadPartContext = resumableContext.PartContextList[i];
-                param.UploadProgressCallback = uploadProgressCallback;
-                param.ProgressUpdateInterval = _conf.ProgressUpdateInterval;
-                param.uploadedBytes = uploadedBytes;
-                param.Finished = taskFinishEvents[i];
-                CreateUploadPartTask(param);
+                param.ReturnBuffer(new MemoryStream((int)part.Length));
             }
 
+            Thread thread = new Thread(new ParameterizedThreadStart(StartPreRead)); 
+            thread.Start(param);
+
             bool allTaskDone = false;
+            for (int i = 0; i < parallel; i++)
+            {
+                UploadTaskParam task = param.TakeTask();
+                if (task == null)
+                {
+                    continue;
+                }
+                taskFinishEvents[i] = task.Finished;
+                runningTasks[i] = task;
+                StartUploadPartTask(task);
+            }
+
             int nextPart = parallel;
             try
             {
-                while (nextPart < resumableContext.PartContextList.Count)
+                int waitingCount = 0;
+                const int MaxWaitingCount = 100;
+                while (nextPart < resumableContext.PartContextList.Count && waitingCount < MaxWaitingCount)
                 {
-                    UploadTaskParam newTaskParam = new UploadTaskParam();
-                    newTaskParam.UploadFileStream = fs;
-                    newTaskParam.InputStream = preReadBuffer;
-                    newTaskParam.ResumableUploadContext = resumableContext;
-                    newTaskParam.ResumableUploadPartContext = resumableContext.PartContextList[nextPart++];
-                    newTaskParam.UploadProgressCallback = uploadProgressCallback;
-                    newTaskParam.ProgressUpdateInterval = _conf.ProgressUpdateInterval;
-                    newTaskParam.uploadedBytes = uploadedBytes;
-                    newTaskParam.Finished = new ManualResetEvent(false);
-
-                    CreateUploadPartTask(newTaskParam);
                     int index = ManualResetEvent.WaitAny(taskFinishEvents);
-                    if (taskParams[index].Error == null)
+                    if (runningTasks[index].Error == null)
                     {
                         resumableContext.Dump();
-                        uploadedBytes += resumableContext.PartContextList[index].Length;
-                        taskParams[index].Finished.Close();
+                        runningTasks[index].Finished.Close();
                     }
                     else
                     {
-                        e = taskParams[index].Error;
+                        e = runningTasks[index].Error;
                     }
 
-                    taskParams[index] = newTaskParam;
-                    taskFinishEvents[index] = newTaskParam.Finished; 
-                    var t = mss[index];
-                    mss[index] = preReadBuffer;
-                    preReadBuffer = t;
+                    param.ReturnBuffer(runningTasks[index].InputStream);
+                    UploadTaskParam task = param.TakeTask();
+                    if (task == null)
+                    {
+                        waitingCount++;
+                        if (param.PreReadError != null) // no more task will be created;
+                        {
+                            break;
+                        }
+
+                        continue;
+                    }
+                    StartUploadPartTask(task);
+                    runningTasks[index] = task;
+                    taskFinishEvents[index] = runningTasks[index].Finished; 
+                    nextPart++;
+                }
+
+                if (waitingCount >= MaxWaitingCount)
+                {
+                    e = new ClientException("Fail to read the data from local stream");
                 }
 
                 WaitHandle.WaitAll(taskFinishEvents);
@@ -181,20 +365,43 @@ namespace Aliyun.OSS
             }
             finally
             {
-                preReadBuffer.Dispose();
                 if (!allTaskDone)
                 {
                     WaitHandle.WaitAll(taskFinishEvents);
                 }
 
+                if (uploadProgressCallback != null)
+                {
+                    long latestUploadedBytes = resumableContext.GetUploadedBytes();
+                    long lastIncrementalUploadedBytes = latestUploadedBytes - _uploadedBytes + _incrementalUploadedBytes;
+                    if (lastIncrementalUploadedBytes > 0)
+                    {
+                        StreamTransferProgressArgs progress = new StreamTransferProgressArgs(lastIncrementalUploadedBytes, latestUploadedBytes, fs.Length);
+                        uploadProgressCallback.Invoke(this, progress);
+                    }
+
+                    _uploadedBytes = latestUploadedBytes;
+                }
+
                 for (int i = 0; i < parallel; i++)
                 {
                     taskFinishEvents[i].Close();
-                    mss[i].Dispose();
-                    if (taskParams[i].Error != null)
+                    if (runningTasks[i].Error != null)
                     {
-                        e = taskParams[i].Error;
+                        e = runningTasks[i].Error;
                     }
+                    runningTasks[i].InputStream.Dispose();
+                }
+
+                if (param.PreReadError != null)
+                {
+                    e = param.PreReadError;
+                }
+
+                MemoryStream buffer = null;
+                while (param.GetBufferLength() != 0 && (buffer = param.TakeBuffer()) != null)
+                {
+                    buffer.Dispose();
                 }
 
                 resumableContext.Dump();
@@ -243,12 +450,6 @@ namespace Aliyun.OSS
                 set;
             }
 
-            public long uploadedBytes
-            {
-                get;
-                set;
-            }
-
             public ManualResetEvent Finished
             {
                 get;
@@ -261,20 +462,8 @@ namespace Aliyun.OSS
                 set;
             }
         }
-        private void CreateUploadPartTask(UploadTaskParam taskParam)
-        {
-            int readCount = 0;
-            while (readCount != taskParam.ResumableUploadPartContext.Length)
-            {
-                int count = taskParam.UploadFileStream.Read(taskParam.InputStream.GetBuffer(), readCount, (int)taskParam.ResumableUploadPartContext.Length - readCount);
-                if (count == 0)
-                {
-                    throw new System.IO.IOException(string.Format("Unable to read data with expected size. Expected size:{0}, actual read size: {1}", taskParam.ResumableUploadPartContext.Length, readCount));
-                }
-                readCount += count;
-            }
-
-            taskParam.InputStream.SetLength(readCount);
+        private void StartUploadPartTask(UploadTaskParam taskParam)
+        {           
             ThreadPool.QueueUserWorkItem(UploadPart, taskParam);
         }
 
@@ -305,10 +494,10 @@ namespace Aliyun.OSS
                         if (taskParam.UploadProgressCallback != null)
                         {
                             progressCallbackStream = _ossClient.SetupProgressListeners(stream,
-                                                                             stream.Length,
-                                                                             taskParam.uploadedBytes,
-                                                                             taskParam.ProgressUpdateInterval,
-                                                                             taskParam.UploadProgressCallback);
+                                                                             taskParam.UploadFileStream.Length, // does not matter
+                                                                             _uploadedBytes,  // does not matter
+                                                                             Math.Min(taskParam.ProgressUpdateInterval, 1024 * 4),
+                                                                             this.ProcessCallbackInternal);
                         }
 
                         var request = new UploadPartRequest(taskParam.ResumableUploadContext.BucketName, taskParam.ResumableUploadContext.Key, taskParam.ResumableUploadContext.UploadId)

@@ -776,7 +776,10 @@ namespace Aliyun.OSS
 
             int maxRetry = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
             ResumableUploadManager uploadManager = new ResumableUploadManager(this, maxRetry, OssUtils.GetClientConfiguration(_serviceClient));
+            System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
+            stopWatch.Start();
             uploadManager.ResumableUploadWithRetry(bucketName, key, content, resumableContext, streamTransferProgress);
+            Console.WriteLine("Finished:" + stopWatch.ElapsedMilliseconds);
 
             PutObjectResult result = null;
             for (int i = 0; i < maxRetry; i++)
@@ -1522,16 +1525,13 @@ namespace Aliyun.OSS
         private ResumableContext LoadResumableUploadContext(string bucketName, string key, Stream content,
                                                             string checkpointDir, long partSize)
         {
-            string contentMd5 = OssUtils.ComputeContentMd5(content, content.Length);
-
             var resumableContext = new ResumableContext(bucketName, key, checkpointDir);
-            if (resumableContext.Load() && resumableContext.ContentMd5 == contentMd5)
+            if (resumableContext.Load())
             {
                 return resumableContext;
             }
 
             resumableContext = NewResumableContext(content.Length, partSize, resumableContext);
-            resumableContext.ContentMd5 = contentMd5;
             return resumableContext;
         }
 
