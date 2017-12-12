@@ -415,6 +415,19 @@ namespace Aliyun.OSS.Util
             return eventStream;
         }
 
+        internal static Stream SetupDownloadProgressListeners(Stream originalStream,
+                                                      long contentLength,
+                                                      long totalBytesWrite,
+                                                      long progressUpdateInterval,
+                                                      object sender,
+                                                      EventHandler<StreamTransferProgressArgs> callback)
+        {
+            var eventStream = new EventStream(originalStream, true);
+            var tracker = new StreamTransferTracker(sender, callback, contentLength, totalBytesWrite, progressUpdateInterval);
+            eventStream.OnWrite += tracker.TransferredProgress;
+            return eventStream;
+        }
+
         /// <summary>
         /// Calls a specific EventHandler in a background thread
         /// </summary>

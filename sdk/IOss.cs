@@ -598,6 +598,14 @@ namespace Aliyun.OSS
         ObjectMetadata GetObject(GetObjectRequest getObjectRequest, Stream output);
 
         /// <summary>
+        /// Download a file.
+        /// Internally it may use multipart download in case the file is big
+        /// </summary>
+        /// <returns>The metadata object</returns>
+        /// <param name="request">DownloadFileRequest instance</param>
+        ObjectMetadata ResumableDownloadFile(DownloadFileRequest request);
+
+        /// <summary>
         /// Gets <see cref="OssObject" /> metadata.
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>

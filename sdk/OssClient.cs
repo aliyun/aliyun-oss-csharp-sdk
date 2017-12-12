@@ -744,7 +744,6 @@ namespace Aliyun.OSS
             }
         }
 
-        /// <inheritdoc/>
         public PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
                                                      EventHandler<StreamTransferProgressArgs> streamTransferProgress = null)
         {
@@ -775,26 +774,46 @@ namespace Aliyun.OSS
                 resumableContext.UploadId = initResult.UploadId;
             }
 
-            ResumableUploadWithRetry(bucketName, key, content, resumableContext, streamTransferProgress);
+            int maxRetry = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
+            ResumableUploadManager uploadManager = new ResumableUploadManager(this, maxRetry, OssUtils.GetClientConfiguration(_serviceClient));
+            uploadManager.ResumableUploadWithRetry(bucketName, key, content, resumableContext, streamTransferProgress);
 
-            // Completes the upload
-            var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, resumableContext.UploadId);
-            if (metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
+            PutObjectResult result = null;
+            for (int i = 0; i < maxRetry; i++)
             {
-                var callbackMetadata = new ObjectMetadata();
-                callbackMetadata.AddHeader(HttpHeaders.Callback, metadata.HttpMetadata[HttpHeaders.Callback]);
-                completeRequest.Metadata = callbackMetadata;
+                try
+                {
+                    // Completes the upload
+                    var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, resumableContext.UploadId);
+                    if (metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
+                    {
+                        var callbackMetadata = new ObjectMetadata();
+                        callbackMetadata.AddHeader(HttpHeaders.Callback, metadata.HttpMetadata[HttpHeaders.Callback]);
+                        completeRequest.Metadata = callbackMetadata;
+                    }
+                    foreach (var part in resumableContext.PartContextList)
+                    {
+                        completeRequest.PartETags.Add(part.PartETag);
+                    }
+
+
+                    result = CompleteMultipartUpload(completeRequest);
+                    break;
+                }
+                catch(Exception)
+                {
+                    if( i == maxRetry - 1)
+                    {
+                        throw;
+                    }
+                }
             }
-            foreach (var part in resumableContext.PartContextList)
-            {
-                completeRequest.PartETags.Add(part.PartETag);
-            }
-            var result = CompleteMultipartUpload(completeRequest);
 
             resumableContext.Clear();
 
             return result;
         }
+
 
         /// <inheritdoc/>
         public AppendObjectResult AppendObject(AppendObjectRequest request)
@@ -940,6 +959,68 @@ namespace Aliyun.OSS
                                                      CreateContext(HttpMethod.Head, bucketName, key),
                                                      bucketName, key);
             return cmd.Execute();
+        }
+
+        public ObjectMetadata ResumableDownloadFile(DownloadFileRequest request)
+        {
+            ThrowIfNullRequest(request);
+            ThrowIfNullRequest(request.BucketName);
+            ThrowIfNullRequest(request.Key);
+            ThrowIfNullRequest(request.DownloadFile);
+
+            if (!Directory.GetParent(request.DownloadFile).Exists)
+            {
+               throw new ArgumentException(String.Format("Invalid file path {0}. The parent folder does not exist.", request.DownloadFile)); 
+            }
+            ObjectMetadata objectMeta = this.GetObjectMetadata(request.BucketName, request.Key);
+            var fileSize = objectMeta.ContentLength;
+
+            // Adjusts part size
+            long actualPartSize = AdjustPartSize(request.PartSize);
+            var config = OssUtils.GetClientConfiguration(_serviceClient);
+            if (fileSize <= actualPartSize)
+            {
+                using (Stream fs = File.Open(request.DownloadFile, FileMode.Create))
+                {
+                    using(var ossObject = GetObject(request.BucketName, request.Key))
+                    {
+                        var streamWrapper = ossObject.Content;
+                        try
+                        {
+                            if (config.EnalbeMD5Check && !string.IsNullOrEmpty(objectMeta.ContentMd5))
+                            {
+                                byte[] expectedHashDigest = Convert.FromBase64String(objectMeta.ContentMd5); ;
+                                streamWrapper = new MD5Stream(ossObject.Content, expectedHashDigest, fileSize);
+                            }
+
+                            if (request.StreamTransferProgress != null)
+                            {
+                                streamWrapper = this.SetupProgressListeners(streamWrapper,
+                                                                                objectMeta.ContentLength,
+                                                                                0,
+                                                                                config.ProgressUpdateInterval,
+                                                                                request.StreamTransferProgress);
+                            }
+                            ResumableDownloadManager.WriteTo(streamWrapper, fs);
+                        }
+                        finally
+                        {
+                            if(!Object.Equals(streamWrapper, fs))
+                            {
+                                streamWrapper.Dispose();
+                            }
+                        }
+                    }
+                }
+
+                return objectMeta;
+            }
+
+            ResumableDownloadContext resumableContext = this.LoadResumableDownloadContext(request.BucketName, request.Key, objectMeta, request.CheckpointFile, actualPartSize);
+            NewResumableContext(fileSize, actualPartSize, resumableContext);
+            ResumableDownloadManager resumableDownloadManager = new ResumableDownloadManager(this, ((RetryableServiceClient)_serviceClient).MaxRetryTimes, config);
+            resumableDownloadManager.ResumableDownloadWithRetry(request, resumableContext);
+            return objectMeta;
         }
 
         /// <inheritdoc/>
@@ -1454,6 +1535,20 @@ namespace Aliyun.OSS
             return resumableContext;
         }
 
+        private ResumableDownloadContext LoadResumableDownloadContext(string bucketName, string key, ObjectMetadata metadata, string checkpointDir, long partSize)
+        {
+            var resumableContext = new ResumableDownloadContext(bucketName, key, checkpointDir);
+            if (resumableContext.Load() && resumableContext.ETag == metadata.ETag && resumableContext.ContentMd5 == metadata.ContentMd5)
+            {
+                return resumableContext;
+            } 
+
+            NewResumableContext(metadata.ContentLength, partSize, resumableContext);
+            resumableContext.ContentMd5 = metadata.ContentMd5;
+            resumableContext.ETag = metadata.ETag;
+            return resumableContext;
+        }
+
         private static ResumableContext NewResumableContext(long contentLength, long partSize, ResumableContext resumableContext)
         {
             var fileSize = contentLength;
@@ -1489,75 +1584,22 @@ namespace Aliyun.OSS
             resumableContext.PartContextList = partContextList;
             return resumableContext;
         }
-
-        private void ResumableUploadWithRetry(string bucketName, string key, Stream content, ResumableContext resumableContext,
-                                              EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
+        internal Stream SetupProgressListeners(Stream originalStream,
+                                                      long contentLength,
+                                                      long totalBytesRead,
+                                                      long progressUpdateInterval,
+                                                      EventHandler<StreamTransferProgressArgs> callback)
         {
-            using (var fs = content)
-            {
-                int maxRetryTimes = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
-
-                for (int i = 0; i < maxRetryTimes; i++)
-                {
-                    try
-                    {
-                        DoResumableUpload(bucketName, key, resumableContext, fs, uploadProgressCallback);
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        if (i != maxRetryTimes - 1)
-                        {
-                            Thread.Sleep(1000);
-                            continue;
-                        }
-                        else
-                        {
-                            throw ex;
-                        }
-                    }
-                }
-            }
+            return OssUtils.SetupProgressListeners(originalStream, contentLength, totalBytesRead, progressUpdateInterval, _serviceClient, callback);
         }
 
-        private void DoResumableUpload(string bucketName, string key, ResumableContext resumableContext, Stream fs,
-                                       EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
+        internal Stream SetupDownloadProgressListeners(Stream originalStream,
+                                                        long contentLength,
+                                                        long totalBytesWritten,
+                                                        long progressUpdateInterval,
+                                                        EventHandler<StreamTransferProgressArgs> callback)
         {
-            var uploadedBytes = resumableContext.GetUploadedBytes();
-            var conf = OssUtils.GetClientConfiguration(_serviceClient);
-            
-            foreach (var part in resumableContext.PartContextList)
-            {
-                if (part.IsCompleted)
-                {
-                    continue;
-                }
-
-                fs.Seek(part.Position, SeekOrigin.Begin);
-                var originalStream = fs;
-                if (uploadProgressCallback != null)
-                {
-                    originalStream = OssUtils.SetupProgressListeners(originalStream, 
-                                                                     fs.Length, 
-                                                                     uploadedBytes,
-                                                                     conf.ProgressUpdateInterval,
-                                                                     _serviceClient, 
-                                                                     uploadProgressCallback);
-                }
-
-                var request = new UploadPartRequest(bucketName, key, resumableContext.UploadId)
-                {
-                    InputStream = originalStream,
-                    PartSize = part.Length,
-                    PartNumber = part.PartId
-                };
-
-                var partResult = UploadPart(request);
-                part.PartETag = partResult.PartETag;
-                part.IsCompleted = true;
-                resumableContext.Dump();
-                uploadedBytes += part.Length;
-            }
+           return OssUtils.SetupDownloadProgressListeners(originalStream, contentLength, totalBytesWritten, progressUpdateInterval, _serviceClient, callback); 
         }
 
         private void ResumableCopyWithRetry(CopyObjectRequest request, ResumableContext context)

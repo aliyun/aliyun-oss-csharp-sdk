@@ -289,4 +289,91 @@ namespace Aliyun.OSS
             SourceKey = sourceKey; 
         }
     }
+
+    internal class ResumableDownloadContext : ResumableContext
+    {
+        public ResumableDownloadContext(string bucketName, string key, string checkpointDir)
+            :base(bucketName, key, checkpointDir)
+        {
+        }
+
+        public long GetDownloadedBytes()
+        {
+            return GetUploadedBytes();
+        }
+
+        public long GetTotalBytes()
+        {
+            long totalBytes = 0;
+            foreach (var part in PartContextList)
+            {
+               totalBytes += part.Length;
+            }
+            return totalBytes;
+        }
+        
+        public string ETag
+        {
+            get;
+            set;
+        }
+
+        public override bool FromString(string value)
+        {
+            var tokens = value.Split(ContextSeparator);
+            if (tokens.Length != 3)
+            {
+                return false;
+            }
+
+            ETag = tokens[0];
+            ContentMd5 = tokens[1];
+            var partStr = tokens[2];
+
+            var partTokens = partStr.Split(PartContextSeparator);
+            if (partTokens.Length <= 1)
+            {
+                return false;
+            }
+
+            PartContextList = PartContextList ?? new List<ResumablePartContext>();
+            for (int i = 0; i < partTokens.Length; i++)
+            {
+                var partContext = new ResumablePartContext();
+                if (!partContext.FromString(partTokens[i]))
+                {
+                    return false;
+                }
+                 
+                PartContextList.Add(partContext);
+            }
+            return true;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder result = new StringBuilder();
+
+            result.Append(ETag);
+            result.Append(ContextSeparator);
+
+            result.Append(ContentMd5);
+            result.Append(ContextSeparator);
+
+            foreach (var part in PartContextList)
+            {
+                string partStr = part.ToString();
+               
+                result.Append(partStr); 
+                result.Append(PartContextSeparator);
+            }
+
+            string ss = result.ToString();
+            if (ss.EndsWith(new string(PartContextSeparator, 1)))
+            {
+                ss = ss.Substring(0, ss.Length - 1);
+            }
+            return ss;
+        }
+    }
 }

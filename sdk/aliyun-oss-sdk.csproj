@@ -13,7 +13,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SourceAnalysisOverrideSettingsFile>C:\Users\Ethan\AppData\Roaming\ICSharpCode/SharpDevelop4\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
     <SignAssembly>false</SignAssembly>
-    <DelaySign>False</DelaySign>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
@@ -377,6 +376,10 @@
     <Compile Include="Commands\GetSymlinkCommand.cs" />
     <Compile Include="Domain\OssSymlink.cs" />
     <Compile Include="Transform\GetSymlinkResultDeserializer.cs" />
+    <Compile Include="Common\ResumableDownloadManager.cs" />
+    <Compile Include="Common\ResumableUploadManager.cs" />
+    <Compile Include="Domain\DownloadFileRequest.cs" />
+    <Compile Include="Common\Internal\StreamTransferTracker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />

@@ -20,6 +20,11 @@ namespace Aliyun.OSS.Test.Util
             return CreateOssClient(AccountSettings.Load());
         }
 
+        public static IOss CreateOssClient(ClientConfiguration conf)
+        {
+            return CreateOssClient(AccountSettings.Load(), conf);
+        }
+
         public static IOss CreateOssClientUseHttps()
         {
             return CreateOssClientUseHttps(AccountSettings.Load());
@@ -37,9 +42,15 @@ namespace Aliyun.OSS.Test.Util
 
         public static IOss CreateOssClient(AccountSettings settings)
         {
+            return CreateOssClient(settings, new ClientConfiguration());
+        }
+
+        public static IOss CreateOssClient(AccountSettings settings, ClientConfiguration conf)
+        {
             return new OssClient(settings.OssEndpoint,
                                  settings.OssAccessKeyId,
-                                 settings.OssAccessKeySecret);
+                                 settings.OssAccessKeySecret,
+                                 conf);
         }
 
         public static IOss CreateOssClientUseHttps(AccountSettings settings)
