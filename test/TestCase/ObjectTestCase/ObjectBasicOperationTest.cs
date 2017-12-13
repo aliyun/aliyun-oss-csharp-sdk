@@ -2365,7 +2365,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), Config.DownloadFolder, null);
+            _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), Config.DownloadFolder, null);
 
             try
             {
@@ -2395,7 +2395,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), Config.DownloadFolder, null);
+            _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), Config.DownloadFolder, null);
 
             try
             {

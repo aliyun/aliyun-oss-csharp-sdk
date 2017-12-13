@@ -1532,6 +1532,7 @@ namespace Aliyun.OSS
             }
 
             resumableContext = NewResumableContext(content.Length, partSize, resumableContext);
+            resumableContext.ContentMd5 = "fakeMD5"; // ContentMd5 is required for ResumableContext. Use a fake one. 
             return resumableContext;
         }
 
