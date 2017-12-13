@@ -738,7 +738,7 @@ namespace Aliyun.OSS
             metadata = metadata ?? new ObjectMetadata();
             SetContentTypeIfNull(key, fileToUpload, ref metadata);
 
-            using (var fs = File.Open(fileToUpload, FileMode.Open))
+            using (var fs = new FileStream(fileToUpload, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 return ResumableUploadObject(bucketName, key, fs, metadata, checkpointDir, partSize, streamTransferProgress);
             }

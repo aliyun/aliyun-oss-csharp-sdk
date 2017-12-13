@@ -2172,7 +2172,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
             var config = new ClientConfiguration();
             config.MaxResumableDownloadThreads = 1;
             var client = OssClientFactory.CreateOssClient(config);
@@ -2205,7 +2205,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
             var config = new ClientConfiguration();
             config.MaxResumableDownloadThreads = 1;
             config.EnalbeMD5Check = true;
@@ -2239,7 +2239,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
             bool progressUpdateCalled = false;
             int percentDone = 0;
             long totalBytesDownloaded = 0;
@@ -2287,7 +2287,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
             bool progressUpdateCalled = false;
             int percentDone = 0;
             long totalBytesDownloaded = 0;
@@ -2331,7 +2331,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
 
             var config = new ClientConfiguration();
             config.EnalbeMD5Check = true;
@@ -2428,7 +2428,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
             bool progressUpdateCalled = false;
             bool faultInjected = false;
             try
@@ -2478,7 +2478,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
 
             var key = OssTestUtils.GetObjectKey(_className);
-            var result = _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
             bool progressUpdateCalled = false;
             bool faultInjected = false;
             try

@@ -69,6 +69,10 @@ namespace Aliyun.OSS
             {
                 DoResumableUploadSingleThread(bucketName, key, resumableContext, fs, uploadProgressCallback);
             }
+            else if (fs is FileStream)
+            {
+                DoResumableUploadMultiThread2(bucketName, key, resumableContext, fs as FileStream, uploadProgressCallback);
+            }
             else
             {
                 DoResumableUploadMultiThread(bucketName, key, resumableContext, fs, uploadProgressCallback);
@@ -255,7 +259,7 @@ namespace Aliyun.OSS
                     int readCount = 0;
                     while (readCount != param.ResumableUploadPartContext.Length)
                     {
-                        int count = preReadThreadParam.Fs.Read(param.InputStream.GetBuffer(), readCount, (int)param.ResumableUploadPartContext.Length - readCount);
+                        int count = preReadThreadParam.Fs.Read(buffer.GetBuffer(), readCount, (int)param.ResumableUploadPartContext.Length - readCount);
                         if (count == 0)
                         {
                             throw new System.IO.IOException(string.Format("Unable to read data with expected size. Expected size:{0}, actual read size: {1}", param.ResumableUploadPartContext.Length, readCount));
@@ -274,6 +278,126 @@ namespace Aliyun.OSS
             }
         }
 
+        private UploadTaskParam CreateTask(int i, ResumableContext resumableContext, FileStream fs)
+        {
+            UploadTaskParam param = new UploadTaskParam();
+            param.UploadFileStream = fs;
+            param.InputStream = new FileStream(fs.Name, FileMode.Open, FileAccess.Read, FileShare.Read);
+            param.ResumableUploadContext = resumableContext;
+            param.ResumableUploadPartContext = resumableContext.PartContextList[i];
+            param.UploadProgressCallback = _uploadProgressCallback;
+            param.ProgressUpdateInterval = _conf.ProgressUpdateInterval;
+            param.Finished = new ManualResetEvent(false);
+            return param;
+        }
+
+        /// <summary>
+        /// Do the resumable upload with multithread from file stream.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="resumableContext">Resumable context.</param>
+        /// <param name="fs">Fs.</param>
+        /// <param name="uploadProgressCallback">Upload progress callback.</param>
+        private void DoResumableUploadMultiThread2(string bucketName, string key, ResumableContext resumableContext, FileStream fs,
+                                   EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
+        {
+            _uploadProgressCallback = uploadProgressCallback;
+            _uploadedBytes = resumableContext.GetUploadedBytes();
+            _totalBytes = fs.Length;
+            _incrementalUploadedBytes = 0;
+
+            Exception e = null;
+            int parallel = Math.Min(_conf.MaxResumableUploadThreads, resumableContext.PartContextList.Count);
+
+            ManualResetEvent[] taskFinishEvents = new ManualResetEvent[parallel];
+            UploadTaskParam[] runningTasks = new UploadTaskParam[parallel];
+            Console.WriteLine("Starting {0} Thread. Total Parts:{1}", parallel, resumableContext.PartContextList.Count);
+            fs.Seek(0, SeekOrigin.Begin);
+
+            bool allTaskDone = false;
+            for (int i = 0; i < parallel; i++)
+            {
+                UploadTaskParam param = CreateTask(i, resumableContext, fs);
+                taskFinishEvents[i] = param.Finished;
+                runningTasks[i] = param;
+                StartUploadPartTask(param);
+            }
+
+            int nextPart = parallel;
+            try
+            {
+                while (nextPart < resumableContext.PartContextList.Count)
+                {
+                    int index = ManualResetEvent.WaitAny(taskFinishEvents);
+                    if (runningTasks[index].Error == null)
+                    {
+                        resumableContext.Dump();
+                        runningTasks[index].Finished.Close();
+                        runningTasks[index].InputStream.Dispose();
+                    }
+                    else
+                    {
+                        e = runningTasks[index].Error;
+                    }
+
+                    UploadTaskParam task = CreateTask(nextPart, resumableContext, fs);
+                    StartUploadPartTask(task);
+                    runningTasks[index] = task;
+                    taskFinishEvents[index] = runningTasks[index].Finished;
+                    nextPart++;
+                }
+
+                WaitHandle.WaitAll(taskFinishEvents);
+                allTaskDone = true;
+            }
+            finally
+            {
+                if (!allTaskDone)
+                {
+                    WaitHandle.WaitAll(taskFinishEvents);
+                }
+
+                if (uploadProgressCallback != null)
+                {
+                    long latestUploadedBytes = resumableContext.GetUploadedBytes();
+                    long lastIncrementalUploadedBytes = latestUploadedBytes - _uploadedBytes + _incrementalUploadedBytes;
+                    if (lastIncrementalUploadedBytes > 0)
+                    {
+                        StreamTransferProgressArgs progress = new StreamTransferProgressArgs(lastIncrementalUploadedBytes, latestUploadedBytes, fs.Length);
+                        uploadProgressCallback.Invoke(this, progress);
+                    }
+
+                    _uploadedBytes = latestUploadedBytes;
+                }
+
+                for (int i = 0; i < parallel; i++)
+                {
+                    taskFinishEvents[i].Close();
+                    if (runningTasks[i].Error != null)
+                    {
+                        e = runningTasks[i].Error;
+                    }
+                    runningTasks[i].InputStream.Dispose();
+                }
+
+                resumableContext.Dump();
+                if (e != null)
+                {
+                    throw e;
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Do the resumable upload with multithread from non file stream
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="resumableContext">Resumable context.</param>
+        /// <param name="fs">Fs.</param>
+        /// <param name="uploadProgressCallback">Upload progress callback.</param>
         private void DoResumableUploadMultiThread(string bucketName, string key, ResumableContext resumableContext, Stream fs,
                                        EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
         {
@@ -336,7 +460,7 @@ namespace Aliyun.OSS
                         e = runningTasks[index].Error;
                     }
 
-                    param.ReturnBuffer(runningTasks[index].InputStream);
+                    param.ReturnBuffer(runningTasks[index].InputStream as MemoryStream);
                     UploadTaskParam task = param.TakeTask();
                     if (task == null)
                     {
@@ -419,7 +543,7 @@ namespace Aliyun.OSS
                 set;
             }
 
-            public MemoryStream InputStream
+            public Stream InputStream
             {
                 get;
                 set;
@@ -486,7 +610,15 @@ namespace Aliyun.OSS
                 Stream stream = taskParam.InputStream;
                 for (int i = 0; i < retryCount; i++)
                 {
-                    stream.Seek(0, SeekOrigin.Begin);
+                    if (stream is FileStream)
+                    {
+                        stream.Seek(part.Position, SeekOrigin.Begin);
+                    }
+                    else
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                    }
+
                     Stream progressCallbackStream = null;
                     try
                     {
