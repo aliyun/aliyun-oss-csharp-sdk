@@ -284,7 +284,6 @@ namespace Aliyun.OSS
 
             Exception e = null;
             int parallel = Math.Min(_conf.MaxResumableUploadThreads, resumableContext.PartContextList.Count);
-            Queue<UploadTaskParam> preReadItems = new Queue<UploadTaskParam>();
 
             int preReadPartCount = Math.Min(parallel, _conf.PreReadBufferCount) + parallel;
 
