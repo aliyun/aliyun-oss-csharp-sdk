@@ -144,7 +144,7 @@ namespace Aliyun.OSS
 
             public Exception PreReadError;
 
-            private Queue<UploadTaskParam> Queue = new Queue<UploadTaskParam>();
+            private Queue<UploadTask> Queue = new Queue<UploadTask>();
 
             private Queue<MemoryStream> BufferPool = new Queue<MemoryStream>();
 
@@ -186,7 +186,7 @@ namespace Aliyun.OSS
                 }
             }
 
-            public UploadTaskParam TakeTask()
+            public UploadTask TakeTask()
             {
                 if (!_taskAvailable.WaitOne(1000 * 10))
                 {
@@ -195,7 +195,7 @@ namespace Aliyun.OSS
 
                 lock(_taskLock)
                 {
-                    UploadTaskParam param = Queue.Dequeue();
+                    UploadTask param = Queue.Dequeue();
                     if (Queue.Count == 0)
                     {
                         _taskAvailable.Reset();
@@ -205,7 +205,7 @@ namespace Aliyun.OSS
                 }
             }
 
-            public void CreateTask(UploadTaskParam task)
+            public void CreateTask(UploadTask task)
             {
                 lock(_taskLock)
                 {
@@ -247,7 +247,7 @@ namespace Aliyun.OSS
                         continue;
                     }
 
-                    UploadTaskParam param = new UploadTaskParam();
+                    UploadTask param = new UploadTask();
                     param.UploadFileStream = preReadThreadParam.Fs;
                     param.InputStream = buffer;
                     param.ResumableUploadContext = preReadThreadParam.ResumableContext;
@@ -278,9 +278,9 @@ namespace Aliyun.OSS
             }
         }
 
-        private UploadTaskParam CreateTask(int i, ResumableContext resumableContext, FileStream fs)
+        private UploadTask CreateTask(int i, ResumableContext resumableContext, FileStream fs)
         {
-            UploadTaskParam param = new UploadTaskParam();
+            UploadTask param = new UploadTask();
             param.UploadFileStream = fs;
             param.InputStream = new FileStream(fs.Name, FileMode.Open, FileAccess.Read, FileShare.Read);
             param.ResumableUploadContext = resumableContext;
@@ -311,14 +311,14 @@ namespace Aliyun.OSS
             int parallel = Math.Min(_conf.MaxResumableUploadThreads, resumableContext.PartContextList.Count);
 
             ManualResetEvent[] taskFinishEvents = new ManualResetEvent[parallel];
-            UploadTaskParam[] runningTasks = new UploadTaskParam[parallel];
+            UploadTask[] runningTasks = new UploadTask[parallel];
             Console.WriteLine("Starting {0} Thread. Total Parts:{1}", parallel, resumableContext.PartContextList.Count);
             fs.Seek(0, SeekOrigin.Begin);
 
             bool allTaskDone = false;
             for (int i = 0; i < parallel; i++)
             {
-                UploadTaskParam param = CreateTask(i, resumableContext, fs);
+                UploadTask param = CreateTask(i, resumableContext, fs);
                 taskFinishEvents[i] = param.Finished;
                 runningTasks[i] = param;
                 StartUploadPartTask(param);
@@ -333,15 +333,15 @@ namespace Aliyun.OSS
                     if (runningTasks[index].Error == null)
                     {
                         resumableContext.Dump();
-                        runningTasks[index].Finished.Close();
-                        runningTasks[index].InputStream.Dispose();
                     }
                     else
                     {
                         e = runningTasks[index].Error;
                     }
 
-                    UploadTaskParam task = CreateTask(nextPart, resumableContext, fs);
+                    runningTasks[index].Finished.Close();
+                    runningTasks[index].InputStream.Dispose();
+                    UploadTask task = CreateTask(nextPart, resumableContext, fs);
                     StartUploadPartTask(task);
                     runningTasks[index] = task;
                     taskFinishEvents[index] = runningTasks[index].Finished;
@@ -412,7 +412,7 @@ namespace Aliyun.OSS
             int preReadPartCount = Math.Min(parallel, _conf.PreReadBufferCount) + parallel;
 
             ManualResetEvent[] taskFinishEvents = new ManualResetEvent[parallel];
-            UploadTaskParam[] runningTasks = new UploadTaskParam[parallel];
+            UploadTask[] runningTasks = new UploadTask[parallel];
             Console.WriteLine("Starting {0} Thread. Total Parts:{1}", parallel, resumableContext.PartContextList.Count);
             fs.Seek(0, SeekOrigin.Begin);
 
@@ -432,7 +432,7 @@ namespace Aliyun.OSS
             bool allTaskDone = false;
             for (int i = 0; i < parallel; i++)
             {
-                UploadTaskParam task = param.TakeTask();
+                UploadTask task = param.TakeTask();
                 if (task == null)
                 {
                     continue;
@@ -452,16 +452,16 @@ namespace Aliyun.OSS
                     int index = ManualResetEvent.WaitAny(taskFinishEvents);
                     if (runningTasks[index].Error == null)
                     {
-                        resumableContext.Dump();
-                        runningTasks[index].Finished.Close();
+                        resumableContext.Dump();  
                     }
                     else
                     {
                         e = runningTasks[index].Error;
                     }
 
+                    runningTasks[index].Finished.Close();
                     param.ReturnBuffer(runningTasks[index].InputStream as MemoryStream);
-                    UploadTaskParam task = param.TakeTask();
+                    UploadTask task = param.TakeTask();
                     if (task == null)
                     {
                         waitingCount++;
@@ -508,12 +508,11 @@ namespace Aliyun.OSS
 
                 for (int i = 0; i < parallel; i++)
                 {
-                    taskFinishEvents[i].Close();
                     if (runningTasks[i].Error != null)
                     {
                         e = runningTasks[i].Error;
                     }
-                    runningTasks[i].InputStream.Dispose();
+                    runningTasks[i].Finished.Close();
                 }
 
                 if (param.PreReadError != null)
@@ -535,7 +534,7 @@ namespace Aliyun.OSS
             }
         }
 
-        internal class UploadTaskParam
+        internal class UploadTask
         {
             public Stream UploadFileStream
             {
@@ -585,14 +584,14 @@ namespace Aliyun.OSS
                 set;
             }
         }
-        private void StartUploadPartTask(UploadTaskParam taskParam)
+        private void StartUploadPartTask(UploadTask taskParam)
         {           
             ThreadPool.QueueUserWorkItem(UploadPart, taskParam);
         }
 
         private void UploadPart(object state) 
         {
-            UploadTaskParam taskParam = state as UploadTaskParam;
+            UploadTask taskParam = state as UploadTask;
             if (taskParam == null)
             {
                 throw new ClientException("Internal error. The state object should be an instance of class UploadTaskParam");

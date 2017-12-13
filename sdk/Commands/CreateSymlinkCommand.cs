@@ -18,10 +18,10 @@ namespace Aliyun.OSS.Commands
 {
     internal class CreateSymlinkCommand : OssCommand
     {
-        private string _bucketName;
-        private string _target;
-        private string _symlink;
-        private ObjectMetadata _objectMetadata;
+        private readonly string _bucketName;
+        private readonly string _target;
+        private readonly string _symlink;
+        private readonly ObjectMetadata _objectMetadata;
 
         protected override string Bucket
         {

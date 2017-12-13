@@ -89,8 +89,9 @@ namespace Aliyun.OSS
                     continue;
                 }
 
-                using (Stream fs = File.Open(GetPartFile(request, part), FileMode.Create))
+                using (Stream fs = File.Open(GetTempDownloadFile(request), FileMode.OpenOrCreate))
                 {
+                    fs.Seek(part.Position, SeekOrigin.Begin);
                     var originalStream = fs;
                     if (downloadProgressCallback != null)
                     {
@@ -108,13 +109,12 @@ namespace Aliyun.OSS
                     WriteTo(partResult.Content, originalStream);
                 }
 
-                part.PartETag = new PartETag(part.PartId, GetPartETag(GetPartFile(request, part)));
                 part.IsCompleted = true;
                 resumableContext.Dump();
                 _downloadedBytes += part.Length;
             }
 
-            MergeParts(request, resumableContext);
+            Validate(request, resumableContext);
         }
 
         public static long WriteTo(Stream src, Stream dest)
@@ -209,25 +209,29 @@ namespace Aliyun.OSS
                         }
 
                         resumableContext.Dump();
-                        taskFinishedEvents[index].Close();
                     }
                     else
                     {
                         e = taskParams[index].Error;
                     }
 
+                    taskFinishedEvents[index].Close();
                     taskParams[index] = StartDownloadPartTask(request, resumableContext.PartContextList[nextPart++], downloadProgressCallback);
                     taskFinishedEvents[index] = taskParams[index].DownloadFinished;
                 }
 
                 ManualResetEvent.WaitAll(taskFinishedEvents);
                 allTasksDone = true;
-                MergeParts(request, resumableContext); 
 
                 if (request.StreamTransferProgress != null)
                 {
                     StreamTransferProgressArgs args = new StreamTransferProgressArgs(_downloadedBytes - lastDownloadedBytes, _downloadedBytes, totalBytes);
                     request.StreamTransferProgress.Invoke(this, args);
+                }
+
+                if (e == null)
+                {
+                    Validate(request, resumableContext);
                 }
             }
             finally
@@ -285,57 +289,31 @@ namespace Aliyun.OSS
             return val - (val < 58 ? 48 : (val < 97 ? 55 : 87));
         }
 
-        private void MergeParts(DownloadFileRequest request, ResumableDownloadContext resumableContext)
+        private void Validate(DownloadFileRequest request, ResumableDownloadContext resumableContext)
         {
-            using(var fs = File.Open(request.DownloadFile, FileMode.Create))
+            if (_conf.EnalbeMD5Check && !string.IsNullOrEmpty(resumableContext.ContentMd5))
             {
-                Stream stream = fs;
-                try
+                using (var fs = File.Open(GetTempDownloadFile(request), FileMode.Open))
                 {
-                    if (_conf.EnalbeMD5Check && !string.IsNullOrEmpty(resumableContext.ContentMd5))
+                    string calcuatedMd5 = OssUtils.ComputeContentMd5(fs, fs.Length);
+                    if (calcuatedMd5 != resumableContext.ContentMd5)
                     {
-                        stream = new MD5Stream(fs,
-                                               Convert.FromBase64String(resumableContext.ContentMd5),
-                                               resumableContext.GetDownloadedBytes());
-                    }
-
-                    for (int i = 0; i < resumableContext.PartContextList.Count; i++)
-                    {
-                        var partFileName = GetPartFile(request, resumableContext.PartContextList[i]);
-                        if (GetPartETag(partFileName) != resumableContext.PartContextList[i].PartETag.ETag)
-                        {
-                            throw new NoneRetryableException("The local file is updated.");
-                        }
-                        using (var src = File.Open(partFileName, FileMode.Open))
-                        {
-                            WriteTo(src, stream);
-                        }
-                    }
-                }
-                finally
-                {
-                    if (!Object.ReferenceEquals(stream, fs))
-                    {
-                        stream.Dispose();
+                        throw new OssException(string.Format("The Md5 of the downloaded file {0} does not match the expected. Expected:{1}, actual:{2}",
+                                                             GetTempDownloadFile(request),
+                                                             resumableContext.ContentMd5,
+                                                             calcuatedMd5
+                                                            ));
                     }
                 }
             }
 
-            for (int i = 0; i < resumableContext.PartContextList.Count;i++) 
-            {
-                var partFileName = GetPartFile(request, resumableContext.PartContextList[i]);
-                File.Delete(partFileName); 
-            }
+            File.Move(GetTempDownloadFile(request), request.DownloadFile);
+          
         }
 
-        private string GetPartFile(DownloadFileRequest request, ResumablePartContext part)
+        private string GetTempDownloadFile(DownloadFileRequest request)
         {
-            return request.DownloadFile + "_Part_" + part.PartId;
-        }
-
-        private string GetPartETag(string partFile)
-        {
-            return File.GetLastWriteTimeUtc(partFile).Ticks.ToString();
+            return request.DownloadFile + ".tmp";
         }
 
         private void DownloadPart(object state)
@@ -351,7 +329,7 @@ namespace Aliyun.OSS
 
             try
             {
-                string fileName = GetPartFile(request, part); 
+                string fileName = GetTempDownloadFile(request); 
                 if (part.IsCompleted && File.Exists(fileName))
                 {
                     return;
@@ -366,8 +344,9 @@ namespace Aliyun.OSS
                         partRequest.SetRange(part.Position, part.Position + part.Length - 1);
                         using(var partResult = _ossClient.GetObject(partRequest))
                         {
-                            using(var fs = File.Open(fileName, FileMode.Create))
+                            using(var fs = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                             {
+                                fs.Seek(part.Position, SeekOrigin.Begin);
                                 long totalBytes = WriteTo(partResult.Content, fs);
                                 if (totalBytes != part.Length)
                                 {
@@ -377,7 +356,6 @@ namespace Aliyun.OSS
                                 Interlocked.Add(ref _downloadedBytes, partResult.ContentLength);
                             }
 
-                            part.PartETag = new PartETag(part.PartId, GetPartETag(fileName));
                             part.IsCompleted = true;
                             return;
                         }
