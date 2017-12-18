@@ -29,10 +29,11 @@ namespace Aliyun.OSS.Common
         private bool _enalbeMD5Check = false;
         private long _progressUpdateInterval = 1024 * 4;
         private long _directWriteStreamThreshold = 0;
-        private long _maxPartCachingSize = 1024 * 1024 * 200;
+        private long _maxPartCachingSize = 1024 * 1024 * 100;
         private int _maxResumableUploadThreads = 8;
         private int _maxResumableDownloadThreads = 8;
         private int _preReadBufferCount = 8;
+        private bool _useSingleThreadReadInResumableUpload = false;
 
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
@@ -233,6 +234,23 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
+        /// When uploading a file with resumable upload, the default behavior is to read the source file in multiple-threading.
+        /// But in old HDD, single thread read may be faster. And when the read speed is the bottleneck, try to change this parameter to compare the result. 
+        /// </summary>
+        /// <value><c>true</c> if use single thread read in resumable upload; otherwise, <c>false</c>.</value>
+        public bool UseSingleThreadReadInResumableUpload
+        {
+            get
+            {
+                return _useSingleThreadReadInResumableUpload;
+            }
+            set
+            {
+                _useSingleThreadReadInResumableUpload = value;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the max resumable download threads.
         /// </summary>
         /// <value>The max resumable download threads.</value>
@@ -245,7 +263,6 @@ namespace Aliyun.OSS.Common
             set
             {
                 _maxResumableDownloadThreads = value;
-
             }
         }
 

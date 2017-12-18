@@ -602,8 +602,8 @@ namespace Aliyun.OSS
         /// Internally it may use multipart download in case the file is big
         /// </summary>
         /// <returns>The metadata object</returns>
-        /// <param name="request">DownloadFileRequest instance</param>
-        ObjectMetadata ResumableDownloadFile(DownloadFileRequest request);
+        /// <param name="request">DownloadObjectRequest instance</param>
+        ObjectMetadata ResumableDownloadObject(DownloadObjectRequest request);
 
         /// <summary>
         /// Gets <see cref="OssObject" /> metadata.

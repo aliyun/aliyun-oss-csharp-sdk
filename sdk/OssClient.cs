@@ -747,6 +747,15 @@ namespace Aliyun.OSS
         public PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
                                                      EventHandler<StreamTransferProgressArgs> streamTransferProgress = null)
         {
+            ThrowIfNullRequest(bucketName);
+            ThrowIfNullRequest(key);
+            ThrowIfNullRequest(content);
+
+            if (!content.CanSeek)
+            {
+                throw new ArgumentException("Parameter content must be seekable---for nonseekable stream, please call UploadObject instead.");
+            }
+
             // calculates content-type
             metadata = metadata ?? new ObjectMetadata();
             SetContentTypeIfNull(key, null, ref metadata);
@@ -776,42 +785,22 @@ namespace Aliyun.OSS
 
             int maxRetry = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
             ResumableUploadManager uploadManager = new ResumableUploadManager(this, maxRetry, OssUtils.GetClientConfiguration(_serviceClient));
-            System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
-            stopWatch.Start();
             uploadManager.ResumableUploadWithRetry(bucketName, key, content, resumableContext, streamTransferProgress);
-            Console.WriteLine("Finished:" + stopWatch.ElapsedMilliseconds);
 
-            PutObjectResult result = null;
-            for (int i = 0; i < maxRetry; i++)
+            // Completes the upload
+            var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, resumableContext.UploadId);
+            if (metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
             {
-                try
-                {
-                    // Completes the upload
-                    var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, resumableContext.UploadId);
-                    if (metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
-                    {
-                        var callbackMetadata = new ObjectMetadata();
-                        callbackMetadata.AddHeader(HttpHeaders.Callback, metadata.HttpMetadata[HttpHeaders.Callback]);
-                        completeRequest.Metadata = callbackMetadata;
-                    }
-                    foreach (var part in resumableContext.PartContextList)
-                    {
-                        completeRequest.PartETags.Add(part.PartETag);
-                    }
-
-
-                    result = CompleteMultipartUpload(completeRequest);
-                    break;
-                }
-                catch(Exception)
-                {
-                    if( i == maxRetry - 1)
-                    {
-                        throw;
-                    }
-                }
+                var callbackMetadata = new ObjectMetadata();
+                callbackMetadata.AddHeader(HttpHeaders.Callback, metadata.HttpMetadata[HttpHeaders.Callback]);
+                completeRequest.Metadata = callbackMetadata;
+            }
+            foreach (var part in resumableContext.PartContextList)
+            {
+                completeRequest.PartETags.Add(part.PartETag);
             }
 
+            PutObjectResult result = CompleteMultipartUpload(completeRequest);
             resumableContext.Clear();
 
             return result;
@@ -964,7 +953,7 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
-        public ObjectMetadata ResumableDownloadFile(DownloadFileRequest request)
+        public ObjectMetadata ResumableDownloadObject(DownloadObjectRequest request)
         {
             ThrowIfNullRequest(request);
             ThrowIfNullRequest(request.BucketName);

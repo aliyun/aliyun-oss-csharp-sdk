@@ -31,7 +31,7 @@ namespace Aliyun.OSS
             this._conf = conf;
         }
 
-        public void ResumableDownloadWithRetry(DownloadFileRequest request, ResumableDownloadContext resumableContext)
+        public void ResumableDownloadWithRetry(DownloadObjectRequest request, ResumableDownloadContext resumableContext)
         {
             for (int i = 0; i < _maxRetryTimes; i++)
             {
@@ -59,7 +59,7 @@ namespace Aliyun.OSS
             }
         }
 
-        private void DoResumableDownload(DownloadFileRequest request, ResumableDownloadContext resumableContext,
+        private void DoResumableDownload(DownloadObjectRequest request, ResumableDownloadContext resumableContext,
                                        EventHandler<StreamTransferProgressArgs> downloadProgressCallback)
         {
             if (resumableContext.PartContextList[0].Length > _conf.MaxPartCachingSize || _conf.MaxResumableDownloadThreads <= 1)
@@ -72,7 +72,7 @@ namespace Aliyun.OSS
             }
         }
 
-        private void DoResumableDownloadSingleThread(DownloadFileRequest request, ResumableDownloadContext resumableContext,
+        private void DoResumableDownloadSingleThread(DownloadObjectRequest request, ResumableDownloadContext resumableContext,
                                       EventHandler<StreamTransferProgressArgs> downloadProgressCallback)
         {
             _downloadedBytes = resumableContext.GetDownloadedBytes();
@@ -134,7 +134,7 @@ namespace Aliyun.OSS
 
         internal class DownloadTaskParam
         {
-            public DownloadFileRequest Request
+            public DownloadObjectRequest Request
             {
                 get;
                 set;
@@ -169,7 +169,7 @@ namespace Aliyun.OSS
                 set;
             }
         }
-        private void DoResumableDownloadMultiThread(DownloadFileRequest request, ResumableDownloadContext resumableContext,
+        private void DoResumableDownloadMultiThread(DownloadObjectRequest request, ResumableDownloadContext resumableContext,
                                        EventHandler<StreamTransferProgressArgs> downloadProgressCallback)
         {
             _downloadedBytes = resumableContext.GetDownloadedBytes();
@@ -257,7 +257,7 @@ namespace Aliyun.OSS
             }
         }
 
-        private DownloadTaskParam StartDownloadPartTask(DownloadFileRequest request, ResumablePartContext part, EventHandler<StreamTransferProgressArgs> downloadProgressCallback)
+        private DownloadTaskParam StartDownloadPartTask(DownloadObjectRequest request, ResumablePartContext part, EventHandler<StreamTransferProgressArgs> downloadProgressCallback)
         {
             DownloadTaskParam taskParam = new DownloadTaskParam();
             taskParam.Request = request;
@@ -289,7 +289,7 @@ namespace Aliyun.OSS
             return val - (val < 58 ? 48 : (val < 97 ? 55 : 87));
         }
 
-        private void Validate(DownloadFileRequest request, ResumableDownloadContext resumableContext)
+        private void Validate(DownloadObjectRequest request, ResumableDownloadContext resumableContext)
         {
             if (_conf.EnalbeMD5Check && !string.IsNullOrEmpty(resumableContext.ContentMd5))
             {
@@ -311,7 +311,7 @@ namespace Aliyun.OSS
           
         }
 
-        private string GetTempDownloadFile(DownloadFileRequest request)
+        private string GetTempDownloadFile(DownloadObjectRequest request)
         {
             return request.DownloadFile + ".tmp";
         }
@@ -323,7 +323,7 @@ namespace Aliyun.OSS
             {
                 throw new ClientException("Internal error. The taskParam should be type of DownloadTaskParam");
             }
-            DownloadFileRequest request = taskParam.Request;
+            DownloadObjectRequest request = taskParam.Request;
             ResumablePartContext part = taskParam.Part;
             EventHandler<StreamTransferProgressArgs> downloadProgressCallback = taskParam.DownloadProgressCallback;
 
@@ -362,11 +362,7 @@ namespace Aliyun.OSS
                     }
                     catch (Exception ex) // when the connection is closed while sending the data, it will run into ObjectDisposedException.
                     {
-                        if ((ex is ObjectDisposedException || ex is WebException) && i != retryCount - 1)
-                        {
-                            Console.WriteLine(string.Format("Retry:{0}. Download part fails:{1}", i, ex.ToString()));
-                        }
-                        else
+                        if (!(ex is ObjectDisposedException || ex is WebException) || i == retryCount - 1)
                         {
                             throw;
                         }

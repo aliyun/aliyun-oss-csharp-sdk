@@ -27,6 +27,7 @@ namespace Aliyun.OSS
         private EventHandler<StreamTransferProgressArgs> _uploadProgressCallback;
         private long _incrementalUploadedBytes;
         private object _callbackLock = new object();
+
         public ResumableUploadManager(OssClient ossClient, int maxRetryTimes, ClientConfiguration conf)
         {
             this._ossClient = ossClient;
@@ -65,17 +66,23 @@ namespace Aliyun.OSS
         private void DoResumableUpload(string bucketName, string key, ResumableContext resumableContext, Stream fs,
                                        EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
         {
-            if (resumableContext.PartContextList[0].Length > _conf.MaxPartCachingSize || _conf.MaxResumableUploadThreads <= 1)
+            bool isFileStream = fs is FileStream;
+
+            // use single thread if MaxResumableUploadThreads is no bigger than 1
+            // or when the stream is not file stream and the part size is bigger than the conf.MaxPartCachingSize
+            if (_conf.MaxResumableUploadThreads <= 1 || (!isFileStream || _conf.UseSingleThreadReadInResumableUpload) && resumableContext.PartContextList[0].Length > _conf.MaxPartCachingSize)
             {
                 DoResumableUploadSingleThread(bucketName, key, resumableContext, fs, uploadProgressCallback);
             }
-            else if (fs is FileStream)
+            else if (isFileStream && !_conf.UseSingleThreadReadInResumableUpload)
             {
-                DoResumableUploadMultiThread2(bucketName, key, resumableContext, fs as FileStream, uploadProgressCallback);
+                // multi-threaded read file and send the data
+                DoResumableUploadFileMultiThread(bucketName, key, resumableContext, fs as FileStream, uploadProgressCallback);
             }
             else
             {
-                DoResumableUploadMultiThread(bucketName, key, resumableContext, fs, uploadProgressCallback);
+                // single thread pre-read the data and multi-thread send the data.
+                DoResumableUploadPreReadMultiThread(bucketName, key, resumableContext, fs, uploadProgressCallback);
             }
         }
 
@@ -157,7 +164,7 @@ namespace Aliyun.OSS
 
             public MemoryStream TakeBuffer()
             {
-                if (!_bufferAvailable.WaitOne(1000 * 10))
+                if (!_bufferAvailable.WaitOne(1000))
                 {
                     return null;
                 }
@@ -226,6 +233,12 @@ namespace Aliyun.OSS
             {
                 return BufferPool.Count;
             }
+
+            public bool RequestStopPreRead
+            {
+                get;
+                set;
+            }
         }
 
         private void StartPreRead(object state)
@@ -239,7 +252,7 @@ namespace Aliyun.OSS
             int nextPart = 0;
             try
             {
-                while (nextPart < preReadThreadParam.ResumableContext.PartContextList.Count)
+                while (!preReadThreadParam.RequestStopPreRead && nextPart < preReadThreadParam.ResumableContext.PartContextList.Count)
                 {
                     MemoryStream buffer = preReadThreadParam.TakeBuffer();
                     if (buffer == null)
@@ -299,7 +312,7 @@ namespace Aliyun.OSS
         /// <param name="resumableContext">Resumable context.</param>
         /// <param name="fs">Fs.</param>
         /// <param name="uploadProgressCallback">Upload progress callback.</param>
-        private void DoResumableUploadMultiThread2(string bucketName, string key, ResumableContext resumableContext, FileStream fs,
+        private void DoResumableUploadFileMultiThread(string bucketName, string key, ResumableContext resumableContext, FileStream fs,
                                    EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
         {
             _uploadProgressCallback = uploadProgressCallback;
@@ -312,7 +325,6 @@ namespace Aliyun.OSS
 
             ManualResetEvent[] taskFinishEvents = new ManualResetEvent[parallel];
             UploadTask[] runningTasks = new UploadTask[parallel];
-            Console.WriteLine("Starting {0} Thread. Total Parts:{1}", parallel, resumableContext.PartContextList.Count);
             fs.Seek(0, SeekOrigin.Begin);
 
             bool allTaskDone = false;
@@ -398,7 +410,7 @@ namespace Aliyun.OSS
         /// <param name="resumableContext">Resumable context.</param>
         /// <param name="fs">Fs.</param>
         /// <param name="uploadProgressCallback">Upload progress callback.</param>
-        private void DoResumableUploadMultiThread(string bucketName, string key, ResumableContext resumableContext, Stream fs,
+        private void DoResumableUploadPreReadMultiThread(string bucketName, string key, ResumableContext resumableContext, Stream fs,
                                        EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
         {
             _uploadProgressCallback = uploadProgressCallback;
@@ -413,26 +425,25 @@ namespace Aliyun.OSS
 
             ManualResetEvent[] taskFinishEvents = new ManualResetEvent[parallel];
             UploadTask[] runningTasks = new UploadTask[parallel];
-            Console.WriteLine("Starting {0} Thread. Total Parts:{1}", parallel, resumableContext.PartContextList.Count);
             fs.Seek(0, SeekOrigin.Begin);
 
             // init the buffer pool
-            PreReadThreadParam param = new PreReadThreadParam();
-            param.Fs = fs;
-            param.ResumableContext = resumableContext;
+            PreReadThreadParam preReadParam = new PreReadThreadParam();
+            preReadParam.Fs = fs;
+            preReadParam.ResumableContext = resumableContext;
             for (int i = 0; i < preReadPartCount && i < resumableContext.PartContextList.Count; i++)
             {
                 var part = resumableContext.PartContextList[i];
-                param.ReturnBuffer(new MemoryStream((int)part.Length));
+                preReadParam.ReturnBuffer(new MemoryStream((int)part.Length));
             }
 
             Thread thread = new Thread(new ParameterizedThreadStart(StartPreRead)); 
-            thread.Start(param);
+            thread.Start(preReadParam);
 
             bool allTaskDone = false;
             for (int i = 0; i < parallel; i++)
             {
-                UploadTask task = param.TakeTask();
+                UploadTask task = preReadParam.TakeTask();
                 if (task == null)
                 {
                     continue;
@@ -460,12 +471,12 @@ namespace Aliyun.OSS
                     }
 
                     runningTasks[index].Finished.Close();
-                    param.ReturnBuffer(runningTasks[index].InputStream as MemoryStream);
-                    UploadTask task = param.TakeTask();
+                    preReadParam.ReturnBuffer(runningTasks[index].InputStream as MemoryStream);
+                    UploadTask task = preReadParam.TakeTask();
                     if (task == null)
                     {
                         waitingCount++;
-                        if (param.PreReadError != null) // no more task will be created;
+                        if (preReadParam.PreReadError != null) // no more task will be created;
                         {
                             break;
                         }
@@ -488,6 +499,7 @@ namespace Aliyun.OSS
             }
             finally
             {
+                preReadParam.RequestStopPreRead = true;
                 if (!allTaskDone)
                 {
                     WaitHandle.WaitAll(taskFinishEvents);
@@ -515,13 +527,13 @@ namespace Aliyun.OSS
                     runningTasks[i].Finished.Close();
                 }
 
-                if (param.PreReadError != null)
+                if (preReadParam.PreReadError != null)
                 {
-                    e = param.PreReadError;
+                    e = preReadParam.PreReadError;
                 }
 
                 MemoryStream buffer = null;
-                while (param.GetBufferLength() != 0 && (buffer = param.TakeBuffer()) != null)
+                while (preReadParam.GetBufferLength() != 0 && (buffer = preReadParam.TakeBuffer()) != null)
                 {
                     buffer.Dispose();
                 }
@@ -644,11 +656,7 @@ namespace Aliyun.OSS
                     }
                     catch (Exception ex) // when the connection is closed while sending the data, it will run into ObjectDisposedException.
                     {
-                        if ((ex is ObjectDisposedException || ex is WebException) && i != retryCount - 1)
-                        {
-                            Console.WriteLine(string.Format("Retry:{0}. UploadPart fails:{1}", i, ex.ToString()));
-                        }
-                        else
+                        if (!(ex is ObjectDisposedException || ex is WebException) || i == retryCount - 1)
                         {
                             throw;
                         }

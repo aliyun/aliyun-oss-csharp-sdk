@@ -11,13 +11,13 @@ using Aliyun.OSS.Util;
 using Aliyun.OSS.Common.Internal;
 namespace Aliyun.OSS
 {
-    public class DownloadFileRequest
+    public class DownloadObjectRequest
     {
         private readonly IList<string> _matchingETagConstraints = new List<string>();
         private readonly IList<string> _nonmatchingEtagConstraints = new List<string>();
         private readonly ResponseHeaderOverrides _responseHeaders = new ResponseHeaderOverrides();
 
-        public DownloadFileRequest(string bucketName, string key, string downloadFile)
+        public DownloadObjectRequest(string bucketName, string key, string downloadFile)
         {
             BucketName = bucketName;
             Key = key;

@@ -17,9 +17,9 @@ namespace Aliyun.OSS
     public class OssSymlink
     {
         /// <summary>
-        /// Gets or sets the object metadata.
+        /// Gets or sets the symlink's metadata.
         /// </summary>
-        /// <value>The object metadata.</value>
+        /// <value>The symlink's metadata.</value>
         public ObjectMetadata ObjectMetadata { get; set; }
 
         /// <summary>
