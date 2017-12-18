@@ -797,6 +797,11 @@ namespace Aliyun.OSS
             }
             foreach (var part in resumableContext.PartContextList)
             {
+                if (part == null || !part.IsCompleted)
+                {
+                    throw new OssException("Not all parts are completed.");
+                }
+
                 completeRequest.PartETags.Add(part.PartETag);
             }
 
