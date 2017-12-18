@@ -38,7 +38,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _ossClient.CreateBucket(_bucketName);
             //create sample object
             _objectKey = OssTestUtils.GetObjectKey(_className);
-            var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
+            OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
                 Config.UploadTestFile, new ObjectMetadata());
         }
 
