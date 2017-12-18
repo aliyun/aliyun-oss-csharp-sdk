@@ -20,9 +20,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static IOss _ossClient;
         private static string _className;
         private static string _bucketName;
-        private static string _objectKey;
-        private static string _objectETag;
-        private static AutoResetEvent _event;
+        private static string _objectKey;     
         private static ClientConfiguration _config;
 
         [TestFixtureSetUp]
@@ -42,9 +40,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _objectKey = OssTestUtils.GetObjectKey(_className);
             var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
                 Config.UploadTestFile, new ObjectMetadata());
-            _objectETag = poResult.ETag;
-
-            _event = new AutoResetEvent(false);
         }
 
         [TestFixtureTearDown]
