@@ -66,5 +66,32 @@ namespace Aliyun.OSS.Samples
                 Console.WriteLine("Failed with error info: {0}", ex.Message);
             }
         }
+
+        public static void ResumableDownloadObject(string bucketName)
+        {
+            const string key = "ResumableDownloadObject";
+            string fileToDownload = Config.DirToDownload + key;
+            string checkpointDir = Config.DirToDownload;
+            try
+            {
+                DownloadObjectRequest request = new DownloadObjectRequest(bucketName, key, fileToDownload)
+                {
+                    PartSize = 8 * 1024 * 1024,
+                    ParallelThreadCount = 3,
+                    CheckpointDir = Config.DirToDownload,
+                };
+                client.ResumableDownloadObject(request);
+                Console.WriteLine("Resumable download object:{0} succeeded", key);
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
+        }
     }
 }
