@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Common.Internal;
+
 namespace Aliyun.OSS
 {
     public class DownloadObjectRequest
@@ -78,7 +79,7 @@ namespace Aliyun.OSS
         /// Gets or sets the checkpoint file.
         /// </summary>
         /// <value>The checkpoint file.</value>
-        public string CheckpointFile
+        public string CheckpointDir
         {
             get;
             set;

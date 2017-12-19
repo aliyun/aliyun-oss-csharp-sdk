@@ -15,6 +15,7 @@ using Aliyun.OSS.Domain;
 using Aliyun.OSS.Commands;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Common;
+
 namespace Aliyun.OSS
 {
     internal class ResumableUploadManager
@@ -36,7 +37,7 @@ namespace Aliyun.OSS
         }
 
         public void ResumableUploadWithRetry(string bucketName, string key, Stream content, ResumableContext resumableContext,
-                                              EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
+                                             EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
         {
             using (var fs = content)
             {
@@ -87,7 +88,7 @@ namespace Aliyun.OSS
         }
 
         private void DoResumableUploadSingleThread(string bucketName, string key, ResumableContext resumableContext, Stream fs,
-                                      EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
+                                                   EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
         {
             var uploadedBytes = resumableContext.GetUploadedBytes();
 
@@ -596,6 +597,7 @@ namespace Aliyun.OSS
                 set;
             }
         }
+
         private void StartUploadPartTask(UploadTask taskParam)
         {           
             ThreadPool.QueueUserWorkItem(UploadPart, taskParam);

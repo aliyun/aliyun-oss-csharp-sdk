@@ -958,6 +958,7 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        /// <inheritdoc/>
         public ObjectMetadata ResumableDownloadObject(DownloadObjectRequest request)
         {
             ThrowIfNullRequest(request);
@@ -993,10 +994,10 @@ namespace Aliyun.OSS
                             if (request.StreamTransferProgress != null)
                             {
                                 streamWrapper = this.SetupProgressListeners(streamWrapper,
-                                                                                objectMeta.ContentLength,
-                                                                                0,
-                                                                                config.ProgressUpdateInterval,
-                                                                                request.StreamTransferProgress);
+                                                                            objectMeta.ContentLength,
+                                                                            0,
+                                                                            config.ProgressUpdateInterval,
+                                                                            request.StreamTransferProgress);
                             }
                             ResumableDownloadManager.WriteTo(streamWrapper, fs);
                         }
@@ -1013,7 +1014,7 @@ namespace Aliyun.OSS
                 return objectMeta;
             }
 
-            ResumableDownloadContext resumableContext = this.LoadResumableDownloadContext(request.BucketName, request.Key, objectMeta, request.CheckpointFile, actualPartSize);
+            ResumableDownloadContext resumableContext = this.LoadResumableDownloadContext(request.BucketName, request.Key, objectMeta, request.CheckpointDir, actualPartSize);
             NewResumableContext(fileSize, actualPartSize, resumableContext);
             ResumableDownloadManager resumableDownloadManager = new ResumableDownloadManager(this, ((RetryableServiceClient)_serviceClient).MaxRetryTimes, config);
             resumableDownloadManager.ResumableDownloadWithRetry(request, resumableContext);
@@ -1579,6 +1580,7 @@ namespace Aliyun.OSS
             resumableContext.PartContextList = partContextList;
             return resumableContext;
         }
+
         internal Stream SetupProgressListeners(Stream originalStream,
                                                       long contentLength,
                                                       long totalBytesRead,

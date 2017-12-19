@@ -16,6 +16,7 @@ using Aliyun.OSS.Commands;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Common.Internal;
+
 namespace Aliyun.OSS
 {
     internal class ResumableDownloadManager
@@ -24,6 +25,7 @@ namespace Aliyun.OSS
         private int _maxRetryTimes;
         private ClientConfiguration _conf;
         private long _downloadedBytes;
+
         public ResumableDownloadManager(OssClient ossClient, int maxRetryTimes, ClientConfiguration conf)
         {
             this._ossClient = ossClient;
@@ -62,12 +64,15 @@ namespace Aliyun.OSS
         private void DoResumableDownload(DownloadObjectRequest request, ResumableDownloadContext resumableContext,
                                        EventHandler<StreamTransferProgressArgs> downloadProgressCallback)
         {
+            // use single thread if MaxResumableUploadThreads is no bigger than 1
+            // or the part size is bigger than the conf.MaxPartCachingSize
             if (resumableContext.PartContextList[0].Length > _conf.MaxPartCachingSize || _conf.MaxResumableDownloadThreads <= 1)
             {
                 DoResumableDownloadSingleThread(request, resumableContext, downloadProgressCallback);
             }
             else
             {
+                // multi-threaded download the object and write the data
                 DoResumableDownloadMultiThread(request, resumableContext, downloadProgressCallback);
             }
         }
@@ -117,9 +122,9 @@ namespace Aliyun.OSS
             Validate(request, resumableContext);
         }
 
-        public static long WriteTo(Stream src, Stream dest)
+        internal static long WriteTo(Stream src, Stream dest)
         {
-            var buffer = new byte[8 * 1024 * 1024];
+            var buffer = new byte[32 * 1024];
             var bytesRead = 0;
             var totalBytes = 0;
             while ((bytesRead = src.Read(buffer, 0, buffer.Length)) > 0)
@@ -169,8 +174,9 @@ namespace Aliyun.OSS
                 set;
             }
         }
+
         private void DoResumableDownloadMultiThread(DownloadObjectRequest request, ResumableDownloadContext resumableContext,
-                                       EventHandler<StreamTransferProgressArgs> downloadProgressCallback)
+                                                    EventHandler<StreamTransferProgressArgs> downloadProgressCallback)
         {
             _downloadedBytes = resumableContext.GetDownloadedBytes();
             if (!request.MatchingETagConstraints.Contains(resumableContext.ETag))
@@ -308,7 +314,6 @@ namespace Aliyun.OSS
             }
 
             File.Move(GetTempDownloadFile(request), request.DownloadFile);
-          
         }
 
         private string GetTempDownloadFile(DownloadObjectRequest request)
@@ -351,7 +356,7 @@ namespace Aliyun.OSS
                                 if (totalBytes != part.Length)
                                 {
                                     throw new OssException(string.Format("Part {0} returns {1} bytes. Expected size is {2} bytes", 
-                                                                        part.PartId, totalBytes, part.Length));
+                                                           part.PartId, totalBytes, part.Length));
                                 }
                                 Interlocked.Add(ref _downloadedBytes, partResult.ContentLength);
                             }

@@ -914,7 +914,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             try
             {
                 DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
-                request.CheckpointFile = Config.DownloadFolder;
+                request.CheckpointDir = Config.DownloadFolder;
                 request.PartSize = 1024 * 1024;
                 request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e) => {
                     if (!progressUpdateCalled)
@@ -965,7 +965,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
                 request.PartSize = 100 * 1024;
-                request.CheckpointFile = Config.DownloadFolder;
+                request.CheckpointDir = Config.DownloadFolder;
                 request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e) => {
                     if (!progressUpdateCalled)
                     {
