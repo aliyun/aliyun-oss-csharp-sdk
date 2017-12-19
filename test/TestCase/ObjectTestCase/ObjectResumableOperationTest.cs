@@ -139,20 +139,29 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void ResumableUploadObjectWithRetry()
         {
+            ResumableUploadObjectWithRetry(2);
+        }
+
+        public void ResumableUploadObjectWithRetry(int threadCount)
+        {
             var key = OssTestUtils.GetObjectKey(_className);
 
             int failedCount = 0;
+            UploadObjectRequest request = new UploadObjectRequest(_bucketName, key, Config.MultiUploadTestFile);
+            request.CheckpointDir = Config.DownloadFolder;
+            request.PartSize = 200 * 1024;
+            request.StreamTransferProgress = (sender, e) => {
+                if (failedCount < 2)
+                {
+                    failedCount++;
+                    throw new Exception("injection failure");
+                }
+            };
+            request.ParallelThreadCount = threadCount;
+
             try
             {
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
-                                                              Config.DownloadFolder, 1024 * 200, 
-                                                              (sender, e) =>
-                                                            {
-                                                                if (failedCount < 2) {
-                                                                    failedCount++;
-                                                                    throw new Exception("injection failure"); 
-                                                                }
-                                                            });
+                var result = _ossClient.ResumableUploadObject(request);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
             }
@@ -173,7 +182,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
-                ResumableUploadObjectWithRetry();
+                ResumableUploadObjectWithRetry(2);
             }
             finally
             {
@@ -184,17 +193,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void ResumableUploadObjectWithRetryUsingSingleThread()
         {
-            int restoreVal = _config.MaxResumableUploadThreads;
-            _config.MaxResumableUploadThreads = 1;
-
-            try
-            {
-                ResumableUploadObjectWithRetry();
-            }
-            finally
-            {
-                _config.MaxResumableUploadThreads = restoreVal;
-            }
+            ResumableUploadObjectWithRetry(1);
         }
 
         [Test]
@@ -501,9 +500,13 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var fileInfo = new FileInfo(Config.MultiUploadTestFile);
                 var fileSize = fileInfo.Length;
                 var config = new ClientConfiguration();
-                config.MaxResumableUploadThreads = 1;
                 var client = OssClientFactory.CreateOssClient(config);
-                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), Config.DownloadFolder, fileSize / 3);
+                UploadObjectRequest request = new UploadObjectRequest(_bucketName, key, Config.MultiUploadTestFile);
+                request.Metadata = new ObjectMetadata();
+                request.CheckpointDir = Config.DownloadFolder;
+                request.PartSize = fileSize / 3;
+                request.ParallelThreadCount = 1;
+                var result = client.ResumableUploadObject(request);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
             }
@@ -654,11 +657,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var key = OssTestUtils.GetObjectKey(_className);
             _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
             var config = new ClientConfiguration();
-            config.MaxResumableDownloadThreads = 1;
             var client = OssClientFactory.CreateOssClient(config);
             try
             {
                 DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.ParallelThreadCount = 1;
                 var metadata = client.ResumableDownloadObject(request);
                 var expectedETag = metadata.ETag;
                 var downloadedFileETag = FileUtils.ComputeContentMd5(targetFile);
@@ -687,12 +690,12 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var key = OssTestUtils.GetObjectKey(_className);
             _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
             var config = new ClientConfiguration();
-            config.MaxResumableDownloadThreads = 1;
             config.EnalbeMD5Check = true;
             var client = OssClientFactory.CreateOssClient(config);
             try
             {
                 DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.ParallelThreadCount = 1;
                 var metadata = client.ResumableDownloadObject(request);
                 var expectedETag = metadata.ETag;
                 var downloadedFileETag = FileUtils.ComputeContentMd5(targetFile);
@@ -724,12 +727,12 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             int percentDone = 0;
             long totalBytesDownloaded = 0;
             var config = new ClientConfiguration();
-            config.MaxResumableDownloadThreads = 1;
             config.EnalbeMD5Check = true;
             var client = OssClientFactory.CreateOssClient(config);
             try
             {
                 DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.ParallelThreadCount = 1;
                 request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e) => {
                     totalBytesDownloaded += e.TransferredBytes;
                     Console.WriteLine("TotalBytes:" + e.TotalBytes);
@@ -982,7 +985,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 };
 
                 var config = new ClientConfiguration();
-                config.MaxResumableDownloadThreads = 1;
+                request.ParallelThreadCount = 1;
                 var client = OssClientFactory.CreateOssClient(config);
 
                 var metadata = client.ResumableDownloadObject(request);

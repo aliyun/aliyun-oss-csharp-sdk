@@ -747,48 +747,92 @@ namespace Aliyun.OSS
         public PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
                                                      EventHandler<StreamTransferProgressArgs> streamTransferProgress = null)
         {
-            ThrowIfNullRequest(bucketName);
-            ThrowIfNullRequest(key);
-            ThrowIfNullRequest(content);
+            UploadObjectRequest request = new UploadObjectRequest(bucketName, key, content);
+            request.CheckpointDir = checkpointDir;
+            request.PartSize = partSize;
+            request.StreamTransferProgress = streamTransferProgress;
+            request.Metadata = metadata;
 
-            if (!content.CanSeek)
+            return ResumableUploadObject(request);
+        }
+
+        public PutObjectResult ResumableUploadObject(UploadObjectRequest request)
+        {
+            ThrowIfNullRequest(request);
+            ThrowIfNullRequest(request.BucketName);
+            ThrowIfNullRequest(request.Key);
+            if (string.IsNullOrEmpty(request.UploadFile) && request.UploadStream == null)
             {
-                throw new ArgumentException("Parameter content must be seekable---for nonseekable stream, please call UploadObject instead.");
+                throw new ArgumentException("Parameter request.UploadFile or request.UploadStream must not be null.");
+            }
+
+            if (request.UploadStream != null && !request.UploadStream.CanSeek)
+            {
+                throw new ArgumentException("Parameter request.UploadStream must be seekable---for nonseekable stream, please call UploadObject instead.");
             }
 
             // calculates content-type
-            metadata = metadata ?? new ObjectMetadata();
-            SetContentTypeIfNull(key, null, ref metadata);
-
-            // Adjust part size
-            long actualPartSize = AdjustPartSize(partSize);
-
-            // If the file size is less than the part size, upload it directly.
-            if (content.Length <= actualPartSize)
+            if (request.Metadata == null)
             {
-                var putObjectRequest = new PutObjectRequest(bucketName, key, content, metadata)
-                {
-                    StreamTransferProgress = streamTransferProgress,
-                };
-                return PutObject(putObjectRequest);
+                request.Metadata = new ObjectMetadata();
             }
 
-            var resumableContext = LoadResumableUploadContext(bucketName, key, content,
-                                                              checkpointDir, actualPartSize);
+            ObjectMetadata metadata = request.Metadata;
+            SetContentTypeIfNull(request.Key, null, ref metadata);
+
+            // Adjust part size
+            long actualPartSize = AdjustPartSize(request.PartSize);
+
+            // If the file size is less than the part size, upload it directly.
+            long fileSize = 0;
+            Stream uploadSteam = null;
+
+            if (request.UploadStream != null)
+            {
+                fileSize = request.UploadStream.Length;
+                uploadSteam = request.UploadStream;
+            }
+            else
+            {
+                fileSize = new System.IO.FileInfo(request.UploadFile).Length;
+                uploadSteam = new FileStream(request.UploadFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+
+            if (fileSize <= actualPartSize)
+            {
+                try
+                {
+                    var putObjectRequest = new PutObjectRequest(request.BucketName, request.Key, uploadSteam, metadata)
+                    {
+                        StreamTransferProgress = request.StreamTransferProgress,
+                    };
+                    return PutObject(putObjectRequest);
+                }
+                finally
+                {
+                    if (!object.ReferenceEquals(uploadSteam, request.UploadStream))
+                    {
+                        uploadSteam.Dispose();
+                    }
+                }
+            }
+
+            var resumableContext = LoadResumableUploadContext(request.BucketName, request.Key, uploadSteam,
+                                                              request.CheckpointDir, actualPartSize);
 
             if (resumableContext.UploadId == null)
             {
-                var initRequest = new InitiateMultipartUploadRequest(bucketName, key, metadata);
+                var initRequest = new InitiateMultipartUploadRequest(request.BucketName, request.Key, metadata);
                 var initResult = InitiateMultipartUpload(initRequest);
                 resumableContext.UploadId = initResult.UploadId;
             }
 
             int maxRetry = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
             ResumableUploadManager uploadManager = new ResumableUploadManager(this, maxRetry, OssUtils.GetClientConfiguration(_serviceClient));
-            uploadManager.ResumableUploadWithRetry(bucketName, key, content, resumableContext, streamTransferProgress);
+            uploadManager.ResumableUploadWithRetry(request, resumableContext);
 
             // Completes the upload
-            var completeRequest = new CompleteMultipartUploadRequest(bucketName, key, resumableContext.UploadId);
+            var completeRequest = new CompleteMultipartUploadRequest(request.BucketName, request.Key, resumableContext.UploadId);
             if (metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
             {
                 var callbackMetadata = new ObjectMetadata();
@@ -810,7 +854,6 @@ namespace Aliyun.OSS
 
             return result;
         }
-
 
         /// <inheritdoc/>
         public AppendObjectResult AppendObject(AppendObjectRequest request)

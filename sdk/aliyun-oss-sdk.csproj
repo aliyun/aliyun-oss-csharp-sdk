@@ -381,6 +381,7 @@
     <Compile Include="Common\ResumableUploadManager.cs" />
     <Compile Include="Domain\DownloadObjectRequest.cs" />
     <Compile Include="Common\Internal\StreamTransferTracker.cs" />
+    <Compile Include="Domain\UploadObjectRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />

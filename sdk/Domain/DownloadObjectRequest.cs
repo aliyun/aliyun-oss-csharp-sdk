@@ -17,12 +17,18 @@ namespace Aliyun.OSS
         private readonly IList<string> _matchingETagConstraints = new List<string>();
         private readonly IList<string> _nonmatchingEtagConstraints = new List<string>();
         private readonly ResponseHeaderOverrides _responseHeaders = new ResponseHeaderOverrides();
+        private int _parallelThreadCount = 2;
 
         public DownloadObjectRequest(string bucketName, string key, string downloadFile)
         {
             BucketName = bucketName;
             Key = key;
             DownloadFile = downloadFile;
+        }
+
+        public DownloadObjectRequest(string bucketName, string key, string downloadFile, string checkpointDir) : this(bucketName, key, downloadFile)
+        {
+            CheckpointDir = checkpointDir;
         }
 
         /// <summary>
@@ -69,10 +75,16 @@ namespace Aliyun.OSS
         /// Gets or sets the parallel thread count.
         /// </summary>
         /// <value>The parallel thread count.</value>
-        public int? ParallelThreadCount
+        public int ParallelThreadCount
         {
-            get;
-            set;
+            get
+            {
+                return _parallelThreadCount;
+            }
+            set
+            {
+                _parallelThreadCount = value;
+            }
         }
 
         /// <summary>

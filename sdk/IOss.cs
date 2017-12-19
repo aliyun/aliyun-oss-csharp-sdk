@@ -497,6 +497,13 @@ namespace Aliyun.OSS
                                               EventHandler<StreamTransferProgressArgs> streamTransferProgress = null);
 
         /// <summary>
+        /// Resumables the upload object.
+        /// </summary>
+        /// <returns>The upload object.</returns>
+        /// <param name="request">Upload Request.</param>
+        PutObjectResult ResumableUploadObject(UploadObjectRequest request);
+
+        /// <summary>
         /// Appends object to OSS according to the <see cref="AppendObjectRequest" />
         /// </summary>
         /// <param name="request"><see cref="AppendObjectRequest" /> instance</param>

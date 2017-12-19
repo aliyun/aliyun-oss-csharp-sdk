@@ -30,8 +30,6 @@ namespace Aliyun.OSS.Common
         private long _progressUpdateInterval = 1024 * 4;
         private long _directWriteStreamThreshold = 0;
         private long _maxPartCachingSize = 1024 * 1024 * 100;
-        private int _maxResumableUploadThreads = 8;
-        private int _maxResumableDownloadThreads = 8;
         private int _preReadBufferCount = 8;
         private bool _useSingleThreadReadInResumableUpload = false;
 
@@ -198,25 +196,6 @@ namespace Aliyun.OSS.Common
         }
 
         /// <summary>
-        /// Gets or sets the max uploading threads per resumable upload call
-        /// In multipart upload (resumable upload), by default it's multithreaded upload. You can specify the max thread count used per call.
-        /// If the number is no more than 1, then use single thread.
-        /// </summary>
-        /// <value>The size of the max part caching.</value>
-        public int MaxResumableUploadThreads
-        {
-            get
-            {
-                return _maxResumableUploadThreads;
-            }
-            set
-            {
-                 _maxResumableUploadThreads = value;
-
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the pre read buffer count in resumable upload.
         /// The max value could be the same size of MaxResumableUploadThreads;
         /// </summary>
@@ -247,22 +226,6 @@ namespace Aliyun.OSS.Common
             set
             {
                 _useSingleThreadReadInResumableUpload = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the max resumable download threads.
-        /// </summary>
-        /// <value>The max resumable download threads.</value>
-        public int MaxResumableDownloadThreads
-        {
-            get
-            {
-                return _maxResumableDownloadThreads;
-            }
-            set
-            {
-                _maxResumableDownloadThreads = value;
             }
         }
 
