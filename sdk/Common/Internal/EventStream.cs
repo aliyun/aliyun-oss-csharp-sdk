@@ -17,6 +17,9 @@ namespace Aliyun.OSS.Common.Internal
     {
         internal delegate void ReadProgress(int bytesRead);
         internal event ReadProgress OnRead;
+
+        internal delegate void WriteProgress(int bytesWritten);
+        internal event WriteProgress OnWrite;
         private bool disableClose;
 
         internal EventStream(Stream stream, bool disableClose)
@@ -100,7 +103,11 @@ namespace Aliyun.OSS.Common.Internal
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            throw new NotImplementedException();
+            BaseStream.Write(buffer, offset, count);
+            if (this.OnWrite != null)
+            {
+                this.OnWrite(count);
+            }
         }
 
         public override void WriteByte(byte value)

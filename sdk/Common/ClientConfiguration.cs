@@ -28,7 +28,12 @@ namespace Aliyun.OSS.Common
         private bool _isCname = false;
         private bool _enalbeMD5Check = false;
         private long _progressUpdateInterval = 1024 * 4;
-        private long _directWriteStreamThreshold = 1024 * 1024 * 8;
+        private long _directWriteStreamThreshold = 0;
+        private long _maxPartCachingSize = 1024 * 1024 * 100;
+        private int _maxResumableUploadThreads = 8;
+        private int _maxResumableDownloadThreads = 8;
+        private int _preReadBufferCount = 8;
+        private bool _useSingleThreadReadInResumableUpload = false;
 
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
@@ -171,6 +176,93 @@ namespace Aliyun.OSS.Common
             set
             {
                 _directWriteStreamThreshold = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the size of the max part caching size
+        /// In multipart upload (resumable upload), if the part size is no bigger than MaxPartCachingSize, it will cache the whole part data before sending the data out. 
+        /// </summary>
+        /// <value>The size of the max part caching.</value>
+        public long MaxPartCachingSize
+        {
+            get
+            {
+                return _maxPartCachingSize;
+            }
+
+            set 
+            {
+                _maxPartCachingSize = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the max uploading threads per resumable upload call
+        /// In multipart upload (resumable upload), by default it's multithreaded upload. You can specify the max thread count used per call.
+        /// If the number is no more than 1, then use single thread.
+        /// </summary>
+        /// <value>The size of the max part caching.</value>
+        public int MaxResumableUploadThreads
+        {
+            get
+            {
+                return _maxResumableUploadThreads;
+            }
+            set
+            {
+                 _maxResumableUploadThreads = value;
+
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the pre read buffer count in resumable upload.
+        /// The max value could be the same size of MaxResumableUploadThreads;
+        /// </summary>
+        /// <value>The pre read buffer count.</value>
+        public int PreReadBufferCount
+        {
+            get
+            {
+                return _preReadBufferCount;
+            }
+            set
+            {
+                _preReadBufferCount = value;
+            }
+        }
+
+        /// <summary>
+        /// When uploading a file with resumable upload, the default behavior is to read the source file in multiple-threading.
+        /// But in old HDD, single thread read may be faster. And when the read speed is the bottleneck, try to change this parameter to compare the result. 
+        /// </summary>
+        /// <value><c>true</c> if use single thread read in resumable upload; otherwise, <c>false</c>.</value>
+        public bool UseSingleThreadReadInResumableUpload
+        {
+            get
+            {
+                return _useSingleThreadReadInResumableUpload;
+            }
+            set
+            {
+                _useSingleThreadReadInResumableUpload = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the max resumable download threads.
+        /// </summary>
+        /// <value>The max resumable download threads.</value>
+        public int MaxResumableDownloadThreads
+        {
+            get
+            {
+                return _maxResumableDownloadThreads;
+            }
+            set
+            {
+                _maxResumableDownloadThreads = value;
             }
         }
 

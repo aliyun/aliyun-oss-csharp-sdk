@@ -377,154 +377,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
-        [Test]
-        public void ResumableUploadObjectTestWithObjectLessThanPartSize()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-
-            try
-            {
-                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
-                var fileSize = fileInfo.Length;
-
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), null, fileSize + 1);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-            }
-        }
-
-        [Test]
-        public void ResumableUploadObjectTestWithObjectEqualPartSize()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-
-            try
-            {
-                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
-                var fileSize = fileInfo.Length;
-
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), null, fileSize);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-            }
-        }
-
-        [Test]
-        public void ResumableUploadObjectTestWithObjectMoreThanPartSize()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-
-            try
-            {
-                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
-                var fileSize = fileInfo.Length;
-
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), null, fileSize - 1);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-            }
-        }
-
-        [Test]
-        public void ResumableUploadObjectTestWithObjectPartSizeTooSmall()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-
-            try
-            {
-                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
-                var fileSize = fileInfo.Length;
-
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(), Config.DownloadFolder, 1);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-            }
-        }
-
-        [Test]
-        public void ResumableUploadObjectTestWithSmallObjectCheckContentType()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newfile.js";
-
-            try
-            {
-                File.Copy(Config.UploadTestFile, newFileName);
-
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, newFileName, new ObjectMetadata(), null);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-
-                var objectMeta = _ossClient.GetObjectMetadata(_bucketName, key);
-                Assert.AreEqual("application/x-javascript", objectMeta.ContentType);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-                File.Delete(newFileName);
-            }
-        }
-
-        [Test]
-        public void ResumableUploadObjectTestWithBigObjectCheckContentType()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-            var newFileName = Path.GetDirectoryName(Config.MultiUploadTestFile) + "/newfile.js";
-
-            try
-            {
-                File.Copy(Config.MultiUploadTestFile, newFileName, true);
-                var fileInfo = new FileInfo(newFileName);
-                var fileSize = fileInfo.Length;
-
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, newFileName, new ObjectMetadata(), Config.DownloadFolder, fileSize / 3);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-
-                var objectMeta = _ossClient.GetObjectMetadata(_bucketName, key);
-                Assert.AreEqual("application/x-javascript", objectMeta.ContentType);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-                File.Delete(newFileName);
-            }
-        }
-
         #endregion
 
         #region invalid key
@@ -1730,190 +1582,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
         #endregion
 
-        #region resumable put object
-
-        [Test]
-        public void ResumableUploadObjectTest()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-
-            try
-            {
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
-                                                           Config.DownloadFolder);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-            }
-        }
-
-        [Test]
-        public void ResumableUploadObjectCheckpointTest()
-        {
-            var key = "test/短板.mp4";
-            // this test case requires to run under admin 
-            try
-            {
-                // checkpoint is null
-                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null, null);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-
-                // checkpoint is xx/
-                result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, new ObjectMetadata(),
-                                                        Config.DownloadFolder + Path.DirectorySeparatorChar);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-
-                // checkpoint is empty
-                result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null, "");
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-
-                // checkpoint is current directory
-                result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null, ".");
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-
-                // checkpoint is previous directory
-                result = _ossClient.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null, "..");
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-            }
-        }
-
-        public class FakeClient : OssClient
-        {
-            public int beginFailedIndex = 0;
-            public int endFailedIndex = 0;
-            public int currentIndex = 0;
-
-            public FakeClient(string endpoint, string accessKeyId, string accessKeySecret)
-            : base(endpoint, accessKeyId, accessKeySecret) { }
-
-            /// <inheritdoc/>        
-            override protected void ThrowIfNullRequest<TRequestType>(TRequestType request)
-            {
-                if (currentIndex >= beginFailedIndex && currentIndex <= endFailedIndex)
-                {
-                    currentIndex++;
-                    throw new ArgumentNullException("uploadPartRequest");
-                }
-
-                currentIndex++;
-                base.ThrowIfNullRequest(request);
-            }
-        };
-
-        [Test]
-        public void ResumableUploadObjectWithRetry()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-
-            try
-            {
-                var client = new FakeClient(Config.Endpoint, Config.AccessKeyId, Config.AccessKeySecret);
-                client.beginFailedIndex = 2;
-                client.endFailedIndex = 3;
-
-                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
-                                                        Config.DownloadFolder);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-            }
-        }
-
-        [Test]
-        public void ResumableUploadObjectWithFailedTimeMoreThanRetryTime()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-
-            try
-            {
-                var client = new FakeClient(Config.Endpoint, Config.AccessKeyId, Config.AccessKeySecret);
-                client.beginFailedIndex = 2;
-                client.endFailedIndex = 100;
-                client.currentIndex = 0;
-
-                client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
-                                                        Config.DownloadFolder);
-                Assert.IsFalse(true);
-            }
-            catch (Exception)
-            {
-                Assert.IsTrue(true);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-            }
-        }
-
-        [Test]
-        public void ResumableUploadObjectFirstFailedAndSecondSucceeded()
-        {
-            var key = OssTestUtils.GetObjectKey(_className);
-
-            var client = new FakeClient(Config.Endpoint, Config.AccessKeyId, Config.AccessKeySecret);
-            try
-            {
-                client.beginFailedIndex = 2;
-                client.endFailedIndex = 100;
-
-                client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
-                                                       Config.DownloadFolder);
-                Assert.IsTrue(false);
-            }
-            catch (Exception)
-            {
-                Assert.IsTrue(true);
-            }
-
-            try
-            {
-                client.beginFailedIndex = 0;
-                client.endFailedIndex = 0;
-                client.currentIndex = 1;
-
-                var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
-                                                       Config.DownloadFolder);
-                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
-                Assert.IsTrue(result.ETag.Length > 0);
-            }
-            finally
-            {
-                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
-                {
-                    _ossClient.DeleteObject(_bucketName, key);
-                }
-            }
-        }
-
-        #endregion
-
         #region Restore object tests
         [Test]
         public void RestoreObjectBasicTest()
@@ -1966,6 +1634,144 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
         #endregion
 
+        #region Symlink tests
+        [Test]
+        public void CreateAndGetSymlinkTest()
+        {
+            string symlink = _objectKey + "_link";
+            _ossClient.CreateSymlink(_bucketName, symlink, _objectKey);
+            OssObject obj = _ossClient.GetObject(_bucketName, symlink);
+            Assert.IsNotNull(obj);
+            Assert.IsTrue(obj.ContentLength > 0);
+            Assert.AreEqual(obj.HttpStatusCode, HttpStatusCode.OK);
+            obj.Dispose();
+
+            OssSymlink ossSymlink = _ossClient.GetSymlink(_bucketName, symlink);
+            Assert.AreEqual(ossSymlink.Target, _objectKey);
+        }
+
+        [Test]
+        public void CreateSymlinkInvalidParameters()
+        {
+            try
+            {
+                _ossClient.CreateSymlink(null, _objectKey + "_link", _objectKey);
+                Assert.Fail();
+            }
+            catch(ArgumentException)
+            {}
+
+            try
+            {
+                _ossClient.CreateSymlink(_bucketName, null, _objectKey);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+
+            try
+            {
+                _ossClient.CreateSymlink(_bucketName, _objectKey + "_link", null);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+
+            try
+            {
+                _ossClient.CreateSymlink(_bucketName, _objectKey, _objectKey);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+        }
+
+        [Test]
+        public void GetSymlinkInvalidParameters()
+        {
+            try
+            {
+                _ossClient.GetSymlink(null, _objectKey + "_link");
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+
+            try
+            {
+                _ossClient.GetSymlink(_bucketName, null);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+
+            try
+            {
+                _ossClient.GetSymlink(_bucketName, _objectKey);
+                Assert.Fail();
+            }
+            catch(OssException ex)
+            {
+                Assert.AreEqual(ex.ErrorCode, "NotSymlink");
+            }
+        }
+
+        [Test]
+        public void CreateAndGetSymlinkWithSpecialNameTest()
+        {
+            string symlink = _objectKey + " +\t#_link";
+            _ossClient.CreateSymlink(_bucketName, symlink, _objectKey);
+            OssObject obj = _ossClient.GetObject(_bucketName, symlink);
+            Assert.IsNotNull(obj);
+            Assert.IsTrue(obj.ContentLength > 0);
+            Assert.AreEqual(obj.HttpStatusCode, HttpStatusCode.OK);
+
+            OssSymlink ossSymlink = _ossClient.GetSymlink(_bucketName, symlink);
+            Assert.AreEqual(ossSymlink.Target, _objectKey);
+            obj.Dispose();
+        }
+
+        [Test]
+        public void CreateAndGetSymlinkWithUserMetadataTest()
+        {
+            string symlink = _objectKey + " +\t#_link";
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.HttpMetadata.Add("x-oss-header1", "value1");
+            metadata.UserMetadata.Add("meta1", "value1");
+            metadata.UserMetadata.Add("meta2", "value2");
+            CreateSymlinkRequest req = new CreateSymlinkRequest(_bucketName, symlink, _objectKey, metadata);
+            _ossClient.CreateSymlink(req);
+            OssObject obj = _ossClient.GetObject(_bucketName, symlink);
+            Assert.IsNotNull(obj);
+            Assert.IsTrue(obj.ContentLength > 0);
+            Assert.AreEqual(obj.HttpStatusCode, HttpStatusCode.OK);
+            Assert.AreEqual(obj.Metadata.UserMetadata.Count, metadata.UserMetadata.Count);
+            Assert.AreEqual(obj.Metadata.UserMetadata["meta1"], metadata.UserMetadata["meta1"]);
+            Assert.AreEqual(obj.Metadata.UserMetadata["meta2"], metadata.UserMetadata["meta2"]);
+            Assert.AreEqual(obj.Metadata.ObjectType, "Symlink");
+            obj.Dispose();
+
+            OssSymlink ossSymlink = _ossClient.GetSymlink(_bucketName, symlink);
+            Assert.AreEqual(ossSymlink.Target, _objectKey);
+            Assert.AreEqual(ossSymlink.ObjectMetadata.UserMetadata["meta1"], metadata.UserMetadata["meta1"]);
+            Assert.AreEqual(ossSymlink.ObjectMetadata.UserMetadata["meta2"], metadata.UserMetadata["meta2"]);
+        }
+
+        [Test]
+        public void CreateSymlinkWithNullUserMetadataTest()
+        {
+            string symlink = _objectKey + " +\t#_link";
+            CreateSymlinkRequest req = new CreateSymlinkRequest(_bucketName, symlink, _objectKey);
+            _ossClient.CreateSymlink(req);
+            OssObject obj = _ossClient.GetObject(_bucketName, symlink);
+            Assert.IsNotNull(obj);
+            Assert.IsTrue(obj.ContentLength > 0);
+            Assert.AreEqual(obj.HttpStatusCode, HttpStatusCode.OK);
+            Assert.AreEqual(obj.Metadata.UserMetadata.Count, 0);
+            obj.Dispose();
+        }
+
+        #endregion
         #region private
         private static List<string> CreateMultiObjects(int objectsCount)
         {

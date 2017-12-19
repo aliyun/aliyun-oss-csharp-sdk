@@ -26,16 +26,16 @@ namespace Aliyun.OSS.Util
         public static long WriteTo(Stream orignStream, Stream destStream, long totalSize)
         {
             var buffer = new byte[BufferSize];
-            
+
             long alreadyRead = 0;
             while (alreadyRead < totalSize)
             {
                 var readSize = orignStream.Read(buffer, 0, BufferSize);
-                if (readSize <= 0) 
+                if (readSize <= 0)
                     break;
-               
+
                 if (alreadyRead + readSize > totalSize)
-                    readSize = (int) (totalSize - alreadyRead);
+                    readSize = (int)(totalSize - alreadyRead);
                 alreadyRead += readSize;
                 destStream.Write(buffer, 0, readSize);
             }

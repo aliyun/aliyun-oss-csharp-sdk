@@ -19,6 +19,7 @@ namespace Aliyun.OSS.Util
         public const string SUBRESOURCE_RESTORE = "restore";
         public const string SUBRESOURCE_BUCKETINFO = "bucketInfo";
         public const string SUBRESOURCE_BUCKETSTAT = "stat";
+        public const string SUBRESOURCE_SYMLINK = "symlink";
     
         public const string PREFIX = "prefix";
         public const string DELIMITER = "delimiter";

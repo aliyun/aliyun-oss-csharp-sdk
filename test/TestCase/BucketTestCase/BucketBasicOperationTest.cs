@@ -409,7 +409,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             }
         }
 
-        /*[Test]
+        /*
+        [Test]
         public void DeleteTestBuckets()
         {
             ListBucketsRequest bucketReq = new ListBucketsRequest()

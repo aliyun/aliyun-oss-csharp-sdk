@@ -131,6 +131,24 @@ namespace Aliyun.OSS.Common.Internal
             return result;
         }
 
+        /// <summary>
+        /// Write the specified buffer, offset and count.
+        /// </summary>
+        /// <returns>The write.</returns>
+        /// <param name="buffer">Buffer.</param>
+        /// <param name="offset">Offset.</param>
+        /// <param name="count">Count.</param>
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            base.Write(buffer, offset, count);
+
+            CurrentPosition += count;
+            if (!FinishedHashing)
+            {
+                Algorithm.AppendBlock(buffer, offset, count);
+            }
+        }
+
 #if !PCL && !CORECLR
         /// <summary>
         /// Closes the underlying stream and finishes calculating the hash.

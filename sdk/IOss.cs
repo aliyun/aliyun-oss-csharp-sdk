@@ -520,6 +520,28 @@ namespace Aliyun.OSS
         AppendObjectResult EndAppendObject(IAsyncResult asyncResult);
 
         /// <summary>
+        /// Creates the symlink of the target object
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="symlink">Symlink.</param>
+        /// <param name="target">Target.</param>
+        void CreateSymlink(string bucketName, string symlink, string target);
+
+        /// <summary>
+        /// Creates the symlink of the target object
+        /// </summary>
+        /// <param name="createSymlinkRequest">Create symlink request.</param>
+        void CreateSymlink(CreateSymlinkRequest createSymlinkRequest);
+
+        /// <summary>
+        /// Gets the target file of the symlink.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="symlink">Symlink </param>
+        /// <returns>OssSymlink object</returns>
+        OssSymlink GetSymlink(string bucketName, string symlink);
+
+        /// <summary>
         /// Gets object
         /// </summary>
         /// <param name="bucketName">bucket name</param>
@@ -574,6 +596,14 @@ namespace Aliyun.OSS
         /// <param name="output">output stream</param>
         /// <returns><see cref="OssObject" /> metadata</returns>
         ObjectMetadata GetObject(GetObjectRequest getObjectRequest, Stream output);
+
+        /// <summary>
+        /// Download a file.
+        /// Internally it may use multipart download in case the file is big
+        /// </summary>
+        /// <returns>The metadata object</returns>
+        /// <param name="request">DownloadObjectRequest instance</param>
+        ObjectMetadata ResumableDownloadObject(DownloadObjectRequest request);
 
         /// <summary>
         /// Gets <see cref="OssObject" /> metadata.
