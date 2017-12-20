@@ -810,10 +810,7 @@ namespace Aliyun.OSS
                 }
                 finally
                 {
-                    if (!object.ReferenceEquals(uploadSteam, request.UploadStream))
-                    {
-                        uploadSteam.Dispose();
-                    }
+                    uploadSteam.Dispose();
                 }
             }
 

@@ -169,7 +169,7 @@ namespace Aliyun.OSS.Common.Communication
                                                     ExecutionContext context)
         {
             var request = HttpFactory.CreateWebRequest(serviceRequest, Configuration);
-            SetRequestContent(request, serviceRequest, false, null, Configuration);
+            SetRequestContent(request, serviceRequest, Configuration);
             try
             {
                 var response = request.GetResponse() as HttpWebResponse;
@@ -194,8 +194,9 @@ namespace Aliyun.OSS.Common.Communication
                 Request = serviceRequest
             };
 
-            SetRequestContent(request, serviceRequest, true,
-                              () => request.BeginGetResponse(OnGetResponseCompleted, asyncResult), Configuration);
+            BeginSetRequestContent(request, serviceRequest,
+                                   () => request.BeginGetResponse(OnGetResponseCompleted, asyncResult), Configuration,
+                                   asyncResult);
 
             return asyncResult;
         }
@@ -236,8 +237,9 @@ namespace Aliyun.OSS.Common.Communication
             }
         }
 
-        private static void SetRequestContent(HttpWebRequest webRequest, ServiceRequest serviceRequest,
-                                              bool async, OssAction asyncCallback, ClientConfiguration clientConfiguration)
+        private static void SetRequestContent(HttpWebRequest webRequest, 
+                                              ServiceRequest serviceRequest,
+                                              ClientConfiguration clientConfiguration)
         {
             var data = serviceRequest.BuildRequestContent();
 
@@ -245,10 +247,6 @@ namespace Aliyun.OSS.Common.Communication
                 (serviceRequest.Method != HttpMethod.Put &&
                  serviceRequest.Method != HttpMethod.Post))
             {
-                // Skip setting content body in this case.
-                if (async)
-                    asyncCallback();
-
                 return;
             }
 
@@ -273,39 +271,87 @@ namespace Aliyun.OSS.Common.Communication
                 }
             }
 
-            if (async)
+            using (var requestStream = webRequest.GetRequestStream())
             {
-                webRequest.BeginGetRequestStream(
-                    (ar) =>
-                    {
-                        using (var requestStream = webRequest.EndGetRequestStream(ar))
-                        {
-                            if (!webRequest.SendChunked)
-                            {
-                                IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
-                            }
-                            else
-                            {
-                                IoUtils.WriteTo(data, requestStream);   
-                            }
-                        }
-                        asyncCallback();
-                    }, null);
+                if (!webRequest.SendChunked)
+                {
+                    IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                }
+                else
+                {
+                    IoUtils.WriteTo(data, requestStream);
+                }
+            }
+        }
+
+        private static void BeginSetRequestContent(HttpWebRequest webRequest, ServiceRequest serviceRequest,
+                                            OssAction asyncCallback, ClientConfiguration clientConfiguration, HttpAsyncResult result)
+        {
+            var data = serviceRequest.BuildRequestContent();
+
+            if (data == null ||
+                (serviceRequest.Method != HttpMethod.Put &&
+                 serviceRequest.Method != HttpMethod.Post))
+            {
+                // Skip setting content body in this case.
+                try
+                {
+                    asyncCallback();
+                }
+                catch(Exception e)
+                {
+                    result.WebRequest.Abort();
+                    result.Complete(e);
+                }
+
+                return;
+            }
+
+            // Write data to the request stream.
+            long userSetContentLength = -1;
+            if (serviceRequest.Headers.ContainsKey(HttpHeaders.ContentLength))
+                userSetContentLength = long.Parse(serviceRequest.Headers[HttpHeaders.ContentLength]);
+
+            if (serviceRequest.UseChunkedEncoding || !data.CanSeek) // when data cannot seek, we have to use chunked encoding as there's no way to set the length
+            {
+                webRequest.SendChunked = true;
+                webRequest.AllowWriteStreamBuffering = false; // when using chunked encoding, the data is likely big and thus not use write buffer;
             }
             else
             {
-                using (var requestStream = webRequest.GetRequestStream())
+                long streamLength = data.Length - data.Position;
+                webRequest.ContentLength = (userSetContentLength >= 0 &&
+                    userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
+                if (webRequest.ContentLength > clientConfiguration.DirectWriteStreamThreshold)
                 {
-                    if (!webRequest.SendChunked)
-                    {
-                        IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
-                    }
-                    else
-                    {
-                        IoUtils.WriteTo(data, requestStream);
-                    }
+                    webRequest.AllowWriteStreamBuffering = false;
                 }
             }
+
+            webRequest.BeginGetRequestStream(
+                    (ar) =>
+                    {
+                        try
+                        {
+                            using (var requestStream = webRequest.EndGetRequestStream(ar))
+                            {
+                                if (!webRequest.SendChunked)
+                                {
+                                    IoUtils.WriteTo(data, requestStream, webRequest.ContentLength);
+                                }
+                                else
+                                {
+                                    IoUtils.WriteTo(data, requestStream);
+                                }
+                            }
+                            asyncCallback();
+                        }
+                        catch(Exception e)
+                        {
+                            result.WebRequest.Abort();
+                            result.Complete(e);
+                        }
+                    }, null);
         }
 
         private static ServiceResponse HandleException(WebException ex)

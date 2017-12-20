@@ -78,6 +78,7 @@ namespace Aliyun.OSS
         /// <summary>
         /// Gets or sets the upload stream.
         /// Note: when both UploadStream and UploadFile properties are set, the UploadStream will be used.
+        /// It will be disposed once the ResumableUploadFile finishes.
         /// </summary>
         /// <value>The upload stream.</value>
         public Stream UploadStream

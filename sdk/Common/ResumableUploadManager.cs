@@ -40,8 +40,7 @@ namespace Aliyun.OSS
         public void ResumableUploadWithRetry(UploadObjectRequest request, ResumableContext resumableContext)
         {
             _request = request;
-            Stream fs = request.UploadStream ?? new FileStream(request.UploadFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-            try
+            using (Stream fs = request.UploadStream ?? new FileStream(request.UploadFile, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 for (int i = 0; i < _maxRetryTimes; i++)
                 {
@@ -62,13 +61,6 @@ namespace Aliyun.OSS
                             throw ex;
                         }
                     }
-                }
-            }
-            finally
-            {
-                if(!object.ReferenceEquals(fs, request.UploadStream))
-                {
-                    fs.Dispose();
                 }
             }
         }

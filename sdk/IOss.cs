@@ -486,7 +486,7 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <param name="key"><see cref="OssObject.Key" /></param>
-        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <param name="content"><see cref="OssObject.Content" />. Content is disposed after the call finishes.</param>
         /// <param name="metadata"><see cref="OssObject" /> metadata</param>
         /// <param name="checkpointDir">Check point dir. If it's not specified, then no checkpoint file is saved and thus resumable file upload is not supported.</param>
         /// <param name="partSize">Part size. If it's not specified, or the size is smaller than <see cref="Util.OssUtils.PartSizeLowerLimit"/>
@@ -498,6 +498,7 @@ namespace Aliyun.OSS
 
         /// <summary>
         /// Resumables the upload object.
+        /// The request.UploadStream will be disposed once the call finishes.
         /// </summary>
         /// <returns>The upload object.</returns>
         /// <param name="request">Upload Request.</param>
