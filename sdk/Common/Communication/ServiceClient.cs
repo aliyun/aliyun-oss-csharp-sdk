@@ -65,6 +65,10 @@ namespace Aliyun.OSS.Common.Communication
         {
             var ar = aysncResult as AsyncResult<ServiceResponse>;
             Debug.Assert(ar != null);
+            if (ar == null)
+            {
+                throw new ArgumentException("ar must be type of AsyncResult<ServiceResponse>");
+            }
 
             try
             {

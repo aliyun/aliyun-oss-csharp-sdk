@@ -28,6 +28,7 @@ namespace Aliyun.OSS
         private EventHandler<StreamTransferProgressArgs> _uploadProgressCallback;
         private long _incrementalUploadedBytes;
         private object _callbackLock = new object();
+        private UploadObjectRequest _request;
 
         public ResumableUploadManager(OssClient ossClient, int maxRetryTimes, ClientConfiguration conf)
         {
@@ -36,16 +37,16 @@ namespace Aliyun.OSS
             this._conf = conf;
         }
 
-        public void ResumableUploadWithRetry(string bucketName, string key, Stream content, ResumableContext resumableContext,
-                                             EventHandler<StreamTransferProgressArgs> uploadProgressCallback)
+        public void ResumableUploadWithRetry(UploadObjectRequest request, ResumableContext resumableContext)
         {
-            using (var fs = content)
+            _request = request;
+            using (Stream fs = request.UploadStream ?? new FileStream(request.UploadFile, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 for (int i = 0; i < _maxRetryTimes; i++)
                 {
                     try
                     {
-                        DoResumableUpload(bucketName, key, resumableContext, fs, uploadProgressCallback);
+                        DoResumableUpload(request.BucketName, request.Key, resumableContext, fs, request.StreamTransferProgress);
                         break;
                     }
                     catch (Exception ex)
@@ -71,7 +72,7 @@ namespace Aliyun.OSS
 
             // use single thread if MaxResumableUploadThreads is no bigger than 1
             // or when the stream is not file stream and the part size is bigger than the conf.MaxPartCachingSize
-            if (_conf.MaxResumableUploadThreads <= 1 || (!isFileStream || _conf.UseSingleThreadReadInResumableUpload) && resumableContext.PartContextList[0].Length > _conf.MaxPartCachingSize)
+            if (_request.ParallelThreadCount <= 1 || (!isFileStream || _conf.UseSingleThreadReadInResumableUpload) && resumableContext.PartContextList[0].Length > _conf.MaxPartCachingSize)
             {
                 DoResumableUploadSingleThread(bucketName, key, resumableContext, fs, uploadProgressCallback);
             }
@@ -322,7 +323,7 @@ namespace Aliyun.OSS
             _incrementalUploadedBytes = 0;
 
             Exception e = null;
-            int parallel = Math.Min(_conf.MaxResumableUploadThreads, resumableContext.PartContextList.Count);
+            int parallel = Math.Min(_request.ParallelThreadCount, resumableContext.PartContextList.Count);
 
             ManualResetEvent[] taskFinishEvents = new ManualResetEvent[parallel];
             UploadTask[] runningTasks = new UploadTask[parallel];
@@ -420,7 +421,7 @@ namespace Aliyun.OSS
             _incrementalUploadedBytes = 0;
 
             Exception e = null;
-            int parallel = Math.Min(_conf.MaxResumableUploadThreads, resumableContext.PartContextList.Count);
+            int parallel = Math.Min(_request.ParallelThreadCount, resumableContext.PartContextList.Count);
 
             int preReadPartCount = Math.Min(parallel, _conf.PreReadBufferCount) + parallel;
 

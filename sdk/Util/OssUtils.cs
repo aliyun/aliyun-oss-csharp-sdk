@@ -345,11 +345,24 @@ namespace Aliyun.OSS.Util
         internal static TResult EndOperationHelper<TResult>(IServiceClient serviceClient, IAsyncResult asyncResult)
         {
             var response = EndOperationHelper(serviceClient, asyncResult);
-            using (RetryableAsyncResult retryableAsyncResult = asyncResult as RetryableAsyncResult)
+            RetryableAsyncResult retryableAsyncResult = asyncResult as RetryableAsyncResult;
+            if (retryableAsyncResult == null)
             {
-                Debug.Assert(retryableAsyncResult != null);
-                OssCommand<TResult> cmd = (OssCommand<TResult>)retryableAsyncResult.Context.Command;
-                return cmd.DeserializeResponse(response);
+                retryableAsyncResult = asyncResult.AsyncState as RetryableAsyncResult;
+            }
+
+            if (retryableAsyncResult != null)
+            {
+                using (retryableAsyncResult)
+                {
+                    Debug.Assert(retryableAsyncResult != null);
+                    OssCommand<TResult> cmd = (OssCommand<TResult>)retryableAsyncResult.Context.Command;
+                    return cmd.DeserializeResponse(response);
+                }
+            }
+            else
+            {
+                throw new ArgumentException("asyncResult");
             }
         }
 
@@ -360,11 +373,27 @@ namespace Aliyun.OSS.Util
 
             var retryableAsyncResult = asyncResult as RetryableAsyncResult;
             if (retryableAsyncResult == null)
-                throw new ArgumentException("retryableAsyncResult should not be null");
+            {
+                ServiceClientImpl.HttpAsyncResult httpAsyncResult =
+                                     asyncResult as ServiceClientImpl.HttpAsyncResult;
+                if (httpAsyncResult == null)
+                {
+                    throw new ArgumentException("asyncResult");
+                }
 
-            ServiceClientImpl.HttpAsyncResult httpAsyncResult =
-                retryableAsyncResult.InnerAsyncResult as ServiceClientImpl.HttpAsyncResult;
-            return serviceClient.EndSend(httpAsyncResult);
+                retryableAsyncResult = httpAsyncResult.AsyncState as RetryableAsyncResult;
+            }
+
+            if (retryableAsyncResult != null)
+            {
+                ServiceClientImpl.HttpAsyncResult httpAsyncResult =
+                    retryableAsyncResult.InnerAsyncResult as ServiceClientImpl.HttpAsyncResult;
+                return serviceClient.EndSend(httpAsyncResult);
+            }
+            else
+            {
+                throw new ArgumentException("asyncResult");
+            }
         }
 
         internal static void CheckCredentials(string accessKeyId, string accessKeySecret)

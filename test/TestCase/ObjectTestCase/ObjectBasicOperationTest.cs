@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
+using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Model;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Test.Util;
@@ -106,6 +107,64 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 }
             }
         }
+
+        [Test]
+        public void UploadObjectBasicSettingsAsyncStandardUsageTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                //upload the object
+                var ar = OssTestUtils.BeginUploadObject(_ossClient, _bucketName, key,
+                                               Config.UploadTestFile,
+                                               null,
+                                               null);
+                var result = OssTestUtils.EndUploadObject(_ossClient, ar);
+                Assert.AreEqual(result.HttpStatusCode, HttpStatusCode.OK);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadObjectBasicSettingsAsyncExceptionTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+            Exception e = new Exception("inject exception");
+            try
+            {
+                //upload the object
+                AutoResetEvent done = new AutoResetEvent(false);
+                var result = OssTestUtils.BeginUploadObject(_ossClient, _bucketName, key,
+                                               Config.UploadTestFile,
+                                               (ar) => {
+                                                   done.Set();
+                                                   throw e;
+                                               },
+                                               null);
+                done.WaitOne(1000 * 100); // in real world, this is not needed. This is just to make sure the injected exception gets caught.
+                OssTestUtils.EndUploadObject(_ossClient, result);
+            }
+            catch(Exception ex)
+            {
+                Assert.AreSame(ex, e);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
 
         [Test]
         public void UploadUnSeekableStreamTest()

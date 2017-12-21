@@ -66,7 +66,7 @@ namespace Aliyun.OSS
         {
             // use single thread if MaxResumableUploadThreads is no bigger than 1
             // or the part size is bigger than the conf.MaxPartCachingSize
-            if (resumableContext.PartContextList[0].Length > _conf.MaxPartCachingSize || _conf.MaxResumableDownloadThreads <= 1)
+            if (resumableContext.PartContextList[0].Length > _conf.MaxPartCachingSize || request.ParallelThreadCount <= 1)
             {
                 DoResumableDownloadSingleThread(request, resumableContext, downloadProgressCallback);
             }
@@ -185,7 +185,7 @@ namespace Aliyun.OSS
             } 
 
             Exception e = null;
-            int parallel = Math.Min(Math.Min(_conf.MaxResumableDownloadThreads, resumableContext.PartContextList.Count), Environment.ProcessorCount);
+            int parallel = Math.Min(Math.Min(request.ParallelThreadCount, resumableContext.PartContextList.Count), Environment.ProcessorCount);
             ManualResetEvent[] taskFinishedEvents = new ManualResetEvent[parallel];
             DownloadTaskParam[] taskParams = new DownloadTaskParam[parallel];
             int nextPart = 0;

@@ -486,7 +486,7 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <param name="key"><see cref="OssObject.Key" /></param>
-        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <param name="content"><see cref="OssObject.Content" />. Content is disposed after the call finishes.</param>
         /// <param name="metadata"><see cref="OssObject" /> metadata</param>
         /// <param name="checkpointDir">Check point dir. If it's not specified, then no checkpoint file is saved and thus resumable file upload is not supported.</param>
         /// <param name="partSize">Part size. If it's not specified, or the size is smaller than <see cref="Util.OssUtils.PartSizeLowerLimit"/>
@@ -495,6 +495,14 @@ namespace Aliyun.OSS
         /// <returns><see cref="PutObjectResult" /> instance</returns>
         PutObjectResult ResumableUploadObject(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
                                               EventHandler<StreamTransferProgressArgs> streamTransferProgress = null);
+
+        /// <summary>
+        /// Resumables the upload object.
+        /// The request.UploadStream will be disposed once the call finishes.
+        /// </summary>
+        /// <returns>The upload object.</returns>
+        /// <param name="request">Upload Request.</param>
+        PutObjectResult ResumableUploadObject(UploadObjectRequest request);
 
         /// <summary>
         /// Appends object to OSS according to the <see cref="AppendObjectRequest" />

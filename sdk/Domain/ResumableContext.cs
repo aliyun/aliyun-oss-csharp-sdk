@@ -69,10 +69,12 @@ namespace Aliyun.OSS
             IsCompleted = isCompleted;
 
             int partNum;
-            if (int.TryParse(tokens[4], out partNum) && partNum > 0 && !string.IsNullOrEmpty(tokens[5]))
+            if (!(int.TryParse(tokens[4], out partNum) && partNum > 0 && !string.IsNullOrEmpty(tokens[5])))
             {
-                PartETag = new PartETag(partNum, tokens[5]);
+                return false;
             }
+
+            PartETag = new PartETag(partNum, tokens[5]);
 
             return true;
         }
@@ -283,7 +285,8 @@ namespace Aliyun.OSS
 
         public ResumableCopyContext (string sourceBucketName, string sourceKey, string destBucketName, 
                                      string destKey, string checkpointDir)
-            : base(destBucketName, destKey, checkpointDir)
+            : base(destBucketName,
+            destKey, checkpointDir)
         {
             SourceBucketName = sourceBucketName;
             SourceKey = sourceKey; 
@@ -297,6 +300,10 @@ namespace Aliyun.OSS
         {
         }
 
+        override protected string GenerateCheckpointFile()
+        {
+            return GetCheckpointFilePath(CheckpointDir, "_Download" + "_" + Base64(BucketName) + "_" + Base64(Key));
+        }
         public long GetDownloadedBytes()
         {
             return GetUploadedBytes();
