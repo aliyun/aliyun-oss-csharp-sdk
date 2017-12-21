@@ -74,6 +74,8 @@
     <Compile Include="Util\NonSeekableStream.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketLifecycleSettingsTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectResumableOperationTest.cs" />
+    <Compile Include="TestCase\ObjectTestCase\OssCrcTest.cs" />
+    <Compile Include="TestCase\OtherTestCase\ResumableContextTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
