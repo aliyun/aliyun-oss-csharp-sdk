@@ -38,10 +38,12 @@ namespace Aliyun.OSS.Samples
         {
             const string key = "AppendObject";
             long position = 0;
+            ulong initCrc = 0;
             try
             {
                 var metadata = client.GetObjectMetadata(bucketName, key);
                 position = metadata.ContentLength;
+                initCrc = ulong.Parse(metadata.Crc64);
             }
             catch(Exception)  {}
 
@@ -53,11 +55,13 @@ namespace Aliyun.OSS.Samples
                     {
                         ObjectMetadata = new ObjectMetadata(),
                         Content = fs,
-                        Position = position
+                        Position = position,
+                        InitCrc = initCrc
                     };
 
                     var result = client.AppendObject(request);
                     position = result.NextAppendPosition;
+                    initCrc = result.HashCrc64Ecma;
 
                     Console.WriteLine("Append object succeeded, next append position:{0}", position);
                 }
@@ -69,7 +73,8 @@ namespace Aliyun.OSS.Samples
                     {
                         ObjectMetadata = new ObjectMetadata(),
                         Content = fs,
-                        Position = position
+                        Position = position,
+                        InitCrc = initCrc
                     };
 
                     var result = client.AppendObject(request);

@@ -1362,6 +1362,96 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
+        public void AppendObjectWithCrc()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                long position = 0;
+                ulong initCrc = 0;
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        Content = fs,
+                        Position = position,
+                        InitCrc = initCrc
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+                    position = result.NextAppendPosition;
+                    initCrc = result.HashCrc64Ecma;
+                }
+
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        Content = fs,
+                        Position = position,
+                        InitCrc = initCrc
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength * 2, result.NextAppendPosition);
+                    Assert.IsTrue(result.HashCrc64Ecma != 0);
+                    initCrc = result.HashCrc64Ecma;
+                }
+
+                var meta = _ossClient.GetObjectMetadata(_bucketName, key);
+                Assert.AreEqual("Appendable", meta.ObjectType);
+                Assert.AreEqual(initCrc.ToString(), meta.Crc64);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void AppendObjectWithWrongCrc()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                long position = 0;
+                ulong initCrc = 123; // wrong init CRC
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        Content = fs,
+                        Position = position,
+                        InitCrc = initCrc
+                    };
+
+                    _ossClient.AppendObject(request);
+                    Assert.Fail();
+                }
+            }
+            catch(ClientException e)
+            {
+                Assert.IsTrue(e.Message.Contains("Crc64"));
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
         public void AppendObjectWithHeader()
         {
             const string contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";

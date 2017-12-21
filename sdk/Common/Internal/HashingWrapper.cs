@@ -17,7 +17,7 @@ namespace Aliyun.OSS.Common.Internal
     {
         private static string MD5ManagedName = typeof(MD5Managed).FullName;
 
-        private HashAlgorithm _algorithm = null;
+        protected HashAlgorithm _algorithm = null;
         private void Init(string algorithmName)
         {
             if (string.Equals(MD5ManagedName, algorithmName, StringComparison.Ordinal))
@@ -123,5 +123,16 @@ namespace Aliyun.OSS.Common.Internal
         public HashingWrapperCrc64()
             : base(typeof(Crc64HashAlgorithm).FullName)
         { }
+
+        public void SetInitCrc64(ulong initCrc)
+        {
+            if (!(this._algorithm is Crc64HashAlgorithm))
+            {
+                throw new ClientException("HashingWrapperCrc64's algorithm must be type of Crc64HashAlgorithm");
+            }
+
+            Crc64HashAlgorithm crcAlgorithm = this._algorithm as Crc64HashAlgorithm;
+            crcAlgorithm.SetInitCrc(initCrc);
+        }
     }
 }

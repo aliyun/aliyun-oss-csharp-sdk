@@ -38,7 +38,7 @@ namespace Aliyun.OSS.Common.Handlers
                     if (!sdkCalculatedHash.ToString().Equals(ossCalculatedHashStr))
                     {
                         response.Dispose();
-                        throw new ClientException("Expected hash not equal to calculated hash");
+                        throw new ClientException("Crc64 validation failed. Expected hash not equal to calculated hash");
                     }
                 }
             }

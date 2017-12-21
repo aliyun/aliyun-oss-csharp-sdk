@@ -16,6 +16,11 @@ namespace Aliyun.OSS.Common.Internal
             Crc64.InitECMA();
         }
 
+        public void SetInitCrc(ulong initCrc)
+        {
+            crc64 = initCrc;
+        }
+
         public override int HashSize
         {
             get {
