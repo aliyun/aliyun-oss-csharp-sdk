@@ -17,7 +17,7 @@ namespace Aliyun.OSS
         private readonly IList<string> _matchingETagConstraints = new List<string>();
         private readonly IList<string> _nonmatchingEtagConstraints = new List<string>();
         private readonly ResponseHeaderOverrides _responseHeaders = new ResponseHeaderOverrides();
-        private int _parallelThreadCount = 2;
+        private int _parallelThreadCount = 3;
 
         public DownloadObjectRequest(string bucketName, string key, string downloadFile)
         {

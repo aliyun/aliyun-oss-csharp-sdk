@@ -17,7 +17,7 @@ namespace Aliyun.OSS
     /// </summary>
     public class UploadObjectRequest
     {
-        private int _parallelThreadCount = 2;
+        private int _parallelThreadCount = 3;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Aliyun.OSS.UploadObjectRequest"/> class.
