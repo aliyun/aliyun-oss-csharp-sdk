@@ -27,8 +27,6 @@ namespace Aliyun.OSS
 
         public bool IsCompleted { get; set; }
 
-        public ulong Crc64 { get; set; }
-
         public bool FromString(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -37,7 +35,7 @@ namespace Aliyun.OSS
             }
 
             var tokens = value.Split(TokenSeparator);
-            if (tokens.Length != 7)
+            if (tokens.Length != 6)
             {
                 return false;
             }
@@ -78,13 +76,6 @@ namespace Aliyun.OSS
 
             PartETag = new PartETag(partNum, tokens[5]);
 
-            ulong crc = 0;
-            if (!ulong.TryParse(tokens[6], out crc))
-            {
-                return false;
-            }
-            Crc64 = crc;
-
             return true;
         }
 
@@ -94,13 +85,11 @@ namespace Aliyun.OSS
                             + Length.ToString() + TokenSeparator + IsCompleted.ToString() + TokenSeparator;
             if (PartETag != null)
             {
-                result += PartETag.PartNumber.ToString() + TokenSeparator + PartETag.ETag + TokenSeparator;
+                result += PartETag.PartNumber.ToString() + TokenSeparator + PartETag.ETag;
             } else
             {
                 result += TokenSeparator;
             }
-
-            result += Crc64.ToString();
 
             return result;
         }
@@ -120,8 +109,6 @@ namespace Aliyun.OSS
         public string UploadId { get; set; }
 
         public string ContentMd5 { get; set; }
-
-        public string Crc64 { get; set; }
 
         public string CheckpointFile
         {
@@ -166,18 +153,17 @@ namespace Aliyun.OSS
         virtual public bool FromString(string value)
         {
             var tokens = value.Split(ContextSeparator);
-            if (tokens.Length != 4)
+            if (tokens.Length != 3)
             {
                 return false;
             }
 
             UploadId = tokens[0];
             ContentMd5 = tokens[1];
-            Crc64 = tokens[2];
-            var partStr = tokens[3];
+            var partStr = tokens[2];
 
             var partTokens = partStr.Split(PartContextSeparator);
-            if (partTokens.Length < 1)
+            if (partTokens.Length <= 1)
             {
                 return false;
             }
@@ -205,17 +191,11 @@ namespace Aliyun.OSS
             }
             result += UploadId.ToString() + ContextSeparator;
 
-            if (ContentMd5 == null)
+            if (string.IsNullOrEmpty(ContentMd5))
             {
-                ContentMd5 = string.Empty;
+                return string.Empty;
             }
-
-            if (Crc64 == null)
-            {
-                Crc64 = string.Empty;
-            }
-
-            result += ContentMd5 + ContextSeparator + Crc64 + ContextSeparator;
+            result += ContentMd5.ToString() + ContextSeparator;
 
             if (PartContextList.Count == 0)
             {

@@ -116,12 +116,6 @@ namespace Aliyun.OSS.Commands
                 uploadPartRequest.InputStream = hashStream;
                 context.ResponseHandlers.Add(new MD5DigestCheckHandler(hashStream));
             }
-            else if (conf.EnableCrcCheck)
-            {
-                var hashStream = new Crc64Stream(originalStream, null, streamLength);
-                uploadPartRequest.InputStream = hashStream;
-                context.ResponseHandlers.Add(new Crc64CheckHandler(hashStream));
-            }
 
             return new UploadPartCommand(client, endpoint, context, 
                                         DeserializerFactory.GetFactory().CreateUploadPartResultDeserializer(uploadPartRequest.PartNumber.Value),

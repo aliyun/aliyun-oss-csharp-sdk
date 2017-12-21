@@ -21,17 +21,9 @@ namespace Aliyun.OSS.Common.Internal
         private void Init(string algorithmName)
         {
             if (string.Equals(MD5ManagedName, algorithmName, StringComparison.Ordinal))
-            {
                 _algorithm = new MD5Managed();
-            }
-            else if (string.Equals(typeof(Crc64HashAlgorithm).FullName, algorithmName, StringComparison.Ordinal))
-            {
-                _algorithm = new Crc64HashAlgorithm();
-            }
             else
-            {
                 throw new ArgumentOutOfRangeException(algorithmName, "Unsupported hashing algorithm");
-            }
         }
 
         public HashingWrapper(string algorithmName)
@@ -115,13 +107,6 @@ namespace Aliyun.OSS.Common.Internal
     {
         public HashingWrapperMD5()
             : base(typeof(MD5Managed).FullName)
-        { }
-    }
-
-    public class HashingWrapperCrc64 : HashingWrapper
-    {
-        public HashingWrapperCrc64()
-            : base(typeof(Crc64HashAlgorithm).FullName)
         { }
     }
 }

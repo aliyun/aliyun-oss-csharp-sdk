@@ -121,10 +121,6 @@ namespace Aliyun.OSS
                 var partResult = _ossClient.UploadPart(request);
                 part.PartETag = partResult.PartETag;
                 part.IsCompleted = true;
-                if (partResult.ResponseMetadata.ContainsKey(HttpHeaders.HashCrc64Ecma))
-                {
-                    part.Crc64 = ulong.Parse(partResult.ResponseMetadata[HttpHeaders.HashCrc64Ecma]);
-                }
                 resumableContext.Dump();
                 uploadedBytes += part.Length;
             }
@@ -658,11 +654,6 @@ namespace Aliyun.OSS
 
                         var partResult = _ossClient.UploadPart(request);
                         part.PartETag = partResult.PartETag;
-                        if (partResult.ResponseMetadata.ContainsKey(HttpHeaders.HashCrc64Ecma))
-                        {
-                            part.Crc64 = ulong.Parse(partResult.ResponseMetadata[HttpHeaders.HashCrc64Ecma]);
-                        }
-
                         part.IsCompleted = true;
                         break;
                     }

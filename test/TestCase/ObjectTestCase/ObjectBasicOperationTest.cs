@@ -43,18 +43,10 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _ossClient.CreateBucket(_archiveBucketName, StorageClass.Archive);
             //create sample object
             _objectKey = OssTestUtils.GetObjectKey(_className);
-            try
-            {
-                var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
-                    Config.UploadTestFile, new ObjectMetadata());
+            var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
+                Config.UploadTestFile, new ObjectMetadata());
+            _objectETag = poResult.ETag;
 
-                _objectETag = poResult.ETag;
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                throw;
-            }
             _event = new AutoResetEvent(false);
         }
 

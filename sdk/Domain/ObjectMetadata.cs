@@ -215,26 +215,6 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
-        /// Gets or sets the crc64.
-        /// </summary>
-        /// <value>The crc64.</value>
-        public string Crc64
-        {
-            get{
-                return _metadata.ContainsKey(HttpHeaders.HashCrc64Ecma)
-                                ? _metadata[HttpHeaders.HashCrc64Ecma] as string : null;
-            }
-
-            set
-            {
-                if (value != null)
-                {
-                    _metadata[HttpHeaders.HashCrc64Ecma] = value;
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the server side encryption algorithm. Only AES256 is support for now.
         /// </summary>
         public string ServerSideEncryption
