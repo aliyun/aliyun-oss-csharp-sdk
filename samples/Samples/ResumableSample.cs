@@ -25,36 +25,20 @@ namespace Aliyun.OSS.Samples
 
         static string fileToUpload = Config.BigFileToUpload;
 
-        public static void ResumableUploadObject(string bucketName) 
+        public static void ResumableUploadObject(string bucketName)
         {
             const string key = "ResumableUploadObject";
             string checkpointDir = Config.DirToDownload;
             try
             {
-                client.ResumableUploadObject(bucketName, key, fileToUpload, null, checkpointDir);
+                UploadObjectRequest request = new UploadObjectRequest(bucketName, key, fileToUpload)
+                {
+                    PartSize = 8 * 1024 * 1024,
+                    ParallelThreadCount = 3,
+                    CheckpointDir = checkpointDir,
+                };
+                client.ResumableUploadObject(request);
                 Console.WriteLine("Resumable upload object:{0} succeeded", key);
-            }
-            catch (OssException ex)
-            {
-                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
-                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Failed with error info: {0}", ex.Message);
-            }
-        }
-
-        public static void ResumableCopyObject(string sourceBucketName, string sourceKey, 
-                                               string destBucketName, string destKey)
-        {
-            
-            string checkpointDir = Config.DirToDownload;
-            try
-            {
-                var request = new CopyObjectRequest(sourceBucketName, sourceKey, destBucketName, destKey);
-                client.ResumableCopyObject(request, checkpointDir);
-                Console.WriteLine("Resumable copy new object:{0} succeeded", request.DestinationKey);
             }
             catch (OssException ex)
             {
@@ -82,6 +66,27 @@ namespace Aliyun.OSS.Samples
                 };
                 client.ResumableDownloadObject(request);
                 Console.WriteLine("Resumable download object:{0} succeeded", key);
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
+        }
+
+        public static void ResumableCopyObject(string sourceBucketName, string sourceKey,
+                                               string destBucketName, string destKey)
+        {
+            string checkpointDir = Config.DirToDownload;
+            try
+            {
+                var request = new CopyObjectRequest(sourceBucketName, sourceKey, destBucketName, destKey);
+                client.ResumableCopyObject(request, checkpointDir);
+                Console.WriteLine("Resumable copy new object:{0} succeeded", request.DestinationKey);
             }
             catch (OssException ex)
             {
