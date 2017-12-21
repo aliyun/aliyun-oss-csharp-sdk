@@ -382,6 +382,9 @@
     <Compile Include="Domain\DownloadObjectRequest.cs" />
     <Compile Include="Common\Internal\StreamTransferTracker.cs" />
     <Compile Include="Domain\UploadObjectRequest.cs" />
+    <Compile Include="Util\Crc64.cs" />
+    <Compile Include="Common\Internal\Crc64HashAlgorithm.cs" />
+    <Compile Include="Common\Handlers\Crc64CheckHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />

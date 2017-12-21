@@ -312,6 +312,21 @@ namespace Aliyun.OSS
                     }
                 }
             }
+            else if (_conf.EnableCrcCheck && !string.IsNullOrEmpty(resumableContext.Crc64))
+            {
+                using (var fs = File.Open(GetTempDownloadFile(request), FileMode.Open))
+                {
+                    string calcuatedCrc64 = OssUtils.ComputeContentCrc64(fs, fs.Length);
+                    if (calcuatedCrc64 != resumableContext.Crc64)
+                    {
+                        throw new OssException(string.Format("The Crc64 of the downloaded file {0} does not match the expected. Expected:{1}, actual:{2}",
+                                                             GetTempDownloadFile(request),
+                                                             resumableContext.Crc64,
+                                                             calcuatedCrc64
+                                                            ));
+                    }
+                }
+            }
 
             File.Move(GetTempDownloadFile(request), request.DownloadFile);
         }

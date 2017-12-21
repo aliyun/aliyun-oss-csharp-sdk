@@ -410,4 +410,11 @@ namespace Aliyun.OSS.Common.Internal
 
         #endregion
     }
+
+    public class Crc64Stream : HashStream<HashingWrapperCrc64>
+    {
+        public Crc64Stream(Stream baseStream, byte[] expectedHash, long expectedLength)
+            : base(baseStream, expectedHash, expectedLength)
+        { }
+    }
 }

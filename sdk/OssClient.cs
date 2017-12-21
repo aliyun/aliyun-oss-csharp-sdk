@@ -825,7 +825,8 @@ namespace Aliyun.OSS
             }
 
             int maxRetry = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
-            ResumableUploadManager uploadManager = new ResumableUploadManager(this, maxRetry, OssUtils.GetClientConfiguration(_serviceClient));
+            ClientConfiguration config = OssUtils.GetClientConfiguration(_serviceClient);
+            ResumableUploadManager uploadManager = new ResumableUploadManager(this, maxRetry, config);
             uploadManager.ResumableUploadWithRetry(request, resumableContext);
 
             // Completes the upload
@@ -836,6 +837,8 @@ namespace Aliyun.OSS
                 callbackMetadata.AddHeader(HttpHeaders.Callback, metadata.HttpMetadata[HttpHeaders.Callback]);
                 completeRequest.Metadata = callbackMetadata;
             }
+
+            ulong objectCrcCalculated = 0;
             foreach (var part in resumableContext.PartContextList)
             {
                 if (part == null || !part.IsCompleted)
@@ -843,10 +846,31 @@ namespace Aliyun.OSS
                     throw new OssException("Not all parts are completed.");
                 }
 
+                if (config.EnableCrcCheck)
+                {
+                    if (objectCrcCalculated == 0)
+                    {
+                        objectCrcCalculated = part.Crc64;
+                    }
+                    else
+                    {
+                        objectCrcCalculated = Crc64.Combine(objectCrcCalculated, part.Crc64, part.Length);    
+                    }
+                }
+
                 completeRequest.PartETags.Add(part.PartETag);
             }
 
             PutObjectResult result = CompleteMultipartUpload(completeRequest);
+            if (config.EnableCrcCheck && result.ResponseMetadata.ContainsKey(HttpHeaders.HashCrc64Ecma))
+            {
+                string objectCrc = result.ResponseMetadata[HttpHeaders.HashCrc64Ecma];
+                if (!string.Equals(objectCrcCalculated.ToString(), objectCrc))
+                {
+                    throw new ClientException("The whole uploaded object's CRC returned from OSS does not match the calculated one. OSS returns " 
+                                              + objectCrc + " but calculated is  " + objectCrcCalculated);
+                }
+            }
             resumableContext.Clear();
 
             return result;
@@ -1029,6 +1053,15 @@ namespace Aliyun.OSS
                             {
                                 byte[] expectedHashDigest = Convert.FromBase64String(objectMeta.ContentMd5); ;
                                 streamWrapper = new MD5Stream(ossObject.Content, expectedHashDigest, fileSize);
+                            }
+                            else if (config.EnableCrcCheck && !string.IsNullOrEmpty(objectMeta.Crc64))
+                            {
+                                ulong crcVal = 0;
+                                if (UInt64.TryParse(objectMeta.Crc64, out crcVal))
+                                {
+                                    byte[] expectedHashDigest = BitConverter.GetBytes(crcVal); 
+                                    streamWrapper = new Crc64Stream(ossObject.Content, expectedHashDigest, fileSize);
+                                }
                             }
 
                             if (request.StreamTransferProgress != null)
@@ -1574,14 +1607,20 @@ namespace Aliyun.OSS
         private ResumableDownloadContext LoadResumableDownloadContext(string bucketName, string key, ObjectMetadata metadata, string checkpointDir, long partSize)
         {
             var resumableContext = new ResumableDownloadContext(bucketName, key, checkpointDir);
-            if (resumableContext.Load() && resumableContext.ETag == metadata.ETag && resumableContext.ContentMd5 == metadata.ContentMd5)
+            if (resumableContext.Load())
             {
-                return resumableContext;
+                if (resumableContext.ETag == metadata.ETag
+                    && resumableContext.ContentMd5 == metadata.ContentMd5
+                    && resumableContext.Crc64 == metadata.Crc64)
+                {
+                    return resumableContext;
+                }
             } 
 
             NewResumableContext(metadata.ContentLength, partSize, resumableContext);
             resumableContext.ContentMd5 = metadata.ContentMd5;
             resumableContext.ETag = metadata.ETag;
+            resumableContext.Crc64 = metadata.Crc64;
             return resumableContext;
         }
 
