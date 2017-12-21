@@ -548,17 +548,21 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
+                //list objects by specifying bucket name
+                var allObjects = _ossClient.ListObjects(_bucketName);
+                var allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
+
+                //default value is 100
+                Assert.AreEqual(100, allObjects.MaxKeys);
+
                 //upload the object
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key,
                     Config.UploadTestFile, new ObjectMetadata());
 
-                //list objects by specifying bucket name
-                var allObjects = _ossClient.ListObjects(_bucketName);
-                //default value is 100
-                Assert.AreEqual(100, allObjects.MaxKeys);
-                var allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
+                allObjects = _ossClient.ListObjects(_bucketName);
+                var allObjectsSumm2 = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
                 //there is already one sample object
-                Assert.AreEqual(2, allObjectsSumm.Count);
+                Assert.AreEqual(allObjectsSumm2.Count, allObjectsSumm.Count + 1);
 
                 //list objects by specifying folder as prefix
                 allObjects = _ossClient.ListObjects(_bucketName, folderName);
