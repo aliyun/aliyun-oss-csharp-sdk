@@ -1,5 +1,12 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.7.0  日期：2017/12/21
+### 变更内容
+- 修复：优化异步机制实现
+- 增加：支持断点并发上传下载
+- 增加：支持符号链接symlink
+- 增加：LifecycleRule支持碎片及所有类型的存储
+
 ## 版本号：2.6.0  日期：2017/11/30
 ### 变更内容
 - 增加：CreateBucket支持StorageClass
