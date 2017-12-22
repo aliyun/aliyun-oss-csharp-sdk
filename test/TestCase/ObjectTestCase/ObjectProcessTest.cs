@@ -23,7 +23,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _imageInfo;
         private static string _process;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -44,7 +44,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _imageInfo = "{\n    \"FileSize\": {\"value\": \"5470\"},\n    \"Format\": {\"value\": \"jpg\"},\n    \"ImageHeight\": {\"value\": \"100\"},\n    \"ImageWidth\": {\"value\": \"100\"},\n    \"ResolutionUnit\": {\"value\": \"1\"},\n    \"XResolution\": {\"value\": \"1/1\"},\n    \"YResolution\": {\"value\": \"1/1\"}}";
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);

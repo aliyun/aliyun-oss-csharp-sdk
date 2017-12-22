@@ -24,7 +24,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _callbackBody;
         private static string _callbackOkResponse;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -47,7 +47,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _callbackOkResponse = "{\"Status\":\"OK\"}";
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);

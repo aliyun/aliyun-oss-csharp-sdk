@@ -16,7 +16,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         private static IOss _ossClient;
         private static string _className;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -26,7 +26,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _className = _className.Substring(_className.LastIndexOf('.') + 1).ToLowerInvariant();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void ClassCleanup()
         {
             //Bucket is limited resources, so double check to clean up all remain
@@ -135,7 +135,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 string.Format("Bucket {0} should not exist after deletion", bucketName));
         }
 
-        [Ignore]
+        [Ignore("Ignore")]
         public void CreateAndDeleteBucketSecondRegionTest()
         {
             var settings = AccountSettings.Load();
@@ -206,7 +206,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             }
         }
 
-        [Ignore]
+        [Ignore("Ignore")]
         public void CreateBucketWithDuplicatedNameDifferentLocationTest()
         {
             //get a random bucketName
@@ -242,7 +242,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 
         //bucket number max to 10
         private const int MaxAllowedBucketNumber = 10;
-        [Ignore]
+        [Ignore("Ignore")]
         public void CreateBucketWhenBucketNumberReachesLimitTest()
         {
             //get a random bucketName

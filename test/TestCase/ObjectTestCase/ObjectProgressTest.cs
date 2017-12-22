@@ -24,7 +24,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _bigObjectKey;
         private static string _tmpLocalFile;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -45,7 +45,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _tmpLocalFile = _className + ".tmp";
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);

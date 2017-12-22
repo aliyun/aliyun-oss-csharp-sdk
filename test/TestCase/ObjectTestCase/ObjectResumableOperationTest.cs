@@ -23,7 +23,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _objectKey;     
         private static ClientConfiguration _config;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void ClassInitialize()
         {
             _config = new ClientConfiguration();
@@ -42,7 +42,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 Config.UploadTestFile, new ObjectMetadata());
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);

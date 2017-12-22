@@ -1,0 +1,85 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>False</EnableDefaultEmbeddedResourceItems>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Aliyun.OSS.Samples</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Aliyun.OSS.Samples.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Config.cs" />
+    <Compile Include="Samples\UploadCallbackSample.cs" />
+    <Compile Include="Samples\ProgressSample.cs" />
+    <Compile Include="Samples\ImageProcessSample.cs" />
+    <Compile Include="Samples\SetObjectAclSample.cs" />
+    <Compile Include="Samples\GetObjectAclSample.cs" />
+    <Compile Include="Samples\DeleteBucketSample.cs" />
+    <Compile Include="Samples\ModifyObjectMetaSample.cs" />
+    <Compile Include="Samples\ResumableSample.cs" />
+    <Compile Include="Samples\SetBucketLifecycleSample.cs" />
+    <Compile Include="Samples\AppendObjectSample.cs" />
+    <Compile Include="Samples\GetBucketLifecycleSample.cs" />
+    <Compile Include="Samples\GetBucketRefererSample.cs" />
+    <Compile Include="Samples\GetBucketWetbsiteSample.cs" />
+    <Compile Include="Samples\DeleteBucketWetbsiteSample.cs" />
+    <Compile Include="Samples\SetBucketWetbsiteSample.cs" />
+    <Compile Include="Samples\DeleteBucketLoggingSample.cs" />
+    <Compile Include="Samples\GetBucketLoggingSample.cs" />
+    <Compile Include="Samples\SetBucketLoggingSample.cs" />
+    <Compile Include="Samples\DeleteBucketCorsSample.cs" />
+    <Compile Include="Samples\GetBucketCorsSample.cs" />
+    <Compile Include="Samples\GetBucketAclSample.cs" />
+    <Compile Include="Samples\DoesBucketExistSample.cs" />
+    <Compile Include="Samples\DoesObjectExistSample.cs" />
+    <Compile Include="Samples\PostPolicySample.cs" />
+    <Compile Include="Samples\CreateEmptyFolderSample.cs" />
+    <Compile Include="Samples\ListObjectsSample.cs" />
+    <Compile Include="Samples\GetObjectByRangeSample.cs" />
+    <Compile Include="Samples\CopyObjectSample.cs" />
+    <Compile Include="Samples\UrlSignatureSample.cs" />
+    <Compile Include="Samples\CNameSample.cs" />
+    <Compile Include="Samples\DeleteObjectsSample.cs" />
+    <Compile Include="Samples\ListBucketsSample.cs" />
+    <Compile Include="Samples\SetBucketCorsSample.cs" />
+    <Compile Include="Samples\SetBucketRefererSample.cs" />
+    <Compile Include="Samples\CreateBucketSample.cs" />
+    <Compile Include="Samples\GetObjectSample.cs" />
+    <Compile Include="Samples\MultipartUploadSample.cs" />
+    <Compile Include="Samples\PutObjectSample.cs" />
+    <Compile Include="Samples\SetBucketAclSample.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Samples\RestoreArchiveObjectSample.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\sdk\aliyun-oss-sdk-dotnetcore.csproj">
+    </ProjectReference>
+  </ItemGroup>
+</Project>

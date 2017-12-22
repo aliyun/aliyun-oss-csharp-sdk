@@ -17,7 +17,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         private static string _className;
         private static string _bucketName;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -31,7 +31,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             ossClient.CreateBucket(_bucketName);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);

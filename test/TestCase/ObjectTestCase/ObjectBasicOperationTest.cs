@@ -27,7 +27,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _archiveBucketName;
         private static AutoResetEvent _event;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -50,7 +50,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _event = new AutoResetEvent(false);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);
