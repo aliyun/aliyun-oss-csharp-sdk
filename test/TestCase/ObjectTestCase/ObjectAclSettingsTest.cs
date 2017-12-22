@@ -15,9 +15,13 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static IOss _ossClient;
         private static string _className;
         private static string _bucketName;
-        private static string _keyName;   
+        private static string _keyName;
 
+#if NETCOREAPP2_0
         [OneTimeSetUp]
+#else
+        [TestFixtureSetUp]
+#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -32,7 +36,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _keyName = OssTestUtils.GetObjectKey(_className);
         }
 
+#if NETCOREAPP2_0
         [OneTimeTearDown]
+#else
+        [TestFixtureTearDown]
+#endif
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);

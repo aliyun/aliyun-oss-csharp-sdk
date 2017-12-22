@@ -14,13 +14,21 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 
         private static readonly DateTime EpochTime = new DateTime(1970, 1, 1);
 
+#if NETCOREAPP2_0
         [OneTimeSetUp]
+#else
+        [TestFixtureSetUp]
+#endif
         public static void ClassInitialize()
         {
             //TODO: 
         }
 
+#if NETCOREAPP2_0
         [OneTimeTearDown]
+#else
+        [TestFixtureTearDown]
+#endif
         public static void ClassCleanup()
         {
             //TODO: 

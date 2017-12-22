@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aliyun-oss-sdk-dotnetcore", "sdk\aliyun-oss-sdk-dotnetcore.csproj", "{4484BB49-D0EB-4DB2-A474-3A1A7A1924BA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aliyun-oss-sdk-test-dotnetcore", "test\aliyun-oss-sdk-test-dotnetcore.csproj", "{C26E957F-01D5-4B1C-B5EA-0AFEBF9450E9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aliyun-oss-sdk-samples-dotnetcore", "samples\aliyun-oss-sdk-samples-dotnetcore.csproj", "{EAB1C5CE-C626-4E4B-8471-97B1AE8B3F44}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4484BB49-D0EB-4DB2-A474-3A1A7A1924BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4484BB49-D0EB-4DB2-A474-3A1A7A1924BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4484BB49-D0EB-4DB2-A474-3A1A7A1924BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4484BB49-D0EB-4DB2-A474-3A1A7A1924BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C26E957F-01D5-4B1C-B5EA-0AFEBF9450E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C26E957F-01D5-4B1C-B5EA-0AFEBF9450E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C26E957F-01D5-4B1C-B5EA-0AFEBF9450E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C26E957F-01D5-4B1C-B5EA-0AFEBF9450E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAB1C5CE-C626-4E4B-8471-97B1AE8B3F44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAB1C5CE-C626-4E4B-8471-97B1AE8B3F44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAB1C5CE-C626-4E4B-8471-97B1AE8B3F44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAB1C5CE-C626-4E4B-8471-97B1AE8B3F44}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E39C51AF-7742-4A49-A05B-EA5C28983B5D}
+	EndGlobalSection
+EndGlobal

@@ -27,8 +27,11 @@ namespace Aliyun.OSS.Common.Authentication
         protected override string ComputeSignatureCore(string key, string data)
         {
             Debug.Assert(!string.IsNullOrEmpty(data));
-
+#if NETCOREAPP2_0
+            using (var algorithm = new HMACSHA1())
+#else
             using (var algorithm = KeyedHashAlgorithm.Create(SignatureMethod.ToUpperInvariant()))
+#endif
             {
                 algorithm.Key = Encoding.GetBytes(key.ToCharArray());
                 return Convert.ToBase64String(

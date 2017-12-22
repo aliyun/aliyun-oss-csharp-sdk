@@ -461,7 +461,13 @@ namespace Aliyun.OSS.Common.Communication
         internal static void AddInternal(WebHeaderCollection headers, string key, string value)
         {
             if (_isMonoPlatform == null)
+            {
+#if NETCOREAPP2_0
+                _isMonoPlatform = true;
+#else
                 _isMonoPlatform = MonoPlatforms.Contains(Environment.OSVersion.Platform);
+#endif
+            }
 
             // HTTP headers should be encoded to iso-8859-1,
             // however it will be encoded automatically by HttpWebRequest in mono.

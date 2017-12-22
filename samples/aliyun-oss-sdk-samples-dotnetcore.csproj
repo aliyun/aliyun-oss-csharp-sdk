@@ -15,6 +15,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Aliyun.OSS.Samples.Program</StartupObject>
+    <RootNamespace>Aliyun.OSS.Samples</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />

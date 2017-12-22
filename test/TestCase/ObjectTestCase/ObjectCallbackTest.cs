@@ -24,7 +24,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _callbackBody;
         private static string _callbackOkResponse;
 
+#if NETCOREAPP2_0
         [OneTimeSetUp]
+#else
+        [TestFixtureSetUp]
+#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -47,7 +51,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _callbackOkResponse = "{\"Status\":\"OK\"}";
         }
 
+#if NETCOREAPP2_0
         [OneTimeTearDown]
+#else
+        [TestFixtureTearDown]
+#endif
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);

@@ -14,6 +14,7 @@
   </PropertyGroup>
  <PropertyGroup>
     <AssemblyOriginatorKeyFile>aliyun_sdk_net.snk</AssemblyOriginatorKeyFile>
+    <RootNamespace>Aliyun.OSS</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Commands\AppendObjectCommand.cs" />
