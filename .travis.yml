@@ -1,7 +1,7 @@
 language: csharp
 solution: aliyun-oss-sdk-dotnetcore.sln
-mono:none
-dotnet:2.0.0
+mono: none
+dotnet: 2.0.0
 env:
   global:
     - MONO_IOMAP=all
