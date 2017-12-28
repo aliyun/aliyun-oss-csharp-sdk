@@ -1,5 +1,5 @@
 
-Microsoft Visual Studio Solution File, Format Version 15.00
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-dotnetcore", "sdk\aliyun-oss-sdk-dotnetcore.csproj", "{B43BB182-FE52-4716-8A09-98A62DF4D2BF}"
 EndProject
