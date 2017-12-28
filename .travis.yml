@@ -1,9 +1,13 @@
 language: csharp
-solution: aliyun-oss-sdk-dotnetcore.sln
-mono: none
-dotnet: 2.0.0
+solution: aliyun-oss-sdk.sln
+
+matrix:
+  include:
+    - dotnet: 2.0.0
+      mono: latest
+
 env:
   global:
     - MONO_IOMAP=all
 script:
- - dotnet restore aliyun-oss-sdk-dotnetcore.sln
+ - dotnet restore aliyun-oss-sdk.sln

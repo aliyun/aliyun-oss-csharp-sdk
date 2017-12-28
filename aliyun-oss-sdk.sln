@@ -4,11 +4,14 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk", "sdk\aliyun-oss-sdk.csproj", "{67BDC800-084C-4F84-8A80-661B5AFE499A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-samples", "samples\aliyun-oss-sdk-samples.csproj", "{ADC5BCC2-3677-4CD5-9ED3-5BBA427519DD}"
-	ProjectSection(ProjectDependencies) = postProject
-		{67BDC800-084C-4F84-8A80-661B5AFE499A} = {67BDC800-084C-4F84-8A80-661B5AFE499A}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-test", "test\aliyun-oss-sdk-test.csproj", "{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-dotnetcore", "sdk\aliyun-oss-sdk-dotnetcore.csproj", "{2F92F310-2914-4A3D-BE56-5C894F9A363F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-samples-dotnetcore", "samples\aliyun-oss-sdk-samples-dotnetcore.csproj", "{E853A3AE-9C94-42B3-AB9C-37CE080BC037}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-test-dotnetcore", "test\aliyun-oss-sdk-test-dotnetcore.csproj", "{9163E33C-28D1-4484-90C9-57816A6464E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +41,30 @@ Global
 		{ADC5BCC2-3677-4CD5-9ED3-5BBA427519DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADC5BCC2-3677-4CD5-9ED3-5BBA427519DD}.Release|x86.ActiveCfg = Release|x86
 		{ADC5BCC2-3677-4CD5-9ED3-5BBA427519DD}.Release|x86.Build.0 = Release|x86
+		{2F92F310-2914-4A3D-BE56-5C894F9A363F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F92F310-2914-4A3D-BE56-5C894F9A363F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F92F310-2914-4A3D-BE56-5C894F9A363F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2F92F310-2914-4A3D-BE56-5C894F9A363F}.Debug|x86.Build.0 = Debug|Any CPU
+		{2F92F310-2914-4A3D-BE56-5C894F9A363F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F92F310-2914-4A3D-BE56-5C894F9A363F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F92F310-2914-4A3D-BE56-5C894F9A363F}.Release|x86.ActiveCfg = Release|Any CPU
+		{2F92F310-2914-4A3D-BE56-5C894F9A363F}.Release|x86.Build.0 = Release|Any CPU
+		{E853A3AE-9C94-42B3-AB9C-37CE080BC037}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E853A3AE-9C94-42B3-AB9C-37CE080BC037}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E853A3AE-9C94-42B3-AB9C-37CE080BC037}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E853A3AE-9C94-42B3-AB9C-37CE080BC037}.Debug|x86.Build.0 = Debug|Any CPU
+		{E853A3AE-9C94-42B3-AB9C-37CE080BC037}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E853A3AE-9C94-42B3-AB9C-37CE080BC037}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E853A3AE-9C94-42B3-AB9C-37CE080BC037}.Release|x86.ActiveCfg = Release|Any CPU
+		{E853A3AE-9C94-42B3-AB9C-37CE080BC037}.Release|x86.Build.0 = Release|Any CPU
+		{9163E33C-28D1-4484-90C9-57816A6464E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9163E33C-28D1-4484-90C9-57816A6464E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9163E33C-28D1-4484-90C9-57816A6464E5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9163E33C-28D1-4484-90C9-57816A6464E5}.Debug|x86.Build.0 = Debug|Any CPU
+		{9163E33C-28D1-4484-90C9-57816A6464E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9163E33C-28D1-4484-90C9-57816A6464E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9163E33C-28D1-4484-90C9-57816A6464E5}.Release|x86.ActiveCfg = Release|Any CPU
+		{9163E33C-28D1-4484-90C9-57816A6464E5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = samples\aliyun-oss-sdk-samples.csproj
