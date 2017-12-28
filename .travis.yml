@@ -6,4 +6,4 @@ env:
   global:
     - MONO_IOMAP=all
 script:
- - dotnet restore
+ - dotnet restore aliyun-oss-sdk-dotnetcore.sln
