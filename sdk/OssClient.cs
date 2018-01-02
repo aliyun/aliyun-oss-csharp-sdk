@@ -687,10 +687,20 @@ namespace Aliyun.OSS
                 metadata.Populate(webRequest);
             }
 
+            ClientConfiguration config = OssUtils.GetClientConfiguration(_serviceClient);
+            Crc64Stream crcStream = null;
             // send data
             using (var requestStream = webRequest.GetRequestStream())
             {
-                IoUtils.WriteTo(content, requestStream);
+                if (config.EnableCrcCheck)
+                {
+                    crcStream = new Crc64Stream(content, null, content.Length);
+                    IoUtils.WriteTo(crcStream, requestStream);                  
+                }
+                else
+                {
+                    IoUtils.WriteTo(content, requestStream);
+                }
             }
 
             // convert response
@@ -708,6 +718,11 @@ namespace Aliyun.OSS
                 responseHandler = new ErrorResponseHandler();
             }
             responseHandler.Handle(serviceResponse);
+
+            if (crcStream != null)
+            {
+                new Crc64CheckHandler(crcStream).Handle(serviceResponse);
+            }
 
             // build result
             var putObjectRequest = new PutObjectRequest(null, null, null, metadata);
@@ -838,7 +853,6 @@ namespace Aliyun.OSS
                 completeRequest.Metadata = callbackMetadata;
             }
 
-            ulong objectCrcCalculated = 0;
             foreach (var part in resumableContext.PartContextList)
             {
                 if (part == null || !part.IsCompleted)
@@ -846,31 +860,10 @@ namespace Aliyun.OSS
                     throw new OssException("Not all parts are completed.");
                 }
 
-                if (config.EnableCrcCheck)
-                {
-                    if (objectCrcCalculated == 0)
-                    {
-                        objectCrcCalculated = part.Crc64;
-                    }
-                    else
-                    {
-                        objectCrcCalculated = Crc64.Combine(objectCrcCalculated, part.Crc64, part.Length);    
-                    }
-                }
-
                 completeRequest.PartETags.Add(part.PartETag);
             }
 
             PutObjectResult result = CompleteMultipartUpload(completeRequest);
-            if (config.EnableCrcCheck && result.ResponseMetadata.ContainsKey(HttpHeaders.HashCrc64Ecma))
-            {
-                string objectCrc = result.ResponseMetadata[HttpHeaders.HashCrc64Ecma];
-                if (!string.Equals(objectCrcCalculated.ToString(), objectCrc))
-                {
-                    throw new ClientException("The whole uploaded object's CRC returned from OSS does not match the calculated one. OSS returns " 
-                                              + objectCrc + " but calculated is  " + objectCrcCalculated);
-                }
-            }
             resumableContext.Clear();
 
             return result;

@@ -117,6 +117,11 @@ namespace Aliyun.OSS.Transform
             return new UploadPartResultDeserializer(partNumber);
         }
 
+        public IDeserializer<ServiceResponse, UploadPartResult> CreateUploadPartResultDeserializer(int partNumber, long length)
+        {
+            return new UploadPartResultDeserializer(partNumber, length);
+        }
+
         public IDeserializer<ServiceResponse, UploadPartCopyResult> CreateUploadPartCopyResultDeserializer(int partNumber)
         {
             return new UploadPartCopyResultDeserializer(CreateContentDeserializer<UploadPartCopyRequestModel>(), partNumber);

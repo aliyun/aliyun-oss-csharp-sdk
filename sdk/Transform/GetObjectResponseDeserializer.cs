@@ -59,7 +59,7 @@ namespace Aliyun.OSS.Transform
                 var hashStream = new MD5Stream(originalStream, expectedHashDigest, streamLength);
                 ossObject.ResponseStream = hashStream;
             }
-            else if (conf.EnableCrcCheck && _getObjectRequest.Range == null)
+            else if (conf.EnableCrcCheck && _getObjectRequest.Range == null && string.IsNullOrEmpty(_getObjectRequest.Process))
             {
                 byte[] expectedHashDigest = null;
                 if (xmlStream.Headers.ContainsKey(HttpHeaders.HashCrc64Ecma))

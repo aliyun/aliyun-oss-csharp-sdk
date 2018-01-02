@@ -95,11 +95,15 @@ namespace Aliyun.OSS.Util
                 square[n] = Gf2MatrixTimes(mat, mat[n]);
         }
 
-        /*
-         * Return the CRC-64 of two sequential blocks, where summ1 is the CRC-64 of the
-         * first block, summ2 is the CRC-64 of the second block, and len2 is the length
-         * of the second block.
-         */
+        /// <summary>
+        /// Return the CRC-64 of two sequential blocks, where summ1 is the CRC-64 of the 
+        /// first block, summ2 is the CRC-64 of the second block, and len2 is the length
+        /// of the second block.
+        /// </summary>
+        /// <returns>The combined crc</returns>
+        /// <param name="crc1">Crc1.</param>
+        /// <param name="crc2">Crc2.</param>
+        /// <param name="len2">Len2.</param>
         static public ulong Combine(ulong crc1, ulong crc2, long len2)
         {
             // degenerate case.

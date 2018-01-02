@@ -124,7 +124,7 @@ namespace Aliyun.OSS.Commands
             }
 
             return new UploadPartCommand(client, endpoint, context, 
-                                        DeserializerFactory.GetFactory().CreateUploadPartResultDeserializer(uploadPartRequest.PartNumber.Value),
+                                         DeserializerFactory.GetFactory().CreateUploadPartResultDeserializer(uploadPartRequest.PartNumber.Value, streamLength),
                                         uploadPartRequest);
         }
     }

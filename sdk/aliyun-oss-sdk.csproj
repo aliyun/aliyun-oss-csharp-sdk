@@ -385,6 +385,7 @@
     <Compile Include="Util\Crc64.cs" />
     <Compile Include="Common\Internal\Crc64HashAlgorithm.cs" />
     <Compile Include="Common\Handlers\Crc64CheckHandler.cs" />
+    <Compile Include="Common\Handlers\CompleteMultipartUploadCrc64Handler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />
