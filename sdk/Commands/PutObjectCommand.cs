@@ -116,6 +116,13 @@ namespace Aliyun.OSS.Commands
                 putObjectRequest.Content = hashStream;
                 context.ResponseHandlers.Add(new MD5DigestCheckHandler(hashStream));
             }
+            else if (conf.EnableCrcCheck)
+            {
+                var streamLength = originalStream.CanSeek ? originalStream.Length : -1;
+                var hashStream = new Crc64Stream(originalStream, null, streamLength);
+                putObjectRequest.Content = hashStream;
+                context.ResponseHandlers.Add(new Crc64CheckHandler(hashStream));
+            }
             
             return new PutObjectCommand(client, endpoint, context,
                                         DeserializerFactory.GetFactory().CreatePutObjectReusltDeserializer(putObjectRequest),

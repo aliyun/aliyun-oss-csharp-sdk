@@ -91,7 +91,11 @@ namespace Aliyun.OSS
             {
                 if (part.IsCompleted)
                 {
-                    continue;
+                    // is CRC is enabled and part.Crc64 is 0, then redownload the data
+                    if (!_conf.EnableCrcCheck || part.Crc64 != 0)
+                    {
+                        continue;
+                    }
                 }
 
                 using (Stream fs = File.Open(GetTempDownloadFile(request), FileMode.OpenOrCreate))
@@ -107,11 +111,28 @@ namespace Aliyun.OSS
                                                                         downloadProgressCallback);
                     }
 
+                    if (_conf.EnableCrcCheck)
+                    {
+                        originalStream = new Crc64Stream(originalStream, null, part.Length);
+                    }
+
                     var getPartRequest = request.ToGetObjectRequest();
                     getPartRequest.SetRange(part.Position, part.Length + part.Position - 1);
 
                     var partResult = _ossClient.GetObject(getPartRequest);
                     WriteTo(partResult.Content, originalStream);
+
+                    if (originalStream is Crc64Stream)
+                    {
+                        Crc64Stream crcStream = originalStream as Crc64Stream;
+
+                        if (crcStream.CalculatedHash == null)
+                        {
+                            crcStream.CalculateHash();
+                        }
+
+                        part.Crc64 = BitConverter.ToUInt64(crcStream.CalculatedHash, 0);
+                    }
                 }
 
                 part.IsCompleted = true;
@@ -312,6 +333,23 @@ namespace Aliyun.OSS
                     }
                 }
             }
+            else if (_conf.EnableCrcCheck && !string.IsNullOrEmpty(resumableContext.Crc64))
+            {
+                ulong calculatedCrc = 0;
+                foreach (var part in resumableContext.PartContextList)
+                {
+                    calculatedCrc = Crc64.Combine(calculatedCrc, part.Crc64, part.Length);
+                }
+
+                if (calculatedCrc.ToString() != resumableContext.Crc64)
+                {
+                    throw new OssException(string.Format("The Crc64 of the downloaded file {0} does not match the expected. Expected:{1}, actual:{2}",
+                                                           GetTempDownloadFile(request),
+                                                           resumableContext.Crc64,
+                                                           calculatedCrc
+                                                          ));
+                }
+            }
 
             File.Move(GetTempDownloadFile(request), request.DownloadFile);
         }
@@ -337,7 +375,11 @@ namespace Aliyun.OSS
                 string fileName = GetTempDownloadFile(request); 
                 if (part.IsCompleted && File.Exists(fileName))
                 {
-                    return;
+                    // is CRC is enabled and part.Crc64 is 0, then redownload the data
+                    if (!_conf.EnableCrcCheck || part.Crc64 != 0)
+                    {
+                        return;
+                    }
                 }
 
                 const int retryCount = 3;
@@ -349,10 +391,17 @@ namespace Aliyun.OSS
                         partRequest.SetRange(part.Position, part.Position + part.Length - 1);
                         using(var partResult = _ossClient.GetObject(partRequest))
                         {
+                            Crc64Stream crcStream = null;
+                            if (_conf.EnableCrcCheck)
+                            {
+                                crcStream = new Crc64Stream(partResult.Content, null, part.Length, 0);
+                            }
+
                             using(var fs = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                             {
                                 fs.Seek(part.Position, SeekOrigin.Begin);
-                                long totalBytes = WriteTo(partResult.Content, fs);
+
+                                long totalBytes = WriteTo(crcStream ?? partResult.Content, fs);
                                 if (totalBytes != part.Length)
                                 {
                                     throw new OssException(string.Format("Part {0} returns {1} bytes. Expected size is {2} bytes", 
@@ -362,6 +411,15 @@ namespace Aliyun.OSS
                             }
 
                             part.IsCompleted = true;
+                            if (crcStream != null)
+                            {
+                                if (crcStream.CalculatedHash == null)
+                                {
+                                    crcStream.CalculateHash();
+                                }
+                                part.Crc64 = BitConverter.ToUInt64(crcStream.CalculatedHash, 0);
+                            }
+
                             return;
                         }
                     }

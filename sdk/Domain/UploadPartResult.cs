@@ -24,11 +24,23 @@ namespace Aliyun.OSS
         public int PartNumber { get; internal set; }
 
         /// <summary>
+        /// Gets or sets the crc64.
+        /// </summary>
+        /// <value>The crc64.</value>
+        public string Crc64 { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the length.
+        /// </summary>
+        /// <value>The length.</value>
+        public long Length { get; internal set; }
+
+        /// <summary>
         /// Gets the PartEtag instance which consists of a part number and the part's ETag
         /// </summary>
         public PartETag PartETag
         {
-            get { return new PartETag(PartNumber, ETag); }
+            get { return new PartETag(PartNumber, ETag, Crc64, Length); }
         }
 
         internal UploadPartResult()

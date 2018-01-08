@@ -32,6 +32,7 @@ namespace Aliyun.OSS.Common
         private long _maxPartCachingSize = 1024 * 1024 * 100;
         private int _preReadBufferCount = 8;
         private bool _useSingleThreadReadInResumableUpload = false;
+        private bool _enableCrcCheck = true;
 
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
@@ -131,11 +132,24 @@ namespace Aliyun.OSS.Common
 
         /// <summary>
         /// Flag of enabling MD5 checksum.
+        /// When EnalbeMD5Check is set true, MD5 will be checked and CRC check will be skipped whenever MD5 is applicable.  
         /// </summary>
         public bool EnalbeMD5Check
         {
             get { return _enalbeMD5Check; }
             set { _enalbeMD5Check = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="T:Aliyun.OSS.Common.ClientConfiguration"/> enable
+        /// crc check.
+        /// When EnalbeMD5Check is set true, MD5 will be checked and CRC check will be skipped whenever MD5 is applicable.  
+        /// </summary>
+        /// <value><c>true</c> if enable crc check; otherwise, <c>false</c>.</value>
+        public bool EnableCrcCheck
+        {
+            get { return _enableCrcCheck; }
+            set { _enableCrcCheck = value; }
         }
 
         /// <summary>

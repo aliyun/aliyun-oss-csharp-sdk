@@ -109,6 +109,12 @@ namespace Aliyun.OSS.Commands
                 request.Content = hashStream;
                 context.ResponseHandlers.Add(new MD5DigestCheckHandler(hashStream));
             }
+            else if (conf.EnableCrcCheck && request.InitCrc != null)
+            {
+                var hashStream = new Crc64Stream(originalStream, null, streamLength, request.InitCrc.Value);
+                request.Content = hashStream;
+                context.ResponseHandlers.Add(new Crc64CheckHandler(hashStream));
+            }
 
             return new AppendObjectCommand(client, endpoint, context,
                                            DeserializerFactory.GetFactory().CreateAppendObjectReusltDeserializer(),

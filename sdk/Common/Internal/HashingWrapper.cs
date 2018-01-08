@@ -17,13 +17,21 @@ namespace Aliyun.OSS.Common.Internal
     {
         private static string MD5ManagedName = typeof(MD5Managed).FullName;
 
-        private HashAlgorithm _algorithm = null;
+        protected HashAlgorithm _algorithm = null;
         private void Init(string algorithmName)
         {
             if (string.Equals(MD5ManagedName, algorithmName, StringComparison.Ordinal))
+            {
                 _algorithm = new MD5Managed();
+            }
+            else if (string.Equals(typeof(Crc64HashAlgorithm).FullName, algorithmName, StringComparison.Ordinal))
+            {
+                _algorithm = new Crc64HashAlgorithm();
+            }
             else
+            {
                 throw new ArgumentOutOfRangeException(algorithmName, "Unsupported hashing algorithm");
+            }
         }
 
         public HashingWrapper(string algorithmName)
@@ -108,5 +116,23 @@ namespace Aliyun.OSS.Common.Internal
         public HashingWrapperMD5()
             : base(typeof(MD5Managed).FullName)
         { }
+    }
+
+    public class HashingWrapperCrc64 : HashingWrapper
+    {
+        public HashingWrapperCrc64()
+            : base(typeof(Crc64HashAlgorithm).FullName)
+        { }
+
+        public void SetInitCrc64(ulong initCrc)
+        {
+            if (!(this._algorithm is Crc64HashAlgorithm))
+            {
+                throw new ClientException("HashingWrapperCrc64's algorithm must be type of Crc64HashAlgorithm");
+            }
+
+            Crc64HashAlgorithm crcAlgorithm = this._algorithm as Crc64HashAlgorithm;
+            crcAlgorithm.SetInitCrc(initCrc);
+        }
     }
 }

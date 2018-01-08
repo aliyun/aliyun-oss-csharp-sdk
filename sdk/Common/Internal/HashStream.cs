@@ -410,4 +410,19 @@ namespace Aliyun.OSS.Common.Internal
 
         #endregion
     }
+
+    public class Crc64Stream : HashStream<HashingWrapperCrc64>
+    {
+        public Crc64Stream(Stream baseStream, byte[] expectedHash, long expectedLength, ulong initCrc64 = 0)
+            : base(baseStream, expectedHash, expectedLength)
+        {
+            if (!(this.Algorithm is HashingWrapperCrc64))
+            {
+                throw new ClientException("Crc64Stream's Algorithm must be HashingWrapperCrc64");
+            }
+
+            HashingWrapperCrc64 crcWrapper = this.Algorithm as HashingWrapperCrc64;
+            crcWrapper.SetInitCrc64(initCrc64);
+        }
+    }
 }
