@@ -58,6 +58,17 @@ namespace Aliyun.OSS.Transform
             return new GetAclResponseDeserializer(CreateContentDeserializer<AccessControlPolicy>());
         }
 
+        public IDeserializer<ServiceResponse, BucketLocationResult> CreateGetBucketLocationResultDeserializer()
+        {
+            return new GetBucketLocationResultDeserializer(CreateContentDeserializer<BucketLocationResult>());
+        }
+
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public IDeserializer<ServiceResponse, BucketMetadata> CreateGetBucketMetadataResultDeserializer()
+        {
+            return new GetBucketMetadataResponseDeserializer();
+        }
+
         public IDeserializer<ServiceResponse, IList<CORSRule>> CreateGetCorsResultDeserializer()
         {
             return new GetCorsResponseDeserializer(CreateContentDeserializer<SetBucketCorsRequestModel>());
@@ -71,6 +82,11 @@ namespace Aliyun.OSS.Transform
         public IDeserializer<ServiceResponse, BucketWebsiteResult> CreateGetBucketWebSiteResultDeserializer()
         {
             return new GetBucketWebSiteResultDeserializer(CreateContentDeserializer<SetBucketWebsiteRequestModel>());
+        }
+
+        public IDeserializer<ServiceResponse, GetBucketStorageCapacityResult> CreateGetBucketStorageCapacityResultDeserializer()
+        {
+            return new GetBucketStorageCapacityResultDeserializer(CreateContentDeserializer<BucketStorageCapacityModel>());
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]

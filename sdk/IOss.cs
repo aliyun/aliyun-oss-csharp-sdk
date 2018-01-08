@@ -112,9 +112,22 @@ namespace Aliyun.OSS
         /// Gets the bucket ACL
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
-        /// <returns>访问权限<see cref="AccessControlList" /> instance</returns>
+        /// <returns>Bucket ACL<see cref="AccessControlList" /> instance</returns>
         AccessControlList GetBucketAcl(string bucketName);
 
+        /// <summary>
+        /// Gets the bucket location
+        /// </summary>
+        /// <param name="bucketName">bucket name</param>
+        /// <returns>bucket location</returns>
+        BucketLocationResult GetBucketLocation(string bucketName);
+
+        /// <summary>
+        /// Gets the bucket metadata
+        /// </summary>
+        /// <param name="bucketName">bucket name</param>
+        /// <returns><see cref="BucketMetadata" />metadata</returns>
+        BucketMetadata GetBucketMetadata(string bucketName);
 
         /// <summary>
         /// Sets the CORS rules for the <see cref="Bucket" />
@@ -209,6 +222,19 @@ namespace Aliyun.OSS
         /// <param name="bucketName">bucket name</param>
         /// <returns>Lifecycle list</returns>
         IList<LifecycleRule> GetBucketLifecycle(string bucketName);
+
+        /// <summary>
+        /// Sets <see cref="Bucket" /> storage capacity
+        /// </summary>
+        /// <param name="setBucketStorageCapacityRequest"><see cref="SetBucketStorageCapacityRequest"/> instance</param>
+        void SetBucketStorageCapacity(SetBucketStorageCapacityRequest setBucketStorageCapacityRequest);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> storage capacity
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="GetBucketStorageCapacityResult"/> instance</returns>
+        GetBucketStorageCapacityResult GetBucketStorageCapacity(string bucketName);
 
         /// <summary>
         /// Checks if the bucket exists

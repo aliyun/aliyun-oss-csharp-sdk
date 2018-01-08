@@ -55,5 +55,7 @@ namespace Aliyun.OSS.Util
         public const string Callback = "x-oss-callback";
 
         public const string CallbackVar = "x-oss-callback-var";
+
+        public const string BucketRegion = "x-oss-bucket-region";
     }
 }
