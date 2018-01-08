@@ -32,6 +32,16 @@ namespace Aliyun.OSS.Transform
 
             DeserializeGeneric(xmlStream, result);
 
+            if (result.ResponseMetadata.ContainsKey(HttpHeaders.HashCrc64Ecma))
+            {
+                result.Crc64 = result.ResponseMetadata[HttpHeaders.HashCrc64Ecma];
+            }
+
+            if (xmlStream.Headers.ContainsKey(HttpHeaders.QuotaDeltaSize))
+            {
+                result.Length = long.Parse(xmlStream.Headers[HttpHeaders.QuotaDeltaSize]);
+            }
+
             return result;
         }
     }
