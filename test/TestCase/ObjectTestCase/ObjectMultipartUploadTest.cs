@@ -93,8 +93,6 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             LogUtility.LogMessage("File {0} is splitted to {1} parts for multipart upload",
                 sourceFile, partCount);
 
-            // Create a list to save result 
-            var partETags = new List<PartETag>();
             //upload the file
             using (var fs = new FileStream(partFile.FullName, FileMode.Open))
             {
