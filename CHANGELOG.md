@@ -1,5 +1,11 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
 
+## 版本号：2.8.0  日期：2018/01/09
+### 变更内容
+- 增加：上传/下载支持CRC校验
+- 增加：支持GetBucketLocation/GetBucketMetadata
+- 增加：支持SetBucketStorageCapacity/GetBucketStorageCapacity
+
 ## 版本号：2.7.0  日期：2017/12/21
 ### 变更内容
 - 修复：优化异步机制实现

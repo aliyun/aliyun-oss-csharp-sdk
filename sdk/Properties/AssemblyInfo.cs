@@ -31,12 +31,12 @@ using System.Runtime.InteropServices;
 //
 // Major.Minor.Build.Revision
 //
-[assembly: AssemblyVersion("2.7.0")]
+[assembly: AssemblyVersion("2.8.0")]
 
 // The asembly is designed as CLS compliant to support CLS-compliant languages.
 //[assembly: CLSCompliant(true)]
 
 [assembly: InternalsVisibleTo("Aliyun.OSS.Test")]
-[assembly: AssemblyFileVersion("2.7.0")]
+[assembly: AssemblyFileVersion("2.8.0")]
 
 
