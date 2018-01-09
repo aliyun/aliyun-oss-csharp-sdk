@@ -22,13 +22,25 @@ namespace Aliyun.OSS
         /// The part number of the target object
         /// </summary>
         public int PartNumber { get; internal set; }
-        
+
+        /// <summary>
+        /// Gets or sets the crc64.
+        /// </summary>
+        /// <value>The crc64.</value>
+        public string Crc64 { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the length.
+        /// </summary>
+        /// <value>The length.</value>
+        public long Length { get; internal set; }
+
         /// <summary>
         /// Gets the wrapper class of the part number and ETag.
         /// </summary>
         public PartETag PartETag
         {
-            get { return new PartETag(PartNumber, ETag); }
+            get { return new PartETag(PartNumber, ETag, Crc64, Length); }
         }
 
         internal UploadPartCopyResult()

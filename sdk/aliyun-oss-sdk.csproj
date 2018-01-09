@@ -145,6 +145,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AppendObjectCommand.cs" />
+    <Compile Include="Commands\GetBucketStorageCapacityCommand.cs" />
+    <Compile Include="Commands\SetBucketStorageCapacityCommand.cs" />
+    <Compile Include="Commands\GetBucketMetadataCommand.cs" />
+    <Compile Include="Commands\GetBucketLocationCommand.cs" />
     <Compile Include="Commands\GetObjectAclCommand.cs" />
     <Compile Include="Commands\SetObjectAclCommand.cs" />
     <Compile Include="Common\ClientConfiguration.cs" />
@@ -184,6 +188,11 @@
     <Compile Include="Common\ThirdParty\MD5Managed.cs" />
     <Compile Include="Common\Internal\PartialWrapperStream.cs" />
     <Compile Include="Common\Internal\StreamReadTracker.cs" />
+    <Compile Include="Domain\BucketMetadata.cs" />
+    <Compile Include="Domain\BucketLocationResult.cs" />
+    <Compile Include="Domain\GetBucketStorageCapacityResult.cs" />
+    <Compile Include="Domain\SetBucketStorageCapacityRequest.cs" />
+    <Compile Include="Model\BucketStorageCapacityModel.cs" />
     <Compile Include="Model\StreamUploadProgressArgs.cs" />
     <Compile Include="Common\Internal\WrapperStream.cs" />
     <Compile Include="Domain\AppendObjectRequest.cs" />
@@ -195,6 +204,10 @@
     <Compile Include="Model\StreamResult.cs" />
     <Compile Include="Model\GenericResult.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
+    <Compile Include="Transform\GetBucketStorageCapacityResultDeserializer.cs" />
+    <Compile Include="Transform\SetBucketStorageCapacityRequestSerializer.cs" />
+    <Compile Include="Transform\GetBucketMetadataResponseDeserializer.cs" />
+    <Compile Include="Transform\GetBucketLocationResultDeserializer.cs" />
     <Compile Include="Transform\IDeserializer.cs" />
     <Compile Include="Transform\ISerializer.cs" />
     <Compile Include="Transform\RequestSerializationException.cs" />

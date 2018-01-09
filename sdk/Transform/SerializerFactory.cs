@@ -39,6 +39,11 @@ namespace Aliyun.OSS.Transform
             return new SetBucketWebsiteRequestSerializer(CreateContentSerializer<SetBucketWebsiteRequestModel>());
         }
 
+        public ISerializer<SetBucketStorageCapacityRequest, Stream> CreateSetBucketStorageCapacityRequestSerializer()
+        {
+            return new SetBucketStorageCapacityRequestSerializer(CreateContentSerializer<BucketStorageCapacityModel>());
+        }
+
         public ISerializer<SetBucketCorsRequest, Stream> CreateSetBucketCorsRequestSerializer()
         {
             return new SetBucketCorsRequestSerializer(CreateContentSerializer<SetBucketCorsRequestModel>());

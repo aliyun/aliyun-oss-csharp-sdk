@@ -287,6 +287,23 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        /// <inheritdoc/>
+        public BucketLocationResult GetBucketLocation(string bucketName)
+        {
+            var cmd = GetBucketLocationCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Get, bucketName, null),
+                                                      bucketName);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public BucketMetadata GetBucketMetadata(string bucketName)
+        {
+            var cmd = GetBucketMetadataCommand.Create(_serviceClient, _endpoint,
+                                          CreateContext(HttpMethod.Head, bucketName, null),
+                                          bucketName);
+            return cmd.Execute();
+        }
 
         /// <inheritdoc/>
         public void SetBucketCors(SetBucketCorsRequest setBucketCorsRequest)
@@ -454,6 +471,29 @@ namespace Aliyun.OSS
             var cmd = GetBucketLifecycleCommand.Create(_serviceClient, _endpoint,
                                                       CreateContext(HttpMethod.Get, bucketName, null),
                                                       bucketName);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public void SetBucketStorageCapacity(SetBucketStorageCapacityRequest setBucketStorageCapacityRequest)
+        {
+            ThrowIfNullRequest(setBucketStorageCapacityRequest);
+            var cmd = SetBucketStorageCapacityCommand.Create(_serviceClient, _endpoint,
+                                                             CreateContext(HttpMethod.Put, setBucketStorageCapacityRequest.BucketName, null),
+                                                             setBucketStorageCapacityRequest.BucketName,
+                                                             setBucketStorageCapacityRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetBucketStorageCapacityResult GetBucketStorageCapacity(string bucketName)
+        {
+            var cmd = GetBucketStorageCapacityCommand.Create(_serviceClient, _endpoint,
+                                                             CreateContext(HttpMethod.Get, bucketName, null),
+                                                             bucketName);
             return cmd.Execute();
         }
 

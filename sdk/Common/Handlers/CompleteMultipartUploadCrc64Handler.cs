@@ -22,12 +22,26 @@ namespace Aliyun.OSS.Common.Handlers
 
         public override void Handle(Communication.ServiceResponse response)
         {
+            
             if (response.Headers.ContainsKey(HttpHeaders.HashCrc64Ecma))
             {
                 ulong crc64 = 0;
+                bool checkCrc = true;
                 foreach (var part in _request.PartETags)
                 {
-                    crc64 = Crc64.Combine(crc64, ulong.Parse(part.Crc64), part.Length);
+                    if (!String.IsNullOrEmpty(part.Crc64) && part.Length != 0)
+                    {
+                        crc64 = Crc64.Combine(crc64, ulong.Parse(part.Crc64), part.Length);
+                    }
+                    else
+                    {
+                        checkCrc = false;
+                    }
+                }
+
+                if (!checkCrc) // the request does not have CRC64 for at least one part, skip the check
+                {
+                    return;
                 }
 
                 var ossCalculatedHashStr = response.Headers[HttpHeaders.HashCrc64Ecma];
