@@ -293,7 +293,7 @@ namespace Aliyun.OSS.Common.Internal
         {
             // Fast-fail on unusable streams
             if (!BaseStream.CanRead && !BaseStream.CanWrite)
-                throw new InvalidDataException("HashStream does not support base streams that are not capable of reading or writing");
+                throw new IOException("HashStream does not support base streams that are not capable of reading or writing");
         }
 
         /// <summary>
