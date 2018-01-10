@@ -15,9 +15,6 @@
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
     <CompilerResponseFile>
     </CompilerResponseFile>
-    <UnityProjectType>Game:1</UnityProjectType>
-    <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
-    <UnityVersion>2017.3.0f3</UnityVersion>
     <RootNamespace>
     </RootNamespace>
     <LangVersion>4</LangVersion>
