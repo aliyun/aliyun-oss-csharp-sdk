@@ -254,15 +254,24 @@ namespace Aliyun.OSS.Common.Communication
             long userSetContentLength = -1;
             if (serviceRequest.Headers.ContainsKey(HttpHeaders.ContentLength))
                 userSetContentLength = long.Parse(serviceRequest.Headers[HttpHeaders.ContentLength]);
-            
-            if (serviceRequest.UseChunkedEncoding || !data.CanSeek) // when data cannot seek, we have to use chunked encoding as there's no way to set the length
+            long streamLength = 0;
+            bool canReadLength = true;
+            try
+            {
+                streamLength = data.Length - data.Position;
+            }
+            catch (Exception)
+            {
+                canReadLength = false;
+            }
+
+            if (serviceRequest.UseChunkedEncoding || !canReadLength) // when data cannot seek, we have to use chunked encoding as there's no way to set the length
             {
                 webRequest.SendChunked = true;
                 webRequest.AllowWriteStreamBuffering = false; // when using chunked encoding, the data is likely big and thus not use write buffer;
             }
             else
             {
-                long streamLength = data.Length - data.Position;
                 webRequest.ContentLength = (userSetContentLength >= 0 &&
                     userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
                 if (webRequest.ContentLength > clientConfiguration.DirectWriteStreamThreshold)
@@ -312,14 +321,24 @@ namespace Aliyun.OSS.Common.Communication
             if (serviceRequest.Headers.ContainsKey(HttpHeaders.ContentLength))
                 userSetContentLength = long.Parse(serviceRequest.Headers[HttpHeaders.ContentLength]);
 
-            if (serviceRequest.UseChunkedEncoding || !data.CanSeek) // when data cannot seek, we have to use chunked encoding as there's no way to set the length
+            long streamLength = 0;
+            bool canReadLength = true;
+            try
+            {
+                streamLength = data.Length - data.Position;
+            }
+            catch (Exception)
+            {
+                canReadLength = false;
+            }
+
+            if (serviceRequest.UseChunkedEncoding || !canReadLength) // when data cannot seek, we have to use chunked encoding as there's no way to set the length
             {
                 webRequest.SendChunked = true;
                 webRequest.AllowWriteStreamBuffering = false; // when using chunked encoding, the data is likely big and thus not use write buffer;
             }
             else
             {
-                long streamLength = data.Length - data.Position;
                 webRequest.ContentLength = (userSetContentLength >= 0 &&
                     userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
                 if (webRequest.ContentLength > clientConfiguration.DirectWriteStreamThreshold)
@@ -460,9 +479,12 @@ namespace Aliyun.OSS.Common.Communication
 
         internal static void AddInternal(WebHeaderCollection headers, string key, string value)
         {
+#if UNITY_5_3_OR_NEWER
+            _isMonoPlatform = true;
+#else
             if (_isMonoPlatform == null)
                 _isMonoPlatform = MonoPlatforms.Contains(Environment.OSVersion.Platform);
-
+#endif
             // HTTP headers should be encoded to iso-8859-1,
             // however it will be encoded automatically by HttpWebRequest in mono.
             if (_isMonoPlatform == false)
