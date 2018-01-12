@@ -23,7 +23,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _imageInfo;
         private static string _process;
 
+#if UNITY_5_3_OR_NEWER
+        [OneTimeSetUp]
+#else
         [TestFixtureSetUp]
+#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -41,10 +45,14 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _process = "image/resize,m_fixed,w_100,h_100";
             _localImageFile = Config.ImageTestFile;
             _processedKey = "process/image" + _keyName;
-            _imageInfo = "{\n    \"FileSize\": {\"value\": \"5470\"},\n    \"Format\": {\"value\": \"jpg\"},\n    \"ImageHeight\": {\"value\": \"100\"},\n    \"ImageWidth\": {\"value\": \"100\"},\n    \"ResolutionUnit\": {\"value\": \"1\"},\n    \"XResolution\": {\"value\": \"1/1\"},\n    \"YResolution\": {\"value\": \"1/1\"}}";
+            _imageInfo = "\"Format\": {\"value\": \"jpg\"},\n    \"ImageHeight\": {\"value\": \"100\"},\n    \"ImageWidth\": {\"value\": \"100\"},\n    \"ResolutionUnit\": {\"value\": \"1\"},\n    \"XResolution\": {\"value\": \"1/1\"},\n    \"YResolution\": {\"value\": \"1/1\"}}";
         }
 
+#if UNITY_5_3_OR_NEWER
+        [OneTimeTearDown]
+#else
         [TestFixtureTearDown]
+#endif
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);
@@ -70,7 +78,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var imgInfo = GetOssImageObjectInfo(_bucketName, _processedKey);
 
                 // check processed result
-                Assert.AreEqual(imgInfo, _imageInfo);
+                Assert.IsTrue(imgInfo.EndsWith(_imageInfo));
             }
             finally
             {
@@ -106,7 +114,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var imgInfo = GetOssImageObjectInfo(_bucketName, _processedKey);
 
                 // check processed result
-                Assert.AreEqual(imgInfo, _imageInfo);
+                Assert.IsTrue(imgInfo.EndsWith(_imageInfo));
             }
             finally
             {

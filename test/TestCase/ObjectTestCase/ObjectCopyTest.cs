@@ -18,7 +18,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _sourceBigObjectKey;
         private static string _sourceBigObjectETag;
 
+#if UNITY_5_3_OR_NEWER
+        [OneTimeSetUp]
+#else
         [TestFixtureSetUp]
+#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -45,7 +49,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _sourceBigObjectETag = poResult.ETag;
         }
 
+#if UNITY_5_3_OR_NEWER
+        [OneTimeTearDown]
+#else
         [TestFixtureTearDown]
+#endif
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);

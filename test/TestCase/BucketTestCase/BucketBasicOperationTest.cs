@@ -16,7 +16,11 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         private static IOss _ossClient;
         private static string _className;
 
+#if UNITY_5_3_OR_NEWER
+        [OneTimeSetUp]
+#else
         [TestFixtureSetUp]
+#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -26,7 +30,11 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _className = _className.Substring(_className.LastIndexOf('.') + 1).ToLowerInvariant();
         }
 
+#if UNITY_5_3_OR_NEWER
+        [OneTimeTearDown]
+#else
         [TestFixtureTearDown]
+#endif
         public static void ClassCleanup()
         {
             //Bucket is limited resources, so double check to clean up all remain
@@ -49,7 +57,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             }
         }
 
-        #region Create Bucket Cases
+#region Create Bucket Cases
         [Test]
         public void CreateAndDeleteBucketTest()
         {
@@ -135,7 +143,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 string.Format("Bucket {0} should not exist after deletion", bucketName));
         }
 
-        [Ignore]
+        [Ignore("Ignore")]
         public void CreateAndDeleteBucketSecondRegionTest()
         {
             var settings = AccountSettings.Load();
@@ -206,7 +214,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             }
         }
 
-        [Ignore]
+        [Ignore("Ignore")]
         public void CreateBucketWithDuplicatedNameDifferentLocationTest()
         {
             //get a random bucketName
@@ -242,7 +250,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 
         //bucket number max to 10
         private const int MaxAllowedBucketNumber = 10;
-        [Ignore]
+        [Ignore("Ignore")]
         public void CreateBucketWhenBucketNumberReachesLimitTest()
         {
             //get a random bucketName
@@ -293,9 +301,9 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Delete Bucket Cases
+#region Delete Bucket Cases
         [Test]
         public void DeleteNonExistBucketTest()
         {
@@ -334,9 +342,9 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Dose Bucket Exists Cases
+#region Dose Bucket Exists Cases
         [Test]
         public void DoesBucketExistTestWithBucketExist()
         {
@@ -382,9 +390,9 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 Assert.True(false, e.Message);
             }
         }
-        #endregion
+#endregion
 
-        #region List Buckets
+#region List Buckets
 
         [Test]
         public void ListBucketspagingTest()
@@ -409,7 +417,6 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             }
         }
 
-        /*
         [Test]
         public void DeleteTestBuckets()
         {
@@ -435,10 +442,10 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 
                 _ossClient.DeleteBucket(bucket.Name);
             }
-        }*/
-        #endregion
+        }
+#endregion
 
-        #region GetBucketInfo
+#region GetBucketInfo
         [Test]
         public void GetBucketInfoTest()
         {
@@ -509,9 +516,9 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             {
             }
         }
-        #endregion
+#endregion
 
-        #region GetBucketStat
+#region GetBucketStat
         [Test]
         public void GetBucketStatTest()
         {
@@ -574,9 +581,9 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             {
             }
         }
-        #endregion
+#endregion
 
-        #region Get Bucket Location Cases
+#region Get Bucket Location Cases
 
         [Test]
         public void GetBucketLocationTest()
@@ -606,9 +613,9 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 string.Format("Bucket {0} should not exist after deletion", bucketName));
         }
 
-        #endregion
+#endregion
 
-        #region Get Bucket Metadata Cases
+#region Get Bucket Metadata Cases
 
         [Test]
         public void GetBucketMetadataTest()
@@ -638,6 +645,6 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 string.Format("Bucket {0} should not exist after deletion", bucketName));
         }
 
-        #endregion
+#endregion
     }
 }

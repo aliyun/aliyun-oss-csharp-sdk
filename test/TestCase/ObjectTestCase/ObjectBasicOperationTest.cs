@@ -27,7 +27,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _archiveBucketName;
         private static AutoResetEvent _event;
 
+#if UNITY_5_3_OR_NEWER
+        [OneTimeSetUp]
+#else
         [TestFixtureSetUp]
+#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -58,7 +62,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _event = new AutoResetEvent(false);
         }
 
+#if UNITY_5_3_OR_NEWER
+        [OneTimeTearDown]
+#else
         [TestFixtureTearDown]
+#endif
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);
@@ -1180,7 +1188,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     ContentType = "application/vnd.wap.wmlc",
                     CacheControl = "max-stale"
                 };
-                _ossClient.ModifyObjectMeta(_bucketName, key, toModifyMeta, 100 * 1024);
+                _ossClient.ModifyObjectMeta(_bucketName, key, toModifyMeta, 100 * 1024, Config.DownloadFolder);
 
                 var newMeta = _ossClient.GetObjectMetadata(_bucketName, key);
                 Assert.AreEqual("application/vnd.wap.wmlc", newMeta.ContentType);

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-unity", "aliyun-oss-sdk-unity.csproj", "{08589B48-978E-4E5C-92A7-16CB5DF84751}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-test-unity", "..\test\aliyun-oss-sdk-test-unity.csproj", "{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{08589B48-978E-4E5C-92A7-16CB5DF84751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08589B48-978E-4E5C-92A7-16CB5DF84751}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08589B48-978E-4E5C-92A7-16CB5DF84751}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08589B48-978E-4E5C-92A7-16CB5DF84751}.Release|Any CPU.Build.0 = Release|Any CPU
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA31768C-1E5C-4FE4-B75D-7793255A6978}
+	EndGlobalSection
+EndGlobal

@@ -14,18 +14,6 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 
         private static readonly DateTime EpochTime = new DateTime(1970, 1, 1);
 
-        [TestFixtureSetUp]
-        public static void ClassInitialize()
-        {
-            //TODO: 
-        }
-
-        [TestFixtureTearDown]
-        public static void ClassCleanup()
-        {
-            //TODO: 
-        }
-
         [Test]
         public void EpochTimeSettingNormalTest()
         {
