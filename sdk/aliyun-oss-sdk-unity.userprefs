@@ -1,0 +1,23 @@
+﻿<Properties StartupConfiguration="{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Common/Internal/HashStream.cs">
+    <Files>
+      <File FileName="Common/Internal/HashStream.cs" Line="300" Column="51" />
+    </Files>
+    <Pads>
+      <Pad Id="MonoDevelop.UnitTesting.TestPad">
+        <State name="__root__">
+          <Node name="aliyun-oss-sdk-unity" expanded="True">
+            <Node name="aliyun-oss-sdk-test-unity" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.aliyun-oss-sdk-test-unity PreferredExecutionTarget="Unity.Editor" />
+  <MultiItemStartupConfigurations />
+</Properties>

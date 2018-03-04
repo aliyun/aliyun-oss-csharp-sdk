@@ -13,7 +13,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SourceAnalysisOverrideSettingsFile>C:\Users\Ethan\AppData\Roaming\ICSharpCode/SharpDevelop4\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
     <SignAssembly>false</SignAssembly>
-    <DelaySign>False</DelaySign>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
@@ -399,6 +398,10 @@
     <Compile Include="Common\Internal\Crc64HashAlgorithm.cs" />
     <Compile Include="Common\Handlers\Crc64CheckHandler.cs" />
     <Compile Include="Common\Handlers\CompleteMultipartUploadCrc64Handler.cs" />
+    <Compile Include="Domain\SelectObjectRequest.cs" />
+    <Compile Include="Commands\SelectObjectCommand.cs" />
+    <Compile Include="Model\SelectObjectRequestModel.cs" />
+    <Compile Include="Transform\SelectObjectRequestSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />

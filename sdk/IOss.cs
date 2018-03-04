@@ -597,6 +597,9 @@ namespace Aliyun.OSS
         /// <returns><see cref="OssObject" /> instance. The caller needs to dispose the object.</returns>
         OssObject GetObject(GetObjectRequest getObjectRequest);
 
+
+        OssObject SelectObject(SelectObjectRequest selectObjectRequest);
+
         /// <summary>
         /// Begins the async call to get object according to the <see cref="GetObjectRequest"/> instance.
         /// </summary>

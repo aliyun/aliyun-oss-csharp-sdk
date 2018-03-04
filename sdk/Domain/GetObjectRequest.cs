@@ -22,6 +22,7 @@ namespace Aliyun.OSS
         private readonly IList<string> _matchingETagConstraints = new List<string>();
         private readonly IList<string> _nonmatchingEtagConstraints = new List<string>();
         private readonly ResponseHeaderOverrides _responseHeaders = new ResponseHeaderOverrides();
+        private readonly IDictionary<string, string> _customHeaders = new Dictionary<string, string>();
 
         /// <summary>
         /// Gets or sets <see cref="Bucket" /> name.
@@ -146,6 +147,11 @@ namespace Aliyun.OSS
             Range = new[] { start, end };
         }
 
+        public void AddCustomHeaders(string headerName, string value)
+        {
+            _customHeaders[headerName] = value;
+        }
+
         /// <summary>
         /// Populate the http headers according to the properties of this object.
         /// </summary>
@@ -183,6 +189,11 @@ namespace Aliyun.OSS
             {
                 headers.Add(OssHeaders.GetObjectIfNoneMatch, 
                     OssUtils.JoinETag(_nonmatchingEtagConstraints));
+            }
+
+            foreach (var item in _customHeaders)
+            {
+                headers.Add(item.Key, item.Value);
             }
         }
     }

@@ -1018,6 +1018,16 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        public OssObject SelectObject(SelectObjectRequest selectObjectRequest)
+        {
+            ThrowIfNullRequest(selectObjectRequest);
+
+            var cmd = SelectObjectCommand.Create(_serviceClient, _endpoint,
+                                              CreateContext(HttpMethod.Get, selectObjectRequest.BucketName, selectObjectRequest.Key),
+                                              selectObjectRequest);
+            return cmd.Execute();
+        }
+
         /// <inheritdoc/>
         public IAsyncResult BeginGetObject(GetObjectRequest getObjectRequest, AsyncCallback callback, Object state)
         {
