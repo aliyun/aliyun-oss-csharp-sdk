@@ -214,6 +214,7 @@ namespace Aliyun.OSS
                 if (type == SelectResponseFrame.DataFrameType)
                 {
                     _payloadLength = IPAddress.NetworkToHostOrder((BitConverter.ToInt32(_framePayloadLengthBytes, 0)));
+                    _payloadLength -= 8; // the payload length includes the offset
                     _offset = 0;
                     _Read(_frameOffsetBytes, 0, 8); //
                     _processingOffset = IPAddress.NetworkToHostOrder((BitConverter.ToInt64(_frameOffsetBytes, 0)));
