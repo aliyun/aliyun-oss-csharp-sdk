@@ -402,6 +402,8 @@
     <Compile Include="Commands\SelectObjectCommand.cs" />
     <Compile Include="Model\SelectObjectRequestModel.cs" />
     <Compile Include="Transform\SelectObjectRequestSerializer.cs" />
+    <Compile Include="Domain\OssSelectObject.cs" />
+    <Compile Include="Transform\SelectObjectResponseDeserializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />

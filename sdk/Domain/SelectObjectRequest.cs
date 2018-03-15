@@ -101,6 +101,12 @@ namespace Aliyun.OSS
             set { _outputQuoteFields = value; }
         }
 
+        public bool KeepAllColumns
+        {
+            get;
+            set;
+        }
+
         public enum HeaderInfo
         {
             None,

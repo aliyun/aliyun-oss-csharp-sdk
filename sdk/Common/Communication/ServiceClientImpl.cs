@@ -271,6 +271,8 @@ namespace Aliyun.OSS.Common.Communication
                 }
             }
 
+            webRequest.AutomaticDecompression = DecompressionMethods.None;
+
             using (var requestStream = webRequest.GetRequestStream())
             {
                 if (!webRequest.SendChunked)

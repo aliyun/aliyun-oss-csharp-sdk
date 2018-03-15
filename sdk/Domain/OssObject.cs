@@ -41,7 +41,7 @@ namespace Aliyun.OSS
         /// <summary>
         /// Gets or sets object's content stream.
         /// </summary>
-        public Stream Content 
+        public virtual Stream Content 
         { 
             get { return this.ResponseStream; } 
         }

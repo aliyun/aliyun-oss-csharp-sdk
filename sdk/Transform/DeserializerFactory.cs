@@ -177,6 +177,12 @@ namespace Aliyun.OSS.Transform
         {
             return new RestoreObjectResultDeserializer(CreateContentDeserializer<ErrorResult>());
         }
+
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        public IDeserializer<ServiceResponse, OssObject> CreateSelectObjectResultDeserializer(SelectObjectRequest request, IServiceClient client)
+        {
+            return new SelectObjectResponseDeserializer(request, client);
+        }
     }
 
     internal class XmlDeserializerFactory : DeserializerFactory

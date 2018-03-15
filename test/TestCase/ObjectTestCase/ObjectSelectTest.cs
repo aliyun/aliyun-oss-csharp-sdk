@@ -33,7 +33,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _bucketName = "oss-select";
             //_ossClient.CreateBucket(_bucketName);
             //create sample object
-            _keyName = "sampleusers_10m_2.csv";
+            _keyName = "bigcsv_normal.csv";
 
 
             _localCsvFile = Config.LocalCsvFile;
@@ -53,15 +53,15 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 // put example csv
                 //_ossClient.PutObject(_bucketName, _keyName, _localCsvFile);
-                OssObject ossObject = _ossClient.GetObject(_bucketName, _keyName);
+                /*OssObject ossObject = _ossClient.GetObject(_bucketName, _keyName);
                 using (FileStream fs = new FileStream(_localCsvOutputFile, FileMode.Create))
                 {
                     OssTestUtils.WriteTo(ossObject.Content, fs);
-                }
+                }*/
 
                 // select the csv
-                SelectObjectRequest request = new SelectObjectRequest(_bucketName, _keyName, "select _1, _4 from ossobject where _4 > 30");
-                ossObject = _ossClient.SelectObject(request);
+                SelectObjectRequest request = new SelectObjectRequest(_bucketName, _keyName, "select _1, _4 from ossobject where _1 like  'Tom%' and _4 > 50");
+                OssObject ossObject = _ossClient.SelectObject(request);
                 using (FileStream fs = new FileStream(_localCsvOutputFile, FileMode.Create))
                 {
                     OssTestUtils.WriteTo(ossObject.Content, fs);

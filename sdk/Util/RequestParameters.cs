@@ -44,5 +44,7 @@ namespace Aliyun.OSS.Util
         public const string SECURITY_TOKEN = "security-token";
 
         public const string OSS_PROCESS = "x-oss-process";
+        public const string CSV_SELECT = "csv/select";
+        public const string SQL = "sql";
     }
 }

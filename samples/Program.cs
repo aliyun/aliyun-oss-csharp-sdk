@@ -12,7 +12,7 @@ namespace Aliyun.OSS.Samples
         {
             Console.WriteLine("Aliyun SDK for .NET Samples!");
 
-            const string bucketName = "<your bucket name>";
+            const string bucketName = "test";
 
             try
             {
@@ -115,7 +115,7 @@ namespace Aliyun.OSS.Samples
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed with error info: {0}", ex.Message);
+                Console.WriteLine("Failed with error info: {0}", ex.ToString());
             }
 
             Console.WriteLine("Press any key to continue . . . ");
