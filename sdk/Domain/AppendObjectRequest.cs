@@ -43,6 +43,12 @@ namespace Aliyun.OSS
         public long Position { get; set; }
 
         /// <summary>
+        /// Gets or sets the init crc.
+        /// </summary>
+        /// <value>The init crc.</value>
+        public ulong? InitCrc { get; set; }
+
+        /// <summary>
         /// The content to append
         /// </summary>
         public Stream Content

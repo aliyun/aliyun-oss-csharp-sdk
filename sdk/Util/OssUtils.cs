@@ -231,6 +231,44 @@ namespace Aliyun.OSS.Util
         }
 
         /// <summary>
+        /// Computes the content crc64.
+        /// </summary>
+        /// <returns>The content crc64.</returns>
+        /// <param name="input">Input.</param>
+        /// <param name="length">stream length</param>
+        public static string ComputeContentCrc64(Stream input, long length)
+        {
+            using(Crc64Stream crcStream = new Crc64Stream(input, null, length))
+            {
+                byte[] buffer = new byte[32 * 1024];
+                int readCount = 0;
+                while(readCount < length)
+                {
+                    int read = crcStream.Read(buffer, 0, buffer.Length);
+                    if (read == 0)
+                    {
+                        break;
+                    }
+                    readCount += read;
+                }
+
+                if (crcStream.CalculatedHash == null)
+                {
+                    crcStream.CalculateHash();
+                }
+
+                if (crcStream.CalculatedHash == null || crcStream.CalculatedHash.Length == 0)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return BitConverter.ToUInt64(crcStream.CalculatedHash, 0).ToString();
+                }
+            }
+        }
+
+        /// <summary>
         /// Checks if the webpage url is valid.
         /// </summary>
         /// <param name="webpage">The wenpage url to check</param>

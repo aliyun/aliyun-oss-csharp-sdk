@@ -669,6 +669,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             try
             {
                 DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.CheckpointDir = Config.DownloadFolder;
                 request.ParallelThreadCount = 1;
                 var metadata = client.ResumableDownloadObject(request);
                 var expectedETag = metadata.ETag;

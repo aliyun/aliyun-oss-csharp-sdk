@@ -47,10 +47,18 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _ossClient.CreateBucket(_archiveBucketName, StorageClass.Archive);
             //create sample object
             _objectKey = OssTestUtils.GetObjectKey(_className);
-            var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
-                Config.UploadTestFile, new ObjectMetadata());
-            _objectETag = poResult.ETag;
+            try
+            {
+                var poResult = OssTestUtils.UploadObject(_ossClient, _bucketName, _objectKey,
+                    Config.UploadTestFile, new ObjectMetadata());
 
+                _objectETag = poResult.ETag;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                throw;
+            }
             _event = new AutoResetEvent(false);
         }
 
@@ -548,17 +556,21 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             try
             {
+                //list objects by specifying bucket name
+                var allObjects = _ossClient.ListObjects(_bucketName);
+                var allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
+
+                //default value is 100
+                Assert.AreEqual(100, allObjects.MaxKeys);
+
                 //upload the object
                 OssTestUtils.UploadObject(_ossClient, _bucketName, key,
                     Config.UploadTestFile, new ObjectMetadata());
 
-                //list objects by specifying bucket name
-                var allObjects = _ossClient.ListObjects(_bucketName);
-                //default value is 100
-                Assert.AreEqual(100, allObjects.MaxKeys);
-                var allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
+                allObjects = _ossClient.ListObjects(_bucketName);
+                var allObjectsSumm2 = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
                 //there is already one sample object
-                Assert.AreEqual(2, allObjectsSumm.Count);
+                Assert.AreEqual(allObjectsSumm2.Count, allObjectsSumm.Count + 1);
 
                 //list objects by specifying folder as prefix
                 allObjects = _ossClient.ListObjects(_bucketName, folderName);
@@ -1351,6 +1363,96 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
                 var meta = _ossClient.GetObjectMetadata(_bucketName, key);
                 Assert.AreEqual("Appendable", meta.ObjectType);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void AppendObjectWithCrc()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                long position = 0;
+                ulong initCrc = 0;
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        Content = fs,
+                        Position = position,
+                        InitCrc = initCrc
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+                    position = result.NextAppendPosition;
+                    initCrc = result.HashCrc64Ecma;
+                }
+
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        Content = fs,
+                        Position = position,
+                        InitCrc = initCrc
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength * 2, result.NextAppendPosition);
+                    Assert.IsTrue(result.HashCrc64Ecma != 0);
+                    initCrc = result.HashCrc64Ecma;
+                }
+
+                var meta = _ossClient.GetObjectMetadata(_bucketName, key);
+                Assert.AreEqual("Appendable", meta.ObjectType);
+                Assert.AreEqual(initCrc.ToString(), meta.Crc64);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
+        [Test]
+        public void AppendObjectWithWrongCrc()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                long position = 0;
+                ulong initCrc = 123; // wrong init CRC
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        Content = fs,
+                        Position = position,
+                        InitCrc = initCrc
+                    };
+
+                    _ossClient.AppendObject(request);
+                    Assert.Fail();
+                }
+            }
+            catch(ClientException e)
+            {
+                Assert.IsTrue(e.Message.Contains("Crc64"));
             }
             finally
             {

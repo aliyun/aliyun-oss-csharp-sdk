@@ -581,6 +581,71 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             {
             }
         }
-#endregion
+
+        #endregion
+
+        #region Get Bucket Location Cases
+
+        [Test]
+        public void GetBucketLocationTest()
+        {
+            //get a random bucketName
+            var bucketName = OssTestUtils.GetBucketName(_className);
+
+            //assert bucket does not exist
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist before creation", bucketName));
+
+            //create a new bucket
+            _ossClient.CreateBucket(bucketName);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should exist after creation", bucketName));
+
+            //get bucket location
+            var locRes = _ossClient.GetBucketLocation(bucketName);
+            Assert.IsTrue(locRes.Location.StartsWith("oss-"),
+                string.Format("Bucket Location {0} should start with 'oss-' but actual {1}", bucketName, locRes.Location));
+
+            //delete the new created bucket
+            _ossClient.DeleteBucket(bucketName);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist after deletion", bucketName));
+        }
+
+        #endregion
+
+        #region Get Bucket Metadata Cases
+
+        [Test]
+        public void GetBucketMetadataTest()
+        {
+            //get a random bucketName
+            var bucketName = OssTestUtils.GetBucketName(_className);
+
+            //assert bucket does not exist
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist before creation", bucketName));
+
+            //create a new bucket
+            _ossClient.CreateBucket(bucketName);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should exist after creation", bucketName));
+
+            //get bucket metadata
+            var metedata = _ossClient.GetBucketMetadata(bucketName);
+            Assert.IsTrue(metedata.BucketRegion.StartsWith("oss-"),
+                string.Format("Bucket Region {0} should start with 'oss-' but actual {1}", bucketName, metedata.BucketRegion));
+
+            //delete the new created bucket
+            _ossClient.DeleteBucket(bucketName);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist after deletion", bucketName));
+        }
+
+        #endregion
     }
 }
