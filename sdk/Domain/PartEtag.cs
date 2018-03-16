@@ -22,14 +22,34 @@ namespace Aliyun.OSS
         public string ETag { get; set; }
 
         /// <summary>
+        /// Gets or sets the crc64.
+        /// </summary>
+        /// <value>The crc64.</value>
+        public string Crc64 { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the length.
+        /// </summary>
+        /// <value>The length.</value>
+        public long Length { get; internal set; }
+
+        /// <summary>
         /// Creates a new instance of <see cref="PartETag" />.
         /// </summary>
         /// <param name="partNumber">Part number</param>
         /// <param name="eTag">Etag</param>
-        public PartETag(int partNumber, string eTag)
+        /// <param name="crc64">crc64</param>
+        /// <param name="length">length</param>
+        public PartETag(int partNumber, string eTag, string crc64, long length)
         {
             PartNumber = partNumber;
             ETag = eTag;
+            Crc64 = crc64;
+            Length = length;
+        }
+
+        public PartETag(int partNumber, string eTag) : this(partNumber, eTag, null, 0)
+        {
         }
     }
 }

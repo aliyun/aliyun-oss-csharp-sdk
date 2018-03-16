@@ -287,6 +287,23 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        /// <inheritdoc/>
+        public BucketLocationResult GetBucketLocation(string bucketName)
+        {
+            var cmd = GetBucketLocationCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Get, bucketName, null),
+                                                      bucketName);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public BucketMetadata GetBucketMetadata(string bucketName)
+        {
+            var cmd = GetBucketMetadataCommand.Create(_serviceClient, _endpoint,
+                                          CreateContext(HttpMethod.Head, bucketName, null),
+                                          bucketName);
+            return cmd.Execute();
+        }
 
         /// <inheritdoc/>
         public void SetBucketCors(SetBucketCorsRequest setBucketCorsRequest)
@@ -454,6 +471,29 @@ namespace Aliyun.OSS
             var cmd = GetBucketLifecycleCommand.Create(_serviceClient, _endpoint,
                                                       CreateContext(HttpMethod.Get, bucketName, null),
                                                       bucketName);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public void SetBucketStorageCapacity(SetBucketStorageCapacityRequest setBucketStorageCapacityRequest)
+        {
+            ThrowIfNullRequest(setBucketStorageCapacityRequest);
+            var cmd = SetBucketStorageCapacityCommand.Create(_serviceClient, _endpoint,
+                                                             CreateContext(HttpMethod.Put, setBucketStorageCapacityRequest.BucketName, null),
+                                                             setBucketStorageCapacityRequest.BucketName,
+                                                             setBucketStorageCapacityRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetBucketStorageCapacityResult GetBucketStorageCapacity(string bucketName)
+        {
+            var cmd = GetBucketStorageCapacityCommand.Create(_serviceClient, _endpoint,
+                                                             CreateContext(HttpMethod.Get, bucketName, null),
+                                                             bucketName);
             return cmd.Execute();
         }
 
@@ -687,10 +727,20 @@ namespace Aliyun.OSS
                 metadata.Populate(webRequest);
             }
 
+            ClientConfiguration config = OssUtils.GetClientConfiguration(_serviceClient);
+            Crc64Stream crcStream = null;
             // send data
             using (var requestStream = webRequest.GetRequestStream())
             {
-                IoUtils.WriteTo(content, requestStream);
+                if (config.EnableCrcCheck)
+                {
+                    crcStream = new Crc64Stream(content, null, content.Length);
+                    IoUtils.WriteTo(crcStream, requestStream);                  
+                }
+                else
+                {
+                    IoUtils.WriteTo(content, requestStream);
+                }
             }
 
             // convert response
@@ -708,6 +758,11 @@ namespace Aliyun.OSS
                 responseHandler = new ErrorResponseHandler();
             }
             responseHandler.Handle(serviceResponse);
+
+            if (crcStream != null)
+            {
+                new Crc64CheckHandler(crcStream).Handle(serviceResponse);
+            }
 
             // build result
             var putObjectRequest = new PutObjectRequest(null, null, null, metadata);
@@ -825,7 +880,8 @@ namespace Aliyun.OSS
             }
 
             int maxRetry = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
-            ResumableUploadManager uploadManager = new ResumableUploadManager(this, maxRetry, OssUtils.GetClientConfiguration(_serviceClient));
+            ClientConfiguration config = OssUtils.GetClientConfiguration(_serviceClient);
+            ResumableUploadManager uploadManager = new ResumableUploadManager(this, maxRetry, config);
             uploadManager.ResumableUploadWithRetry(request, resumableContext);
 
             // Completes the upload
@@ -836,6 +892,7 @@ namespace Aliyun.OSS
                 callbackMetadata.AddHeader(HttpHeaders.Callback, metadata.HttpMetadata[HttpHeaders.Callback]);
                 completeRequest.Metadata = callbackMetadata;
             }
+
             foreach (var part in resumableContext.PartContextList)
             {
                 if (part == null || !part.IsCompleted)
@@ -1029,6 +1086,15 @@ namespace Aliyun.OSS
                             {
                                 byte[] expectedHashDigest = Convert.FromBase64String(objectMeta.ContentMd5); ;
                                 streamWrapper = new MD5Stream(ossObject.Content, expectedHashDigest, fileSize);
+                            }
+                            else if (config.EnableCrcCheck && !string.IsNullOrEmpty(objectMeta.Crc64))
+                            {
+                                ulong crcVal = 0;
+                                if (UInt64.TryParse(objectMeta.Crc64, out crcVal))
+                                {
+                                    byte[] expectedHashDigest = BitConverter.GetBytes(crcVal); 
+                                    streamWrapper = new Crc64Stream(ossObject.Content, expectedHashDigest, fileSize);
+                                }
                             }
 
                             if (request.StreamTransferProgress != null)
@@ -1574,14 +1640,20 @@ namespace Aliyun.OSS
         private ResumableDownloadContext LoadResumableDownloadContext(string bucketName, string key, ObjectMetadata metadata, string checkpointDir, long partSize)
         {
             var resumableContext = new ResumableDownloadContext(bucketName, key, checkpointDir);
-            if (resumableContext.Load() && resumableContext.ETag == metadata.ETag && resumableContext.ContentMd5 == metadata.ContentMd5)
+            if (resumableContext.Load())
             {
-                return resumableContext;
+                if (resumableContext.ETag == metadata.ETag
+                    && resumableContext.ContentMd5 == metadata.ContentMd5
+                    && resumableContext.Crc64 == metadata.Crc64)
+                {
+                    return resumableContext;
+                }
             } 
 
             NewResumableContext(metadata.ContentLength, partSize, resumableContext);
             resumableContext.ContentMd5 = metadata.ContentMd5;
             resumableContext.ETag = metadata.ETag;
+            resumableContext.Crc64 = metadata.Crc64;
             return resumableContext;
         }
 

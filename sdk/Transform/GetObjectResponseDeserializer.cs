@@ -59,6 +59,21 @@ namespace Aliyun.OSS.Transform
                 var hashStream = new MD5Stream(originalStream, expectedHashDigest, streamLength);
                 ossObject.ResponseStream = hashStream;
             }
+            else if (conf.EnableCrcCheck && _getObjectRequest.Range == null && string.IsNullOrEmpty(_getObjectRequest.Process))
+            {
+                byte[] expectedHashDigest = null;
+                if (xmlStream.Headers.ContainsKey(HttpHeaders.HashCrc64Ecma))
+                {
+                    var crcString = xmlStream.Headers[HttpHeaders.HashCrc64Ecma];
+                    ulong crcVal;
+                    if (ulong.TryParse(crcString, out crcVal))
+                    {
+                        expectedHashDigest = BitConverter.GetBytes(crcVal);
+                        var hashStream = new Crc64Stream(originalStream, expectedHashDigest, streamLength);
+                        ossObject.ResponseStream = hashStream;
+                    }
+                }
+            }
 
             return ossObject;
         }

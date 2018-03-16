@@ -377,6 +377,53 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
+        public void PutObjectWithPreSignedUriAndCrc()
+        {
+            var testStr = FileUtils.GenerateOneKb();
+            var bytes = Encoding.ASCII.GetBytes(testStr);
+         
+            var now = DateTime.Now;
+            //set expiration time to 5 seconds later
+            var expireDate = now.AddSeconds(5);
+            var targetObject = OssTestUtils.GetObjectKey(_className);
+            var uri = _ossClient.GeneratePresignedUri(_bucketName, targetObject, expireDate, SignHttpMethod.Put);
+            try
+            {
+                var putResult = _ossClient.PutObject(uri, new MemoryStream(bytes));
+                Assert.AreEqual(putResult.HttpStatusCode, HttpStatusCode.OK);
+            }
+            catch (WebException ex)
+            {
+                Assert.Fail(ex.ToString());
+            }
+        }
+
+        [Test]
+        public void PutObjectWithPreSignedUriWithoutCrc()
+        {
+            var testStr = FileUtils.GenerateOneKb();
+            var bytes = Encoding.ASCII.GetBytes(testStr);
+
+            var now = DateTime.Now;
+            //set expiration time to 5 seconds later
+            var expireDate = now.AddSeconds(5);
+            var targetObject = OssTestUtils.GetObjectKey(_className);
+            var uri = _ossClient.GeneratePresignedUri(_bucketName, targetObject, expireDate, SignHttpMethod.Put);
+            try
+            {
+                Common.ClientConfiguration config = new Common.ClientConfiguration();
+                config.EnableCrcCheck = false;
+                IOss ossClient = OssClientFactory.CreateOssClient(config);
+                var putResult = ossClient.PutObject(uri, new MemoryStream(bytes));
+                Assert.AreEqual(putResult.HttpStatusCode, HttpStatusCode.OK);
+            }
+            catch (WebException ex)
+            {
+                Assert.Fail(ex.ToString());
+            }
+        }
+
+        [Test]
         public void PutPreSignedUriDefaultNegativeTest()
         {
             var testStr = FileUtils.GenerateOneKb();

@@ -98,6 +98,12 @@ namespace Aliyun.OSS.Commands
                 context.ResponseHandlers.Add(new CallbackResponseHandler());
             }
 
+            var conf = OssUtils.GetClientConfiguration(client);
+            if (conf.EnableCrcCheck)
+            {
+                context.ResponseHandlers.Add(new CompleteMultipartUploadCrc64Handler(completeMultipartUploadRequest)); 
+            }
+
             return new CompleteMultipartUploadCommand(client, endpoint, context,
                                                DeserializerFactory.GetFactory().CreateCompleteUploadResultDeserializer(completeMultipartUploadRequest),
                                                completeMultipartUploadRequest);
