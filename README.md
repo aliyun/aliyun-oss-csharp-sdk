@@ -19,10 +19,10 @@
 ### Windows
  - Applicable to `.NET 2.0` or above. 
  - Applicable to `Visual Studio 2010` or above. 
-
 ### Linux/Mac
  - Applicable to `Mono 3.12` or above. 
-
+### .Net Core
+ - Applicable to `.net core 2.0` or above
 ## Install OSS C# SDK
 ### Install in Windows
 #### Install the SDK through NuGet
@@ -59,7 +59,34 @@ In the `Reference Manager` dialog box, click *Browse*, find the directory that t
  - Download the SDK package from Alibaba Cloud OSS official website. Unzip the package and you will find the ***Aliyun.OSS.dll*** file in the *bin* directory.
  - In the Xamarin, access `Solution`, select your project, right click *Project Name*, select `Reference`' > `Edit References` from the pop-up menu.
 In the `Edit References` dialog box, click `.Net Assembly` > `Browse`. Find the directory that the SDK is unzipped to, select the `Aliyun.OSS.dll` file in the *bin* directory, and click *Open*.
+### Running with .Net core runtime
+Starting with version 2.9, OSS SDK supports the .net core 2.0 platform. 
+#### Installing .Net core SDK & runtime
+##### .Net Core SDK 2.0 (or above)
+To build apps for .Net core 2.0, you need to install the .Net core 2.0 SDK.
+Windows:https://www.microsoft.com/net/download/windows/build
 
+MacOS: https://www.microsoft.com/net/download/macos
+
+Linux: https://www.microsoft.com/net/download/linux/build
+
+##### .Net core runtime 2.0 (or above)
+If you just want to run apps of .Net core 2.0, then you need to install the runtime:
+Windows:https://www.microsoft.com/net/download/windows/run
+
+MacOS: https://www.microsoft.com/net/download/macos/run
+
+Linux: https://www.microsoft.com/net/download/linux/run
+
+#### Compile OSS SDK with .net core 2.0
+1) cd to the root folder of OSS SDK.
+2) dotnet restore aliyun-oss-sdk-dotnetcore.sln
+3) dotnet build aliyun-oss-sdk-dotnetcore.sln
+
+#### To run Samples
+1) Update the samples\Config.cs to update the config properties with your actual OSS AKs and endpoint.
+2) use the step above to build the whole solution
+3) cd to the folder where Aliyun.OSS.Samples.dll exists and then run: `dotnet Aliyun.OSS.Samples.dll`
 ## Quick use
 #### Get the bucket list (List Bucket)
 ```csharp
