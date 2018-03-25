@@ -16,8 +16,18 @@
     <AssemblyOriginatorKeyFile>aliyun_sdk_net.snk</AssemblyOriginatorKeyFile>
     <RootNamespace>Aliyun.OSS</RootNamespace>
   </PropertyGroup>
+ <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+   <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;NETSTANDARD2_0;</DefineConstants>
+ </PropertyGroup>
+ <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+   <DefineConstants>TRACE;RELEASE;NETSTANDARD2_0;NETCOREAPP2_0</DefineConstants>
+ </PropertyGroup>
   <ItemGroup>
     <Compile Include="Commands\AppendObjectCommand.cs" />
+	<Compile Include="Commands\GetBucketStorageCapacityCommand.cs" />
+    <Compile Include="Commands\SetBucketStorageCapacityCommand.cs" />
+    <Compile Include="Commands\GetBucketMetadataCommand.cs" />
+    <Compile Include="Commands\GetBucketLocationCommand.cs" />
     <Compile Include="Commands\GetObjectAclCommand.cs" />
     <Compile Include="Commands\SetObjectAclCommand.cs" />
     <Compile Include="Common\ClientConfiguration.cs" />
@@ -57,6 +67,11 @@
     <Compile Include="Common\ThirdParty\MD5Managed.cs" />
     <Compile Include="Common\Internal\PartialWrapperStream.cs" />
     <Compile Include="Common\Internal\StreamReadTracker.cs" />
+	<Compile Include="Domain\BucketMetadata.cs" />
+    <Compile Include="Domain\BucketLocationResult.cs" />
+    <Compile Include="Domain\GetBucketStorageCapacityResult.cs" />
+    <Compile Include="Domain\SetBucketStorageCapacityRequest.cs" />
+    <Compile Include="Model\BucketStorageCapacityModel.cs" />
     <Compile Include="Model\StreamUploadProgressArgs.cs" />
     <Compile Include="Common\Internal\WrapperStream.cs" />
     <Compile Include="Domain\AppendObjectRequest.cs" />
@@ -68,6 +83,10 @@
     <Compile Include="Model\StreamResult.cs" />
     <Compile Include="Model\GenericResult.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
+	<Compile Include="Transform\GetBucketStorageCapacityResultDeserializer.cs" />
+    <Compile Include="Transform\SetBucketStorageCapacityRequestSerializer.cs" />
+    <Compile Include="Transform\GetBucketMetadataResponseDeserializer.cs" />
+    <Compile Include="Transform\GetBucketLocationResultDeserializer.cs" />
     <Compile Include="Transform\IDeserializer.cs" />
     <Compile Include="Transform\ISerializer.cs" />
     <Compile Include="Transform\RequestSerializationException.cs" />
@@ -255,6 +274,10 @@
     <Compile Include="Domain\DownloadObjectRequest.cs" />
     <Compile Include="Common\Internal\StreamTransferTracker.cs" />
     <Compile Include="Domain\UploadObjectRequest.cs" />
+	<Compile Include="Util\Crc64.cs" />
+    <Compile Include="Common\Internal\Crc64HashAlgorithm.cs" />
+    <Compile Include="Common\Handlers\Crc64CheckHandler.cs" />
+    <Compile Include="Common\Handlers\CompleteMultipartUploadCrc64Handler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="aliyun_sdk_net.snk" />
