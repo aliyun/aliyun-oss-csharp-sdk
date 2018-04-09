@@ -22,6 +22,10 @@
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
    <DefineConstants>TRACE;RELEASE;NETSTANDARD2_0;NETCOREAPP2_0</DefineConstants>
  </PropertyGroup>
+ <ItemGroup>
+   <None Remove="Common\Communication\netcore\ServiceClientNewImpl.cs" />
+   <None Remove="Common\Communication\netcore\StreamWeakReferece.cs" />
+ </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AppendObjectCommand.cs" />
 	<Compile Include="Commands\GetBucketStorageCapacityCommand.cs" />
@@ -46,6 +50,8 @@
     <Compile Include="Common\Authentication\IRequestSigner.cs" />
     <Compile Include="Common\Authentication\ServiceSignature.cs" />
     <Compile Include="Common\Communication\ExecutionContext.cs" />
+    <Compile Include="Common\Communication\netcore\ServiceClientNewImpl.cs" />
+    <Compile Include="Common\Communication\netcore\StreamWeakReferece.cs" />
     <Compile Include="Common\Communication\ServiceMessage.cs" />
     <Compile Include="Common\Communication\HttpMethod.cs" />
     <Compile Include="Common\Communication\IServiceClient.cs" />
@@ -314,5 +320,4 @@
   <ItemGroup>
     <None Include="Resources\MimeData.txt" />
   </ItemGroup>
-  <ItemGroup />
 </Project>

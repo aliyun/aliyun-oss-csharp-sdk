@@ -1547,6 +1547,12 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     Assert.IsTrue(false);
                 }
             }
+#if NETCOREAPP2_0
+            catch (System.Net.Http.HttpRequestException ex2)
+            {
+                Assert.IsTrue(ex2.Message.Contains(HttpStatusCode.Conflict.ToString()));
+            }
+#endif
             finally
             {
                 System.Threading.Thread.Sleep(5000);
@@ -1630,6 +1636,12 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     Assert.IsTrue(false);
                 }
             }
+#if NETCOREAPP2_0
+            catch (System.Net.Http.HttpRequestException ex2)
+            {
+                Assert.IsTrue(ex2.Message.Contains(HttpStatusCode.Conflict.ToString()));
+            }
+#endif
             finally
             {
                 System.Threading.Thread.Sleep(5 * 1000);
