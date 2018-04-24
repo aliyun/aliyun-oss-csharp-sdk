@@ -19,10 +19,10 @@ namespace Aliyun.OSS
     /// </summary>
     public class SelectObjectRequest : GetObjectRequest
     {
-        private char _inputNewline = '\n';
+        private string _inputNewline = "\n";
         private char _inputQuote = '"';
         private char _inputDelimiter = ',';
-        private char _outputNewLine = '\n';
+        private string _outputNewLine = "\n";
         private char _outputQuote = '"';
         private char _outputDelimiter = ',';
         private char _inputComment = '#';
@@ -32,7 +32,8 @@ namespace Aliyun.OSS
         public SelectObjectRequest(string bucket, string obj, string sql)
             :base(bucket, obj)
         {
-            Sql = sql;    
+            Sql = sql;
+            //Process = "csv/select";
         }
 
         public string Sql
@@ -41,7 +42,7 @@ namespace Aliyun.OSS
             set;
         }
 
-        public char InputNewLine
+        public string InputNewLine
         {
             get { return _inputNewline; } 
             set { _inputNewline = value; }
@@ -59,7 +60,7 @@ namespace Aliyun.OSS
             set { _inputDelimiter = value; }
         }
 
-        public char OutputNewLine
+        public string OutputNewLine
         {
             get { return _outputNewLine; }
             set { _outputNewLine = value; }
@@ -106,6 +107,19 @@ namespace Aliyun.OSS
             get;
             set;
         }
+
+        public int? StartLine
+        {
+            get;
+            set;
+        }
+
+        public int? EndLine
+        {
+            get;
+            set;
+        }
+
 
         public enum HeaderInfo
         {

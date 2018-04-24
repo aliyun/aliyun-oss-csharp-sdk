@@ -45,6 +45,7 @@ namespace Aliyun.OSS.Util
 
         public const string OSS_PROCESS = "x-oss-process";
         public const string CSV_SELECT = "csv/select";
+        public const string CSV_META = "csv/meta";
         public const string SQL = "sql";
     }
 }

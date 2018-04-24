@@ -650,6 +650,9 @@ namespace Aliyun.OSS
         /// <returns><see cref="OssObject" />metadata</returns>
         ObjectMetadata GetObjectMetadata(string bucketName, string key);
 
+
+        CsvObjectMeta HeadCsvObjectMetadata(string bucketName, string key);
+
         /// <summary>
         /// Deletes <see cref="OssObject" />。
         /// </summary>

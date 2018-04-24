@@ -1066,6 +1066,26 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
+        public CsvObjectMeta HeadCsvObjectMetadata(string bucketName, string key)
+        {
+            var cmd = HeadCsvObjectCommand.Create(_serviceClient, _endpoint,
+                                                     CreateContext(HttpMethod.Head, bucketName, key),
+                                                     bucketName, key);
+            ServiceResponse resp = cmd.Execute();
+           
+            if (resp.IsSuccessful())
+            {
+                CsvObjectMeta meta = new CsvObjectMeta();
+                meta.CsvLines = int.Parse(resp.Headers["x-oss-select-csv-rows"]);
+                //meta.CsvColumns = int.Parse(resp.Headers["x-oss-select-csv-columns"]);
+                return meta;
+            }
+
+            return null;
+        }
+
+
+        /// <inheritdoc/>
         public ObjectMetadata ResumableDownloadObject(DownloadObjectRequest request)
         {
             ThrowIfNullRequest(request);

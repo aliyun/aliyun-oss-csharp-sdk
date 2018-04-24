@@ -39,5 +39,6 @@ namespace Aliyun.OSS.Util
         public const string SelectOutputQuoteCharacter = "x-oss-select-output-quote-character";
         public const string SelectOutputEnableCrc = "x-oss-select-output-enable-crc";
         public const string SelectOutputKeepAllColumns = "x-oss-select-output-keep-all-columns";
+        public const string SelectInputCsvLines = "x-oss-select-line-range";
     }
 }

@@ -44,13 +44,13 @@ namespace Aliyun.OSS.Transform
             return ContentSerializer.Serialize(requestModel);
         }
 
-        private string NewLineToString(char c)
+        private string NewLineToString(string c)
         {
             switch(c)
             {
-                case '\n':
+                case "\n":
                     return "\\n";
-                case '\r':
+                case "\r":
                     return "\\r";
                 default:
                     return c.ToString();

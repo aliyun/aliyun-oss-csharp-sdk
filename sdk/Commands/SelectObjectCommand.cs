@@ -49,6 +49,15 @@ namespace Aliyun.OSS.Commands
                 headers.Add(OssHeaders.SelectOutputRecordDelimiter, GetNewLineString(_selectObjectRequest.OutputNewLine));
                 headers.Add(OssHeaders.SelectOutputQuoteFields, _selectObjectRequest.OutputQuoteFields.ToString());
                 headers.Add(OssHeaders.SelectOutputKeepAllColumns, _selectObjectRequest.KeepAllColumns.ToString());
+                if (_selectObjectRequest.StartLine.HasValue && _selectObjectRequest.EndLine.HasValue){
+                    headers.Add(OssHeaders.SelectInputCsvLines, string.Format("{0}-{1}", _selectObjectRequest.StartLine.Value, _selectObjectRequest.EndLine.Value));
+                }
+                else if(_selectObjectRequest.StartLine.HasValue && !_selectObjectRequest.EndLine.HasValue){
+                    headers.Add(OssHeaders.SelectInputCsvLines, string.Format("{0}-", _selectObjectRequest.StartLine.Value));
+                }
+                else if(_selectObjectRequest.EndLine.HasValue){
+                    headers.Add(OssHeaders.SelectInputCsvLines, string.Format("-{0}", _selectObjectRequest.EndLine.Value));
+                }
                 return headers;
             }
         }
@@ -93,17 +102,21 @@ namespace Aliyun.OSS.Commands
             _selectObjectRequest = selectObjectRequest;
         }
 
-        private string GetNewLineString(char newLine){
+        private string GetNewLineString(string newLine){
             switch(newLine)
             {
-                case '\n':
+                case "\n":
                     return "\\n";
-                case '\t':
+                case "\t":
                     return "\\t";
-                case '\v':
+                case "\v":
                     return "\\v";
-                case '\r':
+                case "\r":
                     return "\\r";
+                case "\r\n":
+                    return "\\r\\n";
+                case "\n\r":
+                    return "\\n\\r";
                 default:
                     return newLine.ToString();
             }

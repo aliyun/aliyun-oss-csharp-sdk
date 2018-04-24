@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Util;
 
@@ -30,7 +31,7 @@ namespace Aliyun.OSS.Commands
             get { return _key; }
         }
 
-        private HeadObjectCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
+        protected HeadObjectCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
                                     string bucketName, string key)
             : base(client, endpoint, context)
         {
@@ -46,6 +47,48 @@ namespace Aliyun.OSS.Commands
                                               string bucketName, string key)
         {
             return new HeadObjectCommand(client, endpoint, context, bucketName, key);
+        }
+    }
+
+    internal class HeadCsvObjectCommand : HeadObjectCommand{
+        private HeadCsvObjectCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
+                                  string bucketName, string key)
+            : base(client, endpoint, context, bucketName, key)
+        {
+        }
+
+        public static new HeadCsvObjectCommand Create(IServiceClient client, Uri endpoint,
+                                              ExecutionContext context,
+                                              string bucketName, string key)
+        {
+            return new HeadCsvObjectCommand(client, endpoint, context, bucketName, key);
+        }
+
+        protected override IDictionary<String, String> Parameters
+        {
+            get {
+                var parameters = base.Parameters;
+                parameters[RequestParameters.OSS_PROCESS] = RequestParameters.CSV_META;
+                return parameters;
+            }
+        }
+
+        protected override HttpMethod Method
+        {
+            get { return HttpMethod.Get; }
+        }
+
+        protected override IDictionary<string, string> Headers
+        {
+            get
+            {
+                var headers = base.Headers;
+                headers[OssHeaders.SelectInputRecordDelimiter] = "\\r\\n";
+                headers[OssHeaders.SelectInputFieldDelimiter] = ",";
+                headers[OssHeaders.SelectInputQuoteCharacter] = "\"";
+                headers[OssHeaders.SelectInputFileHeader] = SelectObjectRequest.HeaderInfo.Ignore.ToString();
+                return headers;
+            }
         }
     }
 }

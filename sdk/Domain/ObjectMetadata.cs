@@ -18,10 +18,10 @@ namespace Aliyun.OSS
     /// </para>
     /// </summary>
     public class ObjectMetadata
-    {      
-        private readonly IDictionary<string, string> _userMetadata = 
+    {
+        private readonly IDictionary<string, string> _userMetadata =
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        private readonly IDictionary<string, object> _metadata = 
+        private readonly IDictionary<string, object> _metadata =
             new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace Aliyun.OSS
         {
             get
             {
-                return _metadata.ContainsKey(HttpHeaders.ContentDisposition) 
+                return _metadata.ContainsKey(HttpHeaders.ContentDisposition)
                     ? _metadata[HttpHeaders.ContentDisposition] as string : null;
             }
             set
@@ -183,7 +183,7 @@ namespace Aliyun.OSS
         {
             get
             {
-                return _metadata.ContainsKey(HttpHeaders.ETag) 
+                return _metadata.ContainsKey(HttpHeaders.ETag)
                     ? _metadata[HttpHeaders.ETag] as string : null;
             }
             set
@@ -220,7 +220,8 @@ namespace Aliyun.OSS
         /// <value>The crc64.</value>
         public string Crc64
         {
-            get{
+            get
+            {
                 return _metadata.ContainsKey(HttpHeaders.HashCrc64Ecma)
                                 ? _metadata[HttpHeaders.HashCrc64Ecma] as string : null;
             }
@@ -288,13 +289,13 @@ namespace Aliyun.OSS
         /// <param name="requestHeaders"></param>
         internal void Populate(IDictionary<string, string> requestHeaders)
         {
-            foreach(var entry in _metadata)
+            foreach (var entry in _metadata)
                 requestHeaders.Add(entry.Key, entry.Value.ToString());
-            
+
             if (!requestHeaders.ContainsKey(HttpHeaders.ContentType))
                 requestHeaders.Add(HttpHeaders.ContentType, HttpUtils.DefaultContentType);
 
-            foreach(var entry in _userMetadata)
+            foreach (var entry in _userMetadata)
                 requestHeaders.Add(OssHeaders.OssUserMetaPrefix + entry.Key, entry.Value);
         }
 
@@ -306,7 +307,7 @@ namespace Aliyun.OSS
         {
             foreach (var entry in _metadata)
             {
-                if (entry.Key.Equals(HttpHeaders.ContentLength) )
+                if (entry.Key.Equals(HttpHeaders.ContentLength))
                 {
                     if (ContentLength > 0)
                     {
@@ -328,7 +329,7 @@ namespace Aliyun.OSS
                 webRequest.Headers.Add(OssHeaders.OssUserMetaPrefix + entry.Key, entry.Value);
             }
         }
-        
+
         /// <summary>
         /// Get the flag which indicates if the metadata specifies the callback.
         /// </summary>
@@ -341,6 +342,21 @@ namespace Aliyun.OSS
                 return true;
             }
             return false;
+        }
+    }
+
+    public class CsvObjectMeta
+    {
+        public int CsvLines
+        {
+            get;
+            set;
+        }
+
+        public int CsvColumns
+        {
+            get;
+            set;
         }
     }
 }

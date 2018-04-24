@@ -30,7 +30,7 @@ namespace Aliyun.OSS
             get
             {
                 if (ossStream == null){
-                    ossStream = new OssSelectStream(base.Content);
+                    ossStream = new OssSelectStream(this.RequestId, base.Content);
                 }
 
                 return ossStream;
@@ -50,13 +50,15 @@ namespace Aliyun.OSS
         private int _payloadLength;
         private long _processingOffset;
         bool flag = false;
-        public OssSelectStream(Stream stream){
+        private string _reqId;
+        public OssSelectStream(string reqId, Stream stream){
             _stream = stream;
             _frameTypeBytes = new byte[4];
             _framePayloadLengthBytes = new byte[4];
             _frameHeaderChecksumBytes = new byte[4];
             _frameOffsetBytes = new byte[8];
             _framePayloadChecksumBytes = new byte[4];
+            _reqId = reqId;
         }
 
         public override bool CanRead
@@ -227,7 +229,30 @@ namespace Aliyun.OSS
                     flag = true;
                 }
                 else if (type == SelectResponseFrame.EndFrameType){
-                    _offset = _payloadLength = 0;
+                    _offset = 0;
+                    _payloadLength = IPAddress.NetworkToHostOrder((BitConverter.ToInt32(_framePayloadLengthBytes, 0)));
+                    _Read(_frameOffsetBytes, 0, 8); //
+                    _processingOffset = IPAddress.NetworkToHostOrder((BitConverter.ToInt64(_frameOffsetBytes, 0)));
+
+
+                    byte[] scannedSizeBuf = new byte[8];
+                    _Read(scannedSizeBuf, 0, 8);
+                    byte[] statusBuf = new byte[4];
+                    _Read(statusBuf, 0, 4); // skip payload checksum;
+                    _Read(statusBuf, 0, 4);
+                    int status = IPAddress.NetworkToHostOrder((BitConverter.ToInt32(statusBuf, 0)));
+                    int errorMsgSize = _payloadLength - 20;
+                    string error = "Oss Select encounter an error during data processing.";
+                    if (errorMsgSize > 0)
+                    {
+                        byte[] errorMsg = new byte[errorMsgSize];
+                        _Read(errorMsg, 0, errorMsgSize);
+                        error += System.Text.Encoding.UTF8.GetString(errorMsg);
+                    }
+                    if (status >= 400){
+                        throw Aliyun.OSS.Util.ExceptionFactory.CreateException(status.ToString(), error, _reqId, ""); 
+                    }
+                    _payloadLength = 0;
                     break;
                 }
                 else{

@@ -26,7 +26,7 @@ namespace Aliyun.OSS.Transform
         public override OssObject Deserialize(ServiceResponse xmlStream)
         {
             OssObject ossObj = base.Deserialize(xmlStream);
-            ossObj.ResponseStream = new OssSelectStream(ossObj.Content);
+            ossObj.ResponseStream = new OssSelectStream(ossObj.RequestId, ossObj.Content);
 
             return ossObj;
         }
