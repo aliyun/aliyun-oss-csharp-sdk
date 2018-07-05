@@ -34,6 +34,10 @@ namespace Aliyun.OSS.Common
         private bool _useSingleThreadReadInResumableUpload = false;
         private bool _enableCrcCheck = true;
 
+#if NETCOREAPP2_0
+        private bool _enableNewServiceClient = true;
+#endif
+
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
         /// </summary>
@@ -242,6 +246,23 @@ namespace Aliyun.OSS.Common
                 _useSingleThreadReadInResumableUpload = value;
             }
         }
+
+#if NETCOREAPP2_0
+        /// <summary>
+        /// Use new ServiceClient's implementation.
+        /// </summary>
+        public bool UseNewServiceClient
+        {
+            get
+            {
+                return _enableNewServiceClient;
+            }
+            set
+            {
+                _enableNewServiceClient = value;
+            }
+        }
+#endif
 
         /// <summary>
         /// Gets the default user agent

@@ -1,46 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{597D1FDD-CC1D-41CB-B914-A9F60486D9DC}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Aliyun.OSS.Test</RootNamespace>
+    <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>False</EnableDefaultEmbeddedResourceItems>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Aliyun.OSS.Test</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectAssetsFile>notexistfile</ProjectAssetsFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup>
+    <RootNamespace>Aliyun.OSS.Test</RootNamespace>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\lib\nunit.framework.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="NUnit" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,7 +31,7 @@
     <Compile Include="TestCase\BucketTestCase\BucketRefersSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketWebsiteSettingsTest.cs" />
-    <Compile Include="TestCase\BucketTestCase\BucketStorageCapacityTest.cs" />
+	<Compile Include="TestCase\BucketTestCase\BucketStorageCapacityTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectProgressTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectHashCheckTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectCallbackTest.cs" />
@@ -68,7 +47,6 @@
     <Compile Include="TestCase\OtherTestCase\ConcurrencyTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectEncodingTypeTest.cs" />
     <Compile Include="Util\AccountSettings.cs" />
-    <Compile Include="Util\Config.cs" />
     <Compile Include="Util\LogUtility.cs" />
     <Compile Include="Util\OssClientFactory.cs" />
     <Compile Include="Util\OssTestUtils.cs" />
@@ -76,13 +54,12 @@
     <Compile Include="Util\NonSeekableStream.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketLifecycleSettingsTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectResumableOperationTest.cs" />
-    <Compile Include="TestCase\ObjectTestCase\OssCrcTest.cs" />
+	<Compile Include="TestCase\ObjectTestCase\OssCrcTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ResumableContextTest.cs" />
+    <Compile Include="Util\ConfigCore.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Remove="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ConcurrencyTestConfig.xml">
@@ -91,10 +68,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\sdk\aliyun-oss-sdk.csproj">
-      <Project>{67BDC800-084C-4F84-8A80-661B5AFE499A}</Project>
-      <Name>aliyun-oss-sdk</Name>
+    <ProjectReference Include="..\sdk\aliyun-oss-sdk-dotnetcore.csproj">
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

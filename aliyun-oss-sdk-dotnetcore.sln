@@ -1,0 +1,29 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-dotnetcore", "sdk\aliyun-oss-sdk-dotnetcore.csproj", "{B43BB182-FE52-4716-8A09-98A62DF4D2BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-test-dotnetcore", "test\aliyun-oss-sdk-test-dotnetcore.csproj", "{2CBA7256-0E62-45B2-9F84-35DC944C99D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-oss-sdk-samples-dotnetcore", "samples\aliyun-oss-sdk-samples-dotnetcore.csproj", "{D364E780-C0A4-4715-9096-FF12F5BD3FD6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B43BB182-FE52-4716-8A09-98A62DF4D2BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B43BB182-FE52-4716-8A09-98A62DF4D2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B43BB182-FE52-4716-8A09-98A62DF4D2BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B43BB182-FE52-4716-8A09-98A62DF4D2BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CBA7256-0E62-45B2-9F84-35DC944C99D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CBA7256-0E62-45B2-9F84-35DC944C99D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CBA7256-0E62-45B2-9F84-35DC944C99D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CBA7256-0E62-45B2-9F84-35DC944C99D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D364E780-C0A4-4715-9096-FF12F5BD3FD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D364E780-C0A4-4715-9096-FF12F5BD3FD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D364E780-C0A4-4715-9096-FF12F5BD3FD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D364E780-C0A4-4715-9096-FF12F5BD3FD6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

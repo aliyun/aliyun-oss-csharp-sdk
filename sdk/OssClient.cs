@@ -1275,6 +1275,17 @@ namespace Aliyun.OSS
                 // Rethrow
                 throw;
             }
+#if NETCOREAPP2_0
+            catch (System.Net.Http.HttpRequestException ex2)
+            {
+                if (ex2.Message.Contains("404"))
+                {
+                    return false;
+                }
+
+                throw;
+            }
+#endif
             return true;
         }
 

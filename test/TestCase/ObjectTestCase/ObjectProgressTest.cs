@@ -24,7 +24,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _bigObjectKey;
         private static string _tmpLocalFile;
 
+#if NETCOREAPP2_0
+        [OneTimeSetUp]
+#else
         [TestFixtureSetUp]
+#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -45,7 +49,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _tmpLocalFile = _className + ".tmp";
         }
 
+#if NETCOREAPP2_0
+        [OneTimeTearDown]
+#else
         [TestFixtureTearDown]
+#endif
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);
