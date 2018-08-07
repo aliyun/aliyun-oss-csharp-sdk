@@ -79,14 +79,15 @@ MacOS: https://www.microsoft.com/net/download/macos/run
 Linux: https://www.microsoft.com/net/download/linux/run
 
 #### Compile OSS SDK with .net core 2.0
-1) cd to the root folder of OSS SDK.
-2) dotnet restore aliyun-oss-sdk-dotnetcore.sln
-3) dotnet build aliyun-oss-sdk-dotnetcore.sln
+ - cd to the root folder of OSS SDK.
+ - dotnet restore aliyun-oss-sdk-dotnetcore.sln
+ - dotnet build aliyun-oss-sdk-dotnetcore.sln
 
 #### To run Samples
-1) Update the samples\Config.cs to update the config properties with your actual OSS AKs and endpoint.
-2) use the step above to build the whole solution
-3) cd to the folder where Aliyun.OSS.Samples.dll exists and then run: `dotnet Aliyun.OSS.Samples.dll`
+ - Update the samples\Config.cs to update the config properties with your actual OSS AKs and endpoint.
+ - use the step above to build the whole solution
+ - cd to the folder where Aliyun.OSS.Samples.dll exists and then run: `dotnet Aliyun.OSS.Samples.dll`
+
 ## Quick use
 #### Get the bucket list (List Bucket)
 ```csharp
