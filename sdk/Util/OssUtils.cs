@@ -516,5 +516,39 @@ namespace Aliyun.OSS.Util
                 }
             }
         }
+
+        internal static Uri GetEndpointFromSignedUrl(Uri signedUrl)
+        {
+            var uri = new Uri(signedUrl.Scheme + "://" + signedUrl.Authority);
+            return uri;
+        }
+
+        internal static String GetResourcePathFromSignedUrl(Uri signedUrl)
+        {
+            var str = signedUrl.AbsolutePath;
+            return str.StartsWith("/") ? str.Substring(1) : str;
+        }
+
+        internal static IDictionary<String, String> GetParametersFromSignedUrl(Uri signedUrl)
+        {
+            IDictionary<String, String> parameters = new Dictionary<String, String>();
+            String query = signedUrl.Query;
+            int index = 0;
+            if (query.Length > 0 && query[0] == '?')
+            {
+                index = 1;
+            }
+            string[] array = query.Substring(index).Split('&');
+            foreach (string i in array)
+            {
+                string[] param = i.Split('=');
+                if (param.Length == 2)
+                    parameters.Add(HttpUtils.DecodeUri(param[0]), HttpUtils.DecodeUri(param[1]));
+                else
+                    parameters.Add(HttpUtils.DecodeUri(param[0]), "");
+            }
+            return parameters;
+        }
+
     }
 }
