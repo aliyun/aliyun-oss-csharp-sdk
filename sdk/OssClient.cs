@@ -721,7 +721,6 @@ namespace Aliyun.OSS
                 Method = HttpMethod.Put,
                 Endpoint = OssUtils.GetEndpointFromSignedUrl(signedUrl),
                 ResourcePath = OssUtils.GetResourcePathFromSignedUrl(signedUrl),
-                UseChunkedEncoding = true,
                 ParametersInUri = true
             };
             var parameters = OssUtils.GetParametersFromSignedUrl(signedUrl);
@@ -730,12 +729,20 @@ namespace Aliyun.OSS
                 request.Parameters.Add(param.Key, param.Value);
             }
             request.Content = content;
-            request.Headers.Add(HttpHeaders.ContentLength, content.Length.ToString());
   
             // populate headers
             if (metadata != null)
             {
+                //prevent to be assigned default value in metadata.Populate
+                if (metadata.ContentType == null)
+                {
+                    request.Headers[HttpHeaders.ContentType] = "";
+                }
                 metadata.Populate(request.Headers);
+            }
+            if (!request.Headers.ContainsKey(HttpHeaders.ContentLength))
+            {
+                request.Headers[HttpHeaders.ContentLength] = content.Length.ToString();
             }
 
             // prepare context

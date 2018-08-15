@@ -45,7 +45,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _process = "image/resize,m_fixed,w_100,h_100";
             _localImageFile = Config.ImageTestFile;
             _processedKey = "process/image" + _keyName;
-            _imageInfo = "{\n    \"FileSize\": {\"value\": \"5470\"},\n    \"Format\": {\"value\": \"jpg\"},\n    \"ImageHeight\": {\"value\": \"100\"},\n    \"ImageWidth\": {\"value\": \"100\"},\n    \"ResolutionUnit\": {\"value\": \"1\"},\n    \"XResolution\": {\"value\": \"1/1\"},\n    \"YResolution\": {\"value\": \"1/1\"}}";
+            _imageInfo = "{\n    \"FileSize\": {\"value\": \"3347\"},\n    \"Format\": {\"value\": \"jpg\"},\n    \"ImageHeight\": {\"value\": \"100\"},\n    \"ImageWidth\": {\"value\": \"100\"},\n    \"ResolutionUnit\": {\"value\": \"1\"},\n    \"XResolution\": {\"value\": \"1/1\"},\n    \"YResolution\": {\"value\": \"1/1\"}}";
         }
 
 #if NETCOREAPP2_0

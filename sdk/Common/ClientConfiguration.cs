@@ -33,7 +33,7 @@ namespace Aliyun.OSS.Common
         private int _preReadBufferCount = 8;
         private bool _useSingleThreadReadInResumableUpload = false;
         private bool _enableCrcCheck = true;
-        static private int _connectionLimit = 512;
+        private static int _connectionLimit = 512;
 
 #if NETCOREAPP2_0
         private bool _enableNewServiceClient = true;
