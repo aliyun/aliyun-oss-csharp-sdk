@@ -21,7 +21,7 @@ namespace Aliyun.OSS.Util
         public const string DefaultContentType = "application/octet-stream";
         private const string UrlAllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
         private static IDictionary<string, string> _mimeDict = new Dictionary<string, string>();
-
+        public static Version DefaultHttpVersion = System.Net.HttpVersion.Version11;
         static HttpUtils()
         {
             char[] delimiterChars = { ' ', '\t'};

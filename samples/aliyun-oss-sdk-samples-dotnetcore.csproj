@@ -10,12 +10,15 @@
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Aliyun.OSS.Samples</AssemblyName>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Aliyun.OSS.Samples.Program</StartupObject>
     <RootNamespace>Aliyun.OSS.Samples</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;NETSTANDARD2_0;NETCOREAPP;NETCOREAPP2_1;NETCOREAPP;NETCOREAPP2_1</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
@@ -78,6 +81,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\sdk\aliyun-oss-sdk-dotnetcore.csproj">

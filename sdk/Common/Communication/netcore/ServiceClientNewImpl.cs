@@ -154,6 +154,7 @@ namespace Aliyun.OSS.Common.Communication
             var req = new HttpRequestMessage(Convert(request.Method), request.BuildRequestUri());
             this.SetRequestContent(req, request);
             this.SetHeaders(req, request);
+            this.SetHttpVersion(req);
             HttpClient client = GetClient();
             HttpResponseMessage resp = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead).Result;
             return new ResponseImpl(resp);
@@ -174,6 +175,20 @@ namespace Aliyun.OSS.Common.Communication
 
             // Write data to the request stream.
             requestMsg.Content = new StreamContent(new StreamWeakReferece(data));
+        }
+
+        private void SetHttpVersion(HttpRequestMessage requestMsg)
+        {
+            //support http2.0 only in https protocal
+            if (Configuration.HttpVersion <= HttpUtils.DefaultHttpVersion)
+            {
+                return;
+            }
+            if (String.Compare(requestMsg.RequestUri.Scheme, 0, HttpUtils.HttpsProto, 0, 5, true) != 0)
+            {
+                return;
+            }
+            requestMsg.Version = Configuration.HttpVersion;
         }
 
         void SetHeaders(HttpRequestMessage req, ServiceRequest request)
@@ -240,6 +255,7 @@ namespace Aliyun.OSS.Common.Communication
             var req = new HttpRequestMessage(Convert(request.Method), request.BuildRequestUri());
             this.SetRequestContent(req, request);
             this.SetHeaders(req, request);
+            this.SetHttpVersion(req);
             HttpClient client = GetClient();
             var task = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
             ServiceClientImpl.HttpAsyncResult result = new ServiceClientImpl.HttpAsyncResult(callback, state);
@@ -307,11 +323,12 @@ namespace Aliyun.OSS.Common.Communication
 
         private HttpClient Create(bool setProxy)
         {
-            HttpClientHandler httpClientHandler = new HttpClientHandler();
-            HttpClient client = new HttpClient(httpClientHandler);
+            //HttpClientHandler httpClientHandler = new HttpClientHandler();
+            WinHttpHandler httpHandler = new WinHttpHandler();
+            HttpClient client = new HttpClient(httpHandler);
             if (setProxy)
             {
-                this.SetProxy(httpClientHandler);
+                //this.SetProxy(httpHandler);
             }
 
             client.Timeout = Configuration.ConnectionTimeout < 0 ? TimeSpan.FromDays(1) : TimeSpan.FromMilliseconds(Configuration.ConnectionTimeout);

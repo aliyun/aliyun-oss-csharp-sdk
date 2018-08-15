@@ -37,6 +37,7 @@ namespace Aliyun.OSS.Common
 
 #if NETCOREAPP2_0
         private bool _enableNewServiceClient = true;
+        private Version _httpVersion = HttpUtils.DefaultHttpVersion;
 #endif
 
         /// <summary>
@@ -267,6 +268,21 @@ namespace Aliyun.OSS.Common
                 _enableNewServiceClient = value;
             }
         }
+        /// <summary>
+        /// set httpversion, default is http1.1
+        /// </summary>
+        public Version HttpVersion
+        {
+            get
+            {
+                return _httpVersion;
+            }
+            set
+            {
+                _httpVersion = value;
+            }
+        }
+        
 #endif
 
         /// <summary>

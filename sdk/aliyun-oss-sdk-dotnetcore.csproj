@@ -9,7 +9,7 @@
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Aliyun.OSS</AssemblyName>
   </PropertyGroup>
  <PropertyGroup>
@@ -17,7 +17,7 @@
     <RootNamespace>Aliyun.OSS</RootNamespace>
   </PropertyGroup>
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-   <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;NETSTANDARD2_0;</DefineConstants>
+   <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;NETSTANDARD2_0;NETCOREAPP;NETCOREAPP2_1</DefineConstants>
  </PropertyGroup>
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
    <DefineConstants>TRACE;RELEASE;NETSTANDARD2_0;NETCOREAPP2_0</DefineConstants>
@@ -319,5 +319,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\MimeData.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="4.5.0" />
   </ItemGroup>
 </Project>

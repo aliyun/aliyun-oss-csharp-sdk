@@ -12,11 +12,11 @@ namespace Aliyun.OSS.Samples
         {
             Console.WriteLine("Aliyun SDK for .NET Samples!");
 
-            const string bucketName = "<your bucket name>";
+            const string bucketName = "guangjun-c-sdk-test-4";
 
             try
             {
-                CreateBucketSample.CreateBucket(bucketName);
+                //CreateBucketSample.CreateBucket(bucketName);
 
                 //ListBucketsSample.ListBuckets();
 
@@ -62,7 +62,7 @@ namespace Aliyun.OSS.Samples
 
                 //ListObjectsSample.ListObjects(bucketName);
 
-                //UrlSignatureSample.UrlSignature(bucketName);
+                UrlSignatureSample.UrlSignature(bucketName);
 
                 //GetObjectSample.GetObjects(bucketName);
                 //GetObjectByRangeSample.GetObjectPartly(bucketName);

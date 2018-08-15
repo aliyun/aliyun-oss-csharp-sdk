@@ -137,7 +137,9 @@ namespace Aliyun.OSS.Samples
 
         public static void PutLocalFileBySignedUrl(string bucketName, string key)
         {
-            OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret);
+            ClientConfiguration config = new ClientConfiguration();
+            config.HttpVersion = System.Net.HttpVersion.Version20;
+            OssClient client = new OssClient(endpoint, accessKeyId, accessKeySecret, config);
 
             try
             {
