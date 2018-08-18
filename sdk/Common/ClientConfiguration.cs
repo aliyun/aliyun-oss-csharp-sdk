@@ -33,6 +33,7 @@ namespace Aliyun.OSS.Common
         private int _preReadBufferCount = 8;
         private bool _useSingleThreadReadInResumableUpload = false;
         private bool _enableCrcCheck = true;
+        private static int _connectionLimit = 512;
 
 #if NETCOREAPP2_0
         private bool _enableNewServiceClient = true;
@@ -41,7 +42,11 @@ namespace Aliyun.OSS.Common
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
         /// </summary>
-        public const int ConnectionLimit = 512;
+        public static int ConnectionLimit
+        {
+            get { return _connectionLimit; }
+            set { _connectionLimit = value; }
+        }
 
         private Protocol _protocol = Protocol.Http;
 

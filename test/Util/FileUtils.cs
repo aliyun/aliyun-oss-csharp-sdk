@@ -9,7 +9,7 @@ namespace Aliyun.OSS.Test.Util
     {
         public static string ComputeContentMd5(string inputFile)
         {
-            using (var inputStream = File.Open(inputFile, FileMode.Open))
+            using (Stream inputStream = File.OpenRead(inputFile))
             {
                 using (var md5 = MD5.Create())
                 {
