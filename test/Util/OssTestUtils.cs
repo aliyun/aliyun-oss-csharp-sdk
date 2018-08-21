@@ -98,7 +98,7 @@ namespace Aliyun.OSS.Test.Util
         public static PutObjectResult UploadObject(IOss ossClient, string bucketName,
             string objectKeyName, string originalFile)
         {
-            using (var fs = File.Open(originalFile, FileMode.Open))
+            using (Stream fs = File.OpenRead(originalFile))
             {
                 return ossClient.PutObject(bucketName, objectKeyName, fs);
             }
@@ -134,7 +134,7 @@ namespace Aliyun.OSS.Test.Util
             // Create a list to save the result
             var partETags = new List<PartETag>();
             //upload the file
-            using (var fs = new FileStream(partFile.FullName, FileMode.Open))
+            using (Stream fs = new FileStream(partFile.FullName, FileMode.Open))
             {
                 for (var i = 0; i < numberOfParts; i++)
                 {

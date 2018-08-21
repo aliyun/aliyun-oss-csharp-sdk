@@ -35,6 +35,12 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>aliyun_sdk_net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -80,6 +86,7 @@
     <Compile Include="TestCase\OtherTestCase\ResumableContextTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="aliyun_sdk_net.snk" />
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
