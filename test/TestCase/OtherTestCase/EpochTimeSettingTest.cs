@@ -61,8 +61,9 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 
         private void AssertRequestTimeValidatity(ClientConfiguration conf)
         {
-            _ossClient = new OssClient(new Uri(Config.Endpoint), Config.AccessKeyId,
-                Config.AccessKeySecret, conf);
+            var uri = new Uri(Config.Endpoint.ToLower().Trim().StartsWith("http") ? 
+                Config.Endpoint.Trim() : "http://" + Config.Endpoint.Trim());
+            _ossClient = new OssClient(uri, Config.AccessKeyId, Config.AccessKeySecret, conf);
             try
             {
                 _ossClient.ListBuckets();
@@ -95,8 +96,9 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 
         private void AssertRequestTimeTooSkewed(ClientConfiguration conf)
         {
-            _ossClient = new OssClient(new Uri(Config.Endpoint), Config.AccessKeyId,
-                Config.AccessKeySecret, conf);
+            var uri = new Uri(Config.Endpoint.ToLower().Trim().StartsWith("http") ?
+                Config.Endpoint.Trim() : "http://" + Config.Endpoint.Trim());
+            _ossClient = new OssClient(uri, Config.AccessKeyId, Config.AccessKeySecret, conf);
             try
             {
                 _ossClient.ListBuckets();

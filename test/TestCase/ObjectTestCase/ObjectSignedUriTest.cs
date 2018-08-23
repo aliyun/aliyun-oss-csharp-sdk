@@ -2,9 +2,12 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Xml.Serialization;
 using Aliyun.OSS;
+using Aliyun.OSS.Common;
+using Aliyun.OSS.Model;
 using Aliyun.OSS.Test.Util;
-
+using Aliyun.OSS.Util;
 using NUnit.Framework;
 
 namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
@@ -328,6 +331,56 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 if (res != null) res.Close();
             }
         }
+
+        [Test]
+        public void GetObjectWithPreSignedAndAclParameter()
+        {
+            var targetObject = OssTestUtils.GetObjectKey(_className);
+            OssTestUtils.UploadObject(_ossClient, _bucketName, targetObject, Config.UploadTestFile);
+            var gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject, SignHttpMethod.Get)
+            {
+                Expiration = DateTime.Now.AddHours(1),
+            };
+            gpuRequest.AddQueryParam("acl", "");
+            var uri = _ossClient.GeneratePresignedUri(gpuRequest);
+            try
+            {
+                var getObjectResult = _ossClient.GetObject(uri);
+                Assert.AreEqual(getObjectResult.HttpStatusCode, HttpStatusCode.OK);
+
+                var xml = new XmlSerializer(typeof(AccessControlPolicy));
+                var model = xml.Deserialize(getObjectResult.Content) as AccessControlPolicy;
+                var acl = new AccessControlList();
+                foreach (var grant in model.Grants)
+                {
+                    if (grant == EnumUtils.GetStringValue(CannedAccessControlList.PublicRead))
+                    {
+                        acl.GrantPermission(GroupGrantee.AllUsers, Permission.Read);
+                        acl.ACL = CannedAccessControlList.PublicRead;
+                    }
+                    else if (grant == EnumUtils.GetStringValue(CannedAccessControlList.PublicReadWrite))
+                    {
+                        acl.GrantPermission(GroupGrantee.AllUsers, Permission.FullControl);
+                        acl.ACL = CannedAccessControlList.PublicReadWrite;
+                    }
+                    else if (grant == EnumUtils.GetStringValue(CannedAccessControlList.Private))
+                    {
+                        acl.ACL = CannedAccessControlList.Private;
+                    }
+                    else if (grant == EnumUtils.GetStringValue(CannedAccessControlList.Default))
+                    {
+                        acl.ACL = CannedAccessControlList.Default;
+                    }
+                }
+
+                var acl1 = _ossClient.GetObjectAcl(_bucketName, targetObject);
+                Assert.AreEqual(acl1.ACL, acl.ACL);
+            }
+            catch (OssException e)
+            {
+                Assert.Fail(e.Message);
+            }
+        }
         #endregion
 
         #region PUT methods
@@ -457,6 +510,66 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 if (req != null) req.Abort();
                 if (res != null) res.Close();
+            }
+        }
+        
+        [Test]
+        public void PutObjectWithPreSignedUriWithParameter()
+        {
+            var targetObject = OssTestUtils.GetObjectKey(_className);
+            var gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject, SignHttpMethod.Put)
+            {
+                ContentType = "text/rtf",
+                Expiration = DateTime.Now.AddHours(1),
+            };
+            gpuRequest.UserMetadata.Add("Author", "oss");
+            gpuRequest.UserMetadata.Add("Test", "test");
+            gpuRequest.AddQueryParam("x-param-null", "");
+            gpuRequest.AddQueryParam("x-param-space0", " ");
+            gpuRequest.AddQueryParam("x-param-value", "value");
+            gpuRequest.AddQueryParam("x-param-space1", " ");
+
+            var uri = _ossClient.GeneratePresignedUri(gpuRequest);
+
+            var metadata = new ObjectMetadata();
+            metadata.ContentType = "text/rtf";
+            metadata.UserMetadata.Add("Author", "oss");
+            metadata.UserMetadata.Add("Test", "test");
+
+            var putObjectResult = _ossClient.PutObject(uri, Config.UploadTestFile, metadata);
+            Assert.AreEqual(putObjectResult.HttpStatusCode, HttpStatusCode.OK);
+        }
+
+        [Test]
+        public void PutObjectWithPreSignedUriWithParameterNegativeTest()
+        {
+            var targetObject = OssTestUtils.GetObjectKey(_className);
+            var gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject, SignHttpMethod.Put)
+            {
+                ContentType = "text/rtf",
+                Expiration = DateTime.Now.AddHours(1),
+            };
+            gpuRequest.UserMetadata.Add("Author", "oss");
+            gpuRequest.UserMetadata.Add("Test", "test");
+            gpuRequest.AddQueryParam("x-param-null", "");
+            gpuRequest.AddQueryParam("x-param-space0", " ");
+            gpuRequest.AddQueryParam("x-param-value", "value");
+            gpuRequest.AddQueryParam("x-param-space1", " ");
+
+            var uri = _ossClient.GeneratePresignedUri(gpuRequest);
+
+            var metadata = new ObjectMetadata();
+            metadata.ContentType = "text/rtf";
+            metadata.UserMetadata.Add("Author", "oss");
+            metadata.UserMetadata.Add("Test", "test1");
+            try
+            {
+                var putObjectResult = _ossClient.PutObject(uri, Config.UploadTestFile, metadata);
+                Assert.AreEqual(putObjectResult.HttpStatusCode, HttpStatusCode.Forbidden);
+            }
+            catch (OssException e)
+            {
+                Assert.AreEqual(OssErrorCode.SignatureDoesNotMatch, e.ErrorCode);
             }
         }
         #endregion

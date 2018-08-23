@@ -531,24 +531,27 @@ namespace Aliyun.OSS.Util
 
         internal static IDictionary<String, String> GetParametersFromSignedUrl(Uri signedUrl)
         {
-            IDictionary<String, String> parameters = new Dictionary<String, String>();
-            String query = signedUrl.Query;
+            var parameters = new Dictionary<String, String>();
+            var query = signedUrl.Query;
             int index = 0;
             if (query.Length > 0 && query[0] == '?')
             {
                 index = 1;
             }
-            string[] array = query.Substring(index).Split('&');
-            foreach (string i in array)
+            var array = query.Substring(index).Split('&');
+            foreach (var i in array)
             {
-                string[] param = i.Split('=');
+                var param = i.Split('=');
                 if (param.Length == 2)
+                {
                     parameters.Add(HttpUtils.DecodeUri(param[0]), HttpUtils.DecodeUri(param[1]));
+                }
                 else
+                {
                     parameters.Add(HttpUtils.DecodeUri(param[0]), "");
+                }
             }
             return parameters;
         }
-
     }
 }
