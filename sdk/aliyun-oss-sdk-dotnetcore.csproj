@@ -15,6 +15,8 @@
  <PropertyGroup>
     <AssemblyOriginatorKeyFile>aliyun_sdk_net.snk</AssemblyOriginatorKeyFile>
     <RootNamespace>Aliyun.OSS</RootNamespace>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;NETSTANDARD2_0;</DefineConstants>

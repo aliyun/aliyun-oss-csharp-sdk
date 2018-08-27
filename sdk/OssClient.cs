@@ -716,53 +716,58 @@ namespace Aliyun.OSS
         public PutObjectResult PutObject(Uri signedUrl, Stream content, ObjectMetadata metadata)
         {
             // prepare request
-            var webRequest = (HttpWebRequest)WebRequest.Create(signedUrl);
-            webRequest.Timeout = Timeout.Infinite;  // A temporary solution. 
-            webRequest.Method = HttpMethod.Put.ToString().ToUpperInvariant();
-            webRequest.ContentLength = content.Length;
-
+            var request = new ServiceRequest
+            {
+                Method = HttpMethod.Put,
+                Endpoint = OssUtils.GetEndpointFromSignedUrl(signedUrl),
+                ResourcePath = OssUtils.GetResourcePathFromSignedUrl(signedUrl),
+                ParametersInUri = true
+            };
+            var parameters = OssUtils.GetParametersFromSignedUrl(signedUrl);
+            foreach (var param in parameters)
+            {
+                request.Parameters.Add(param.Key, param.Value);
+            }
+            request.Content = content;
+  
             // populate headers
             if (metadata != null)
             {
-                metadata.Populate(webRequest);
+                //prevent to be assigned default value in metadata.Populate
+                if (metadata.ContentType == null)
+                {
+                    request.Headers[HttpHeaders.ContentType] = "";
+                }
+                metadata.Populate(request.Headers);
             }
-
-            ClientConfiguration config = OssUtils.GetClientConfiguration(_serviceClient);
-            Crc64Stream crcStream = null;
-            // send data
-            using (var requestStream = webRequest.GetRequestStream())
+            if (!request.Headers.ContainsKey(HttpHeaders.ContentLength))
             {
-                if (config.EnableCrcCheck)
-                {
-                    crcStream = new Crc64Stream(content, null, content.Length);
-                    IoUtils.WriteTo(crcStream, requestStream);                  
-                }
-                else
-                {
-                    IoUtils.WriteTo(content, requestStream);
-                }
+                request.Headers[HttpHeaders.ContentLength] = content.Length.ToString();
             }
 
-            // convert response
-            var response = webRequest.GetResponse() as HttpWebResponse;
-            var serviceResponse = new ServiceClientImpl.ResponseImpl(response);
-
-            // handle error if exist
-            ErrorResponseHandler responseHandler;
+            // prepare context
+            var context = new ExecutionContext();
+            context.Signer = null;
+            context.Credentials = null;
             if (ObjectMetadata.HasCallbackHeader(metadata))
             {
-                responseHandler = new CallbackResponseHandler();
+                context.ResponseHandlers.Add(new CallbackResponseHandler());
             }
             else
             {
-                responseHandler = new ErrorResponseHandler();
+                context.ResponseHandlers.Add(new ErrorResponseHandler());
             }
-            responseHandler.Handle(serviceResponse);
 
-            if (crcStream != null)
+            ClientConfiguration config = OssUtils.GetClientConfiguration(_serviceClient);
+            if (config.EnableCrcCheck)
             {
-                new Crc64CheckHandler(crcStream).Handle(serviceResponse);
+                var hashStream = new Crc64Stream(request.Content, null, request.Content.Length);
+                request.Content = hashStream;
+                context.ResponseHandlers.Add(new Crc64CheckHandler(hashStream));
             }
+
+            // get response
+            var serviceResponse = _serviceClient.Send(request, context);
 
             // build result
             var putObjectRequest = new PutObjectRequest(null, null, null, metadata);
@@ -976,17 +981,27 @@ namespace Aliyun.OSS
         public OssObject GetObject(Uri signedUrl)
         {
             // prepare request
-            var webRequest = (HttpWebRequest)WebRequest.Create(signedUrl);
-            webRequest.Timeout = Timeout.Infinite;  // A temporary solution. 
-            webRequest.Method = HttpMethod.Get.ToString().ToUpperInvariant();
+            var request = new ServiceRequest
+            {
+                Method = HttpMethod.Get,
+                Endpoint = OssUtils.GetEndpointFromSignedUrl(signedUrl),
+                ResourcePath = OssUtils.GetResourcePathFromSignedUrl(signedUrl),
+                ParametersInUri = true
+            };
+            var parameters = OssUtils.GetParametersFromSignedUrl(signedUrl);
+            foreach (var param in parameters)
+            {
+                request.Parameters.Add(param.Key, param.Value);
+            }
 
-            // convert response
-            var response = webRequest.GetResponse() as HttpWebResponse;
-            var serviceResponse = new ServiceClientImpl.ResponseImpl(response);
+            // prepare context
+            var context = new ExecutionContext();
+            context.Signer = null;
+            context.Credentials = null;
+            context.ResponseHandlers.Add(new ErrorResponseHandler());
 
-            // handle error if exist
-            var responseHandler = new ErrorResponseHandler();
-            responseHandler.Handle(serviceResponse);
+            // get response
+            var serviceResponse = _serviceClient.Send(request, context);
 
             // build result
             var getObjectRequest = new GetObjectRequest(null, null);

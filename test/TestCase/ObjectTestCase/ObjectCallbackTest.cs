@@ -524,6 +524,50 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _ossClient.DeleteObject(_bucketName, _objectKey);
         }
 
+        [Test]
+        public void GeneratePresignedUriCallbackTestWithParameter()
+        {
+            string callbackHeaderBuilder = new CallbackHeaderBuilder(_callbackUrl, _callbackBody).Build();
+            string CallbackVariableHeaderBuilder = new CallbackVariableHeaderBuilder().
+                AddCallbackVariable("x:var1", "x:value1").AddCallbackVariable("x:var2", "x:value2").Build();
+
+            var gpuRequest = new GeneratePresignedUriRequest(_bucketName, _objectKey, SignHttpMethod.Put)
+            {
+                ContentType = "text/rtf",
+                Expiration = DateTime.Now.AddHours(1),
+                Callback = callbackHeaderBuilder,
+                CallbackVar = CallbackVariableHeaderBuilder
+            };
+            gpuRequest.UserMetadata.Add("Author", "Mingdi");
+            gpuRequest.AddQueryParam("x-param-null", "");
+            gpuRequest.AddQueryParam("x-param-space0", " ");
+            gpuRequest.AddQueryParam("x-param-value", "value");
+            gpuRequest.AddQueryParam("x-param-space1", " ");
+            var uri = _ossClient.GeneratePresignedUri(gpuRequest);
+
+            var metadata = new ObjectMetadata();
+            metadata.ContentType = "text/rtf";
+            metadata.UserMetadata.Add("Author", "Mingdi");
+            metadata.AddHeader(HttpHeaders.Callback, callbackHeaderBuilder);
+            metadata.AddHeader(HttpHeaders.CallbackVar, CallbackVariableHeaderBuilder);
+
+            var putObjectResult = _ossClient.PutObject(uri, Config.UploadTestFile, metadata);
+            Assert.IsTrue(putObjectResult.IsSetResponseStream());
+            Assert.AreEqual(_callbackOkResponse, GetCallbackResponse(putObjectResult));
+            Assert.AreEqual(putObjectResult.HttpStatusCode, HttpStatusCode.OK);
+            Assert.AreEqual(putObjectResult.ContentLength, _callbackOkResponse.Length);
+            Assert.AreEqual(putObjectResult.RequestId.Length, "58DB0ACB686D42D5B4163D75".Length);
+            Assert.AreEqual(putObjectResult.ResponseMetadata[HttpHeaders.ContentType], "application/json");
+            Assert.AreEqual(putObjectResult.ResponseMetadata[HttpHeaders.ETag], putObjectResult.ETag);
+            Assert.AreEqual(putObjectResult.ResponseMetadata[HttpHeaders.ContentMd5].Length, "7GoU4OYaYroKXsbsG1f/lw==".Length);
+            Assert.IsTrue(putObjectResult.ResponseMetadata[HttpHeaders.HashCrc64Ecma].Length > 0);
+            Assert.IsTrue(putObjectResult.ResponseMetadata[HttpHeaders.ServerElapsedTime].Length > 0);
+            Assert.AreEqual(putObjectResult.ResponseMetadata[HttpHeaders.Date].Length, "Wed, 29 Mar 2017 01:15:58 GMT".Length);
+
+            _ossClient.DeleteObject(_bucketName, _objectKey);
+        }
+
+        [Test]
         public void GeneratePresignedUriMetadataTest()
         {
             var gpuRequest = new GeneratePresignedUriRequest(_bucketName, _objectKey, SignHttpMethod.Put)
