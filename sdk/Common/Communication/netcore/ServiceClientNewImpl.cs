@@ -275,7 +275,14 @@ namespace Aliyun.OSS.Common.Communication
 
         private HttpClient GetClient()
         {
-            if (string.IsNullOrEmpty(Configuration.ProxyHost))
+            if (_httpClientSelf != null)
+            {
+                return _httpClientSelf;
+            }
+
+            bool notUseProxy = string.IsNullOrEmpty(Configuration.ProxyHost);
+
+            if (notUseProxy)
             {
                 if (_httpClientNoProxy == null)
                 {
@@ -283,11 +290,11 @@ namespace Aliyun.OSS.Common.Communication
                     {
                         if (_httpClientNoProxy == null)
                         {
+                            _configurationNoProxy = DupConfiguration(Configuration);
                             _httpClientNoProxy = Create(false);
                         }
                     }
-                }
-                return _httpClientNoProxy;
+                } 
             }
             else
             {
@@ -297,12 +304,39 @@ namespace Aliyun.OSS.Common.Communication
                     {
                         if (_httpClient == null)
                         {
+                            _configuration = DupConfiguration(Configuration);
                             _httpClient = Create(true);
                         }
                     }
-                }
-                return _httpClient;
+                } 
             }
+
+            if (notUseProxy)
+            {
+                if (CanReuseHttpClient(_configurationNoProxy, Configuration))
+                {
+                    _httpClientSelf = _httpClientNoProxy;
+                }
+            }
+            else
+            {
+                if (CanReuseHttpClient(_configuration, Configuration))
+                {
+                    _httpClientSelf = _httpClient;
+                }
+            }
+
+            if (_httpClientSelf == null)
+            {
+                lock (_clientLock)
+                {
+                    if (_httpClientSelf == null)
+                    {
+                        _httpClientSelf = Create(!notUseProxy);
+                    }
+                }
+            }
+            return _httpClientSelf;
         }
 
         private HttpClient Create(bool setProxy)
@@ -320,8 +354,46 @@ namespace Aliyun.OSS.Common.Communication
             return client;
         }
 
+        private ClientConfiguration DupConfiguration(ClientConfiguration src)
+        {
+            if (src == null)
+            {
+                return null;
+            }
+
+            var config = new ClientConfiguration()
+            {
+                ProxyHost = src.ProxyHost,
+                ProxyPort = src.ProxyPort,
+                ProxyUserName = src.ProxyUserName,
+                ProxyPassword = src.ProxyPassword,
+                ConnectionTimeout = src.ConnectionTimeout,
+            };
+            return config;
+        }
+
+        private bool CanReuseHttpClient(ClientConfiguration dst, ClientConfiguration src)
+        {
+            if (dst == null 
+                || src == null
+                || (dst.ConnectionTimeout == src.ConnectionTimeout && 
+                    dst.ProxyHost == src.ProxyHost &&
+                    dst.ProxyPort == src.ProxyPort &&
+                    dst.ProxyUserName == src.ProxyUserName &&
+                    dst.ProxyPassword == src.ProxyPassword
+                ))
+            {
+                return true;
+            }
+            return false;
+        }
+
         private static HttpClient _httpClient;
         private static HttpClient _httpClientNoProxy;
         private static object _clientLock = new object();
+        private static ClientConfiguration _configuration;
+        private static ClientConfiguration _configurationNoProxy;
+        private HttpClient _httpClientSelf;
+
     }
 }

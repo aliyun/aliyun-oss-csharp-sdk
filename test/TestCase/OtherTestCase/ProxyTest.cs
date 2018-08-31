@@ -141,5 +141,28 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
                 Assert.AreEqual(e.Status, WebExceptionStatus.ProtocolError);
             }
         }
+
+#if NETCOREAPP2_0
+        [Test]
+#endif
+        public void ProxyAuthInvalidTestWithDiffrentHttpClient()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                IOss ossClient = OssClientFactory.CreateOssClientWithProxy(Config.Endpoint,
+                    Config.DisabledAccessKeyId, Config.DisabledAccessKeySecret,
+                    Config.ProxyHost, Int32.Parse(Config.ProxyPort) + 2, null, null);
+
+                OssTestUtils.ObjectExists(ossClient, _bucketName, key);
+
+                Assert.Fail("Object Exists should not pass when it was invalid authorization");
+            }
+            catch (WebException e)
+            {
+                Assert.AreEqual(e.Status, WebExceptionStatus.ProtocolError);
+            }
+        }
     }
 }
