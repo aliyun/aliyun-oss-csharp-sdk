@@ -42,7 +42,8 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 #endif
         public static void ClassCleanup()
         {
-            OssTestUtils.CleanBucket(_ossClient, _bucketName);
+            IOss ossClient = OssClientFactory.CreateOssClient();
+            OssTestUtils.CleanBucket(ossClient, _bucketName);
         }
 
         [Test]
