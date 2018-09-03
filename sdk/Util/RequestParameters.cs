@@ -43,5 +43,10 @@ namespace Aliyun.OSS.Util
         public const string SECURITY_TOKEN = "security-token";
 
         public const string OSS_PROCESS = "x-oss-process";
+
+        public const string OSS_EXPIRES = "x-oss-expires";
+        public const string OSS_SIGNATURE = "x-oss-signature";
+        public const string OSS_SIGNATURE_VERSION = "x-oss-signature-version";
+        public const string OSS_ACCESS_KEY_ID2 = "x-oss-access-key-id";
     }
 }

@@ -27,9 +27,16 @@ namespace Aliyun.OSS.Common.Authentication
 
         protected abstract string ComputeSignatureCore(string key, string data);
 
-        public static ServiceSignature Create()
+        public static ServiceSignature Create(string version)
         {
-            return new HmacSha1Signature();
+            if (version == Util.SignUtils.SignerVerion2)
+            {
+                return new HmacSha256Signature();
+            }
+            else
+            {
+                return new HmacSha1Signature();
+            }
         }
     }
 }

@@ -128,6 +128,11 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
+        /// Gets or sets Signer Version
+        /// </summary>
+        public string SignerVersion { get; set; }
+
+        /// <summary>
         /// Add a user metadata
         /// The metaItem should not start with 'x-oss-meta-'.
         /// </summary>

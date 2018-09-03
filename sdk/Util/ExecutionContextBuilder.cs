@@ -22,7 +22,11 @@ namespace Aliyun.OSS.Util
         public string Bucket { get; set; }
         
         public string Key { get; set; }
-        
+
+        public string SignerVersion { get; set; }
+
+        public IList<string> HeadersToSign { get; set; }
+
         public ExecutionContextBuilder()
         {
             ResponseHandlers = new List<IResponseHandler>();
@@ -32,7 +36,7 @@ namespace Aliyun.OSS.Util
         {
             var context = new ExecutionContext
             {
-                Signer = CreateSigner(Bucket, Key), 
+                Signer = CreateSigner(Bucket, Key, SignerVersion, HeadersToSign), 
                 Credentials = Credentials
             };
             foreach(var h in ResponseHandlers)
@@ -42,7 +46,7 @@ namespace Aliyun.OSS.Util
             return context;
         }
         
-        private static IRequestSigner CreateSigner(string bucket, string key)
+        private static IRequestSigner CreateSigner(string bucket, string key, string version, IList<string> headersToSign)
         {    
             var resourcePath = "/" + (bucket ?? string.Empty) +
                 ((key != null ? "/" + key : ""));
@@ -54,7 +58,7 @@ namespace Aliyun.OSS.Util
                 resourcePath = resourcePath + "/";
             }
             
-            return new OssRequestSigner(resourcePath);
+            return new OssRequestSigner(resourcePath, version, headersToSign);
         }
     }
 }

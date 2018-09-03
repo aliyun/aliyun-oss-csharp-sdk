@@ -74,6 +74,7 @@
     <Compile Include="TestCase\OtherTestCase\EpochTimeSettingTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ConcurrencyTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectEncodingTypeTest.cs" />
+    <Compile Include="TestCase\OtherTestCase\SignerTest.cs" />
     <Compile Include="Util\AccountSettings.cs" />
     <Compile Include="Util\Config.cs" />
     <Compile Include="Util\LogUtility.cs" />

@@ -21,7 +21,7 @@ namespace Aliyun.OSS.Common.Authentication
 
         public override string SignatureVersion
         {
-            get { return "1"; }
+            get { return "v1"; }
         }
 
         protected override string ComputeSignatureCore(string key, string data)

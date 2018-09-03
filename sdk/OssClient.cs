@@ -1400,14 +1400,15 @@ namespace Aliyun.OSS
             var useToken = creds.UseToken;
             var bucketName = generatePresignedUriRequest.BucketName;
             var key = generatePresignedUriRequest.Key;
-            
+            var conf = OssUtils.GetClientConfiguration(_serviceClient);
+            var signerVersion = generatePresignedUriRequest.SignerVersion ?? conf.SignerVersion;
+
             const long ticksOf1970 = 621355968000000000;
             var expires = ((generatePresignedUriRequest.Expiration.ToUniversalTime().Ticks - ticksOf1970) / 10000000L)
                 .ToString(CultureInfo.InvariantCulture);
             var resourcePath = OssUtils.MakeResourcePath(_endpoint, bucketName, key);
                 
             var request = new ServiceRequest();
-            var conf = OssUtils.GetClientConfiguration(_serviceClient);
             request.Endpoint = OssUtils.MakeBucketEndpoint(_endpoint, bucketName, conf);
             request.ResourcePath = resourcePath;
 
@@ -1444,18 +1445,32 @@ namespace Aliyun.OSS
 
             if (useToken)
                 request.Parameters.Add(RequestParameters.SECURITY_TOKEN, securityToken);
-            
+
+            if (signerVersion == SignUtils.SignerVerion2)
+            {
+                request.Parameters.Add(RequestParameters.OSS_SIGNATURE_VERSION, "OSS2");
+                request.Parameters.Add(RequestParameters.OSS_EXPIRES, expires);
+                request.Parameters.Add(RequestParameters.OSS_ACCESS_KEY_ID2, accessKeyId);
+            }
+
             var canonicalResource = "/" + (bucketName ?? "") + ((key != null ? "/" + key : ""));
             var httpMethod = generatePresignedUriRequest.Method.ToString().ToUpperInvariant();
-            
+
             var canonicalString =
-                SignUtils.BuildCanonicalString(httpMethod, canonicalResource, request/*, expires*/);
-            var signature = ServiceSignature.Create().ComputeSignature(accessKeySecret, canonicalString);
+                SignUtils.BuildCanonicalString(httpMethod, canonicalResource, request, signerVersion, null, null);
+            var signature = ServiceSignature.Create(signerVersion).ComputeSignature(accessKeySecret, canonicalString);
 
             IDictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams.Add(RequestParameters.EXPIRES, expires);
-            queryParams.Add(RequestParameters.OSS_ACCESS_KEY_ID, accessKeyId);
-            queryParams.Add(RequestParameters.SIGNATURE, signature);
+            if (signerVersion == SignUtils.SignerVerion2)
+            {
+                queryParams.Add(RequestParameters.OSS_SIGNATURE, signature);
+            }
+            else
+            {
+                queryParams.Add(RequestParameters.EXPIRES, expires);
+                queryParams.Add(RequestParameters.OSS_ACCESS_KEY_ID, accessKeyId);
+                queryParams.Add(RequestParameters.SIGNATURE, signature);
+            }
             foreach (var param in request.Parameters)
                 queryParams.Add(param.Key, param.Value);
 
@@ -1608,7 +1623,9 @@ namespace Aliyun.OSS
                 Bucket = bucket,
                 Key = key,
                 Method = method,
-                Credentials = _credsProvider.GetCredentials()
+                Credentials = _credsProvider.GetCredentials(),
+                SignerVersion = OssUtils.GetClientConfiguration(_serviceClient).SignerVersion,
+                HeadersToSign = OssUtils.GetClientConfiguration(_serviceClient).HeadersToSign
             };
             builder.ResponseHandlers.Add(new ErrorResponseHandler());
             return builder.Build();

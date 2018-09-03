@@ -34,6 +34,7 @@ namespace Aliyun.OSS.Common
         private bool _useSingleThreadReadInResumableUpload = false;
         private bool _enableCrcCheck = true;
         private static int _connectionLimit = 512;
+        private string _signerVersion = SignUtils.SignerVerion1;
 
 #if NETCOREAPP2_0
         private bool _enableNewServiceClient = true;
@@ -268,6 +269,27 @@ namespace Aliyun.OSS.Common
             }
         }
 #endif
+
+        /// <summary>
+        /// Set the signer version, default is v1
+        /// </summary>
+        public string SignerVersion
+        {
+            get
+            {
+                return _signerVersion;
+            }
+            set
+            {
+                _signerVersion = value;
+            }
+        }
+
+        /// <summary>
+        /// Set the headers to sign in canonicalized header part, v2 only
+        /// Contains the headers whose prefixes are x-oss- by default
+        /// </summary>
+        public IList<string> HeadersToSign { get; set; }
 
         /// <summary>
         /// Gets the default user agent
