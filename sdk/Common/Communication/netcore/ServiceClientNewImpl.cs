@@ -290,7 +290,7 @@ namespace Aliyun.OSS.Common.Communication
                     {
                         if (_httpClientNoProxy == null)
                         {
-                            _configurationNoProxy = DupConfiguration(Configuration);
+                            _configurationNoProxy = Configuration.Clone() as ClientConfiguration;
                             _httpClientNoProxy = Create(false);
                         }
                     }
@@ -304,7 +304,7 @@ namespace Aliyun.OSS.Common.Communication
                     {
                         if (_httpClient == null)
                         {
-                            _configuration = DupConfiguration(Configuration);
+                            _configuration = Configuration.Clone() as ClientConfiguration;
                             _httpClient = Create(true);
                         }
                     }
@@ -352,24 +352,6 @@ namespace Aliyun.OSS.Common.Communication
             client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", Configuration.UserAgent);
             ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(HttpFactory.CheckValidationResult);
             return client;
-        }
-
-        private ClientConfiguration DupConfiguration(ClientConfiguration src)
-        {
-            if (src == null)
-            {
-                return null;
-            }
-
-            var config = new ClientConfiguration()
-            {
-                ProxyHost = src.ProxyHost,
-                ProxyPort = src.ProxyPort,
-                ProxyUserName = src.ProxyUserName,
-                ProxyPassword = src.ProxyPassword,
-                ConnectionTimeout = src.ConnectionTimeout,
-            };
-            return config;
         }
 
         private bool CanReuseHttpClient(ClientConfiguration dst, ClientConfiguration src)

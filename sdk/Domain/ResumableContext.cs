@@ -74,10 +74,12 @@ namespace Aliyun.OSS
             if (string.IsNullOrEmpty(tokens[4]) && string.IsNullOrEmpty(tokens[5]))
             {
                 PartETag = null;
-            } else if (!(int.TryParse(tokens[4], out partNum) && partNum > 0 && !string.IsNullOrEmpty(tokens[5])))
+            }
+            else if (!(int.TryParse(tokens[4], out partNum) && partNum > 0 && !string.IsNullOrEmpty(tokens[5])))
             {
                 return false;
-            } else
+            }
+            else
             {
                 PartETag = new PartETag(partNum, tokens[5]);
             }
@@ -99,7 +101,8 @@ namespace Aliyun.OSS
             if (PartETag != null)
             {
                 result += PartETag.PartNumber.ToString() + TokenSeparator + PartETag.ETag + TokenSeparator;
-            } else
+            }
+            else
             {
                 result += "" + TokenSeparator + "" + TokenSeparator;
             }
