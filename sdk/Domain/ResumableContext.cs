@@ -71,12 +71,18 @@ namespace Aliyun.OSS
             IsCompleted = isCompleted;
 
             int partNum;
-            if (!(int.TryParse(tokens[4], out partNum) && partNum > 0 && !string.IsNullOrEmpty(tokens[5])))
+            if (string.IsNullOrEmpty(tokens[4]) && string.IsNullOrEmpty(tokens[5]))
+            {
+                PartETag = null;
+            }
+            else if (!(int.TryParse(tokens[4], out partNum) && partNum > 0 && !string.IsNullOrEmpty(tokens[5])))
             {
                 return false;
             }
-
-            PartETag = new PartETag(partNum, tokens[5]);
+            else
+            {
+                PartETag = new PartETag(partNum, tokens[5]);
+            }
 
             ulong crc = 0;
             if (!ulong.TryParse(tokens[6], out crc))
@@ -95,9 +101,10 @@ namespace Aliyun.OSS
             if (PartETag != null)
             {
                 result += PartETag.PartNumber.ToString() + TokenSeparator + PartETag.ETag + TokenSeparator;
-            } else
+            }
+            else
             {
-                result += TokenSeparator;
+                result += "" + TokenSeparator + "" + TokenSeparator;
             }
 
             result += Crc64.ToString();
@@ -348,15 +355,23 @@ namespace Aliyun.OSS
         public override bool FromString(string value)
         {
             var tokens = value.Split(ContextSeparator);
-            if (tokens.Length != 3)
+            if (tokens.Length != 4)
             {
                 return false;
             }
 
             ETag = tokens[0];
-            ContentMd5 = tokens[1];
-            var partStr = tokens[2];
+            if (!string.IsNullOrEmpty(tokens[1]))
+            {
+                ContentMd5 = tokens[1];
+            }
 
+            if (!string.IsNullOrEmpty(tokens[2]))
+            {
+                Crc64 = tokens[2];
+            }
+
+            var partStr = tokens[3];
             var partTokens = partStr.Split(PartContextSeparator);
             if (partTokens.Length <= 1)
             {
@@ -385,6 +400,9 @@ namespace Aliyun.OSS
             result.Append(ContextSeparator);
 
             result.Append(ContentMd5);
+            result.Append(ContextSeparator);
+
+            result.Append(Crc64);
             result.Append(ContextSeparator);
 
             foreach (var part in PartContextList)
