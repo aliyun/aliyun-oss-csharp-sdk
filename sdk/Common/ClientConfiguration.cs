@@ -14,7 +14,7 @@ namespace Aliyun.OSS.Common
     /// <summary>
     /// The client configuration that specifies the network parameters.
     /// </summary>
-    public class ClientConfiguration
+    public class ClientConfiguration: ICloneable
     {
         private const string UserAgentPrefix = "aliyun-sdk-dotnet/";
         private static readonly string _userAgent = GetDefaultUserAgent();
@@ -280,6 +280,11 @@ namespace Aliyun.OSS.Common
                 Environment.OSVersion.Version + "/" + 
                 OssUtils.DetermineSystemArchitecture() + ";" + 
                 Environment.Version + ")";
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone(); 
         }
     }
 }

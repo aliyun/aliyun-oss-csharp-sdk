@@ -10,6 +10,7 @@ using System.Threading;
 using Aliyun.OSS.Common;
 using System.Text;
 using Aliyun.OSS.Util;
+using System.Security.Cryptography;
 
 namespace Aliyun.OSS.Samples
 {
@@ -26,6 +27,7 @@ namespace Aliyun.OSS.Samples
         static string fileToUpload = Config.FileToUpload;
 
         static AutoResetEvent _event = new AutoResetEvent(false);
+        static HashAlgorithm hashAlgorithm = new MD5CryptoServiceProvider();
 
         /// <summary>
         /// sample for put object to oss
@@ -33,6 +35,8 @@ namespace Aliyun.OSS.Samples
         public static void PutObject(string bucketName)
         {
             PutObjectFromFile(bucketName);
+
+            PutObjectFromFileWithTimeout(bucketName);
 
             PutObjectFromString(bucketName);
 
@@ -43,6 +47,8 @@ namespace Aliyun.OSS.Samples
             PutObjectWithHeader(bucketName);
 
             AsyncPutObject(bucketName);
+
+            PutObjectFromStringWithHashPrefix(bucketName);
         }
 
         public static void PutObjectFromFile(string bucketName)
@@ -61,6 +67,78 @@ namespace Aliyun.OSS.Samples
             catch (Exception ex)
             {
                 Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
+        }
+
+        public static void PutObjectFromFileWithTimeout(string bucketName)
+        {
+            var _configuration = new ClientConfiguration();
+            _configuration.ConnectionTimeout = 20000; 
+            var _client = new OssClient(endpoint, accessKeyId, accessKeySecret, _configuration);
+
+            const string key = "PutObjectFromFile";
+            try
+            {
+                _client.PutObject(bucketName, key, fileToUpload);
+                Console.WriteLine("Put object:{0} succeeded", key);
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
+        }
+
+        private static string GetMd5Hash(string str)
+        {
+            var output = new byte[128];
+            var buffer = System.Text.Encoding.Default.GetBytes(str);
+            hashAlgorithm.TransformBlock(buffer, 0, str.Length, output, 0);
+            hashAlgorithm.TransformFinalBlock(buffer, 0, 0);
+            var md5 = BitConverter.ToString(hashAlgorithm.Hash).ToLower();
+            md5 = md5.Replace("-", "");
+            return md5;
+        }
+
+        public static void PutObjectFromStringWithHashPrefix(string bucketName)
+        {
+            DateTime begin = new DateTime(2018,6,1);
+            DateTime end = new DateTime(2018,6,1);
+
+            for (var i = begin; i <= end; i = i.AddDays(1))
+            {
+                var hash_prefix = "camera_01/" + i.Year + "-" + i.Month.ToString().PadLeft(2, '0');
+                var key_prefix  = GetMd5Hash(hash_prefix).Substring(0, 4) + "/" + hash_prefix + "-" + i.Day.ToString().PadLeft(2, '0') + "/";
+
+                for (var j = 1; j < 2; j++)
+                {
+                    var key = key_prefix + j.ToString().PadLeft(8, '0') + ".dat";
+                    const string str = "Aliyun OSS SDK for C#";
+
+                    try
+                    {
+                        byte[] binaryData = Encoding.ASCII.GetBytes(str);
+                        var stream = new MemoryStream(binaryData);
+
+                        client.PutObject(bucketName, key, stream);
+                        Console.WriteLine("Put object:{0} succeeded", key);
+                    }
+                    catch (OssException ex)
+                    {
+                        Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                            ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Failed with error info: {0}", ex.Message);
+                    }
+
+                }
+
             }
         }
 

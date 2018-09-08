@@ -25,6 +25,13 @@ namespace Aliyun.OSS.Samples
 
         static string fileToUpload = Config.BigFileToUpload;
 
+        private static void streamProgressCallback(object sender, StreamTransferProgressArgs args)
+        {
+            Console.WriteLine("ProgressCallback - TotalBytes:{0}, TransferredBytes:{1}, IncrementTransferred:{2}",
+                args.TotalBytes, args.TransferredBytes, args.IncrementTransferred);
+        }
+
+
         public static void ResumableUploadObject(string bucketName)
         {
             const string key = "ResumableUploadObject";
@@ -36,6 +43,7 @@ namespace Aliyun.OSS.Samples
                     PartSize = 8 * 1024 * 1024,
                     ParallelThreadCount = 3,
                     CheckpointDir = checkpointDir,
+                    StreamTransferProgress = streamProgressCallback,
                 };
                 client.ResumableUploadObject(request);
                 Console.WriteLine("Resumable upload object:{0} succeeded", key);
@@ -63,6 +71,7 @@ namespace Aliyun.OSS.Samples
                     PartSize = 8 * 1024 * 1024,
                     ParallelThreadCount = 3,
                     CheckpointDir = Config.DirToDownload,
+                    StreamTransferProgress = streamProgressCallback,
                 };
                 client.ResumableDownloadObject(request);
                 Console.WriteLine("Resumable download object:{0} succeeded", key);
