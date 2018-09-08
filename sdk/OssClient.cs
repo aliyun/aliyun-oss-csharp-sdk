@@ -1136,9 +1136,9 @@ namespace Aliyun.OSS
             }
 
             ResumableDownloadContext resumableContext = this.LoadResumableDownloadContext(request.BucketName, request.Key, objectMeta, request.CheckpointDir, actualPartSize);
-            NewResumableContext(fileSize, actualPartSize, resumableContext);
             ResumableDownloadManager resumableDownloadManager = new ResumableDownloadManager(this, ((RetryableServiceClient)_serviceClient).MaxRetryTimes, config);
             resumableDownloadManager.ResumableDownloadWithRetry(request, resumableContext);
+            resumableContext.Clear();
             return objectMeta;
         }
 
