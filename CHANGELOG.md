@@ -1,4 +1,10 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
+## 版本号：2.9.0  日期：2018/09/17
+### 变更内容
+- 增加：支持.net core 2.0 平台 
+- 增加：支持修改ConnectionLimit参数 
+- 修复：当断点上传/下载出错时，没有从断点位置继续上传/下载的问题
+- 优化：去除OSSClient里对HttpWebRequest的直接依赖
 
 ## 版本号：2.8.0  日期：2018/01/09
 ### 变更内容
