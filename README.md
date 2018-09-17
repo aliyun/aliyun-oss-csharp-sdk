@@ -12,7 +12,7 @@
  - OSS C# SDK[Online Documentation](http://gosspublic.alicdn.com/AliyunNetSDK/international/apidocs/latest/index.html). 
 
 ## Version
- - Current version: 2.8.0.
+ - Current version: 2.9.0.
 
 ## Run environment
 
@@ -28,7 +28,7 @@
 #### Install the SDK through NuGet
  - If NuGet hasn't been installed for Visual Studio, install [NuGet](http://docs.nuget.org/docs/start-here/installing-nuget) first. 
  - After NuGet is installed, access Visual Studio to create a project or open an existing project, and then select `TOOLS` > `NuGet Package Manager` > `Manage NuGet Packages for Solution`.
- - Type `aliyun.oss.sdk` in the search box and click *Search*, find `Aliyun.OSS.SDK` in the search results, select the latest version, and click *Install*. After installation, the SDK is added to the project.
+ - Type `aliyun.oss.sdk` in the search box and click *Search*, find `Aliyun.OSS.SDK` or `Aliyun.OSS.SDK.Core` in the search results, select the latest version, and click *Install*. After installation, the SDK is added to the project.
 
 #### Install the SDK through GitHub
  - If Git hasn't been installed, install [Git](https://git-scm.com/downloads) first. 
