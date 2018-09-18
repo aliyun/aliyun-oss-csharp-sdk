@@ -28,7 +28,7 @@
 #### NuGet安装
  - 如果您的Visual Studio没有安装NuGet，请先安装 [NuGet](http://docs.nuget.org/docs/start-here/installing-nuget).
  - 安装好NuGet后，先在`Visual Studio`中新建或者打开已有的项目，然后选择`<工具>`－`<NuGet程序包管理器>`－`<管理解决方案的NuGet程序包>`，
- - 搜索`aliyun.oss.sdk`，在结果中找到`Aliyun.OSS.SDK`或`Aliyun.OSS.SDK.Core`，选择最新版本，点击安装，成功后添加到项目应用中。
+ - 搜索`aliyun.oss.sdk`，在结果中找到`Aliyun.OSS.SDK`或`Aliyun.OSS.SDK.NetCore`，选择最新版本，点击安装，成功后添加到项目应用中。
 
 #### GitHub安装
  - 如果没有安装git，请先安装 [git](https://git-scm.com/downloads) 
