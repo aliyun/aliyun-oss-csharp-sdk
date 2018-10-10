@@ -56,6 +56,20 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             rule.Status = RuleStatus.Disabled;
             rule.ExpriationDays = 365;
             Test(rule);
+
+            rule = new LifecycleRule();
+            rule.ID = "StandardExpireRule" + Guid.NewGuid();
+            rule.Prefix = "object";
+            rule.Status = RuleStatus.Enabled;
+            rule.CreatedBeforeDate = DateTime.UtcNow.Date.AddDays(200);
+            Test(rule);
+
+            rule = new LifecycleRule();
+            rule.ID = "StandardExpireRule" + Guid.NewGuid();
+            rule.Prefix = "object";
+            rule.Status = RuleStatus.Disabled;
+            rule.CreatedBeforeDate = DateTime.UtcNow.Date.AddDays(365);
+            Test(rule);
         }
 
         [Test]
@@ -102,6 +116,18 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             };
 
             rule.Transitions[0].LifeCycleExpiration.Days = 250;
+            Test(rule);
+
+            rule = new LifecycleRule();
+            rule.ID = "StandardExpireRule" + Guid.NewGuid();
+            rule.Prefix = "object";
+            rule.Status = RuleStatus.Disabled;
+            rule.CreatedBeforeDate = DateTime.UtcNow.Date.AddDays(365);
+
+            rule.AbortMultipartUpload = new LifecycleRule.LifeCycleExpiration()
+            {
+                CreatedBeforeDate = DateTime.UtcNow.Date.AddDays(200)
+            };
             Test(rule);
         }
 

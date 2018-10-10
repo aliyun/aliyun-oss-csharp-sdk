@@ -70,6 +70,17 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                     Assert.IsTrue(true);
                 }
             }
+
+            try
+            {
+                var sbwRequest = new SetBucketWebsiteRequest(_bucketName, "index.html", ".html");
+                _ossClient.SetBucketWebsite(sbwRequest);
+                Assert.Fail("Set Bucket website should fail with invalid page names");
+            }
+            catch (ArgumentException)
+            {
+                Assert.IsTrue(true);
+            }
         }
     }
 }
