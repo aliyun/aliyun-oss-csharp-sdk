@@ -220,7 +220,7 @@ wax		audio/x-ms-wax
 pdb		chemical/x-pdb
 xyz	    chemical/x-xyz
 bmp	    image/bmp
-gi		image/gif
+gif		image/gif
 ief		image/ief
 png	    image/png
 wbmp    image/vnd.wap.wbmp
