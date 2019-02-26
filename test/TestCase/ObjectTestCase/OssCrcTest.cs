@@ -18,11 +18,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _bucketName;
         private static IOss _ossClient;
 
-#if NETCOREAPP2_0
         [OneTimeSetUp]
-#else
-        [TestFixtureSetUp]
-#endif
         public static void ClassInitialize()
         {
             //get current class name, which is prefix of bucket/object
@@ -33,11 +29,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _ossClient.CreateBucket(_bucketName);
         }
 
-#if NETCOREAPP2_0
         [OneTimeTearDown]
-#else
-        [TestFixtureTearDown]
-#endif
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);

@@ -16,11 +16,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         private static IOss _ossClient;
         private static string _className;
 
-#if NETCOREAPP2_0
         [OneTimeSetUp]
-#else
-        [TestFixtureSetUp]
-#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -29,11 +25,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _className = TestContext.CurrentContext.Test.FullName;
             _className = _className.Substring(_className.LastIndexOf('.') + 1).ToLowerInvariant();
         }
-#if NETCOREAPP2_0
+
         [OneTimeTearDown]
-#else
-        [TestFixtureTearDown]
-#endif
         public static void ClassCleanup()
         {
             //Bucket is limited resources, so double check to clean up all remain

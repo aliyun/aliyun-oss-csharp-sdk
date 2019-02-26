@@ -21,11 +21,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _objectKey;
         private static string _objectETag;
 
-#if NETCOREAPP2_0
         [OneTimeSetUp]
-#else
-        [TestFixtureSetUp]
-#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -43,11 +39,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _objectETag = poResult.ETag;
         }
 
-#if NETCOREAPP2_0
         [OneTimeTearDown]
-#else
-        [TestFixtureTearDown]
-#endif
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);
