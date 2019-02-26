@@ -115,7 +115,7 @@ namespace Aliyun.OSS.Util
                 fileType = System.IO.Path.GetExtension(key);
             }
 
-            fileType = fileType.Trim().TrimStart(new char[1] { '.' });
+            fileType = fileType.Trim().TrimStart(new char[1] { '.' }).ToLower();
             
             if (_mimeDict.ContainsKey(fileType))
             {

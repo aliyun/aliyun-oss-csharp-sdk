@@ -27,11 +27,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         private static string _archiveBucketName;
         private static AutoResetEvent _event;
 
-#if NETCOREAPP2_0
         [OneTimeSetUp]
-#else
-        [TestFixtureSetUp]
-#endif
         public static void ClassInitialize()
         {
             //get a OSS client object
@@ -62,11 +58,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _event = new AutoResetEvent(false);
         }
 
-#if NETCOREAPP2_0
         [OneTimeTearDown]
-#else
-        [TestFixtureTearDown]
-#endif
         public static void ClassCleanup()
         {
             OssTestUtils.CleanBucket(_ossClient, _bucketName);
@@ -922,6 +914,60 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        [Test]
+        public void UploadObjectCaseFileSurfix()
+        {
+            var key = OssTestUtils.GetObjectKey(_className) + ".potx";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newFile.Docx";
+
+            try
+            {
+                File.Copy(Config.UploadTestFile, newFileName, true);
+                OssTestUtils.UploadObject(_ossClient, _bucketName, key, newFileName, null);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+
+                var coRequest = new GetObjectRequest(_bucketName, key);
+                var result = _ossClient.GetObject(coRequest);
+                Assert.AreEqual("application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                result.Metadata.ContentType);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                    File.Delete(newFileName);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadObjectFileSurfixGif()
+        {
+            var key = OssTestUtils.GetObjectKey(_className) + ".gif";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newFile.Gif";
+
+            try
+            {
+                File.Copy(Config.UploadTestFile, newFileName, true);
+                OssTestUtils.UploadObject(_ossClient, _bucketName, key, newFileName, null);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+
+                var coRequest = new GetObjectRequest(_bucketName, key);
+                var result = _ossClient.GetObject(coRequest);
+                Assert.AreEqual("image/gif",
+                                result.Metadata.ContentType);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                    File.Delete(newFileName);
+                }
+            }
+        }
+
         #endregion
 
         #region does object exist
@@ -1636,7 +1682,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     Assert.IsTrue(false);
                 }
             }
-#if NETCOREAPP2_0
+#if TEST_DOTNETCORE
             catch (System.Net.Http.HttpRequestException ex2)
             {
                 Assert.IsTrue(ex2.Message.Contains(HttpStatusCode.Conflict.ToString()));

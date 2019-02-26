@@ -64,8 +64,10 @@ namespace Aliyun.OSS.Common.Communication
                     if (!_response.IsSuccessStatusCode)
                     {
                         if (_response.Content != null) { // after the EnsureSuccessStatusCode(), the _strema will be closed if the status code is non-successful one.
-                            _stream = new MemoryStream();
-                            _response.Content.CopyToAsync(_stream).Wait();
+                            var tmpStream = new MemoryStream();
+                            _stream.CopyToAsync(tmpStream).Wait();
+                            _stream.Dispose();
+                            _stream = tmpStream;
                             _stream.Seek(0, SeekOrigin.Begin);
                             _disposeStream = true;
                         }
