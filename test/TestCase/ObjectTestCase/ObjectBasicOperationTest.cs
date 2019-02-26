@@ -922,6 +922,60 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        [Test]
+        public void UploadObjectCaseFileSurfix()
+        {
+            var key = OssTestUtils.GetObjectKey(_className) + ".potx";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newFile.Docx";
+
+            try
+            {
+                File.Copy(Config.UploadTestFile, newFileName, true);
+                OssTestUtils.UploadObject(_ossClient, _bucketName, key, newFileName, null);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+
+                var coRequest = new GetObjectRequest(_bucketName, key);
+                var result = _ossClient.GetObject(coRequest);
+                Assert.AreEqual("application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                result.Metadata.ContentType);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                    File.Delete(newFileName);
+                }
+            }
+        }
+
+        [Test]
+        public void UploadObjectFileSurfixGif()
+        {
+            var key = OssTestUtils.GetObjectKey(_className) + ".gif";
+            var newFileName = Path.GetDirectoryName(Config.UploadTestFile) + "/newFile.Gif";
+
+            try
+            {
+                File.Copy(Config.UploadTestFile, newFileName, true);
+                OssTestUtils.UploadObject(_ossClient, _bucketName, key, newFileName, null);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+
+                var coRequest = new GetObjectRequest(_bucketName, key);
+                var result = _ossClient.GetObject(coRequest);
+                Assert.AreEqual("image/gif",
+                                result.Metadata.ContentType);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                    File.Delete(newFileName);
+                }
+            }
+        }
+
         #endregion
 
         #region does object exist
