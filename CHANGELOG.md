@@ -1,4 +1,10 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
+## 版本号：2.9.1  日期：2019/02/28
+### 变更内容
+- 优化：适配.net core 2.1/2.2 平台 
+- 修复：不识别gif的ContentType的问题 
+- 优化：匹配ContentType时忽略大小写
+
 ## 版本号：2.9.0  日期：2018/09/17
 ### 变更内容
 - 增加：支持.net core 2.0 平台 
