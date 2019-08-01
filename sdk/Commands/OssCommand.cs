@@ -122,14 +122,16 @@ namespace Aliyun.OSS.Commands
 
             if (!Headers.ContainsKey(HttpHeaders.ContentType))
                 request.Headers[HttpHeaders.ContentType] = string.Empty;
-            
-            foreach(var h in Headers)
+
+            if (Headers.ContainsKey("itsvse"))
+                request.Headers[HttpHeaders.ContentType] = Headers["itsvse"];
+
+            foreach (var h in Headers)
                 request.Headers.Add(h.Key, h.Value);
             if (Context.Credentials.UseToken)
                 request.Headers[HttpHeaders.SecurityToken] = Context.Credentials.SecurityToken;
             
             request.Content = Content;
-
             return request;
         }
     }
