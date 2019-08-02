@@ -16,7 +16,9 @@ namespace Aliyun.OSS.Samples
 
             try
             {
-                CreateBucketSample.CreateBucket(bucketName);
+                ProcessObjectSample.ProcessObject(bucketName, "test/itsvse.jpg", "image/watermark,type_d3F5LXplbmhlaQ,size_30,text_aHR0cHM6Ly93d3cuaXRzdnNlLmNvbS8,color_FF0000,t_90,g_se,x_10,y_10", "test/itsvse_demo.jpg");
+
+                //CreateBucketSample.CreateBucket(bucketName);
 
                 //ListBucketsSample.ListBuckets();
 
@@ -99,9 +101,9 @@ namespace Aliyun.OSS.Samples
                 //DeleteBucketSample.DeleteNoEmptyBucket(bucketName);
 
                 //SetObjectAclSample.SetObjectAcl(bucketName);
-                
+
                 //GetObjectAclSample.GetBucketAcl(bucketName);
-                
+
                 //ImageProcessSample.ImageProcess(bucketName);
 
                 //ProgressSample.Progress(bucketName);

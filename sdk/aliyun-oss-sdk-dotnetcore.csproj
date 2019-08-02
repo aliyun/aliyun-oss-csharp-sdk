@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Include="Commands\AppendObjectCommand.cs" />
 	<Compile Include="Commands\GetBucketStorageCapacityCommand.cs" />
+	<Compile Include="Commands\ProcessObjectCommand.cs" />
     <Compile Include="Commands\SetBucketStorageCapacityCommand.cs" />
     <Compile Include="Commands\GetBucketMetadataCommand.cs" />
     <Compile Include="Commands\GetBucketLocationCommand.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Domain\GetBucketStorageCapacityResult.cs" />
     <Compile Include="Domain\SetBucketStorageCapacityRequest.cs" />
     <Compile Include="Model\BucketStorageCapacityModel.cs" />
+    <Compile Include="Model\ProcessObjectResult.cs" />
     <Compile Include="Model\StreamUploadProgressArgs.cs" />
     <Compile Include="Common\Internal\WrapperStream.cs" />
     <Compile Include="Domain\AppendObjectRequest.cs" />

@@ -1152,6 +1152,15 @@ namespace Aliyun.OSS
  
         }
 
+        public void ProcessObject(string bucketName, string key, string style, string o, string b = null)
+        {
+            var cmd = ProcessObjectCommand.Create(_serviceClient, _endpoint,
+                                                CreateContext(HttpMethod.Post, bucketName, key),
+                                                bucketName, key, style, o, b);
+            cmd.Execute();
+
+        }
+
         /// <inheritdoc/>
         public DeleteObjectsResult DeleteObjects(DeleteObjectsRequest deleteObjectsRequest)
         {

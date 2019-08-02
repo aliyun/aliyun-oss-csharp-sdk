@@ -17,7 +17,7 @@ namespace Aliyun.OSS.Util
         public const string ContentEncoding = "Content-Encoding";
 
         public const string ContentLength = "Content-Length";
-        
+
         public const string ContentMd5 = "Content-MD5";
 
         public const string ContentType = "Content-Type";
