@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Threading;
 using Aliyun.OSS.Common;
+using Aliyun.OSS.Common.Internal;
 
 namespace Aliyun.OSS.Samples
 {
@@ -32,6 +33,7 @@ namespace Aliyun.OSS.Samples
         {
             SyncAppendObject(bucketName);
             AsyncAppendObject(bucketName);
+            SyncAppendObjectWithPartSize(bucketName);
         }
 
         public static void SyncAppendObject(string bucketName)
@@ -121,6 +123,52 @@ namespace Aliyun.OSS.Samples
                     client.BeginAppendObject(request, AppendObjectCallback, notice.Clone());
 
                     _event.WaitOne();
+                }
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
+            }
+        }
+
+        public static void SyncAppendObjectWithPartSize(string bucketName)
+        {
+            const long partSize = 1 * 1024 * 1024;
+            const string key = "AppendObjectWithPartsize";
+            long position = 0;
+            ulong initCrc = 0;
+            try
+            {
+                var metadata = client.GetObjectMetadata(bucketName, key);
+                position = metadata.ContentLength;
+                initCrc = ulong.Parse(metadata.Crc64);
+            }
+            catch (Exception) { }
+
+            try
+            {
+                using (var fs = File.Open(fileToUpload, FileMode.Open))
+                {
+                    do
+                    {
+                        fs.Seek(position, SeekOrigin.Begin);
+                        var request = new AppendObjectRequest(bucketName, key)
+                        {
+                            ObjectMetadata = new ObjectMetadata(),
+                            Content = new PartialWrapperStream(fs, partSize),
+                            Position = position,
+                            InitCrc = initCrc
+                        };
+                        var result = client.AppendObject(request);
+                        position = result.NextAppendPosition;
+                        initCrc = result.HashCrc64Ecma;
+                        Console.WriteLine("Append object succeeded, next append position:{0}, crc64:{1}", position, initCrc);
+                    } while (position < fs.Length);
                 }
             }
             catch (OssException ex)

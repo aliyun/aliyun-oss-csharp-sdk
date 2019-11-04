@@ -129,11 +129,12 @@ namespace Aliyun.OSS.Samples
                {
                    using (var fs = File.Open(dirToDownload + "/sample2.data", FileMode.OpenOrCreate))
                    {
-                       int length = 4 * 1024;
-                       var buf = new byte[length];
+                       int length;
+                       int bufLength = 4 * 1024;
+                       var buf = new byte[bufLength];
                        do
                        {
-                           length = requestStream.Read(buf, 0, length);
+                           length = requestStream.Read(buf, 0, bufLength);
                            fs.Write(buf, 0, length);
                        } while (length != 0);
                    }
