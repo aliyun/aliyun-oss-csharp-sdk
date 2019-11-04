@@ -49,6 +49,8 @@ namespace Aliyun.OSS.Samples
             AsyncPutObject(bucketName);
 
             PutObjectFromStringWithHashPrefix(bucketName);
+
+            PutObjectWithContentDispositionHeader(bucketName);
         }
 
         public static void PutObjectFromFile(string bucketName)
@@ -288,6 +290,37 @@ namespace Aliyun.OSS.Samples
             finally
             {
                 _event.Set();
+            }
+        }
+
+        public static void PutObjectWithContentDispositionHeader(string bucketName)
+        {
+            const string key = "PutObjectWithContentDispositionHeader";
+            try
+            {
+                using (var content = File.Open(fileToUpload, FileMode.Open))
+                {
+                    var saveAs = "测试123.txt";
+                    var contentDisposition = string.Format("attachment;filename*=utf-8''{0}", HttpUtils.EncodeUri(saveAs, "utf-8"));
+
+                    var metadata = new ObjectMetadata();
+                    metadata.ContentLength = content.Length;
+                    metadata.ContentDisposition = contentDisposition;
+                    metadata.UserMetadata.Add("github-account", "qiyuewuyi");
+
+                    client.PutObject(bucketName, key, content, metadata);
+
+                    Console.WriteLine("Put object:{0} succeeded", key);
+                }
+            }
+            catch (OssException ex)
+            {
+                Console.WriteLine("Failed with error code: {0}; Error info: {1}. \nRequestID:{2}\tHostID:{3}",
+                    ex.ErrorCode, ex.Message, ex.RequestId, ex.HostId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed with error info: {0}", ex.Message);
             }
         }
     }
