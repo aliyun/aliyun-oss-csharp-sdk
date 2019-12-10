@@ -110,5 +110,28 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 }
             }
         }
+
+        [Test]
+        public void EnableLoggingWithEmtpyPrefixNameTest()
+        {
+            var sblRequest = new SetBucketLoggingRequest(_bucketName, _bucketName, "");
+            try
+            {
+                _ossClient.SetBucketLogging(sblRequest);
+                OssTestUtils.WaitForCacheExpire();
+                var blResponse = _ossClient.GetBucketLogging(_bucketName);
+                Assert.AreEqual(_bucketName, blResponse.TargetBucket);
+                Assert.AreEqual("", blResponse.TargetPrefix);
+            }
+            catch (OssException e)
+            {
+                Assert.Fail(e.Message);
+            }
+            finally
+            {
+                _ossClient.DeleteBucketLogging(_bucketName);
+                _ossClient.GetBucketLogging(_bucketName);
+            }
+        }
     }
 }

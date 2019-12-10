@@ -129,7 +129,10 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             Assert.IsNotNull(mpUpload, "The multipart uploading should be in progress");
 
-            PartListing partList = _ossClient.ListParts(new ListPartsRequest(_bucketName, targetObjectKey, mpUpload));
+            var listRequest = new ListPartsRequest(_bucketName, targetObjectKey, mpUpload);
+            listRequest.MaxParts = partCount * 2;
+            listRequest.PartNumberMarker = 0;
+            PartListing partList = _ossClient.ListParts(listRequest);
 
             var completeRequest = new CompleteMultipartUploadRequest(_bucketName, targetObjectKey, initResult.UploadId);
             foreach (var part in partList.Parts)
@@ -200,13 +203,18 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var lmuRequest = new ListMultipartUploadsRequest(_bucketName);
             var lmuListing = ossClient.ListMultipartUploads(lmuRequest);
             string mpUpload = null;
+            string mpUploadInfo = null;
             foreach (var t in lmuListing.MultipartUploads)
             {
                 if (t.UploadId == initResult.UploadId)
+                {
                     mpUpload = t.UploadId;
+                    mpUploadInfo = t.ToString();
+                }
             }
 
             Assert.IsNotNull(mpUpload, "The multipart uploading should be in progress");
+            Assert.IsTrue(mpUploadInfo.Contains(mpUpload));
 
             var completeRequest = new CompleteMultipartUploadRequest(_bucketName, targetObjectKey, initResult.UploadId);
             foreach (var partETag in partETags)
@@ -361,6 +369,383 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
             //delete the object
             _ossClient.DeleteObject(_bucketName, targetObjectKey);
+        }
+
+        [Test]
+        public void MultipartUploadListMultipartUploadsTest()
+        {
+            //get target object name
+            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
+            var initRequest = new InitiateMultipartUploadRequest(_bucketName, targetObjectKey);
+            var initResult = _ossClient.InitiateMultipartUpload(initRequest);
+
+            //get target object name
+            targetObjectKey = OssTestUtils.GetObjectKey(_className);
+            initRequest = new InitiateMultipartUploadRequest(_bucketName, targetObjectKey);
+            initResult = _ossClient.InitiateMultipartUpload(initRequest);
+
+            //get target object name
+            targetObjectKey = OssTestUtils.GetObjectKey(_className);
+            initRequest = new InitiateMultipartUploadRequest(_bucketName, targetObjectKey);
+            initResult = _ossClient.InitiateMultipartUpload(initRequest);
+            var targetObjectKey_3th = targetObjectKey;
+
+            //get target object name
+            targetObjectKey = OssTestUtils.GetObjectKey(_className);
+            initRequest = new InitiateMultipartUploadRequest(_bucketName, targetObjectKey);
+            initResult = _ossClient.InitiateMultipartUpload(initRequest);
+            var minUploadId = initResult.UploadId;
+
+
+            var lmuRequest = new ListMultipartUploadsRequest(_bucketName);
+
+            //list 1
+            lmuRequest.Prefix = targetObjectKey;
+            var lmuListing = _ossClient.ListMultipartUploads(lmuRequest);
+            var uploadSumm = OssTestUtils.ToArray<MultipartUpload>(lmuListing.MultipartUploads);
+            Assert.AreEqual(1, uploadSumm.Count);
+
+            //list 4
+            lmuRequest.Prefix = _className;
+            lmuListing = _ossClient.ListMultipartUploads(lmuRequest);
+            uploadSumm = OssTestUtils.ToArray<MultipartUpload>(lmuListing.MultipartUploads);
+            Assert.AreEqual(4, uploadSumm.Count);
+
+            //list max 2
+            lmuRequest.Prefix = _className;
+            lmuRequest.MaxUploads = 2;
+            lmuListing = _ossClient.ListMultipartUploads(lmuRequest);
+            uploadSumm = OssTestUtils.ToArray<MultipartUpload>(lmuListing.MultipartUploads);
+            Assert.AreEqual(2, uploadSumm.Count);
+
+            //list max 10， key-marker is the 3th object
+            lmuRequest.Prefix = _className;
+            lmuRequest.MaxUploads = 10;
+            lmuRequest.KeyMarker = targetObjectKey_3th;
+            lmuListing = _ossClient.ListMultipartUploads(lmuRequest);
+            uploadSumm = OssTestUtils.ToArray<MultipartUpload>(lmuListing.MultipartUploads);
+            Assert.AreEqual(1, uploadSumm.Count);
+            foreach (var item in lmuListing.MultipartUploads)
+            {
+                Assert.AreEqual(targetObjectKey, item.Key);
+            }
+
+            //get target object name
+            initRequest = new InitiateMultipartUploadRequest(_bucketName, targetObjectKey);
+            initResult = _ossClient.InitiateMultipartUpload(initRequest);
+            if (minUploadId.CompareTo(initResult.UploadId) > 0)
+            {
+                minUploadId = initResult.UploadId;
+            }
+
+            //list max 10， set UploadIdMarker 
+            lmuRequest.Prefix = _className;
+            lmuRequest.MaxUploads = 10;
+            lmuRequest.Delimiter = "";
+            lmuRequest.KeyMarker = targetObjectKey_3th;
+            lmuRequest.UploadIdMarker = "";
+            lmuListing = _ossClient.ListMultipartUploads(lmuRequest);
+            uploadSumm = OssTestUtils.ToArray<MultipartUpload>(lmuListing.MultipartUploads);
+            Assert.AreEqual(2, uploadSumm.Count);
+
+            //list max 10， set UploadIdMarker 
+            lmuRequest.Prefix = _className;
+            lmuRequest.MaxUploads = 10;
+            lmuRequest.Delimiter = "";
+            lmuRequest.KeyMarker = targetObjectKey;
+            lmuRequest.UploadIdMarker = minUploadId;
+            lmuListing = _ossClient.ListMultipartUploads(lmuRequest);
+            uploadSumm = OssTestUtils.ToArray<MultipartUpload>(lmuListing.MultipartUploads);
+            Assert.AreEqual(1, uploadSumm.Count);
+        }
+
+        [Test]
+        public void MultipartUploadUploadPartRequestArgumentCheck()
+        {
+            try
+            {
+                var uploadPartRequest = new UploadPartRequest(_bucketName, "", "")
+                {
+                    PartNumber = null,
+                    PartSize = null,
+                    InputStream = null
+                };
+                var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("The parameter is empty or null"));
+            }
+
+            try
+            {
+                var uploadPartRequest = new UploadPartRequest(_bucketName, "test_object", "")
+                {
+                    PartNumber = null,
+                    PartSize = null,
+                    InputStream = null
+                };
+                var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("uploadId should be specified"));
+            }
+
+            try
+            {
+                var uploadPartRequest = new UploadPartRequest(_bucketName, "test_object", "test-upload-id")
+                {
+                    PartNumber = null,
+                    PartSize = null,
+                    InputStream = null
+                };
+                var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partNumber should be specified"));
+            }
+
+            try
+            {
+                var uploadPartRequest = new UploadPartRequest(_bucketName, "test_object", "test-upload-id")
+                {
+                    PartNumber = 1,
+                    PartSize = null,
+                    InputStream = null
+                };
+                var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partSize should be specified"));
+            }
+
+            try
+            {
+                var uploadPartRequest = new UploadPartRequest(_bucketName, "test_object", "test-upload-id")
+                {
+                    PartNumber = 1,
+                    PartSize = 1024*1024*5,
+                    InputStream = null
+                };
+                var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("inputStream should be specified"));
+            }
+
+            try
+            {
+                var uploadPartRequest = new UploadPartRequest(_bucketName, "test_object", "test-upload-id")
+                {
+                    PartNumber = 1,
+                    PartSize = -1,
+                    InputStream = new MemoryStream(new byte[0])
+                };
+                var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partSize not live in valid range"));
+            }
+
+            try
+            {
+                var uploadPartRequest = new UploadPartRequest(_bucketName, "test_object", "test-upload-id")
+                {
+                    PartNumber = 1,
+                    PartSize = 5 * 1024 * 1024 * 1024L + 1L,
+                    InputStream = new MemoryStream(new byte[0])
+                };
+                var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partSize not live in valid range"));
+            }
+
+            try
+            {
+                var uploadPartRequest = new UploadPartRequest(_bucketName, "test_object", "test-upload-id")
+                {
+                    PartNumber = 10001,
+                    PartSize = 1024 * 1024 * 5,
+                    InputStream = new MemoryStream(new byte[0])
+                };
+                var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partNumber not live in valid range"));
+            }
+        }
+
+        [Test]
+        public void MultipartUploadUploadPartCopyRequestArgumentCheck()
+        {
+            try
+            {
+                var uploadPartCopyRequest = new UploadPartCopyRequest("targetbucket",
+                    "targetKey", "sourcebucket", "sourceKey", "upload-id")
+                {
+                    PartNumber = null,
+                    PartSize = null,
+                    BeginIndex = null
+                };
+                var uploadPartResult = _ossClient.UploadPartCopy(uploadPartCopyRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partNumber should be specfied"));
+            }
+
+            try
+            {
+                var uploadPartCopyRequest = new UploadPartCopyRequest("targetbucket",
+                    "targetKey", "sourcebucket", "sourceKey", "upload-id")
+                {
+                    PartNumber = 1,
+                    PartSize = null,
+                    BeginIndex = null
+                };
+                var uploadPartResult = _ossClient.UploadPartCopy(uploadPartCopyRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partSize should be specfied"));
+            }
+
+            try
+            {
+                var uploadPartCopyRequest = new UploadPartCopyRequest("targetbucket",
+                    "targetKey", "sourcebucket", "sourceKey", "upload-id")
+                {
+                    PartNumber = 1,
+                    PartSize = 1024*1024*5,
+                    BeginIndex = null
+                };
+                var uploadPartResult = _ossClient.UploadPartCopy(uploadPartCopyRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("beginIndex should be specfied"));
+            }
+
+            try
+            {
+                var uploadPartCopyRequest = new UploadPartCopyRequest("targetbucket",
+                    "targetKey", "sourcebucket", "sourceKey", "upload-id")
+                {
+                    PartNumber = 1,
+                    PartSize = -1,
+                    BeginIndex = 1
+                };
+                var uploadPartResult = _ossClient.UploadPartCopy(uploadPartCopyRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partSize not live in valid range"));
+            }
+
+            try
+            {
+                var uploadPartCopyRequest = new UploadPartCopyRequest("targetbucket",
+                    "targetKey", "sourcebucket", "sourceKey", "upload-id")
+                {
+                    PartNumber = 1,
+                    PartSize = 5 * 1024 * 1024 * 1024L + 1L,
+                    BeginIndex = 1
+                };
+                var uploadPartResult = _ossClient.UploadPartCopy(uploadPartCopyRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partSize not live in valid range"));
+            }
+
+            try
+            {
+                var uploadPartCopyRequest = new UploadPartCopyRequest("targetbucket",
+                    "targetKey", "sourcebucket", "sourceKey", "upload-id")
+                {
+                    PartNumber = 10001,
+                    PartSize = 1024 * 1024 * 5,
+                    BeginIndex = 1
+                };
+                var uploadPartResult = _ossClient.UploadPartCopy(uploadPartCopyRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("partNumber not live in valid range"));
+            }
+        }
+
+        [Test]
+        public void CompleteMultipartUploadRequestArgumentCheck()
+        {
+            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var completeRequest = new CompleteMultipartUploadRequest(_bucketName, targetObjectKey, null);
+                _ossClient.CompleteMultipartUpload(completeRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("uploadId"));
+            }
+        }
+
+        [Test]
+        public void AbortMultipartUploadRequestArgumentCheck()
+        {
+            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var abortRequest = new AbortMultipartUploadRequest(_bucketName, targetObjectKey, null);
+                _ossClient.AbortMultipartUpload(abortRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("uploadId"));
+            }
+        }
+
+        [Test]
+        public void ListPartsRequestArgumentCheck()
+        {
+            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var listRequest = new ListPartsRequest(_bucketName, targetObjectKey, null);
+                _ossClient.ListParts(listRequest);
+                Assert.Fail("the arg is null, should throw exception.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("uploadId"));
+            }
         }
     }
 }

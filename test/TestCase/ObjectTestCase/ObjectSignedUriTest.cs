@@ -80,6 +80,25 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
+        public void GetPreSignedUriDefaultExpireDatePositiveTest()
+        {
+            var uri = _ossClient.GeneratePresignedUri(_bucketName, _objectKey);
+            try
+            {
+                var goResult = _ossClient.GetObject(uri);
+                using (var stream = goResult.Content)
+                {
+                    var actualETag = FileUtils.ComputeContentMd5(stream);
+                    Assert.AreEqual(_objectETag.ToLowerInvariant(), actualETag.ToLowerInvariant());
+                }
+            }
+            catch
+            {
+                Assert.IsTrue(false);
+            }
+        }
+
+        [Test]
         public void GetPreSignedUriDefaultNegativeTest()
         {
             HttpWebRequest req = null;

@@ -5,7 +5,7 @@ using System.Threading;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Test.Util;
-
+using Aliyun.OSS.Util;
 using NUnit.Framework;
 
 namespace Aliyun.OSS.Test.TestClass.BucketTestClass
@@ -389,6 +389,12 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         [Test]
         public void ListBucketspagingTest()
         {
+            for (int i = 0; i < 5; i++)
+            {
+                var bucketName = OssTestUtils.GetBucketName(_className);
+                _ossClient.CreateBucket(bucketName);
+            }
+
             var lbRequest = new ListBucketsRequest
             {
                 Prefix = _className,
@@ -407,6 +413,18 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                     break;
                 }
             }
+
+            //prifix null
+            lbRequest.Prefix = null;
+            lbRequest.Marker = null;
+            lbRequest.MaxKeys = 2;
+            _ossClient.ListBuckets(lbRequest);
+
+            //MaxKeys null
+            lbRequest.Prefix = _className;
+            lbRequest.Marker = null;
+            lbRequest.MaxKeys = null;
+            _ossClient.ListBuckets(lbRequest);
         }
 
         /*
@@ -457,10 +475,12 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 Assert.AreEqual(bucketInfo.Bucket.AccessControlList.Grant, CannedAccessControlList.Private);
 
                 _ossClient.SetBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+                OssTestUtils.WaitForCacheExpire();
                 bucketInfo = _ossClient.GetBucketInfo(bucketName);
                 Assert.AreEqual(bucketInfo.Bucket.AccessControlList.Grant, CannedAccessControlList.PublicRead);
 
                 _ossClient.SetBucketAcl(bucketName, CannedAccessControlList.PublicReadWrite);
+                OssTestUtils.WaitForCacheExpire();
                 bucketInfo = _ossClient.GetBucketInfo(bucketName);
                 Assert.AreEqual(bucketInfo.Bucket.AccessControlList.Grant, CannedAccessControlList.PublicReadWrite);
 
@@ -470,7 +490,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 
                 Assert.AreEqual(bucketInfo.Bucket.StorageClass, StorageClass.IA);
                 Assert.AreEqual(bucketInfo.Bucket.Name, bucketName);
-
+                Assert.IsTrue(bucketInfo.Bucket.ToString().Contains(bucketName));
             }
             finally
             {
@@ -630,6 +650,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             //get bucket metadata
             var metedata = _ossClient.GetBucketMetadata(bucketName);
             Assert.IsTrue(metedata.BucketRegion.StartsWith("oss-"),
+                string.Format("Bucket Region {0} should start with 'oss-' but actual {1}", bucketName, metedata.BucketRegion));
+            Assert.IsTrue(metedata.HttpMetadata[HttpHeaders.BucketRegion].StartsWith("oss-"),
                 string.Format("Bucket Region {0} should start with 'oss-' but actual {1}", bucketName, metedata.BucketRegion));
 
             //delete the new created bucket

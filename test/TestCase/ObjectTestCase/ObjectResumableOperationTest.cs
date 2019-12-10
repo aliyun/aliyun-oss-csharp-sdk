@@ -519,6 +519,36 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        [Test]
+        public void ResumableUploadObjectTestBigObjectUseSingleThreadReadTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var fileInfo = new FileInfo(Config.MultiUploadTestFile);
+                var fileSize = fileInfo.Length;
+                var config = new ClientConfiguration();
+                config.UseSingleThreadReadInResumableUpload = true;
+                var client = OssClientFactory.CreateOssClient(config);
+                UploadObjectRequest request = new UploadObjectRequest(_bucketName, key, Config.MultiUploadTestFile);
+                request.Metadata = new ObjectMetadata();
+                request.CheckpointDir = Config.DownloadFolder;
+                request.PartSize = fileSize / 3;
+                request.ParallelThreadCount = 3;
+                var result = client.ResumableUploadObject(request);
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                Assert.IsTrue(result.ETag.Length > 0);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
+
         #endregion
 
         #region Resumable Download objects;
