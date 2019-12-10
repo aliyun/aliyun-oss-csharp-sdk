@@ -365,11 +365,14 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var folder = OssTestUtils.GetObjectKey(_className);
             var key = folder + "/" + OssTestUtils.GetObjectKey(_className);
 
+            var saveAs = "abc测试123.zip";
+            var contentDisposition = string.Format("attachment;filename*=utf-8''{0}", HttpUtils.EncodeUri(saveAs, "utf-8"));
+
             //config metadata
             var metadata = new ObjectMetadata
             {
                 CacheControl = "no-cache",
-                ContentDisposition = "abc.zip",
+                ContentDisposition = contentDisposition,//"abc.zip",
                 ContentEncoding = "gzip"
             };
             var eTag = FileUtils.ComputeContentMd5(Config.UploadTestFile);
@@ -392,6 +395,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 Assert.AreEqual(eTag.ToLowerInvariant(), uploadedObjectMetadata.ETag.ToLowerInvariant());
                 Assert.AreEqual(encryption, uploadedObjectMetadata.ServerSideEncryption);
                 Assert.AreEqual(2, uploadedObjectMetadata.UserMetadata.Count);
+                Assert.IsTrue(uploadedObjectMetadata.ContentDisposition.Contains("abc"));
             }
             finally
             {
@@ -399,6 +403,26 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 {
                     _ossClient.DeleteObject(_bucketName, key);
                 }
+            }
+        }
+
+        [Test]
+        public void UploadObjectWithInvalidArgument()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                Stream stream = null;
+                var meta = new ObjectMetadata() { ContentMd5 = "test" };
+
+                //upload the object
+                _ossClient.PutObject(_bucketName, key, stream, meta);
+                Assert.Fail("the argument is null, should not be here");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("content"));
             }
         }
 
@@ -441,6 +465,28 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 {
                     _ossClient.DeleteObject(_bucketName, key);
                 }
+            }
+        }
+
+        [Test]
+        public void AsyncUploadObjectSpecifyFilePathDefaultMetadataTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var asyncResult = _ossClient.BeginPutObject(_bucketName, key, fs, null, null);
+                    var waitHandle = asyncResult.AsyncWaitHandle;
+                    waitHandle = asyncResult.AsyncWaitHandle;
+                    waitHandle.WaitOne();
+                    Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                }
+            }
+            catch
+            {
+                Assert.IsTrue(false);
             }
         }
 
@@ -540,6 +586,30 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
+        public void AsyncGetObjectBasicTest()
+        {
+            var targetFile = OssTestUtils.GetTargetFileName(_className);
+            targetFile = Path.Combine(Config.DownloadFolder, targetFile);
+
+            try
+            {
+                var asyncResult = _ossClient.BeginGetObject(_bucketName, _objectKey, null, null);
+                asyncResult.AsyncWaitHandle.WaitOne();
+                var ossObject = _ossClient.EndGetObject(asyncResult);
+                using (var stream = ossObject.Content)
+                {
+                    var downloadedFileETag = FileUtils.ComputeContentMd5(stream);
+                    var expectedETag = _ossClient.GetObjectMetadata(_bucketName, _objectKey).ETag;
+                    Assert.AreEqual(expectedETag.ToLowerInvariant(), downloadedFileETag.ToLowerInvariant());
+                }
+            }
+            catch
+            {
+                Assert.IsTrue(false);
+            }
+        }
+
+        [Test]
         public void ListAllObjectsTest()
         {
             //test folder structure
@@ -563,6 +633,10 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 var allObjectsSumm2 = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
                 //there is already one sample object
                 Assert.AreEqual(allObjectsSumm2.Count, allObjectsSumm.Count + 1);
+                foreach(var objectSummary in allObjectsSumm2)
+                {
+                    Assert.IsTrue(objectSummary.ToString().Contains(_bucketName));
+                }
 
                 //list objects by specifying folder as prefix
                 allObjects = _ossClient.ListObjects(_bucketName, folderName);
@@ -578,6 +652,115 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 Assert.AreEqual(folderName, allObjects.Prefix);
                 Assert.AreEqual("/", allObjects.Delimiter);
                 //Assert.Fail("List objects using full conditions");
+
+                //upload the object 
+                var key1 = folderName + "/" + OssTestUtils.GetObjectKey(_className);
+                OssTestUtils.UploadObject(_ossClient, _bucketName, key1,
+                   Config.UploadTestFile, new ObjectMetadata());
+
+                //list objects with marker
+                loRequest.Prefix = folderName;
+                loRequest.MaxKeys = 1;
+                loRequest.Delimiter = "";
+                allObjects = _ossClient.ListObjects(loRequest);
+                Assert.AreEqual(folderName, allObjects.Prefix);
+                Assert.AreEqual(true, allObjects.IsTruncated);
+                loRequest.Marker = allObjects.NextMarker;
+                allObjects = _ossClient.ListObjects(loRequest);
+                Assert.AreEqual(folderName, allObjects.Prefix);
+                Assert.AreEqual(false, allObjects.IsTruncated);
+
+                //MaxKeys & EncodingType null 
+                loRequest.Prefix = folderName;
+                loRequest.MaxKeys = null;
+                loRequest.Delimiter = "/";
+                loRequest.EncodingType = null;
+                allObjects = _ossClient.ListObjects(loRequest);
+                Assert.AreEqual(100, allObjects.MaxKeys);
+            }
+            finally
+            {
+                _ossClient.DeleteObject(_bucketName, key);
+            }
+        }
+
+        [Test]
+        public void AsyncListAllObjectsTest()
+        {
+            //test folder structure
+            var folderName = OssTestUtils.GetObjectKey(_className);
+            var key = folderName + "/" + OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                //list objects by specifying bucket name
+                var asyncResult = _ossClient.BeginListObjects(_bucketName, null, null);
+                asyncResult.AsyncWaitHandle.WaitOne();
+                var allObjects = _ossClient.EndListObjects(asyncResult);
+                var allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
+
+                //default value is 100
+                Assert.AreEqual(100, allObjects.MaxKeys);
+
+                //upload the object
+                OssTestUtils.UploadObject(_ossClient, _bucketName, key,
+                    Config.UploadTestFile, new ObjectMetadata());
+
+                asyncResult = _ossClient.BeginListObjects(_bucketName, null, null);
+                asyncResult.AsyncWaitHandle.WaitOne();
+                allObjects = _ossClient.EndListObjects(asyncResult);
+                var allObjectsSumm2 = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
+
+                //there is already one sample object
+                Assert.AreEqual(allObjectsSumm2.Count, allObjectsSumm.Count + 1);
+
+                //list objects by specifying folder as prefix
+                asyncResult = _ossClient.BeginListObjects(_bucketName, folderName, null, null);
+                asyncResult.AsyncWaitHandle.WaitOne();
+                allObjects = _ossClient.EndListObjects(asyncResult);
+                Assert.AreEqual(folderName, allObjects.Prefix);
+                allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
+                Assert.AreEqual(1, allObjectsSumm.Count);
+
+                var loRequest = new ListObjectsRequest(_bucketName);
+                loRequest.Prefix = folderName;
+                loRequest.MaxKeys = 10;
+                loRequest.Delimiter = "/";
+                asyncResult = _ossClient.BeginListObjects(loRequest, null, null);
+                asyncResult.AsyncWaitHandle.WaitOne();
+                allObjects = _ossClient.EndListObjects(asyncResult);
+                Assert.AreEqual(folderName, allObjects.Prefix);
+                Assert.AreEqual("/", allObjects.Delimiter);
+                //Assert.Fail("List objects using full conditions");
+
+                //upload the object 
+                var key1 = folderName + "/" + OssTestUtils.GetObjectKey(_className);
+                OssTestUtils.UploadObject(_ossClient, _bucketName, key1,
+                   Config.UploadTestFile, new ObjectMetadata());
+
+                //list objects with marker
+                loRequest.Prefix = folderName;
+                loRequest.MaxKeys = 1;
+                loRequest.Delimiter = "";
+                asyncResult = _ossClient.BeginListObjects(loRequest, null, null);
+                asyncResult.AsyncWaitHandle.WaitOne();
+                allObjects = _ossClient.EndListObjects(asyncResult);
+                Assert.AreEqual(folderName, allObjects.Prefix);
+                Assert.AreEqual(true, allObjects.IsTruncated);
+                loRequest.Marker = allObjects.NextMarker;
+                allObjects = _ossClient.ListObjects(loRequest);
+                Assert.AreEqual(folderName, allObjects.Prefix);
+                Assert.AreEqual(false, allObjects.IsTruncated);
+
+                //MaxKeys & EncodingType null 
+                loRequest.Prefix = folderName;
+                loRequest.MaxKeys = null;
+                loRequest.Delimiter = "/";
+                loRequest.EncodingType = null;
+                asyncResult = _ossClient.BeginListObjects(loRequest, null, null);
+                asyncResult.AsyncWaitHandle.WaitOne();
+                allObjects = _ossClient.EndListObjects(asyncResult);
+                Assert.AreEqual(100, allObjects.MaxKeys);
             }
             finally
             {
@@ -1744,6 +1927,44 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        [Test]
+        public void AppendObjectWithMd5()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                long position = 0;
+                string eTag = string.Empty;
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        Content = fs,
+                        Position = position,
+                        InitCrc = 0
+                    };
+
+                    var client = OssClientFactory.CreateOssClientEnableMD5(true);
+                    var result = client.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+                    position = result.NextAppendPosition;
+                    eTag = result.ETag;
+                }
+
+                var meta = _ossClient.GetObjectMetadata(_bucketName, key);
+                Assert.AreEqual("Appendable", meta.ObjectType);
+                Assert.AreEqual(eTag, meta.ETag);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _bucketName, key))
+                {
+                    _ossClient.DeleteObject(_bucketName, key);
+                }
+            }
+        }
 
         [Test]
         public void AsyncAppendObject()
@@ -1804,6 +2025,35 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 {
                     _ossClient.DeleteObject(_bucketName, key);
                 }
+            }
+        }
+
+        [Test]
+        public void AppendObjectWithNullParamter()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+            try
+            {
+                long position = 0;
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var fileLength = fs.Length;
+                    var request = new AppendObjectRequest(_bucketName, key)
+                    {
+                        ObjectMetadata = new ObjectMetadata(),
+                        Content = null,
+                        Position = position
+                    };
+
+                    var result = _ossClient.AppendObject(request);
+                    Assert.AreEqual(fileLength, result.NextAppendPosition);
+                    position = result.NextAppendPosition;
+                    Assert.IsFalse(true);
+                }
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("request.Content"));
             }
         }
 

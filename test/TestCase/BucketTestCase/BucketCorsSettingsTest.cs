@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Aliyun.OSS;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Test.Util;
@@ -108,6 +109,244 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             finally
             {
                 _ossClient.DeleteBucketCors(_bucketName);
+            }
+        }
+
+        [Test]
+        public void SetBucketCorsRequestInvalidArgumentTest()
+        {
+            try
+            {
+                var sbcRequest = new SetBucketCorsRequest(_bucketName);
+                sbcRequest.AddCORSRule(null);
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("corsRule should not be null or empty"));
+            }
+
+            try
+            {
+                var sbcRequest = new SetBucketCorsRequest(_bucketName);
+                var rule = new CORSRule();
+                rule.AddAllowedOrigin("Original " + Guid.NewGuid());
+                rule.AddAllowedMethod("GET");
+                for (var i = 0; i < 12; i++)
+                {
+                    sbcRequest.AddCORSRule(rule);
+                }
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("One bucket not allow exceed ten item of CORSRules"));
+            }
+
+            try
+            {
+                var sbcRequest = new SetBucketCorsRequest(_bucketName);
+                var rule = new CORSRule();
+                sbcRequest.AddCORSRule(rule);
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("corsRule.AllowedOrigins should not be empty"));
+            }
+
+            try
+            {
+                var sbcRequest = new SetBucketCorsRequest(_bucketName);
+                var rule = new CORSRule();
+                rule.AddAllowedOrigin("Original " + Guid.NewGuid());
+                sbcRequest.AddCORSRule(rule);
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("corsRule.AllowedMethods should not be empty"));
+            }
+
+            try
+            {
+                var sbcRequest = new SetBucketCorsRequest(_bucketName);
+                sbcRequest.CORSRules = null;
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("CORSRule list should not be null"));
+            }
+
+            try
+            {
+                var corsRules = new List<CORSRule>();
+                var rule = new CORSRule();
+                rule.AddAllowedOrigin("Original " + Guid.NewGuid());
+                rule.AddAllowedMethod("GET");
+                for (var i = 0; i < 9; i++)
+                {
+                    corsRules.Add(rule);
+                }
+                var sbcRequest = new SetBucketCorsRequest(_bucketName);
+                sbcRequest.CORSRules = corsRules;
+                Assert.IsTrue(true);
+
+                corsRules.Add(rule);
+                corsRules.Add(rule);
+                sbcRequest.CORSRules = corsRules;
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains(" bucket not allow exceed ten item of CORSRules"));
+            }
+        }
+
+        [Test]
+        public void SetBucketCORSRuleInvalidArgumentTest()
+        {
+            try
+            {
+                var allowedOrigins = new List<String>();
+                allowedOrigins.Add("*");
+                allowedOrigins.Add("*");
+                var rule = new CORSRule();
+                rule.AllowedOrigins = allowedOrigins;
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch(Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("At most one asterisk wildcard allowed"));
+            }
+
+            try
+            {
+                var allowedHeaders = new List<String>();
+                allowedHeaders.Add("*");
+                allowedHeaders.Add("*");
+                var rule = new CORSRule();
+                rule.AllowedHeaders = allowedHeaders;
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("At most one asterisk wildcard allowed"));
+            }
+
+            try
+            {
+                var exposeHeaders = new List<String>();
+                exposeHeaders.Add("*");
+                var rule = new CORSRule();
+                rule.ExposeHeaders = exposeHeaders;
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("Asterisk wildcard not allowed"));
+            }
+
+            try
+            {
+                var rule = new CORSRule();
+                rule.MaxAgeSeconds = -1;
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("MaxAge should not less than 0 or greater than 999999999"));
+            }
+
+            try
+            {
+                var rule = new CORSRule();
+                rule.MaxAgeSeconds = 999999999 + 1;
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("MaxAge should not less than 0 or greater than 999999999"));
+            }
+
+            try
+            {
+                var rule = new CORSRule();
+                rule.AddAllowedHeader(null);
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("allowedHeader"));
+            }
+
+            try
+            {
+                var rule = new CORSRule();
+                rule.AddAllowedOrigin("*");
+                rule.AddAllowedOrigin("*");
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("At most one asterisk wildcard allowed"));
+            }
+
+            try
+            {
+                var rule = new CORSRule();
+                rule.AddAllowedOrigin(null);
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("allowedOrigin"));
+            }
+
+            try
+            {
+                var rule = new CORSRule();
+                rule.AddAllowedHeader("*");
+                rule.AddAllowedHeader("*");
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("At most one asterisk wildcard allowed"));
+            }
+
+            try
+            {
+                var rule = new CORSRule();
+                rule.AddExposeHeader(null);
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("exposedHeader"));
+            }
+
+            try
+            {
+                var rule = new CORSRule();
+                rule.AddExposeHeader("*");
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("Asterisk wildcard not allowed"));
+            }
+
+            try
+            {
+                var rule = new CORSRule();
+                rule.AddAllowedMethod(null);
+                Assert.Fail("Invalid argument should not be successful");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("allowedMethod should not be null or empty"));
             }
         }
 

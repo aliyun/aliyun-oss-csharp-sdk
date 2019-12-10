@@ -114,10 +114,13 @@ namespace Aliyun.OSS.Test.Util
                 }
             }
 
-            var uri = new Uri(endpoint.ToLower().Trim().StartsWith(HttpProto) ?
-                endpoint.Trim() : HttpProto + endpoint.Trim());
+            endpoint = endpoint.ToLower().Trim();
+            if (!endpoint.StartsWith(HttpProto) && !endpoint.StartsWith(HttpsProto))
+            {
+                endpoint = HttpProto + endpoint;
+            }
 
-            return new OssClient(uri, accessKeyId, accessKeySecret, clientConfiguration);
+            return new OssClient(new Uri(endpoint), accessKeyId, accessKeySecret, clientConfiguration);
         }
     }
 }

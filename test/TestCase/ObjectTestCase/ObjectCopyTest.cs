@@ -389,5 +389,35 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 _ossClient.DeleteObject(_bucketName, targetObjectKey);
             }
         }
+
+        [Test]
+        public void AsyncCopyObjectBasicTest()
+        {
+            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
+
+            //construct metadata
+            var metadata = new ObjectMetadata();
+            const string userMetaKey = "myKey";
+            const string userMetaValue = "myValue";
+            metadata.UserMetadata.Add(userMetaKey, userMetaValue);
+            metadata.CacheControl = "No-Cache";
+
+            var coRequest = new CopyObjectRequest(_bucketName, _sourceObjectKey, _bucketName, targetObjectKey)
+            {
+                NewObjectMetadata = metadata
+            };
+
+            //copy object
+            _ossClient.CopyObject(coRequest);
+            var asyncResult = _ossClient.BeginCopyObject(coRequest, null, null);
+            asyncResult.AsyncWaitHandle.WaitOne();
+            var coResult = _ossClient.EndCopyResult(asyncResult);
+
+            Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, targetObjectKey));
+            var resMetadata = _ossClient.GetObjectMetadata(_bucketName, targetObjectKey);
+            Assert.AreEqual(userMetaValue, resMetadata.UserMetadata[userMetaKey]);
+
+            _ossClient.DeleteObject(_bucketName, targetObjectKey);
+        }
     }
 }

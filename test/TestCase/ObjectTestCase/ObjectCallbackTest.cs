@@ -106,6 +106,32 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         [Test]
+        public void PutObjectWithZeroCallbackVarTest()
+        {
+            string callbackHeaderBuilder = new CallbackHeaderBuilder(_callbackUrl, _callbackBody).Build();
+            string CallbackVariableHeaderBuilder = new CallbackVariableHeaderBuilder().Build();
+
+            var metadata = new ObjectMetadata();
+            metadata.AddHeader(HttpHeaders.Callback, callbackHeaderBuilder);
+            metadata.AddHeader(HttpHeaders.CallbackVar, CallbackVariableHeaderBuilder);
+
+            var putObjectResult = _ossClient.PutObject(_bucketName, _objectKey, Config.UploadTestFile, metadata);
+            Assert.IsTrue(putObjectResult.IsSetResponseStream());
+            Assert.AreEqual(_callbackOkResponse, GetCallbackResponse(putObjectResult));
+            Assert.AreEqual(putObjectResult.HttpStatusCode, HttpStatusCode.OK);
+            Assert.AreEqual(putObjectResult.ContentLength, _callbackOkResponse.Length);
+            Assert.AreEqual(putObjectResult.RequestId.Length, "58DB0ACB686D42D5B4163D75".Length);
+            Assert.AreEqual(putObjectResult.ResponseMetadata[HttpHeaders.ContentType], "application/json");
+            Assert.AreEqual(putObjectResult.ResponseMetadata[HttpHeaders.ETag], putObjectResult.ETag);
+            Assert.AreEqual(putObjectResult.ResponseMetadata[HttpHeaders.ContentMd5].Length, "7GoU4OYaYroKXsbsG1f/lw==".Length);
+            Assert.IsTrue(putObjectResult.ResponseMetadata[HttpHeaders.HashCrc64Ecma].Length > 0);
+            Assert.IsTrue(putObjectResult.ResponseMetadata[HttpHeaders.ServerElapsedTime].Length > 0);
+            Assert.AreEqual(putObjectResult.ResponseMetadata[HttpHeaders.Date].Length, "Wed, 29 Mar 2017 01:15:58 GMT".Length);
+
+            _ossClient.DeleteObject(_bucketName, _objectKey);
+        }
+
+        [Test]
         public void PutObjectWithoutCallbackTest()
         {
             var metadata = new ObjectMetadata
@@ -168,6 +194,49 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 Assert.AreEqual(OssErrorCode.CallbackFailed, e.ErrorCode);
                 Assert.AreEqual("Error status : 502.", e.Message);
+            }
+        }
+
+        [Test]
+        public void PutObjectCallbackVarInvalidNegativeTest()
+        {
+            string callbackHeaderBuilder = new CallbackHeaderBuilder(_callbackUrl, _callbackBody).Build();
+            try
+            {
+                string CallbackVariableHeaderBuilder = new CallbackVariableHeaderBuilder().
+                    AddCallbackVariable("x:var1", "x:value1").AddCallbackVariable("var2", "value2").Build();
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+        }
+
+        [Test]
+        public void PutObjectCallbackHeaderArgumentTest()
+        {
+            var callbackHeaderBuilder = new CallbackHeaderBuilder(_callbackUrl, _callbackBody, "test.demo.com", CallbackBodyType.Url).Build();
+            callbackHeaderBuilder = new CallbackHeaderBuilder(_callbackUrl, _callbackBody, "test.demo.com", CallbackBodyType.Json).Build();
+
+            try
+            {
+                callbackHeaderBuilder = new CallbackHeaderBuilder(null, null, null, CallbackBodyType.Url).Build();
+                Assert.IsTrue(false);
+            }
+            catch(Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("Callback argument invalid"));
+            }
+
+            try
+            {
+                callbackHeaderBuilder = new CallbackHeaderBuilder(_callbackUrl, null, null, CallbackBodyType.Url).Build();
+                Assert.IsTrue(false);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message.Contains("Callback argument invalid"));
             }
         }
         #endregion

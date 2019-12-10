@@ -11,6 +11,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         private static IOss _ossClient;
         private static string _className;
         private static string _bucketName;
+        private static string _bucketString;
 
         [OneTimeSetUp]
         public static void ClassInitialize()
@@ -22,7 +23,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _className = _className.Substring(_className.LastIndexOf('.') + 1).ToLowerInvariant();
             //create the bucket
             _bucketName = OssTestUtils.GetBucketName(_className);
-            _ossClient.CreateBucket(_bucketName);
+            _bucketString = _ossClient.CreateBucket(_bucketName).ToString();
         }
 
         [OneTimeTearDown]
