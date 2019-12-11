@@ -279,6 +279,20 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
+        public void SetBucketPolicy(SetBucketPolicyRequest setBucketPolicyRequest)
+        {
+            ThrowIfNullRequest(setBucketPolicyRequest);
+
+            var cmd = SetBucketPolicyCommand.Create(_serviceClient, _endpoint,
+                                                CreateContext(HttpMethod.Put, setBucketPolicyRequest.BucketName, null),
+                                                setBucketPolicyRequest.BucketName, setBucketPolicyRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
         public AccessControlList GetBucketAcl(string bucketName)
         {
             var cmd = GetBucketAclCommand.Create(_serviceClient, _endpoint,
@@ -303,6 +317,26 @@ namespace Aliyun.OSS
                                           CreateContext(HttpMethod.Head, bucketName, null),
                                           bucketName);
             return cmd.Execute();
+        }
+
+        public GetBucketPolicyResult GetBucketPolicy(string bucketName)
+        {
+            var cmd = GetBucketPolicyCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Get, bucketName, null),
+                                                 bucketName);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public void DeleteBucketPolicy(string bucketName)
+        {
+            var cmd = DeleteBucketPolicyCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Delete, bucketName, null),
+                                                    bucketName);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
         }
 
         /// <inheritdoc/>

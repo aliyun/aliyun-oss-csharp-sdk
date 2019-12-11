@@ -245,6 +245,24 @@ namespace Aliyun.OSS
         /// Otherwise returns false.
         /// </returns>
         bool DoesBucketExist(string bucketName);
+        /// <summary>
+        /// Sets <see cref="Bucket" /> Bucket Policy
+        /// </summary>
+        /// <param name="SetBucketPolicyRequest"><see cref="SetBucketPolicyRequest"/> instance</param>
+        void SetBucketPolicy(SetBucketPolicyRequest setBucketPolicyRequest);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> Bucket Policy
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="GetBucketPolicyResult"/> instance</returns>
+        GetBucketPolicyResult GetBucketPolicy(string bucketName);
+
+        /// <summary>
+        /// Deletes the bucket's Policy.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        void DeleteBucketPolicy(string bucketName);
 
         #endregion
 

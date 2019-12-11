@@ -58,6 +58,11 @@ namespace Aliyun.OSS.Transform
             return new GetAclResponseDeserializer(CreateContentDeserializer<AccessControlPolicy>());
         }
 
+        public IDeserializer<ServiceResponse, GetBucketPolicyResult> CreateGetBucketPolicyDeserializer()
+        {
+            return new GetBucketPolicyDeserializer(CreateContentDeserializer<GetBucketPolicyResult>());
+        }
+
         public IDeserializer<ServiceResponse, BucketLocationResult> CreateGetBucketLocationResultDeserializer()
         {
             return new GetBucketLocationResultDeserializer(CreateContentDeserializer<BucketLocationResult>());
