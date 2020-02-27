@@ -115,6 +115,46 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        [Test]
+        public void PutObjectWithProcessTest()
+        {
+            IOss client = OssClientFactory.CreateOssClientEnableMD5(true);
+            try
+            {
+                //just for code coverage
+                using (Stream content = File.OpenRead(_localImageFile))
+                {
+                    var hashStream = new Common.Internal.MD5Stream(content, null, content.Length);
+                    var putRequest = new PutObjectRequest(_bucketName, _keyName, hashStream);
+                    putRequest.Process = _process;
+                    client.PutObject(putRequest);
+                }
+
+                // get processed image
+                GetObjectRequest request = new GetObjectRequest(_bucketName, _keyName, _process);
+                OssObject ossObject = client.GetObject(request);
+
+                // put processed image
+                Stream seekableStream = ConvertStreamToSeekable(ossObject.Content);
+                client.PutObject(_bucketName, _processedKey, seekableStream);
+
+                // get info of processed image
+                var imgInfo = GetOssImageObjectInfo(_bucketName, _processedKey);
+
+                // check processed result
+                Assert.AreEqual(imgInfo, _imageInfo);
+            }
+            catch (OssException e)
+            {
+                Assert.AreEqual(OssErrorCode.InvalidArgument, e.ErrorCode);
+            }
+            finally
+            {
+                _ossClient.DeleteObject(_bucketName, _keyName);
+                _ossClient.DeleteObject(_bucketName, _processedKey);
+            }
+        }
+
         #region private
         private static Stream ConvertStreamToSeekable(Stream stream)
         {

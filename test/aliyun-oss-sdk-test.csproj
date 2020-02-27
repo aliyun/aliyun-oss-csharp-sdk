@@ -70,6 +70,8 @@
     <Compile Include="TestCase\ObjectTestCase\ObjectCopyTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectMultipartUploadTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectSignedUriTest.cs" />
+    <Compile Include="TestCase\OtherTestCase\ClassUnitTest.cs" />
+    <Compile Include="TestCase\OtherTestCase\UtilsTest.cs" />
     <Compile Include="TestCase\OtherTestCase\HttpsTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ProxyTest.cs" />
     <Compile Include="TestCase\OtherTestCase\EpochTimeSettingTest.cs" />

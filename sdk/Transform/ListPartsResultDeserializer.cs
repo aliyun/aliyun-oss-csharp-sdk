@@ -25,7 +25,7 @@ namespace Aliyun.OSS.Transform
             var partListing = new PartListing
             {
                 BucketName = listPartResult.Bucket,
-                Key = listPartResult.EncodingType.ToLowerInvariant().Equals(HttpUtils.UrlEncodingType) ? HttpUtils.DecodeUri(listPartResult.Key) : listPartResult.Key,
+                Key = (listPartResult.EncodingType != null && listPartResult.EncodingType.ToLowerInvariant().Equals(HttpUtils.UrlEncodingType)) ? HttpUtils.DecodeUri(listPartResult.Key) : listPartResult.Key,
                 MaxParts = listPartResult.MaxParts,
                 NextPartNumberMarker = listPartResult.NextPartNumberMarker.Length == 0 ? 
                     0 : Convert.ToInt32(listPartResult.NextPartNumberMarker),

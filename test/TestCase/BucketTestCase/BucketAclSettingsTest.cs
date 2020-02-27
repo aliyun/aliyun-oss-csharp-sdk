@@ -54,6 +54,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             OssTestUtils.WaitForCacheExpire();
             acl = _ossClient.GetBucketAcl(_bucketName);
             Assert.AreEqual(acl.ACL, CannedAccessControlList.Private);
+            Assert.AreEqual(acl.ToString().IndexOf("ACL=Private") != -1, true);
         }
 
         [Test]

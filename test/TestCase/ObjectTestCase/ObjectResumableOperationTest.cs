@@ -233,11 +233,11 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var client = new FakeClient(Config.Endpoint, Config.AccessKeyId, Config.AccessKeySecret);
             try
             {
-                client.beginFailedIndex = 2;
+                client.beginFailedIndex = 8;
                 client.endFailedIndex = 100;
 
                 client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
-                                                       Config.DownloadFolder);
+                                                       Config.DownloadFolder, 1024 * 256);
                 Assert.IsTrue(false);
             }
             catch (Exception)
@@ -252,7 +252,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 client.currentIndex = 1;
 
                 var result = client.ResumableUploadObject(_bucketName, key, Config.MultiUploadTestFile, null,
-                                                       Config.DownloadFolder);
+                                                       Config.DownloadFolder, 1024 * 256);
                 Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
                 Assert.IsTrue(result.ETag.Length > 0);
             }
@@ -547,6 +547,100 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     _ossClient.DeleteObject(_bucketName, key);
                 }
             }
+        }
+
+        [Test]
+        public void ResumableUploadObjectWithExecptionTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            //file path invalid
+            try
+            {
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, "invalid-file-Path", null, "");
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+            //file path is folder
+            try
+            {
+                var result = _ossClient.ResumableUploadObject(_bucketName, key, Config.DownloadFolder, null, "");
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+            //file path invalid
+            try
+            {
+                var reqeust = new UploadObjectRequest(_bucketName, key, "invalid-file-Path");
+                var result = _ossClient.ResumableUploadObject(reqeust);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+            //file path is folder
+            try
+            {
+                var reqeust = new UploadObjectRequest(_bucketName, key, Config.DownloadFolder);
+                var result = _ossClient.ResumableUploadObject(reqeust);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+            //file path is folder
+            try
+            {
+                var result = _ossClient.ResumableUploadObject(null);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+
+            //file path is empty & UploadStream is empty
+            try
+            {
+                var reqeust = new UploadObjectRequest(_bucketName, key, "");
+                reqeust.UploadStream = null;
+                var result = _ossClient.ResumableUploadObject(reqeust);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+
+            //file UploadStream is not seekable
+            try
+            {
+                var content = new MemoryStream(Encoding.ASCII.GetBytes("123"));
+                var md5Stream = new Common.Internal.MD5Stream(content, null, content.Length);
+                var reqeust = new UploadObjectRequest(_bucketName, key, "");
+                reqeust.UploadStream = md5Stream;
+                var result = _ossClient.ResumableUploadObject(reqeust);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
         }
 
         #endregion
@@ -1036,6 +1130,223 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     LogUtility.LogWarning("Delete file {0} failed with Exception {1}", targetFile, e.Message);
                 }
                 _ossClient.DeleteObject(_bucketName, key);
+            }
+        }
+
+        [Test]
+        public void ResumableDownloadBigFileBreakAndResumeWithCheckpointFileTest()
+        {
+            var targetFile = OssTestUtils.GetTargetFileName(_className);
+            targetFile = Path.Combine(Config.DownloadFolder, targetFile);
+
+            var key = OssTestUtils.GetObjectKey(_className);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            bool progressUpdateCalled = false;
+            bool faultInjected = false;
+            try
+            {
+                var conf = new ClientConfiguration();
+                conf.MaxErrorRetry = 1;
+                var client = new OssClient(Config.Endpoint, Config.AccessKeyId, Config.AccessKeySecret, conf);
+
+                DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.CheckpointDir = Config.DownloadFolder;
+                request.PartSize = 1024 * 1024;
+                request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e) => {
+                    if (!progressUpdateCalled)
+                    {
+                        progressUpdateCalled = true;
+                    }
+                    else
+                    {
+                        if (!faultInjected)
+                        {
+                            faultInjected = true;
+                            throw new TimeoutException("Inject failure");
+                        }
+                    }
+                };
+
+                var metadata = client.ResumableDownloadObject(request);
+                Assert.IsTrue(false);
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(e.Message, "Inject failure");
+                DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.CheckpointDir = Config.DownloadFolder;
+                request.PartSize = 1024 * 1024;
+                request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e1) => {
+                    Assert.IsTrue(e1.TransferredBytes >= 2 * 1024 * 1024);
+                };
+                var metadata = _ossClient.ResumableDownloadObject(request);
+                var expectedETag = metadata.ETag;
+                var downloadedFileETag = FileUtils.ComputeContentMd5(targetFile);
+                Assert.AreEqual(expectedETag.ToLowerInvariant(), downloadedFileETag.ToLowerInvariant());
+                Assert.AreEqual(progressUpdateCalled, true);
+            }
+            finally
+            {
+                try
+                {
+                    FileUtils.DeleteFile(targetFile);
+                }
+                catch (Exception e)
+                {
+                    LogUtility.LogWarning("Delete file {0} failed with Exception {1}", targetFile, e.Message);
+                }
+                _ossClient.DeleteObject(_bucketName, key);
+            }
+        }
+
+        [Test]
+        public void ResumableDownloadBigFileBreakAndResumeCheckpointFileWithNotMatchParSizeTest()
+        {
+            var targetFile = OssTestUtils.GetTargetFileName(_className);
+            targetFile = Path.Combine(Config.DownloadFolder, targetFile);
+
+            var key = OssTestUtils.GetObjectKey(_className);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            bool progressUpdateCalled = false;
+            bool faultInjected = false;
+            try
+            {
+                var conf = new ClientConfiguration();
+                conf.MaxErrorRetry = 1;
+                var client = new OssClient(Config.Endpoint, Config.AccessKeyId, Config.AccessKeySecret, conf);
+
+                DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.CheckpointDir = Config.DownloadFolder;
+                request.PartSize = 1024 * 1024;
+                request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e) => {
+                    if (!progressUpdateCalled)
+                    {
+                        progressUpdateCalled = true;
+                    }
+                    else
+                    {
+                        if (!faultInjected)
+                        {
+                            faultInjected = true;
+                            throw new TimeoutException("Inject failure");
+                        }
+                    }
+                };
+
+                var metadata = client.ResumableDownloadObject(request);
+                Assert.IsTrue(false);
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(e.Message, "Inject failure");
+                DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.CheckpointDir = Config.DownloadFolder;
+                request.PartSize = 512 * 1024;
+                request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e1) => {
+                    Assert.IsTrue(e1.TransferredBytes >= 2 * 1024 * 1024);
+                };
+                var metadata = _ossClient.ResumableDownloadObject(request);
+                var expectedETag = metadata.ETag;
+                var downloadedFileETag = FileUtils.ComputeContentMd5(targetFile);
+                Assert.AreEqual(expectedETag.ToLowerInvariant(), downloadedFileETag.ToLowerInvariant());
+                Assert.AreEqual(progressUpdateCalled, true);
+            }
+            finally
+            {
+                try
+                {
+                    FileUtils.DeleteFile(targetFile);
+                }
+                catch (Exception e)
+                {
+                    LogUtility.LogWarning("Delete file {0} failed with Exception {1}", targetFile, e.Message);
+                }
+                _ossClient.DeleteObject(_bucketName, key);
+            }
+        }
+
+        [Test]
+        public void ResumableDownloadBigFileSingleThreadBreakAndResumeWithCheckpointFileTest()
+        {
+            var targetFile = OssTestUtils.GetTargetFileName(_className);
+            targetFile = Path.Combine(Config.DownloadFolder, targetFile);
+
+            var key = OssTestUtils.GetObjectKey(_className);
+            _ossClient.PutObject(_bucketName, key, Config.MultiUploadTestFile);
+            bool progressUpdateCalled = false;
+            bool faultInjected = false;
+            try
+            {
+                DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.PartSize = 100 * 1024;
+                request.CheckpointDir = Config.DownloadFolder;
+                request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e) => {
+                    if (!progressUpdateCalled)
+                    {
+                        progressUpdateCalled = true;
+                    }
+                    else
+                    {
+                        if (!faultInjected)
+                        {
+                            faultInjected = true;
+                            throw new TimeoutException("Inject failure");
+                        }
+                    }
+                };
+
+                var config = new ClientConfiguration();
+                config.MaxErrorRetry = 1;
+
+                request.ParallelThreadCount = 1;
+                var client = OssClientFactory.CreateOssClient(config);
+
+                var metadata = client.ResumableDownloadObject(request);
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(e.Message, "Inject failure");
+                DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
+                request.CheckpointDir = Config.DownloadFolder;
+                request.PartSize = 100 * 1024;
+                request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e1) => {
+                    Assert.IsTrue(e1.TransferredBytes >= 2 * 100 * 1024);
+                };
+                var metadata = _ossClient.ResumableDownloadObject(request);
+                var expectedETag = metadata.ETag;
+                var downloadedFileETag = FileUtils.ComputeContentMd5(targetFile);
+                Assert.AreEqual(expectedETag.ToLowerInvariant(), downloadedFileETag.ToLowerInvariant());
+                Assert.AreEqual(progressUpdateCalled, true);
+            }
+            finally
+            {
+                try
+                {
+                    FileUtils.DeleteFile(targetFile);
+                }
+                catch (Exception e)
+                {
+                    LogUtility.LogWarning("Delete file {0} failed with Exception {1}", targetFile, e.Message);
+                }
+                _ossClient.DeleteObject(_bucketName, key);
+            }
+        }
+
+        [Test]
+        public void ResumableDwonloadObjectWithExecptionTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            //file path invalid
+            try
+            {
+                var reqeust = new DownloadObjectRequest(_bucketName, key, "invalid/invalid-file-Path");
+                var result = _ossClient.ResumableDownloadObject(reqeust);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
             }
         }
         #endregion
