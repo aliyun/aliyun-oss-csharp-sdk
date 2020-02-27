@@ -62,6 +62,8 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             ulong crc = Crc64.Compute(content, 0, content.Length);
             Assert.AreEqual(crc, Crc64.Combine(crc1, crc2, content2.Length));
 
+            Assert.AreEqual(crc1, Crc64.Combine(crc1, crc2, 0));
+
             ulong crc3 = Crc64.Compute(content2, 0, content2.Length, crc1);
             Assert.AreEqual(crc3, crc);
         }

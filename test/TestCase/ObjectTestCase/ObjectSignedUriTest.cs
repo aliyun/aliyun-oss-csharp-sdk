@@ -584,5 +584,69 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
         #endregion
+
+        #region Misc Test
+        [Test]
+        public void GeneratePresignedUriWithExecptionTest()
+        {
+            try
+            {
+                var targetObject = OssTestUtils.GetObjectKey(_className);
+                var gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject, SignHttpMethod.Head)
+                {
+                    ContentType = "text/rtf",
+                    Expiration = DateTime.Now.AddHours(1),
+                };
+                gpuRequest.UserMetadata.Add("Author", "oss");
+                gpuRequest.UserMetadata.Add("Test", "test");
+                gpuRequest.AddQueryParam("x-param-null", "");
+                gpuRequest.AddQueryParam("x-param-space0", " ");
+                gpuRequest.AddQueryParam("x-param-value", "value");
+                gpuRequest.AddQueryParam("x-param-space1", " ");
+                var uri = _ossClient.GeneratePresignedUri(gpuRequest);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+        }
+
+        [Test]
+        public void GeneratePresignedUriStsTokenTest()
+        {
+            var targetObject = OssTestUtils.GetObjectKey(_className);
+            try
+            {
+                var client = new OssClient(Config.Endpoint, 
+                    new Common.Authentication.DefaultCredentialsProvider(
+                        new Common.Authentication.DefaultCredentials(Config.AccessKeyId, Config.AccessKeySecret, "test-token")));
+
+                var gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject, SignHttpMethod.Get)
+                {
+                    ContentType = "text/rtf",
+                    Expiration = DateTime.Now.AddHours(1),
+                };
+                var uri = client.GeneratePresignedUri(gpuRequest);
+                Assert.AreNotEqual(uri.ToString().IndexOf("security-token=test-token"), -1);
+            }
+            catch
+            {
+                Assert.IsTrue(false);
+            }
+
+            var request = new GeneratePresignedUriRequest(_bucketName, targetObject, SignHttpMethod.Get)
+            {
+                ContentType = "text/rtf",
+                Expiration = DateTime.Now.AddHours(1),
+            };
+            request.BucketName = null;
+            _ossClient.GeneratePresignedUri(request);
+
+            request.BucketName = _bucketName;
+            request.Key = targetObject;
+            _ossClient.GeneratePresignedUri(request);
+        }
+        #endregion
     }
 }

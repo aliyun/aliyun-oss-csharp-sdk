@@ -488,6 +488,129 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 Assert.IsTrue(false);
             }
+
+
+            key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                {
+                    var asyncResult = _ossClient.BeginPutObject(_bucketName, key, fs, new ObjectMetadata(), null, null);
+                    var waitHandle = asyncResult.AsyncWaitHandle;
+                    waitHandle = asyncResult.AsyncWaitHandle;
+                    waitHandle.WaitOne();
+                    Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+                }
+            }
+            catch
+            {
+                Assert.IsTrue(false);
+            }
+
+
+            key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var asyncResult = _ossClient.BeginPutObject(_bucketName, key, Config.UploadTestFile, new ObjectMetadata(), null, null);
+                var waitHandle = asyncResult.AsyncWaitHandle;
+                waitHandle = asyncResult.AsyncWaitHandle;
+                waitHandle.WaitOne();
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+            }
+            catch
+            {
+                Assert.IsTrue(false);
+            }
+
+            key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                ObjectMetadata meta = null;
+                var asyncResult = _ossClient.BeginPutObject(_bucketName, key, Config.UploadTestFile, meta, null, null);
+                var waitHandle = asyncResult.AsyncWaitHandle;
+                waitHandle = asyncResult.AsyncWaitHandle;
+                waitHandle.WaitOne();
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _bucketName, key));
+            }
+            catch
+            {
+                Assert.IsTrue(false);
+            }
+        }
+
+        [Test]
+        public void UploadObjectWithExceptionTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            //file path invalid
+            try
+            {
+                var result = _ossClient.PutObject(_bucketName, key, "invalid-file-Path", null);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+            //file path is folder
+            try
+            {
+                var result = _ossClient.PutObject(_bucketName, key, Config.DownloadFolder, null);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+            //file path invalid
+            try
+            {
+                var result = _ossClient.BeginPutObject(_bucketName, key, "invalid-file-Path", null, null, null);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+            //file path is folder
+            try
+            {
+                var result = _ossClient.BeginPutObject(_bucketName, key, Config.DownloadFolder, null, null, null);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+            //file path invalid
+            try
+            {
+                var result = _ossClient.PutObject(new Uri("http://endpoint/bucket/key"), "invalid-file-Path", null);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+
+            //file path is folder
+            try
+            {
+                var result = _ossClient.PutObject(new Uri("http://endpoint/bucket/key"), Config.DownloadFolder, null);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
         }
 
         #endregion
@@ -594,6 +717,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             try
             {
                 var asyncResult = _ossClient.BeginGetObject(_bucketName, _objectKey, null, null);
+                Thread.Sleep(1 * 1000);
                 asyncResult.AsyncWaitHandle.WaitOne();
                 var ossObject = _ossClient.EndGetObject(asyncResult);
                 using (var stream = ossObject.Content)
@@ -606,6 +730,47 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             catch
             {
                 Assert.IsTrue(false);
+            }
+        }
+
+        [Test]
+        public void AsyncGetObjectWithExceptionTest()
+        {
+            var key = _objectKey + "-not-exist";
+            try
+            {
+                var asyncResult = _ossClient.BeginGetObject(_bucketName, key, null, null);
+                Thread.Sleep(1 * 1000);
+                asyncResult.AsyncWaitHandle.WaitOne();
+                var ossObject = _ossClient.EndGetObject(asyncResult);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
+            }
+        }
+
+        [Test]
+        public void GetObjectToStreamTest()
+        {
+            var targetFile = OssTestUtils.GetTargetFileName(_className);
+            targetFile = Path.Combine(Config.DownloadFolder, targetFile);
+
+            try
+            {
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    var request = new GetObjectRequest(_bucketName, _objectKey);
+                    var result = _ossClient.GetObject(request, stream);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    var downloadedFileETag = FileUtils.ComputeContentMd5(stream);
+                    var expectedETag = result.ETag;
+                    Assert.AreEqual(expectedETag.ToLowerInvariant(), downloadedFileETag.ToLowerInvariant());
+                }
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(false, e.Message);
             }
         }
 
@@ -765,6 +930,26 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             finally
             {
                 _ossClient.DeleteObject(_bucketName, key);
+            }
+        }
+
+        [Test]
+        public void AsyncListAllObjectsWithExceptionTest()
+        {
+            //test folder structure
+            var folderName = OssTestUtils.GetObjectKey(_className);
+            var key = folderName + "/" + OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                ListObjectsRequest listRequest = null;
+                //list objects by specifying bucket name
+                var asyncResult = _ossClient.BeginListObjects(listRequest, null, null);
+                Assert.IsTrue(false);
+            }
+            catch
+            {
+                Assert.IsTrue(true);
             }
         }
 
@@ -931,6 +1116,54 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     _ossClient.DeleteObject(_bucketName, key);
                 }
             }
+        }
+
+        [Test]
+        public void DeleteObjectsRequestTest()
+        {
+            try
+            {
+                var request = new DeleteObjectsRequest("bucket", null, true);
+                Assert.IsTrue(false, "should not here");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+
+            try
+            {
+                var list = new List<string>();
+                var request = new DeleteObjectsRequest("bucket", list, true);
+                Assert.IsTrue(false, "should not here");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+
+            try
+            {
+                var list = new List<string>();
+                for (int i = 0; i < 1001; i++)
+                {
+                    list.Add("key" + i);
+                }
+                var request = new DeleteObjectsRequest("bucket", list, true);
+                Assert.IsTrue(false, "should not here");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+
+            var list1 = new List<string>();
+            list1.Add("key");
+            var request1 = new DeleteObjectsRequest("bucket", list1, true);
+            request1.EncodingType = null;
+            Assert.AreEqual(request1.EncodingType, HttpUtils.UrlEncodingType);
+            request1.EncodingType = "type";
+            Assert.AreEqual(request1.EncodingType, "type");
         }
 
         #endregion
@@ -1183,10 +1416,10 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void DoesObjectExistWithBucketExistAndObjectNotExist()
         {
+            string bucketName = _bucketName;
+            const string key = "one";
             try
             {
-                string bucketName = _bucketName;
-                const string key = "one";
                 try
                 {
                     _ossClient.DeleteObject(bucketName, key);
@@ -1202,6 +1435,18 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             catch (Exception e)
             {
                 Assert.True(false, e.Message);
+            }
+
+            //throw execption
+            try
+            {
+                var client = new OssClient(Config.Endpoint, Config.AccessKeyId, Config.AccessKeySecret, "", new ClientConfiguration());
+                bool isExist = _ossClient.DoesObjectExist(bucketName, key);
+                Assert.True(false);
+            }
+            catch (Exception e)
+            {
+                Assert.True(true, e.Message);
             }
         }
 
@@ -2249,6 +2494,30 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         }
 
         #endregion
+
+        #region Post Object
+        [Test]
+        public void GeneratePostPolicyTest()
+        {
+            try
+            {
+                _ossClient.GeneratePostPolicy(DateTime.UtcNow, null);
+                Assert.IsTrue(false);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(true, e.Message);
+
+            }
+
+            var conds = new PolicyConditions();
+            var policy = _ossClient.GeneratePostPolicy(DateTime.UtcNow, conds);
+            Assert.AreNotEqual(policy.IndexOf("expiration"), -1);
+        }
+
+
+        #endregion
+
         #region private
         private static List<string> CreateMultiObjects(int objectsCount)
         {

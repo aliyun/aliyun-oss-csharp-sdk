@@ -119,6 +119,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
 
             var lmuRequest = new ListMultipartUploadsRequest(_bucketName);
+            lmuRequest.EncodingType = null;
             var lmuListing = _ossClient.ListMultipartUploads(lmuRequest);
             string mpUpload = null;
             foreach (var t in lmuListing.MultipartUploads)
@@ -238,6 +239,8 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void MultipartUploadAbortInMiddleTest()
         {
+            IOss client = OssClientFactory.CreateOssClientEnableMD5(true);
+
             var sourceFile = Config.MultiUploadTestFile;
             //get target object name
             var targetObjectKey = OssTestUtils.GetObjectKey(_className);
@@ -278,13 +281,14 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                     uploadPartRequest.InputStream = fs;
                     uploadPartRequest.PartSize = size;
                     uploadPartRequest.PartNumber = (i + 1);
-                    var uploadPartResult = _ossClient.UploadPart(uploadPartRequest);
+                    var uploadPartResult = client.UploadPart(uploadPartRequest);
 
                     // Save the result
                     partETags.Add(uploadPartResult.PartETag);
 
                     //list parts which are uploaded
                     var listPartsRequest = new ListPartsRequest(_bucketName, targetObjectKey, initResult.UploadId);
+                    listPartsRequest.EncodingType = null;
                     var listPartsResult = _ossClient.ListParts(listPartsRequest);
                     //there should be only 1 part was not uploaded
                     Assert.AreEqual(i + 1, OssTestUtils.ToArray<Part>(listPartsResult.Parts).Count, "uploaded parts is not expected");
@@ -746,6 +750,66 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 Assert.IsTrue(e.Message.Contains("uploadId"));
             }
+        }
+
+        [Test]
+        public void MultipartUploadPartCopyNGTest()
+        {
+            //get target object name
+            var targetObjectKey = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                var initRequest = new InitiateMultipartUploadRequest(_bucketName, targetObjectKey);
+                var initResult = _ossClient.InitiateMultipartUpload(initRequest);
+
+                // Set the part size 
+                const int partSize = 1024 * 512 * 1;
+
+                var sourceObjectMeta = _ossClient.GetObjectMetadata(_bucketName, _sourceObjectKey);
+                // Calculate the part count
+                var partCount = OssTestUtils.CalculatePartCount(sourceObjectMeta.ContentLength, partSize);
+
+                LogUtility.LogMessage("Object {0} is splitted to {1} parts for multipart upload part copy",
+                    _sourceObjectKey, partCount);
+
+                // Create a list to save result 
+                var partETags = new List<PartETag>();
+
+                for (var i = 0; i < partCount; i++)
+                {
+                    // Skip to the start position
+                    long skipBytes = partSize * i;
+
+                    // calculate the part size
+                    var size = partSize < sourceObjectMeta.ContentLength - skipBytes
+                        ? partSize
+                        : sourceObjectMeta.ContentLength - skipBytes;
+
+                    // Create a UploadPartRequest, uploading parts
+                    var uploadPartCopyRequest =
+                        new UploadPartCopyRequest(_bucketName, targetObjectKey, _bucketName, _sourceObjectKey, initResult.UploadId)
+                        {
+                            BeginIndex = skipBytes,
+                            PartSize = size,
+                            PartNumber = (i + 1),
+                            UnmodifiedSinceConstraint = DateTime.Now.AddDays(-1)
+                        };
+                    uploadPartCopyRequest.NonmatchingETagConstraints.Add(_objectETag);
+                    var uploadPartCopyResult = _ossClient.UploadPartCopy(uploadPartCopyRequest);
+
+                    // Save the result
+                    partETags.Add(uploadPartCopyResult.PartETag);
+                }
+                Assert.IsTrue(false);
+            }
+            catch (OssException e)
+            {
+                Assert.AreEqual(e.ErrorCode, "PreconditionFailed");
+            }
+  
+            //delete the object
+            _ossClient.DeleteObject(_bucketName, targetObjectKey);
         }
     }
 }

@@ -382,9 +382,50 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 Assert.True(false, e.Message);
             }
         }
-#endregion
 
-#region List Buckets
+        [Test]
+        public void DoesBucketExistTestWithException()
+        {
+            try
+            {
+                _ossClient.DoesBucketExist("");
+                Assert.IsTrue(false);
+            }
+            catch (Exception e)
+            {
+                Assert.True(true, e.Message);
+            }
+
+            try
+            {
+                _ossClient.DoesBucketExist("Invalid-Bucket");
+                Assert.IsTrue(false);
+            }
+            catch (Exception e)
+            {
+                Assert.True(true, e.Message);
+            }
+
+            var bucketName1 = OssTestUtils.GetBucketName(_className);
+            try
+            {
+                var client = new OssClient(Config.Endpoint, Config.AccessKeyId, "invalid-sk");
+                _ossClient.CreateBucket(bucketName1, StorageClass.IA);
+                client.DoesBucketExist(bucketName1);
+                Assert.IsTrue(false);
+            }
+            catch (Exception e)
+            {
+                Assert.True(true, e.Message);
+            }
+            finally
+            {
+                _ossClient.DeleteBucket(bucketName1);
+            }
+        }
+        #endregion
+
+        #region List Buckets
 
         [Test]
         public void ListBucketspagingTest()
@@ -659,6 +700,9 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             OssTestUtils.WaitForCacheExpire();
             Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
                 string.Format("Bucket {0} should not exist after deletion", bucketName));
+
+            var metadata = new BucketMetadata();
+            Assert.AreEqual(metadata.BucketRegion, null);
         }
 
         #endregion

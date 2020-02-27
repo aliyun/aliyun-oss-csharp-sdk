@@ -72,5 +72,21 @@ namespace Aliyun.OSS.Test.TestClass.AccessKeyTestClass
                 Assert.AreEqual("InvalidAccessKeyId", e.ErrorCode);
             }
         }
+
+
+        [Test]
+        public void DefaultCredentialsProviderNGTest()
+        {
+            try
+            {
+                var ossClient = new OssClient(Config.Endpoint, new Common.Authentication.DefaultCredentialsProvider(null));
+                ossClient.ListBuckets();
+                Assert.Fail("Invalid key secret should not initialize OssClient successfully");
+            }
+            catch (System.Exception e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
     }
 }
