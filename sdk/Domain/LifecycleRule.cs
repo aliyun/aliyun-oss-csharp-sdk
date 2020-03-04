@@ -74,6 +74,12 @@ namespace Aliyun.OSS
         public LifeCycleExpiration AbortMultipartUpload { get; set; }
 
         /// <summary>
+        /// Gets or sets the object tags.
+        /// </summary>
+        /// <value>The object tags.</value>
+        public Tag[] Tags { get; set; }
+
+        /// <summary>
         /// Determines whether the specified <see cref="Aliyun.OSS.LifecycleRule"/> is equal to the current <see cref="T:Aliyun.OSS.LifecycleRule"/>.
         /// </summary>
         /// <param name="obj">The <see cref="Aliyun.OSS.LifecycleRule"/> to compare with the current <see cref="T:Aliyun.OSS.LifecycleRule"/>.</param>
@@ -117,6 +123,26 @@ namespace Aliyun.OSS
                 for (int i = 0; i < this.Transitions.Length; i++)
                 {
                     if (!this.Transitions[i].Equals(obj.Transitions[i]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            //tags
+            if (this.Tags == null && obj.Tags != null
+                || this.Tags != null && obj.Tags == null)
+            {
+                return false;
+            }
+
+            if (this.Tags != null && obj.Tags != null)
+            {
+                if (this.Tags.Length != obj.Tags.Length) return false;
+
+                for (int i = 0; i < this.Tags.Length; i++)
+                {
+                    if (!this.Tags[i].Equals(obj.Tags[i]))
                     {
                         return false;
                     }

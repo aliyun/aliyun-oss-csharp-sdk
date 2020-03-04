@@ -12,5 +12,14 @@ namespace Aliyun.OSS
         /// Gets or sets the tag value
         /// </summary>
         public string Value { get; set; }
+
+        public bool Equals(Tag obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+
+            if (obj == null) return false;
+
+            return this.Key.Equals(obj.Key)  && this.Value.Equals(obj.Value);
+        }
     }
 }

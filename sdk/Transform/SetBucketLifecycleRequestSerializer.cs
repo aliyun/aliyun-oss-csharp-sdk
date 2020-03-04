@@ -63,6 +63,19 @@ namespace Aliyun.OSS.Transform
                 {
                     lcc.LifecycleRules[i].AbortMultipartUpload = ConvertExpiration(rules[i].AbortMultipartUpload);
                 }
+
+                if (rules[i].Tags != null)
+                {
+                    lcc.LifecycleRules[i].Tags = new LifecycleRuleTag[rules[i].Tags.Length];
+                    for (int j = 0; j < lcc.LifecycleRules[i].Tags.Length; j++)
+                    {
+                        lcc.LifecycleRules[i].Tags[j] = new LifecycleRuleTag
+                        {
+                            Key = rules[i].Tags[j].Key,
+                            Value = rules[i].Tags[j].Value,
+                        };
+                    }
+                }
             }
 
             return ContentSerializer.Serialize(lcc);

@@ -1421,6 +1421,40 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        /// <inheritdoc/>
+        public void SetObjectTagging(SetObjectTaggingRequest setObjectTaggingRequest)
+        {
+            ThrowIfNullRequest(setObjectTaggingRequest);
+
+            var cmd = SetObjectTaggingCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Put, setObjectTaggingRequest.BucketName, setObjectTaggingRequest.Key),
+                                                      setObjectTaggingRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DeleteObjectTagging(string bucketName, string key)
+        {
+            var cmd = DeleteObjectTaggingCommand.Create(_serviceClient, _endpoint,
+                                                   CreateContext(HttpMethod.Delete, bucketName, key),
+                                                   bucketName, key);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetObjectTaggingResult GetObjectTagging(string bucketName, string key)
+        {
+            var cmd = GetObjectTaggingCommand.Create(_serviceClient, _endpoint,
+                                                             CreateContext(HttpMethod.Get, bucketName, key),
+                                                             bucketName, key);
+            return cmd.Execute();
+        }
         #endregion
         
         #region Generate URL

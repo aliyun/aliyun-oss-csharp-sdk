@@ -61,6 +61,19 @@ namespace Aliyun.OSS.Transform
                     }
                 }
 
+                if (lcc.Tags != null)
+                {
+                    rule.Tags = new Tag[lcc.Tags.Length];
+                    for (int i = 0; i < rule.Tags.Length; i++)
+                    {
+                        rule.Tags[i] = new Tag()
+                        {
+                            Key = lcc.Tags[i].Key,
+                            Value = lcc.Tags[i].Value
+                        };
+                    }
+                }
+
                 rules.Add(rule);
             }
             return rules;            
