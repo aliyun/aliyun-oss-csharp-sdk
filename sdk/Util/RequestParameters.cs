@@ -22,6 +22,7 @@ namespace Aliyun.OSS.Util
         public const string SUBRESOURCE_SYMLINK = "symlink";
 		public const string SUBRESOURCE_LOCATION = "location";
 		public const string SUBRESOURCE_QOS = "qos";
+        public const string SUBRESOURCE_POLICY = "policy";
         public const string PREFIX = "prefix";
         public const string DELIMITER = "delimiter";
         public const string MARKER = "marker";    

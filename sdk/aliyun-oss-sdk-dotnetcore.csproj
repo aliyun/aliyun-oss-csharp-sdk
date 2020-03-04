@@ -31,7 +31,10 @@
  </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AppendObjectCommand.cs" />
+    <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
+    <Compile Include="Commands\GetBucketPolicyCommand.cs" />
 	<Compile Include="Commands\GetBucketStorageCapacityCommand.cs" />
+	<Compile Include="Commands\SetBucketPolicyCommand.cs" />
     <Compile Include="Commands\SetBucketStorageCapacityCommand.cs" />
     <Compile Include="Commands\GetBucketMetadataCommand.cs" />
     <Compile Include="Commands\GetBucketLocationCommand.cs" />
@@ -78,7 +81,9 @@
     <Compile Include="Common\Internal\StreamReadTracker.cs" />
 	<Compile Include="Domain\BucketMetadata.cs" />
     <Compile Include="Domain\BucketLocationResult.cs" />
+    <Compile Include="Domain\GetBucketPolicyResult.cs" />
     <Compile Include="Domain\GetBucketStorageCapacityResult.cs" />
+    <Compile Include="Domain\SetBucketPolicyRequest.cs" />
     <Compile Include="Domain\SetBucketStorageCapacityRequest.cs" />
     <Compile Include="Model\BucketStorageCapacityModel.cs" />
     <Compile Include="Model\StreamUploadProgressArgs.cs" />
@@ -92,6 +97,7 @@
     <Compile Include="Model\StreamResult.cs" />
     <Compile Include="Model\GenericResult.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
+    <Compile Include="Transform\GetBucketPolicyDeserializer.cs" />
 	<Compile Include="Transform\GetBucketStorageCapacityResultDeserializer.cs" />
     <Compile Include="Transform\SetBucketStorageCapacityRequestSerializer.cs" />
     <Compile Include="Transform\GetBucketMetadataResponseDeserializer.cs" />

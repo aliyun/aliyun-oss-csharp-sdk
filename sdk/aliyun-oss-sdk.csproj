@@ -188,10 +188,14 @@
     <Compile Include="Common\ThirdParty\MD5Managed.cs" />
     <Compile Include="Common\Internal\PartialWrapperStream.cs" />
     <Compile Include="Common\Internal\StreamReadTracker.cs" />
+    <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
     <Compile Include="Domain\BucketMetadata.cs" />
     <Compile Include="Domain\BucketLocationResult.cs" />
     <Compile Include="Domain\GetBucketStorageCapacityResult.cs" />
     <Compile Include="Domain\SetBucketStorageCapacityRequest.cs" />
+    <Compile Include="Commands\GetBucketPolicyCommand.cs" />
+    <Compile Include="Transform\GetBucketPolicyDeserializer.cs" />
+    <Compile Include="Domain\GetBucketPolicyResult.cs" />
     <Compile Include="Model\BucketStorageCapacityModel.cs" />
     <Compile Include="Model\StreamUploadProgressArgs.cs" />
     <Compile Include="Common\Internal\WrapperStream.cs" />
@@ -203,6 +207,8 @@
     <Compile Include="Domain\ResumableContext.cs" />
     <Compile Include="Model\StreamResult.cs" />
     <Compile Include="Model\GenericResult.cs" />
+    <Compile Include="Commands\SetBucketPolicyCommand.cs" />
+    <Compile Include="Domain\SetBucketPolicyRequest.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\GetBucketStorageCapacityResultDeserializer.cs" />
     <Compile Include="Transform\SetBucketStorageCapacityRequestSerializer.cs" />
