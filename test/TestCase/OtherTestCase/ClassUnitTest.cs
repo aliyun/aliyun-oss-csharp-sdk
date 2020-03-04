@@ -1564,13 +1564,94 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         public void UploadPartResultDeserializerTest()
         {
             var factory = DeserializerFactory.GetFactory("text/xml");
-            var request = new PutObjectRequest("bucket", "key", new MemoryStream());
             var deserializer = factory.CreateUploadPartResultDeserializer(1);
             var headers = new Dictionary<string, string>();
             string data = "";
             var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
             var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
             var result = deserializer.Deserialize(xmlStream);
+        }
+
+        [Test]
+        public void GetBucketTaggingResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var request = new PutObjectRequest("bucket", "key", new MemoryStream());
+            var deserializer = factory.CreateGetBucketTaggingResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <Tagging>
+                    <TagSet>
+                        <Tag>
+                            <Key>tag2</Key>
+                            <Value>jsmith</Value>
+                        </Tag>
+                    </TagSet>
+                </Tagging>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Tags.Count, 1);
+            Assert.AreEqual(result.Tags[0].Key, "tag2");
+            Assert.AreEqual(result.Tags[0].Value, "jsmith");
+
+            data =
+             @" 
+                <Tagging>
+                    <TagSet>
+                        <Tag>
+                            <Key>tag2</Key>
+                        </Tag>
+                    </TagSet>
+                </Tagging>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Tags.Count, 1);
+            Assert.AreEqual(result.Tags[0].Key, "tag2");
+            Assert.AreEqual(result.Tags[0].Value, null);
+
+            data =
+                @" 
+                <Tagging>
+                    <TagSet>
+                    </TagSet>
+                </Tagging>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Tags.Count, 0);
+
+            data =
+                @" 
+                <Tagging>
+                </Tagging>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Tags.Count, 0);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(false, e.Message);
+            }
         }
 
         [Test]

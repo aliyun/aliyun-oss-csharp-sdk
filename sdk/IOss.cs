@@ -265,6 +265,25 @@ namespace Aliyun.OSS
         /// <param name="bucketName">Bucket name.</param>
         void DeleteBucketPolicy(string bucketName);
 
+        /// <summary>
+        /// Sets <see cref="Bucket" /> Bucket Tagging
+        /// </summary>
+        /// <param name="SetBucketTaggingRequest"><see cref="SetBucketTaggingRequest"/> instance</param>
+        void SetBucketTagging(SetBucketTaggingRequest setBucketTaggingRequest);
+
+        /// <summary>
+        /// Deletes the bucket's Tagging.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        void DeleteBucketTagging(string bucketName);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> Bucket Tagging
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="GetBucketTaggingResult"/> instance</returns>
+        GetBucketTaggingResult GetBucketTagging(string bucketName);
+
         #endregion
 
         #region Object Operations

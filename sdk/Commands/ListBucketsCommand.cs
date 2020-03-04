@@ -44,6 +44,19 @@ namespace Aliyun.OSS.Commands
             {
                 parameters[RequestParameters.MAX_KEYS] = request.MaxKeys.Value.ToString(CultureInfo.InvariantCulture);
             }
+
+            if (request.Tag != null)
+            {
+                if (request.Tag.Key != null)
+                {
+                    parameters[RequestParameters.TAG_KEY] = request.Tag.Key;
+                }
+
+                if (request.Tag.Value != null)
+                {
+                    parameters[RequestParameters.TAG_VALUE] = request.Tag.Value;
+                }
+            }
         }
 
         private ListBucketsCommand(IServiceClient client, Uri endpoint, ExecutionContext context,

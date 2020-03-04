@@ -497,6 +497,43 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+
+        /// <inheritdoc/>
+        public void SetBucketTagging(SetBucketTaggingRequest setBucketTaggingRequest)
+        {
+            ThrowIfNullRequest(setBucketTaggingRequest);
+
+            var cmd = SetBucketTaggingCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Put, setBucketTaggingRequest.BucketName, null),
+                                                      setBucketTaggingRequest.BucketName,
+                                                      setBucketTaggingRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DeleteBucketTagging(string bucketName)
+        {
+            var cmd = DeleteBucketTaggingCommand.Create(_serviceClient, _endpoint,
+                                                   CreateContext(HttpMethod.Delete, bucketName, null),
+                                                   bucketName);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetBucketTaggingResult GetBucketTagging(string bucketName)
+        {
+            var cmd = GetBucketTaggingCommand.Create(_serviceClient, _endpoint,
+                                                             CreateContext(HttpMethod.Get, bucketName, null),
+                                                             bucketName);
+            return cmd.Execute();
+        }
+
         /// <inheritdoc/>
         public bool DoesBucketExist(string bucketName)
         {
