@@ -46,6 +46,8 @@ namespace Aliyun.OSS.Util
 
         public const string OSS_PROCESS = "x-oss-process";
 
+        public const string OSS_TAGGING = "x-oss-tagging";
+
         public const string TAG_KEY = "tag-key";
         public const string TAG_VALUE = "tag-value";
     }

@@ -1655,6 +1655,88 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         }
 
         [Test]
+        public void GetObjectTaggingResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var request = new PutObjectRequest("bucket", "key", new MemoryStream());
+            var deserializer = factory.CreateGetObjectTaggingResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <Tagging>
+                    <TagSet>
+                        <Tag>
+                            <Key>tag2</Key>
+                            <Value>jsmith</Value>
+                        </Tag>
+                    </TagSet>
+                </Tagging>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Tags.Count, 1);
+            Assert.AreEqual(result.Tags[0].Key, "tag2");
+            Assert.AreEqual(result.Tags[0].Value, "jsmith");
+
+            data =
+             @" 
+                <Tagging>
+                    <TagSet>
+                        <Tag>
+                            <Key>tag2</Key>
+                        </Tag>
+                    </TagSet>
+                </Tagging>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Tags.Count, 1);
+            Assert.AreEqual(result.Tags[0].Key, "tag2");
+            Assert.AreEqual(result.Tags[0].Value, null);
+
+            data =
+                @" 
+                <Tagging>
+                    <TagSet>
+                    </TagSet>
+                </Tagging>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Tags.Count, 0);
+
+            data =
+                @" 
+                <Tagging>
+                </Tagging>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Tags.Count, 0);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(false, e.Message);
+            }
+        }
+
+        [Test]
         public void SerializerFactoryTest()
         {
             var factory = SerializerFactory.GetFactory("text/xml");
@@ -1708,6 +1790,32 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             {
                 Assert.IsTrue(true, e.Message);
             }
+        }
+
+        [Test]
+        public void TagTest()
+        {
+            var tag0 = new Tag { Key = "key", Value = "value" };
+            var tag1 = new Tag { Key= "key", Value = "value" };
+            var tag2 = new Tag { Key = "key", Value = "value2" };
+            var tag3 = new Tag { Key = "key3", Value = "value" };
+            var tag4 = new Tag { Key = "key"};
+            var tag5 = new Tag {Value = "value" };
+
+            Tag tag6 = null;
+
+            Tag tag7 = tag0;
+
+            Assert.IsTrue(tag0.Equals(tag1));
+            Assert.IsTrue(tag0.Equals(tag7));
+            Assert.IsTrue(tag0.Equals(tag0));
+
+            Assert.IsFalse(tag0.Equals(tag2));
+            Assert.IsFalse(tag0.Equals(tag3));
+            Assert.IsFalse(tag0.Equals(tag4));
+            Assert.IsFalse(tag0.Equals(tag5));
+            Assert.IsFalse(tag0.Equals(tag6));
+            Assert.IsFalse(tag4.Equals(tag5));
         }
 
         [Test]

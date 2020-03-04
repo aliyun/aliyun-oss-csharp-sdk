@@ -36,6 +36,9 @@ namespace Aliyun.OSS.Model
 
         [XmlElement("Transition")]
         public LifecycleRuleTransition[] Transition { get; set; }
+
+        [XmlElement("Tag")]
+        public LifecycleRuleTag[] Tags { get; set; }
     }
 
     public class Expiration
@@ -83,5 +86,14 @@ namespace Aliyun.OSS.Model
     {
         [XmlElement("StorageClass")]
         public StorageClass StorageClass { get; set; }
+    }
+
+    public class LifecycleRuleTag
+    {
+        [XmlElement("Key")]
+        public string Key { get; set; }
+
+        [XmlElement("Value")]
+        public string Value { get; set; }
     }
 }

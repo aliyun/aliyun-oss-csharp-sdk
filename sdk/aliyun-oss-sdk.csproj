@@ -146,14 +146,17 @@
   <ItemGroup>
     <Compile Include="Commands\AppendObjectCommand.cs" />
     <Compile Include="Commands\DeleteBucketTaggingCommand.cs" />
+    <Compile Include="Commands\DeleteObjectTaggingCommand.cs" />
     <Compile Include="Commands\GetBucketStorageCapacityCommand.cs" />
     <Compile Include="Commands\GetBucketTaggingCommand.cs" />
+    <Compile Include="Commands\GetObjectTaggingCommand.cs" />
     <Compile Include="Commands\SetBucketStorageCapacityCommand.cs" />
     <Compile Include="Commands\GetBucketMetadataCommand.cs" />
     <Compile Include="Commands\GetBucketLocationCommand.cs" />
     <Compile Include="Commands\GetObjectAclCommand.cs" />
     <Compile Include="Commands\SetBucketTaggingCommand.cs" />
     <Compile Include="Commands\SetObjectAclCommand.cs" />
+    <Compile Include="Commands\SetObjectTaggingCommand.cs" />
     <Compile Include="Common\ClientConfiguration.cs" />
     <Compile Include="Commands\HeadObjectCommand.cs" />
     <Compile Include="Commands\DeleteObjectsCommand.cs" />
@@ -195,10 +198,12 @@
     <Compile Include="Domain\BucketMetadata.cs" />
     <Compile Include="Domain\BucketLocationResult.cs" />
     <Compile Include="Domain\GetBucketStorageCapacityResult.cs" />
+    <Compile Include="Domain\GetObjectTaggingResult.cs" />
     <Compile Include="Domain\GetBucketTaggingResult.cs" />
     <Compile Include="Domain\SetBucketStorageCapacityRequest.cs" />
     <Compile Include="Commands\GetBucketPolicyCommand.cs" />
     <Compile Include="Domain\SetBucketTaggingRequest.cs" />
+    <Compile Include="Domain\SetObjectTaggingRequest.cs" />
     <Compile Include="Domain\Tag.cs" />
     <Compile Include="Model\Tagging.cs" />
     <Compile Include="Transform\GetBucketPolicyDeserializer.cs" />
@@ -219,6 +224,7 @@
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\GetBucketStorageCapacityResultDeserializer.cs" />
     <Compile Include="Transform\GetBucketTaggingResultDeserializer.cs" />
+    <Compile Include="Transform\GetObjectTaggingResultDeserializer.cs" />
     <Compile Include="Transform\SetBucketStorageCapacityRequestSerializer.cs" />
     <Compile Include="Transform\GetBucketMetadataResponseDeserializer.cs" />
     <Compile Include="Transform\GetBucketLocationResultDeserializer.cs" />
@@ -227,6 +233,7 @@
     <Compile Include="Transform\RequestSerializationException.cs" />
     <Compile Include="Transform\ResponseDeserializationException.cs" />
     <Compile Include="Transform\SetBucketTaggingRequestSerializer.cs" />
+    <Compile Include="Transform\SetObjectTaggingRequestSerializer.cs" />
     <Compile Include="Transform\XmlStreamSerializer.cs" />
     <Compile Include="Transform\XmlStreamDeserializer.cs" />
     <Compile Include="Util\AsyncResult.cs" />

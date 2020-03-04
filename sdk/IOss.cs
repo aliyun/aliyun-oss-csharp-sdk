@@ -795,6 +795,27 @@ namespace Aliyun.OSS
         /// <param name="key">Key.</param>
         RestoreObjectResult RestoreObject(string bucketName, string key);
 
+        /// <summary>
+        /// Sets the object tagging
+        /// </summary>
+        /// <param name="SetObjectTaggingRequest"></param>
+        void SetObjectTagging(SetObjectTaggingRequest setObjectTaggingRequest);
+
+        /// <summary>
+        /// Gets the object tagging 
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <returns><see cref="GetObjectTaggingResult" /> instance</returns>
+        GetObjectTaggingResult GetObjectTagging(string bucketName, string key);
+
+        /// <summary>
+        /// Deletes object tagging
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        void DeleteObjectTagging(string bucketName, string key);
+
         #endregion
         
         #region Generate URL
