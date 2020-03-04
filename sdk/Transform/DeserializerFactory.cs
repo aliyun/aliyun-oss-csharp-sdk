@@ -89,6 +89,11 @@ namespace Aliyun.OSS.Transform
             return new GetBucketStorageCapacityResultDeserializer(CreateContentDeserializer<BucketStorageCapacityModel>());
         }
 
+        public IDeserializer<ServiceResponse, GetBucketPolicyResult> CreateGetBucketPolicyDeserializer()
+        {
+            return new GetBucketPolicyDeserializer(CreateContentDeserializer<GetBucketPolicyResult>());
+        }
+
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public IDeserializer<ServiceResponse, PutObjectResult> CreatePutObjectReusltDeserializer(PutObjectRequest request)
         {
