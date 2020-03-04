@@ -182,6 +182,11 @@ namespace Aliyun.OSS.Transform
         {
             return new RestoreObjectResultDeserializer(CreateContentDeserializer<ErrorResult>());
         }
+
+        public IDeserializer<ServiceResponse, GetBucketTaggingResult> CreateGetBucketTaggingResultDeserializer()
+        {
+            return new GetBucketTaggingResultDeserializer(CreateContentDeserializer<Tagging>());
+        }
     }
 
     internal class XmlDeserializerFactory : DeserializerFactory

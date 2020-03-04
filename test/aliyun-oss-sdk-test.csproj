@@ -60,6 +60,7 @@
     <Compile Include="TestCase\BucketTestCase\BucketPolicySettingTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketRefersSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketSettingsTest.cs" />
+    <Compile Include="TestCase\BucketTestCase\BucketTaggingSettingTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketWebsiteSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketStorageCapacityTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectProgressTest.cs" />

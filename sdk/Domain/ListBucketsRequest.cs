@@ -11,6 +11,8 @@ namespace Aliyun.OSS
     /// </summary>
     public class ListBucketsRequest
     {
+        private Tag _tag;
+
         /// <summary>
         /// Gets or sets the bucket name prefix to list (optional)
         /// </summary>
@@ -25,5 +27,10 @@ namespace Aliyun.OSS
         /// Gets or sets the max entries to return. By default is 100.
         /// </summary>
         public int? MaxKeys { get; set; }
+
+        /// <summary>
+        /// Gets or sets the bucket tag
+        /// </summary>
+        public Tag Tag { get => _tag; set => _tag = value; }
     }
 }

@@ -23,6 +23,7 @@ namespace Aliyun.OSS.Util
 		public const string SUBRESOURCE_LOCATION = "location";
 		public const string SUBRESOURCE_QOS = "qos";
         public const string SUBRESOURCE_POLICY = "policy";
+        public const string SUBRESOURCE_TAGGING = "tagging";
         public const string PREFIX = "prefix";
         public const string DELIMITER = "delimiter";
         public const string MARKER = "marker";    
@@ -44,5 +45,8 @@ namespace Aliyun.OSS.Util
         public const string SECURITY_TOKEN = "security-token";
 
         public const string OSS_PROCESS = "x-oss-process";
+
+        public const string TAG_KEY = "tag-key";
+        public const string TAG_VALUE = "tag-value";
     }
 }
