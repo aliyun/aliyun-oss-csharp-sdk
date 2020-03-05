@@ -74,6 +74,12 @@ namespace Aliyun.OSS
         public BucketACL AccessControlList { get; set; }
 
         /// <summary>
+        /// Gets or sets the disaster recovery.
+        /// </summary>
+        /// <value>The access control list.</value>
+        public DataRedundancyType DataRedundancyType { get; set; }
+
+        /// <summary>
         /// Creats a new <see cref="Bucket" /> instance with the specified name.
         /// </summary>
         /// <param name="name">Bucket name</param>

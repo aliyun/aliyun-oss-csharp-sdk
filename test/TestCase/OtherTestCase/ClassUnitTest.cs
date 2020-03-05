@@ -889,6 +889,60 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             transition1.StorageClass = StorageClass.Archive;
             transition2.StorageClass = StorageClass.Standard;
             Assert.AreEqual(transition1.Equals(transition2), false);
+
+            //Tags
+            LifecycleRule rulet1 = new LifecycleRule();
+            rulet1.ID = "StandardExpireRule";
+            rulet1.Prefix = "test";
+            rulet1.Status = RuleStatus.Enabled;
+            rulet1.ExpriationDays = 200;
+
+            LifecycleRule rulet2 = new LifecycleRule();
+            rulet2.ID = "StandardExpireRule";
+            rulet2.Prefix = "test";
+            rulet2.Status = RuleStatus.Enabled;
+            rulet2.ExpriationDays = 200;
+            rulet2.Tags = new Tag[1]
+            {
+                new Tag(){
+                    Key = "key1",
+                    Value = "value1"
+                }
+            };
+            Assert.AreNotEqual(rulet1, rulet2);
+            Assert.AreNotEqual(rulet2, rulet1);
+
+            rulet1.Tags = new Tag[1]
+            {
+                new Tag(){
+                    Key = "key1",
+                    Value = "value1"
+                }
+            };
+            rulet2.Tags = new Tag[1]
+            {
+                new Tag(){
+                    Key = "key2",
+                    Value = "value2"
+                }
+            };
+            Assert.AreNotEqual(rulet1, rulet2);
+
+            rulet2.Tags = new Tag[2]
+            {
+                new Tag(){
+                    Key = "key1",
+                    Value = "value1"
+                },
+                new Tag(){
+                    Key = "key2",
+                    Value = "value2"
+                }
+            };
+            Assert.AreNotEqual(rulet1, rulet2);
+
+            rulet2.Tags = rulet1.Tags;
+            Assert.AreEqual(rulet1, rulet2);
         }
 
         [Test]

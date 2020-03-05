@@ -293,9 +293,60 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 }
             }
         }
-#endregion
 
-#region Delete Bucket Cases
+        [Test]
+        public void CreateBucketByCreateBucketRequest()
+        {
+            //create a new bucket by default, acl is private, storage class is standard
+            var bucketName = OssTestUtils.GetBucketName(_className);
+            var request = new CreateBucketRequest(bucketName);
+            _ossClient.CreateBucket(request);
+            Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should exist after creation", bucketName));
+
+            var result = _ossClient.GetBucketInfo(bucketName);
+            Assert.AreEqual(result.Bucket.AccessControlList.Grant, CannedAccessControlList.Private);
+            Assert.AreEqual(result.Bucket.StorageClass, StorageClass.Standard);
+            Assert.AreEqual(result.Bucket.DataRedundancyType, DataRedundancyType.LRS);
+
+            _ossClient.DeleteBucket(bucketName);
+            OssTestUtils.WaitForCacheExpire(1);
+
+            //create a public bucket with IA 
+            bucketName = OssTestUtils.GetBucketName(_className);
+            request = new CreateBucketRequest(bucketName, StorageClass.IA, CannedAccessControlList.PublicReadWrite);
+            request.DataRedundancyType = DataRedundancyType.LRS;
+
+            _ossClient.CreateBucket(request);
+            Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should exist after creation", bucketName));
+
+            result = _ossClient.GetBucketInfo(bucketName);
+            Assert.AreEqual(result.Bucket.AccessControlList.Grant, CannedAccessControlList.PublicReadWrite);
+            Assert.AreEqual(result.Bucket.StorageClass, StorageClass.IA);
+            Assert.AreEqual(result.Bucket.DataRedundancyType, DataRedundancyType.LRS);
+
+            _ossClient.DeleteBucket(bucketName);
+
+
+            //create a public bucket with IA , ZRS
+            bucketName = OssTestUtils.GetBucketName(_className);
+            request = new CreateBucketRequest(bucketName, StorageClass.IA, CannedAccessControlList.PublicReadWrite);
+            request.DataRedundancyType = DataRedundancyType.ZRS;
+            _ossClient.CreateBucket(request);
+            Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should exist after creation", bucketName));
+
+            result = _ossClient.GetBucketInfo(bucketName);
+            Assert.AreEqual(result.Bucket.AccessControlList.Grant, CannedAccessControlList.PublicReadWrite);
+            Assert.AreEqual(result.Bucket.StorageClass, StorageClass.IA);
+            Assert.AreEqual(result.Bucket.DataRedundancyType, DataRedundancyType.ZRS);
+
+            _ossClient.DeleteBucket(bucketName);
+        }
+        #endregion
+
+        #region Delete Bucket Cases
         [Test]
         public void DeleteNonExistBucketTest()
         {

@@ -236,6 +236,11 @@ namespace Aliyun.OSS.Test.Util
             Thread.Sleep(5 * 1000);
         }
 
+        public static void WaitForCacheExpire(int sec)
+        {
+            Thread.Sleep(sec * 1000);
+        }
+
         public static int CalculatePartCount(long totalSize, int singleSize)
         {
             // Calculate the part count
