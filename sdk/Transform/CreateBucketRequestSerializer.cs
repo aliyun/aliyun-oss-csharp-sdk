@@ -11,20 +11,20 @@ using Aliyun.OSS.Util;
 
 namespace Aliyun.OSS.Transform
 {
-    internal class CreateBucketRequestSerializer : RequestSerializer<StorageClass, CreateBucketRequestModel>
+    internal class CreateBucketRequestSerializer : RequestSerializer<CreateBucketRequest, CreateBucketRequestModel>
     {
         public CreateBucketRequestSerializer(ISerializer<CreateBucketRequestModel, Stream> contentSerializer)
             : base(contentSerializer)
         {
         }
 
-        public override Stream Serialize(StorageClass request)
+        public override Stream Serialize(CreateBucketRequest request)
         {
             var model = new CreateBucketRequestModel
             {
-                StorageClass = request
+                StorageClass = request.StorageClass,
+                DataRedundancyType = request.DataRedundancyType
             };
-
             return ContentSerializer.Serialize(model);
         }
     }

@@ -61,7 +61,14 @@ namespace Aliyun.OSS
         /// <param name="bucketName">Bucket name.</param>
         /// <param name="storageClass">Storage class.</param>
         Bucket CreateBucket(string bucketName, StorageClass? storageClass);
-       
+
+        /// <summary>
+        /// Creates a bucket
+        /// </summary>
+        /// <returns>The bucket.</returns>
+        /// <param name="createBucketRequest"><see cref="CreateBucketRequest"/></param>
+        Bucket CreateBucket(CreateBucketRequest createBucketRequest);
+
         /// <summary>
         /// Deletes a empty bucket.If the bucket is not empty, this will fail.
         /// </summary>

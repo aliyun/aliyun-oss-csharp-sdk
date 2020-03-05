@@ -14,5 +14,13 @@ namespace Aliyun.OSS.Model
     {
         [XmlElement("StorageClass")]
         public StorageClass StorageClass { get; set; }
+
+        [XmlElement("DataRedundancyType", IsNullable = true)]
+        public DataRedundancyType? DataRedundancyType { get; set; }
+
+        public bool ShouldSerializeDataRedundancyType()
+        {
+            return DataRedundancyType != null;
+        }
     }
 }

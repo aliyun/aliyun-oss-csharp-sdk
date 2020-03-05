@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Transform;
@@ -15,6 +16,7 @@ namespace Aliyun.OSS.Commands
     internal class CreateBucketCommand : OssCommand
     {
         private readonly string _bucketName;
+        private readonly CreateBucketRequest _createBucketRequest;
 
         protected override HttpMethod Method
         {
@@ -31,11 +33,30 @@ namespace Aliyun.OSS.Commands
             get
             {
                 return StorageClass == null ? null : SerializerFactory.GetFactory().CreateCreateBucketSerialization()
-                                        .Serialize(StorageClass.Value);
+                                        .Serialize(_createBucketRequest);
+            }
+        }
+
+        protected override IDictionary<string, string> Headers
+        {
+            get
+            {
+                var headers = base.Headers;
+                if (ACL != null && ACL != CannedAccessControlList.Default)
+                {
+                    headers[OssHeaders.OssCannedAcl] = EnumUtils.GetStringValue(ACL);
+                }
+                return headers;
             }
         }
 
         protected StorageClass? StorageClass
+        {
+            get;
+            set;
+        }
+
+        protected CannedAccessControlList? ACL
         {
             get;
             set;
@@ -48,6 +69,10 @@ namespace Aliyun.OSS.Commands
             OssUtils.CheckBucketName(bucketName);
             _bucketName = bucketName;
             StorageClass = storageClass;
+            ACL = null;
+            if (storageClass != null) { 
+                _createBucketRequest = new CreateBucketRequest(bucketName, storageClass.Value, CannedAccessControlList.Default);
+            }
         }
 
         public static CreateBucketCommand Create(IServiceClient client, Uri endpoint,
@@ -55,6 +80,24 @@ namespace Aliyun.OSS.Commands
                                                  string bucketName, StorageClass? storageClass = null)
         {
             return new CreateBucketCommand(client, endpoint, context, bucketName, storageClass);
+        }
+
+        private CreateBucketCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
+                            string bucketName, CreateBucketRequest createBucketRequest)
+            : base(client, endpoint, context)
+        {
+            OssUtils.CheckBucketName(bucketName);
+            _bucketName = bucketName;
+            _createBucketRequest = createBucketRequest;
+            StorageClass = createBucketRequest.StorageClass;
+            ACL = createBucketRequest.ACL;
+        }
+
+        public static CreateBucketCommand Create(IServiceClient client, Uri endpoint,
+                                         ExecutionContext context,
+                                         string bucketName, CreateBucketRequest createBucketRequest)
+        {
+            return new CreateBucketCommand(client, endpoint, context, bucketName, createBucketRequest);
         }
     }
 }

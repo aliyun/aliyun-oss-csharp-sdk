@@ -197,6 +197,7 @@
     <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
     <Compile Include="Domain\BucketMetadata.cs" />
     <Compile Include="Domain\BucketLocationResult.cs" />
+    <Compile Include="Domain\CreateBucketRequest.cs" />
     <Compile Include="Domain\GetBucketStorageCapacityResult.cs" />
     <Compile Include="Domain\GetObjectTaggingResult.cs" />
     <Compile Include="Domain\GetBucketTaggingResult.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Domain\SetBucketTaggingRequest.cs" />
     <Compile Include="Domain\SetObjectTaggingRequest.cs" />
     <Compile Include="Domain\Tag.cs" />
+    <Compile Include="Enums\DataRedundancyType.cs" />
     <Compile Include="Model\Tagging.cs" />
     <Compile Include="Transform\GetBucketPolicyDeserializer.cs" />
     <Compile Include="Domain\GetBucketPolicyResult.cs" />

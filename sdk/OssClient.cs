@@ -213,6 +213,21 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
+        public Bucket CreateBucket(CreateBucketRequest createBucketRequest)
+        {
+            ThrowIfNullRequest(createBucketRequest);
+
+            var cmd = CreateBucketCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Put, createBucketRequest.BucketName, null),
+                                                 createBucketRequest.BucketName, createBucketRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+
+            return new Bucket(createBucketRequest.BucketName);
+        }
+        /// <inheritdoc/>
         public void DeleteBucket(string bucketName)
         {
             var cmd = DeleteBucketCommand.Create(_serviceClient, _endpoint,
