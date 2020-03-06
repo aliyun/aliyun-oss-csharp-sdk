@@ -36,6 +36,11 @@ namespace Aliyun.OSS
         public ObjectMetadata ObjectMetadata { get; set; }
 
         /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
+        /// <summary>
         /// Creates a new instance of <see cref="InitiateMultipartUploadRequest" />.
         /// </summary>
         /// <param name="bucketName">bucket name</param>

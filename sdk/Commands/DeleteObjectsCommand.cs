@@ -54,6 +54,10 @@ namespace Aliyun.OSS.Commands
                 var headers = new Dictionary<string, string>();
                 headers[HttpHeaders.ContentLength] = Content.Length.ToString();
                 headers[HttpHeaders.ContentMd5] = OssUtils.ComputeContentMd5(Content, Content.Length);
+                if (_deleteObjectsRequest.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
                 return headers;
             }
         }

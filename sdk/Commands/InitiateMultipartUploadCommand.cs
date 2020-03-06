@@ -57,7 +57,13 @@ namespace Aliyun.OSS.Commands
             {
                 var headers = new Dictionary<string, string>();
                 if (_initiateMultipartUploadRequest.ObjectMetadata != null)
+                {
                     _initiateMultipartUploadRequest.ObjectMetadata.Populate(headers);
+                }
+                if (_initiateMultipartUploadRequest.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
                 return headers;
             }
         }

@@ -14,17 +14,16 @@ namespace Aliyun.OSS.Commands
 {
     internal class GetObjectAclCommand : OssCommand<AccessControlList>
     {
-        private readonly string _bucketName;
-        private readonly string _key;
+        private readonly GetObjectAclRequest _request;
 
         protected override string Bucket
         {
-            get { return _bucketName; }
+            get { return _request.BucketName; }
         }
 
         protected override string Key
         {
-            get { return _key; }
+            get { return _request.Key; }
         }
 
         protected override IDictionary<string, string> Parameters
@@ -38,23 +37,34 @@ namespace Aliyun.OSS.Commands
             }
         }
 
+        protected override IDictionary<string, string> Headers
+        {
+            get
+            {
+                var headers = base.Headers;
+                if (_request.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
+                return headers;
+            }
+        }
+
         private GetObjectAclCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                    string bucketName, string key, 
+                                    GetObjectAclRequest request, 
                                     IDeserializer<ServiceResponse, AccessControlList> deserializer)
             : base(client, endpoint, context, deserializer)
         {
-            OssUtils.CheckBucketName(bucketName);
-            OssUtils.CheckObjectKey(key);
-
-            _bucketName = bucketName;
-            _key = key;
+            OssUtils.CheckBucketName(request.BucketName);
+            OssUtils.CheckObjectKey(request.Key);
+            _request = request;
         }
 
         public static GetObjectAclCommand Create(IServiceClient client, Uri endpoint,
                                                  ExecutionContext context,
-                                                 string bucketName, string key)
+                                                 GetObjectAclRequest request)
         {
-            return new GetObjectAclCommand(client, endpoint, context, bucketName, key,
+            return new GetObjectAclCommand(client, endpoint, context, request,
                                            DeserializerFactory.GetFactory().CreateGetAclResultDeserializer());
         }
     }

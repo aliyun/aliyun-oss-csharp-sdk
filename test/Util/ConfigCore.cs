@@ -21,5 +21,8 @@ namespace Aliyun.OSS.Test.Util
         public static readonly string MultiUploadTestFile = "";  // path to multi upload test file--it should be 1MB or bigger
         public static readonly string ImageTestFile = ""; // path to upload test image file
         public static readonly string DownloadFolder = ""; // path to download folder
+        public static readonly string PayerAccessKeyId = "";  // payer access key id
+        public static readonly string PayerAccessKeySecret = ""; // payer access key secret
+        public static readonly string PayerUid = ""; // payer uid
     }
 }

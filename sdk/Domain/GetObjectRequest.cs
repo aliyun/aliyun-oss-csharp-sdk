@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Text;
 
 using Aliyun.OSS.Util;
-using Aliyun.OSS.Common.Internal;
 
 namespace Aliyun.OSS
 {
@@ -98,6 +97,11 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
+        /// <summary>
         /// Creates a new instance of <see cref="GetObjectRequest" />.
         /// </summary>
         /// <param name="bucketName">bucket name</param>
@@ -183,6 +187,10 @@ namespace Aliyun.OSS
             {
                 headers.Add(OssHeaders.GetObjectIfNoneMatch, 
                     OssUtils.JoinETag(_nonmatchingEtagConstraints));
+            }
+            if (RequestPayer == RequestPayer.Requester)
+            {
+                headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
             }
         }
     }

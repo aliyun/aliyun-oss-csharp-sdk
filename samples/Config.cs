@@ -5,15 +5,15 @@ namespace Aliyun.OSS.Samples
 {
     internal class Config
     {
-        public static string AccessKeyId = "<your access key id>";
+        public static string AccessKeyId = "";
 
-        public static string AccessKeySecret = "<your access key secret>";
+        public static string AccessKeySecret = "";
 
-        public static string Endpoint = "<your endpoint>";
+        public static string Endpoint = "";
 
-        public static string DirToDownload = "<your local dir to download file>";
+        public static string DirToDownload = "";
 
-        public static string FileToUpload = "<your local file to upload>";
+        public static string FileToUpload = "";
 
         public static string BigFileToUpload = "<your local big file to upload>";
         public static string ImageFileToUpload = "<your local image file to upload>";

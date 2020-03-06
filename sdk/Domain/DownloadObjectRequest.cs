@@ -153,6 +153,11 @@ namespace Aliyun.OSS
             get { return _responseHeaders; }
         }
 
+        /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
         internal GetObjectRequest ToGetObjectRequest()
         {
             GetObjectRequest request = new GetObjectRequest(BucketName, Key);
@@ -169,6 +174,8 @@ namespace Aliyun.OSS
 
             request.ModifiedSinceConstraint = ModifiedSinceConstraint;
             request.UnmodifiedSinceConstraint = UnmodifiedSinceConstraint;
+
+            request.RequestPayer = RequestPayer;
 
             return request;
         }
@@ -198,6 +205,11 @@ namespace Aliyun.OSS
             {
                 headers.Add(OssHeaders.GetObjectIfNoneMatch,
                     OssUtils.JoinETag(_nonmatchingEtagConstraints));
+            }
+            if (RequestPayer == RequestPayer.Requester)
+            {
+                headers.Add(OssHeaders.OssRequestPayer,
+                    RequestPayer.Requester.ToString().ToLowerInvariant());
             }
         }
     }
