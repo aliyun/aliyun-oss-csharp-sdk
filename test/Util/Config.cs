@@ -19,5 +19,8 @@ namespace Aliyun.OSS.Test.Util
 		public static readonly string MultiUploadTestFile = ConfigurationManager.AppSettings["MultiUploadTestFile"];
         public static readonly string ImageTestFile = ConfigurationManager.AppSettings["ImageTestFile"];
 		public static readonly string DownloadFolder = ConfigurationManager.AppSettings["DownloadFolder"];
+        public static readonly string PayerAccessKeyId = ConfigurationManager.AppSettings["PayerAccessKeyId"];
+        public static readonly string PayerAccessKeySecret = ConfigurationManager.AppSettings["PayerAccessKeySecret"];
+        public static readonly string PayerUid = ConfigurationManager.AppSettings["PayerUid"];
     }
 }

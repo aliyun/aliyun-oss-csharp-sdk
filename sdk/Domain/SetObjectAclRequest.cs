@@ -32,6 +32,11 @@ namespace Aliyun.OSS
         public CannedAccessControlList ACL { get; private set; }
 
         /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
+        /// <summary>
         /// Creates a new instance of <see cref="SetObjectAclRequest" />.
         /// </summary>
         /// <param name="bucketName">bucket name</param>

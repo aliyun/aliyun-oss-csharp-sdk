@@ -99,6 +99,11 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
+        /// <summary>
         /// Creates an instance of <see cref="ListObjectsRequest" />.
         /// </summary>
         /// <param name="bucketName">bucket name</param>

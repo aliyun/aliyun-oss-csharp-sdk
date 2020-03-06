@@ -33,6 +33,19 @@ namespace Aliyun.OSS.Commands
             }
         }
 
+        protected override IDictionary<string, string> Headers
+        {
+            get
+            {
+                var headers = base.Headers;
+                if (_listObjectsRequest.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
+                return headers;
+            }
+        }
+
         private ListObjectsCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
                                    IDeserializer<ServiceResponse, ObjectListing> deserializer,
                                    ListObjectsRequest listObjectsRequest)

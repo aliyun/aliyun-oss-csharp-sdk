@@ -61,7 +61,12 @@ namespace Aliyun.OSS
         /// Progress callback getter and setter
         /// </summary>
         public EventHandler<StreamTransferProgressArgs> StreamTransferProgress { get; set; }
-        
+
+        /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
         /// <summary>
         /// Creates a new instance of <see cref="AppendObjectRequest" />
         /// </summary>
@@ -71,11 +76,6 @@ namespace Aliyun.OSS
         {
             BucketName = bucketName;
             Key = key;
-        }
-        
-        internal void Populate(IDictionary<string, string> headers)
-        {
-            ObjectMetadata.Populate(headers);
         }
     }
 

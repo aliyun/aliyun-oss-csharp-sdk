@@ -28,7 +28,7 @@ namespace Aliyun.OSS.Util
             "acl", "uploadId", "partNumber", "uploads", "cors", "logging", 
             "website", "delete", "referer", "lifecycle", "security-token","append", 
             "position", "x-oss-process", "restore", "bucketInfo", "stat", "symlink", 
-            "location", "qos", "policy", "tagging",
+            "location", "qos", "policy", "tagging","requestPayment",
             ResponseHeaderOverrides.ResponseCacheControl,
             ResponseHeaderOverrides.ResponseContentDisposition,
             ResponseHeaderOverrides.ResponseContentEncoding,

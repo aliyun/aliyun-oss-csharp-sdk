@@ -273,23 +273,36 @@ namespace Aliyun.OSS
         void DeleteBucketPolicy(string bucketName);
 
         /// <summary>
-        /// Sets <see cref="Bucket" /> Bucket Tagging
+        /// Sets <see cref="Bucket" /> bucket tagging
         /// </summary>
         /// <param name="SetBucketTaggingRequest"><see cref="SetBucketTaggingRequest"/> instance</param>
         void SetBucketTagging(SetBucketTaggingRequest setBucketTaggingRequest);
 
         /// <summary>
-        /// Deletes the bucket's Tagging.
+        /// Deletes the bucket's tagging.
         /// </summary>
         /// <param name="bucketName">Bucket name.</param>
         void DeleteBucketTagging(string bucketName);
 
         /// <summary>
-        /// Gets <see cref="Bucket" /> Bucket Tagging
+        /// Gets <see cref="Bucket" /> bucket tagging
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <returns><see cref="GetBucketTaggingResult"/> instance</returns>
         GetBucketTaggingResult GetBucketTagging(string bucketName);
+
+        /// <summary>
+        /// Sets <see cref="Bucket" /> bucket request payment
+        /// </summary>
+        /// <param name="SetBucketRequestPaymentRequest"><see cref="SetBucketRequestPaymentRequest"/> instance</param>
+        void SetBucketRequestPayment(SetBucketRequestPaymentRequest setBucketRequestPaymentRequest);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> bucket request payment
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="GetBucketRequestPaymentResult"/></returns>
+        GetBucketRequestPaymentResult GetBucketRequestPayment(string bucketName);
 
         #endregion
 
@@ -693,11 +706,24 @@ namespace Aliyun.OSS
         ObjectMetadata GetObjectMetadata(string bucketName, string key);
 
         /// <summary>
-        /// Deletes <see cref="OssObject" />。
+        /// Gets <see cref="OssObject" /> metadata.
+        /// </summary>
+        /// <param name="request">GetObjectMetadataRequest instance</param>
+        /// <returns><see cref="OssObject" />metadata</returns>
+        ObjectMetadata GetObjectMetadata(GetObjectMetadataRequest request);
+
+        /// <summary>
+        /// Deletes <see cref="OssObject" />
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <param name="key"><see cref="OssObject.Key" /></param>
         void DeleteObject(string bucketName, string key);
+
+        /// <summary>
+        /// Deletes <see cref="OssObject" />
+        /// </summary>
+        /// <param name="deleteObjectRequest">the request parameter</param>
+        void DeleteObject(DeleteObjectRequest deleteObjectRequest);
 
         /// <summary>
         /// Deletes multiple objects
@@ -795,12 +821,26 @@ namespace Aliyun.OSS
         AccessControlList GetObjectAcl(string bucketName, string key);
 
         /// <summary>
+        /// Gets the object ACL
+        /// </summary>
+        /// <param name="getObjectAclRequest"></param>
+        AccessControlList GetObjectAcl(GetObjectAclRequest getObjectAclRequest);
+
+        /// <summary>
         /// Restores the object.
         /// </summary>
         /// <returns>The object.</returns>
         /// <param name="bucketName">Bucket name.</param>
         /// <param name="key">Key.</param>
         RestoreObjectResult RestoreObject(string bucketName, string key);
+
+        /// <summary>
+        /// Restores the object.
+        /// </summary>
+        /// <returns>The object.</returns>
+        /// <param name="RestoreObjectRequest"></param>
+        RestoreObjectResult RestoreObject(RestoreObjectRequest restoreObjectRequest);
+
 
         /// <summary>
         /// Sets the object tagging

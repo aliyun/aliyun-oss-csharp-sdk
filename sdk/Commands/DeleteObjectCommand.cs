@@ -14,8 +14,7 @@ namespace Aliyun.OSS.Commands
 {
     internal class DeleteObjectCommand : OssCommand
     {
-        private readonly string _bucketName;
-        private readonly string _key;
+        private readonly DeleteObjectRequest _deleteObjectRequest;
 
         protected override HttpMethod Method
         {
@@ -24,12 +23,25 @@ namespace Aliyun.OSS.Commands
 
         protected override string Bucket
         {
-            get { return _bucketName; }
+            get { return _deleteObjectRequest.BucketName; }
         }
         
         protected override string Key
         {
-            get { return _key; }
+            get { return _deleteObjectRequest.Key; }
+        }
+
+        protected override IDictionary<string, string> Headers
+        {
+            get
+            {
+                var headers = base.Headers;
+                if (_deleteObjectRequest.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
+                return headers;
+            }
         }
 
         protected override IDictionary<string, string> Parameters
@@ -44,20 +56,19 @@ namespace Aliyun.OSS.Commands
         }
 
         private DeleteObjectCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                    string bucketName, string key)
+                                    DeleteObjectRequest deleteObjectRequest)
             : base(client, endpoint, context)
         {
-            OssUtils.CheckBucketName(bucketName);
-            OssUtils.CheckObjectKey(key);
+            OssUtils.CheckBucketName(deleteObjectRequest.BucketName);
+            OssUtils.CheckObjectKey(deleteObjectRequest.Key);
 
-            _bucketName = bucketName;
-            _key = key;
+            _deleteObjectRequest = deleteObjectRequest;
         }
 
         public static DeleteObjectCommand Create(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                                 string bucketName, string key)
+                                                 string bucketName, DeleteObjectRequest deleteObjectRequest)
         {
-            return new DeleteObjectCommand(client, endpoint, context, bucketName, key);
+            return new DeleteObjectCommand(client, endpoint, context, deleteObjectRequest);
         }
     }
 }

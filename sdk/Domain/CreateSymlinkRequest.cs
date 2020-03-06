@@ -30,5 +30,10 @@ namespace Aliyun.OSS
         /// </summary>
         /// <value>The object metadata.</value>
         public ObjectMetadata ObjectMetadata { get; set; }
+
+        /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
     }
 }
