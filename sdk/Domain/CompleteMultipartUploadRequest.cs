@@ -44,7 +44,12 @@ namespace Aliyun.OSS
         /// <see cref="ObjectMetadata" /> getter/setter
         /// </summary>
         public ObjectMetadata Metadata { get; set; }
-        
+
+        /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
         /// <summary>
         /// Creates a <see cref="CompleteMultipartUploadRequest" /> instance by bucket name, object key and upload Id.
         /// </summary>

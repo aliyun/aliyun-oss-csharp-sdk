@@ -46,7 +46,13 @@ namespace Aliyun.OSS.Commands
             {
                 var headers = base.Headers;
                 if (_completeMultipartUploadRequest.Metadata != null)
+                {
                     _completeMultipartUploadRequest.Metadata.Populate(headers);
+                }
+                if (_completeMultipartUploadRequest.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
                 return headers;
             }
         }

@@ -24,6 +24,7 @@ namespace Aliyun.OSS.Util
 		public const string SUBRESOURCE_QOS = "qos";
         public const string SUBRESOURCE_POLICY = "policy";
         public const string SUBRESOURCE_TAGGING = "tagging";
+        public const string SUBRESOURCE_REQUESTPAYER = "requestPayment";
         public const string PREFIX = "prefix";
         public const string DELIMITER = "delimiter";
         public const string MARKER = "marker";    

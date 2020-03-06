@@ -12,11 +12,11 @@ namespace Aliyun.OSS.Samples
         {
             Console.WriteLine("Aliyun SDK for .NET Samples!");
 
-            const string bucketName = "<your bucket name>";
+            const string bucketName = "skyranch-02";
 
             try
             {
-                CreateBucketSample.CreateBucket(bucketName);
+                //CreateBucketSample.CreateBucket(bucketName);
 
                 //ListBucketsSample.ListBuckets();
 
@@ -52,7 +52,7 @@ namespace Aliyun.OSS.Samples
 
                 //DoesBucketExistSample.DoesBucketExist(bucketName);
 
-                //PutObjectSample.PutObject(bucketName);
+                PutObjectSample.PutObject(bucketName);
 
                 //ResumbaleSample.ResumableUploadObject(bucketName);
 

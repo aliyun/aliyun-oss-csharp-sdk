@@ -52,6 +52,11 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
+        /// <summary>
         /// Creates an instance with bucket name and keys. Quiet mode is true by default.
         /// </summary>
         /// <param name="bucketName">bucket name</param>

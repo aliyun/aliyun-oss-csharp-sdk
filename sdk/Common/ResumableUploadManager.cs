@@ -115,7 +115,8 @@ namespace Aliyun.OSS
                 {
                     InputStream = originalStream,
                     PartSize = part.Length,
-                    PartNumber = part.PartId
+                    PartNumber = part.PartId,
+                    RequestPayer = _request.RequestPayer
                 };
 
                 var partResult = _ossClient.UploadPart(request);
@@ -653,7 +654,8 @@ namespace Aliyun.OSS
                         {
                             InputStream = progressCallbackStream ?? stream,
                             PartSize = part.Length,
-                            PartNumber = part.PartId
+                            PartNumber = part.PartId,
+                            RequestPayer = _request.RequestPayer
                         };
 
                         var partResult = _ossClient.UploadPart(request);

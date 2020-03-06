@@ -605,6 +605,30 @@ namespace Aliyun.OSS
             }
         }
 
+        /// <inheritdoc/>
+        public void SetBucketRequestPayment(SetBucketRequestPaymentRequest setBucketRequestPaymentRequest)
+        {
+            ThrowIfNullRequest(setBucketRequestPaymentRequest);
+
+            var cmd = SetBucketRequestPaymentCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Put, setBucketRequestPaymentRequest.BucketName, null),
+                                                      setBucketRequestPaymentRequest.BucketName,
+                                                      setBucketRequestPaymentRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetBucketRequestPaymentResult GetBucketRequestPayment(string bucketName)
+        {
+            var cmd = GetBucketRequestPaymentCommand.Create(_serviceClient, _endpoint,
+                                                             CreateContext(HttpMethod.Get, bucketName, null),
+                                                             bucketName);
+            return cmd.Execute();
+        }
+
         #endregion
 
         #region Object Operations
@@ -952,6 +976,7 @@ namespace Aliyun.OSS
                     var putObjectRequest = new PutObjectRequest(request.BucketName, request.Key, uploadSteam, metadata)
                     {
                         StreamTransferProgress = request.StreamTransferProgress,
+                        RequestPayer = request.RequestPayer
                     };
                     return PutObject(putObjectRequest);
                 }
@@ -966,7 +991,11 @@ namespace Aliyun.OSS
 
             if (resumableContext.UploadId == null)
             {
-                var initRequest = new InitiateMultipartUploadRequest(request.BucketName, request.Key, metadata);
+                var initRequest = new InitiateMultipartUploadRequest(request.BucketName, request.Key, metadata)
+                {
+                    RequestPayer = request.RequestPayer
+                };
+
                 var initResult = InitiateMultipartUpload(initRequest);
                 resumableContext.UploadId = initResult.UploadId;
             }
@@ -977,7 +1006,10 @@ namespace Aliyun.OSS
             uploadManager.ResumableUploadWithRetry(request, resumableContext);
 
             // Completes the upload
-            var completeRequest = new CompleteMultipartUploadRequest(request.BucketName, request.Key, resumableContext.UploadId);
+            var completeRequest = new CompleteMultipartUploadRequest(request.BucketName, request.Key, resumableContext.UploadId)
+            {
+                RequestPayer = request.RequestPayer
+            };
             if (metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
             {
                 var callbackMetadata = new ObjectMetadata();
@@ -1034,7 +1066,7 @@ namespace Aliyun.OSS
         {
             var cmd = CreateSymlinkCommand.Create(_serviceClient, _endpoint,
                                                   CreateContext(HttpMethod.Put, bucketName, symlink),
-                                                  bucketName, symlink, target);
+                                                  new CreateSymlinkRequest(bucketName, symlink, target));
             using(cmd.Execute())
             {
                 // do nothing;
@@ -1151,9 +1183,15 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public ObjectMetadata GetObjectMetadata(string bucketName, string key)
         {
+            return GetObjectMetadata(new GetObjectMetadataRequest(bucketName, key));
+        }
+
+        /// <inheritdoc/>
+        public ObjectMetadata GetObjectMetadata(GetObjectMetadataRequest request)
+        {
             var cmd = GetObjectMetadataCommand.Create(_serviceClient, _endpoint,
-                                                     CreateContext(HttpMethod.Head, bucketName, key),
-                                                     bucketName, key);
+                                                     CreateContext(HttpMethod.Head, request.BucketName, request.Key),
+                                                     request);
             return cmd.Execute();
         }
 
@@ -1169,7 +1207,12 @@ namespace Aliyun.OSS
             {
                throw new ArgumentException(String.Format("Invalid file path {0}. The parent folder does not exist.", request.DownloadFile)); 
             }
-            ObjectMetadata objectMeta = this.GetObjectMetadata(request.BucketName, request.Key);
+
+            var metaRequest = new GetObjectMetadataRequest(request.BucketName, request.Key)
+            {
+                RequestPayer = request.RequestPayer
+            };
+            ObjectMetadata objectMeta = this.GetObjectMetadata(metaRequest);
             var fileSize = objectMeta.ContentLength;
 
             // Adjusts part size
@@ -1179,7 +1222,7 @@ namespace Aliyun.OSS
             {
                 using (Stream fs = File.Open(request.DownloadFile, FileMode.Create))
                 {
-                    using(var ossObject = GetObject(request.BucketName, request.Key))
+                    using(var ossObject = GetObject(request.ToGetObjectRequest()))
                     {
                         var streamWrapper = ossObject.Content;
                         try
@@ -1232,12 +1275,18 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public void DeleteObject(string bucketName, string key)
         {
-            var cmd = DeleteObjectCommand.Create(_serviceClient, _endpoint,
-                                                CreateContext(HttpMethod.Delete, bucketName, key),
-                                                bucketName, key);
-            cmd.Execute();
- 
+            DeleteObject(new DeleteObjectRequest(bucketName, key));
         }
+
+        /// <inheritdoc/>
+        public void DeleteObject(DeleteObjectRequest deleteObjectRequest)
+        {
+            var cmd = DeleteObjectCommand.Create(_serviceClient, _endpoint,
+                                                CreateContext(HttpMethod.Delete, deleteObjectRequest.BucketName, deleteObjectRequest.Key),
+                                                deleteObjectRequest.BucketName, deleteObjectRequest);
+            cmd.Execute();
+        }
+
 
         /// <inheritdoc/>
         public DeleteObjectsResult DeleteObjects(DeleteObjectsRequest deleteObjectsRequest)
@@ -1292,7 +1341,11 @@ namespace Aliyun.OSS
             long actualPartSize = AdjustPartSize(partSize);
 
             // Gets the file size
-            var objectMeta = GetObjectMetadata(copyObjectRequest.SourceBucketName, copyObjectRequest.SourceKey);
+            var metaRequest = new GetObjectMetadataRequest(copyObjectRequest.SourceBucketName, copyObjectRequest.SourceKey)
+            {
+                RequestPayer = copyObjectRequest.RequestPayer
+            };
+            var objectMeta = GetObjectMetadata(metaRequest);
             var fileSize = objectMeta.ContentLength;
 
             if (fileSize <= actualPartSize)
@@ -1304,9 +1357,12 @@ namespace Aliyun.OSS
 
             if (resumableCopyContext.UploadId == null)
             {
-                var initRequest = new InitiateMultipartUploadRequest(copyObjectRequest.DestinationBucketName, 
-                                                                     copyObjectRequest.DestinationKey, 
-                                                                     copyObjectRequest.NewObjectMetadata);
+                var initRequest = new InitiateMultipartUploadRequest(copyObjectRequest.DestinationBucketName,
+                                                                     copyObjectRequest.DestinationKey,
+                                                                     copyObjectRequest.NewObjectMetadata)
+                {
+                    RequestPayer = copyObjectRequest.RequestPayer
+                };
                 var initResult = InitiateMultipartUpload(initRequest);
                 resumableCopyContext.UploadId = initResult.UploadId;
             }
@@ -1315,8 +1371,11 @@ namespace Aliyun.OSS
             ResumableCopyWithRetry(copyObjectRequest, resumableCopyContext);
 
             // Completes the copy
-            var completeRequest = new CompleteMultipartUploadRequest(copyObjectRequest.DestinationBucketName, 
-                                                                     copyObjectRequest.DestinationKey, resumableCopyContext.UploadId);
+            var completeRequest = new CompleteMultipartUploadRequest(copyObjectRequest.DestinationBucketName,
+                                                                     copyObjectRequest.DestinationKey, resumableCopyContext.UploadId)
+            {
+                RequestPayer = copyObjectRequest.RequestPayer
+            };
             foreach (var part in resumableCopyContext.PartContextList)
             {
                 completeRequest.PartETags.Add(part.PartETag);
@@ -1326,7 +1385,11 @@ namespace Aliyun.OSS
             resumableCopyContext.Clear();
 
             // Gets the last modified time
-            objectMeta = GetObjectMetadata(copyObjectRequest.DestinationBucketName, copyObjectRequest.DestinationKey);
+            metaRequest = new GetObjectMetadataRequest(copyObjectRequest.DestinationBucketName, copyObjectRequest.DestinationKey)
+            {
+                RequestPayer = copyObjectRequest.RequestPayer
+            };
+            objectMeta = GetObjectMetadata(metaRequest);
             return new CopyObjectResult() { ETag = result.ETag, LastModified = objectMeta.LastModified };
         }
 
@@ -1416,25 +1479,35 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public AccessControlList GetObjectAcl(string bucketName, string key)
         {
-            var cmd = GetObjectAclCommand.Create(_serviceClient, 
+            return GetObjectAcl(new GetObjectAclRequest(bucketName, key));
+        }
+
+        public AccessControlList GetObjectAcl(GetObjectAclRequest getObjectAclRequest)
+        {
+            var cmd = GetObjectAclCommand.Create(_serviceClient,
                                                  _endpoint,
-                                                 CreateContext(HttpMethod.Get, bucketName, key),
-                                                 bucketName, 
-                                                 key);
+                                                 CreateContext(HttpMethod.Get, getObjectAclRequest.BucketName, getObjectAclRequest.Key),
+                                                 getObjectAclRequest);
             return cmd.Execute();
         }
 
-        /// <inheritdoc/>
-        public RestoreObjectResult RestoreObject(string bucketName, string key)
+    /// <inheritdoc/>
+    public RestoreObjectResult RestoreObject(string bucketName, string key)
         {
-            ExecutionContext context = CreateContext(HttpMethod.Post, bucketName, key);
+            return RestoreObject(new RestoreObjectRequest(bucketName, key));
+        }
+
+        /// <inheritdoc/>
+        public RestoreObjectResult RestoreObject(RestoreObjectRequest restoreObjectRequest)
+        {
+            ExecutionContext context = CreateContext(HttpMethod.Post, restoreObjectRequest.BucketName, restoreObjectRequest.Key);
             var cmd = RestoreObjectCommand.Create(_serviceClient,
                                                   _endpoint,
                                                   context,
-                                                  bucketName,
-                                                  key);
+                                                  restoreObjectRequest);
             return cmd.Execute();
         }
+
 
         /// <inheritdoc/>
         public void SetObjectTagging(SetObjectTaggingRequest setObjectTaggingRequest)
@@ -1900,7 +1973,8 @@ namespace Aliyun.OSS
                 {
                     PartSize = part.Length,
                     PartNumber = part.PartId,
-                    BeginIndex = part.Position
+                    BeginIndex = part.Position,
+                    RequestPayer = request.RequestPayer
                 };
                 var copyResult = UploadPartCopy(copyRequest);
  
