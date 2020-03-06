@@ -73,6 +73,10 @@ namespace Aliyun.OSS.Commands
                     headers[OssHeaders.CopySourceIfUnmodifiedSince]
                         = DateUtils.FormatRfc822Date(_uploadPartCopyRequest.UnmodifiedSinceConstraint.Value);
                 }
+                if (_uploadPartCopyRequest.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
                 return headers;
             }
         }

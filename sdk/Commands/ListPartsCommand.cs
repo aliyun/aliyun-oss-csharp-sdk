@@ -41,7 +41,20 @@ namespace Aliyun.OSS.Commands
                 return parameters;
             }
         }
-        
+
+        protected override IDictionary<string, string> Headers
+        {
+            get
+            {
+                var headers = base.Headers;
+                if (_listPartsRequest.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
+                return headers;
+            }
+        }
+
         private static void Populate(ListPartsRequest listPartsRequst, IDictionary<string, string> parameters)
         {
             parameters[RequestParameters.UPLOAD_ID] = listPartsRequst.UploadId;

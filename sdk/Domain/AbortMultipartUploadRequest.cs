@@ -27,6 +27,11 @@ namespace Aliyun.OSS
         public string UploadId { get; private set; }
 
         /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
+        /// <summary>
         /// Creates a new intance <see cref="AbortMultipartUploadRequest" /> with bucket name, object key and upload Id.
         /// </summary>
         /// <param name="bucketName">bucket name</param>

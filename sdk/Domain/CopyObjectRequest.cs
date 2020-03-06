@@ -74,7 +74,12 @@ namespace Aliyun.OSS
         /// Otherwise return 412 as HTTP code (precondition failed)
         /// </summary>   
         public DateTime? ModifiedSinceConstraint { get; set; }
-        
+
+        /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
         /// <summary>
         /// Creates a new <see cref="CopyObjectRequest" /> instance
         /// </summary>
@@ -131,6 +136,11 @@ namespace Aliyun.OSS
             // Remove Content-Length header, ObjectMeta#Populate will create 
             // ContentLength header, but we do not need it for the request body is empty.
             headers.Remove(HttpHeaders.ContentLength);
+
+            if (RequestPayer == RequestPayer.Requester)
+            {
+                headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+            }
         }
     }
 

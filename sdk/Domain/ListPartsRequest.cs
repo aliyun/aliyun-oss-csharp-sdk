@@ -42,6 +42,11 @@ namespace Aliyun.OSS
         public string UploadId { get; private set; }
 
         /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
+        /// <summary>
         /// Creates an instance of <see cref="ListPartsRequest" />.
         /// </summary>
         /// <param name="bucketName">bucket name</param>

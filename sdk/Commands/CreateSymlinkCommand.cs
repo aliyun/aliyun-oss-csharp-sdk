@@ -18,19 +18,17 @@ namespace Aliyun.OSS.Commands
 {
     internal class CreateSymlinkCommand : OssCommand
     {
-        private readonly string _bucketName;
-        private readonly string _target;
-        private readonly string _symlink;
         private readonly ObjectMetadata _objectMetadata;
+        private readonly CreateSymlinkRequest _request;
 
         protected override string Bucket
         {
-            get { return _bucketName; }
+            get { return _request.BucketName; }
         }
 
         protected override string Key
         {
-            get { return _symlink; }
+            get { return _request.Symlink; }
         }
 
         protected override HttpMethod Method
@@ -54,53 +52,45 @@ namespace Aliyun.OSS.Commands
             get
             {
                 var headers = base.Headers;
-                headers.Add(OssHeaders.SymlinkTarget, _target);
+                headers.Add(OssHeaders.SymlinkTarget, _request.Target);
                 if (_objectMetadata != null)
                 {
                     _objectMetadata.Populate(headers);
                 }
-
+                if (_request.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
                 return headers;
             }
         }
 
         private CreateSymlinkCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                     string bucketName, string symlink, string target)
+                                     CreateSymlinkRequest request)
             : base(client, endpoint, context)
         {
-            OssUtils.CheckBucketName(bucketName);
-            OssUtils.CheckObjectKey(symlink);
-            OssUtils.CheckObjectKey(target);
+            OssUtils.CheckBucketName(request.BucketName);
+            OssUtils.CheckObjectKey(request.Symlink);
+            OssUtils.CheckObjectKey(request.Target);
 
-            if (symlink == target)
+            if (request.Symlink == request.Target)
             {
                 throw new ArgumentException("Symlink file name must be different with its target.");
             }
-
-            _bucketName = bucketName;
-            _symlink = symlink;
-            _target = target;
+            _request = request;
         }
 
         private CreateSymlinkCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                     string bucketName, string symlink, string target, ObjectMetadata metadata)
-            :this(client, endpoint, context, bucketName, symlink, target)
+                                     CreateSymlinkRequest request, ObjectMetadata metadata)
+            :this(client, endpoint, context, request)
         {
             _objectMetadata = metadata;
         }
 
         public static CreateSymlinkCommand Create(IServiceClient client, Uri endpoint,
-                                                 ExecutionContext context,
-                                                 string bucketName, string symlink, string target)
-        {
-            return new CreateSymlinkCommand(client, endpoint, context, bucketName, symlink, target);
-        }
-
-        public static CreateSymlinkCommand Create(IServiceClient client, Uri endpoint,
                                                  ExecutionContext context, CreateSymlinkRequest request)
         {
-            return new CreateSymlinkCommand(client, endpoint, context, request.BucketName, 
-                                            request.Symlink, request.Target, request.ObjectMetadata);
+            return new CreateSymlinkCommand(client, endpoint, context, request, request.ObjectMetadata);
         }
     }
 }

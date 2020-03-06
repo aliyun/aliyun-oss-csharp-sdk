@@ -142,5 +142,10 @@ namespace Aliyun.OSS
             get;
             set;
         }
+
+        /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
     }
 }

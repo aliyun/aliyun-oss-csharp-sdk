@@ -96,6 +96,11 @@ namespace Aliyun.OSS
         /// </summary>   
         public DateTime? ModifiedSinceConstraint { get; set; }
 
+        /// <summary>
+        /// Gets or sets the reqeust payer
+        /// </summary>
+        public RequestPayer RequestPayer { get; set; } 
+
         public UploadPartCopyRequest(string targetBucket, string targetKey, string sourceBucket, 
             string sourceKey, string uploadId)
         {

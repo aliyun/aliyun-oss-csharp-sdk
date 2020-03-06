@@ -48,6 +48,7 @@
     <Compile Include="TestCase\ObjectTestCase\ObjectBasicOperationTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectCopyTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectMultipartUploadTest.cs" />
+    <Compile Include="TestCase\ObjectTestCase\ObjectRequestPaymentTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectSignedUriTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectTaggingTest.cs" />
     <Compile Include="TestCase\OtherTestCase\HttpsTest.cs" />

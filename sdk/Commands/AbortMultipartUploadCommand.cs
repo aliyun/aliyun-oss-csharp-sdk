@@ -46,7 +46,20 @@ namespace Aliyun.OSS.Commands
                 return parameters;
             }
         }
-        
+
+        protected override IDictionary<string, string> Headers
+        {
+            get
+            {
+                var headers = base.Headers;
+                if (_abortMultipartUploadRequest.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
+                return headers;
+            }
+        }
+
         private AbortMultipartUploadCommand(IServiceClient client, Uri endpoint, ExecutionContext context, 
                                             AbortMultipartUploadRequest abortMultipartUploadRequest)
             : base(client, endpoint, context)
