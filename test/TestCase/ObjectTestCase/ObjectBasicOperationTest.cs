@@ -2518,6 +2518,30 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
         #endregion
 
+        #region object meta test
+        [Test]
+        public void ObjectMetadataTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.UserMetadata.Add("meta1", "value1");
+            metadata.UserMetadata.Add("meta2", "value2");
+            _ossClient.PutObject(_bucketName, key, new MemoryStream(Encoding.ASCII.GetBytes("hello")), metadata);
+
+            var result = _ossClient.GetObjectMetadata(new GetObjectMetadataRequest(_bucketName, key));
+            Assert.AreEqual(result.UserMetadata.ContainsKey("meta1"), true);
+            Assert.AreEqual(result.UserMetadata.ContainsKey("meta2"), true);
+            Assert.AreEqual(result.ContentLength, 5);
+
+
+            result = _ossClient.GetSimplifiedObjectMetadata(new GetObjectMetadataRequest(_bucketName, key));
+            Assert.AreEqual(result.UserMetadata.ContainsKey("meta1"), false);
+            Assert.AreEqual(result.UserMetadata.ContainsKey("meta2"), false);
+            Assert.AreEqual(result.ContentLength, 5);
+        }
+
+        #endregion
+
         #region private
         private static List<string> CreateMultiObjects(int objectsCount)
         {

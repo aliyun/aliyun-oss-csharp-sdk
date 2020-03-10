@@ -29,6 +29,7 @@ namespace Aliyun.OSS.Util
             "website", "delete", "referer", "lifecycle", "security-token","append", 
             "position", "x-oss-process", "restore", "bucketInfo", "stat", "symlink", 
             "location", "qos", "policy", "tagging", "requestPayment", "x-oss-traffic-limit",
+            "objectMeta",
             ResponseHeaderOverrides.ResponseCacheControl,
             ResponseHeaderOverrides.ResponseContentDisposition,
             ResponseHeaderOverrides.ResponseContentEncoding,
