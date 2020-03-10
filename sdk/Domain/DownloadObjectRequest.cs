@@ -156,7 +156,12 @@ namespace Aliyun.OSS
         /// <summary>
         /// Gets or sets the reqeust payer
         /// </summary>
-        public RequestPayer RequestPayer { get; set; } 
+        public RequestPayer RequestPayer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the traffic limit, the unit is bit/s
+        /// </summary>
+        public long TrafficLimit { get; set; }
 
         internal GetObjectRequest ToGetObjectRequest()
         {
@@ -176,6 +181,8 @@ namespace Aliyun.OSS
             request.UnmodifiedSinceConstraint = UnmodifiedSinceConstraint;
 
             request.RequestPayer = RequestPayer;
+
+            request.TrafficLimit = TrafficLimit;
 
             return request;
         }
