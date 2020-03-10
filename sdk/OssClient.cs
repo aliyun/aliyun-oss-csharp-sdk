@@ -1197,7 +1197,17 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
-        public ObjectMetadata ResumableDownloadObject(DownloadObjectRequest request)
+        public ObjectMetadata GetSimplifiedObjectMetadata(GetObjectMetadataRequest request)
+        {
+            var cmd = GetObjectMetadataCommand.Create(_serviceClient, _endpoint,
+                                                     CreateContext(HttpMethod.Head, request.BucketName, request.Key),
+                                                     request, true);
+            return cmd.Execute();
+        }
+
+
+    /// <inheritdoc/>
+    public ObjectMetadata ResumableDownloadObject(DownloadObjectRequest request)
         {
             ThrowIfNullRequest(request);
             ThrowIfNullRequest(request.BucketName);

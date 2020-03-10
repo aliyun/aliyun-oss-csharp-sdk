@@ -713,6 +713,13 @@ namespace Aliyun.OSS
         ObjectMetadata GetObjectMetadata(GetObjectMetadataRequest request);
 
         /// <summary>
+        /// Gets <see cref="OssObject" /> metadata.
+        /// </summary>
+        /// <param name="request">GetObjectMetadataRequest instance</param>
+        /// <returns><see cref="OssObject" />metadata</returns>
+        ObjectMetadata GetSimplifiedObjectMetadata(GetObjectMetadataRequest request);
+        
+        /// <summary>
         /// Deletes <see cref="OssObject" />
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
