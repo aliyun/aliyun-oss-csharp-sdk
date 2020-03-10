@@ -59,5 +59,7 @@ namespace Aliyun.OSS.Util
         public const string BucketRegion = "x-oss-bucket-region";
 
         public const string QuotaDeltaSize = "x-oss-quota-delta-size";
+
+        public const string QosDelayTime = "x-oss-qos-delay-time";
     }
 }

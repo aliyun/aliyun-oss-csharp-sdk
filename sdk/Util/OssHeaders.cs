@@ -27,5 +27,6 @@ namespace Aliyun.OSS.Util
         public const string CopyObjectMetaDataDirective = "x-oss-metadata-directive";
         public const string SymlinkTarget = "x-oss-symlink-target";
         public const string OssRequestPayer = "x-oss-request-payer";
+        public const string OssTrafficLimit = "x-oss-traffic-limit";
     }
 }

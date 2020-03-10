@@ -51,5 +51,7 @@ namespace Aliyun.OSS.Util
 
         public const string TAG_KEY = "tag-key";
         public const string TAG_VALUE = "tag-value";
+
+        public const string OSS_TRAFFIC_LIMIT = "x-oss-traffic-limit";
     }
 }

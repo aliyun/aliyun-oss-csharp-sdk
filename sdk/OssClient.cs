@@ -976,7 +976,8 @@ namespace Aliyun.OSS
                     var putObjectRequest = new PutObjectRequest(request.BucketName, request.Key, uploadSteam, metadata)
                     {
                         StreamTransferProgress = request.StreamTransferProgress,
-                        RequestPayer = request.RequestPayer
+                        RequestPayer = request.RequestPayer,
+                        TrafficLimit = request.TrafficLimit
                     };
                     return PutObject(putObjectRequest);
                 }
@@ -1974,7 +1975,8 @@ namespace Aliyun.OSS
                     PartSize = part.Length,
                     PartNumber = part.PartId,
                     BeginIndex = part.Position,
-                    RequestPayer = request.RequestPayer
+                    RequestPayer = request.RequestPayer,
+                    TrafficLimit = request.TrafficLimit
                 };
                 var copyResult = UploadPartCopy(copyRequest);
  
