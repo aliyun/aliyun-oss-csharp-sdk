@@ -77,6 +77,10 @@ namespace Aliyun.OSS.Commands
                 {
                     headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
                 }
+                if (_uploadPartCopyRequest.TrafficLimit > 0)
+                {
+                    headers.Add(OssHeaders.OssTrafficLimit, _uploadPartCopyRequest.TrafficLimit.ToString());
+                }
                 return headers;
             }
         }

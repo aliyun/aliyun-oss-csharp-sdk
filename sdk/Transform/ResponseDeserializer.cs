@@ -75,6 +75,11 @@ namespace Aliyun.OSS.Transform
             {
                 result.ResponseMetadata.Add(HttpHeaders.ContentMd5, xmlStream.Headers[HttpHeaders.ContentMd5]);
             }
+
+            if (xmlStream.Headers.ContainsKey(HttpHeaders.QosDelayTime))
+            {
+                result.ResponseMetadata.Add(HttpHeaders.QosDelayTime, xmlStream.Headers[HttpHeaders.QosDelayTime]);
+            }
         }
     }
 }

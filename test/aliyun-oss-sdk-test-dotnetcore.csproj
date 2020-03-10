@@ -51,6 +51,7 @@
     <Compile Include="TestCase\ObjectTestCase\ObjectRequestPaymentTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectSignedUriTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectTaggingTest.cs" />
+    <Compile Include="TestCase\ObjectTestCase\ObjectTrafficLimitTest.cs" />
     <Compile Include="TestCase\OtherTestCase\HttpsTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ProxyTest.cs" />
     <Compile Include="TestCase\OtherTestCase\EpochTimeSettingTest.cs" />
