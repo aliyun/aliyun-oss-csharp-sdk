@@ -15,6 +15,7 @@ namespace Aliyun.OSS.Commands
     internal class GetObjectMetadataCommand : OssCommand<ObjectMetadata>
     {
         private readonly GetObjectMetadataRequest _request;
+        private readonly bool _simplifiedMetadata;
 
         protected override HttpMethod Method
         {
@@ -29,6 +30,19 @@ namespace Aliyun.OSS.Commands
         protected override string Key
         {
             get { return _request.Key; }
+        }
+
+        protected override IDictionary<string, string> Parameters
+        {
+            get
+            {
+                var paramters = base.Parameters;
+                if (_simplifiedMetadata)
+                {
+                    paramters.Add(RequestParameters.SUBRESOURCE_OBJECTMETA, null);
+                }
+                return paramters;
+            }
         }
 
         protected override IDictionary<string, string> Headers
@@ -46,12 +60,13 @@ namespace Aliyun.OSS.Commands
 
         private GetObjectMetadataCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
                                          IDeserializer<ServiceResponse, ObjectMetadata> deserializer,
-                                         GetObjectMetadataRequest request)
+                                         GetObjectMetadataRequest request, bool simplifiedMetadata)
             : base(client, endpoint, context, deserializer)
         {
             OssUtils.CheckBucketName(request.BucketName);
             OssUtils.CheckObjectKey(request.Key);
             _request = request;
+            _simplifiedMetadata = simplifiedMetadata;
         }
 
         public static GetObjectMetadataCommand Create(IServiceClient client, Uri endpoint, ExecutionContext context,
@@ -59,7 +74,15 @@ namespace Aliyun.OSS.Commands
         {
             return new GetObjectMetadataCommand(client, endpoint, context,
                                                 DeserializerFactory.GetFactory().CreateGetObjectMetadataResultDeserializer(),
-                                                request);
+                                                request, false);
+        }
+
+        public static GetObjectMetadataCommand Create(IServiceClient client, Uri endpoint, ExecutionContext context,
+                                              GetObjectMetadataRequest request, bool simplifiedMetadata)
+        {
+            return new GetObjectMetadataCommand(client, endpoint, context,
+                                                DeserializerFactory.GetFactory().CreateGetObjectMetadataResultDeserializer(),
+                                                request, simplifiedMetadata);
         }
     }
 
