@@ -28,6 +28,19 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             result = _ossClient.GetBucketRequestPayment(_bucketName);
             Assert.AreEqual(result.Payer, RequestPayer.BucketOwner);
         }
+
+        [Test]
+        public void SetBucketRequestPaymentWithExceptionTest()
+        {
+            try
+            {
+                _ossClient.SetBucketRequestPayment(null);
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
     }
 }
 

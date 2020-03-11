@@ -629,6 +629,41 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        /// <inheritdoc/>
+        public void SetBucketEncryption(SetBucketEncryptionRequest setBucketEncryptionRequest)
+        {
+            ThrowIfNullRequest(setBucketEncryptionRequest);
+
+            var cmd = SetBucketEncryptionCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Put, setBucketEncryptionRequest.BucketName, null),
+                                                      setBucketEncryptionRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DeleteBucketEncryption(string bucketName)
+        {
+            var cmd = DeleteBucketEncryptionCommand.Create(_serviceClient, _endpoint,
+                                       CreateContext(HttpMethod.Delete, bucketName, null),
+                                       bucketName);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public BucketEncryptionResult GetBucketEncryption(string bucketName)
+        {
+            var cmd = GetBucketEncryptionCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Get, bucketName, null),
+                                                 bucketName);
+            return cmd.Execute();
+        }
+
         #endregion
 
         #region Object Operations

@@ -59,6 +59,7 @@
     <Compile Include="TestCase\BucketTestCase\BucketLoggingSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketPolicySettingTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketRefersSettingsTest.cs" />
+    <Compile Include="TestCase\BucketTestCase\BucketEncryptionSettingTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketRequestPaymentSettingTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketTaggingSettingTest.cs" />

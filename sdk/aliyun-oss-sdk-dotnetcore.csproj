@@ -31,14 +31,17 @@
  </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AppendObjectCommand.cs" />
+    <Compile Include="Commands\DeleteBucketEncryptionCommand.cs" />
     <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
     <Compile Include="Commands\DeleteBucketTaggingCommand.cs" />
     <Compile Include="Commands\DeleteObjectTaggingCommand.cs" />
+    <Compile Include="Commands\GetBucketEncryptionCommand.cs" />
     <Compile Include="Commands\GetBucketPolicyCommand.cs" />
     <Compile Include="Commands\GetBucketRequestPaymentCommand.cs" />
 	<Compile Include="Commands\GetBucketStorageCapacityCommand.cs" />
 	<Compile Include="Commands\GetBucketTaggingCommand.cs" />
 	<Compile Include="Commands\GetObjectTaggingCommand.cs" />
+	<Compile Include="Commands\SetBucketEncryptionCommand.cs" />
 	<Compile Include="Commands\SetBucketPolicyCommand.cs" />
 	<Compile Include="Commands\SetBucketRequestPaymentCommand.cs" />
     <Compile Include="Commands\SetBucketStorageCapacityCommand.cs" />
@@ -87,6 +90,7 @@
     <Compile Include="Common\ThirdParty\MD5Managed.cs" />
     <Compile Include="Common\Internal\PartialWrapperStream.cs" />
     <Compile Include="Common\Internal\StreamReadTracker.cs" />
+    <Compile Include="Domain\BucketEncryptionResult.cs" />
 	<Compile Include="Domain\BucketMetadata.cs" />
     <Compile Include="Domain\BucketLocationResult.cs" />
     <Compile Include="Domain\CreateBucketRequest.cs" />
@@ -99,6 +103,7 @@
     <Compile Include="Domain\GetObjectMetadataRequest.cs" />
     <Compile Include="Domain\GetObjectTaggingResult.cs" />
     <Compile Include="Domain\RestoreObjectRequest.cs" />
+    <Compile Include="Domain\SetBucketEncryptionRequest.cs" />
     <Compile Include="Domain\SetBucketPolicyRequest.cs" />
     <Compile Include="Domain\SetBucketRequestPaymentRequest.cs" />
     <Compile Include="Domain\SetBucketStorageCapacityRequest.cs" />
@@ -109,6 +114,7 @@
     <Compile Include="Enums\RequestPayer.cs" />
     <Compile Include="Model\BucketStorageCapacityModel.cs" />
     <Compile Include="Model\RequestPaymentConfiguration.cs" />
+    <Compile Include="Model\ServerSideEncryptionRule.cs" />
     <Compile Include="Model\StreamUploadProgressArgs.cs" />
     <Compile Include="Common\Internal\WrapperStream.cs" />
     <Compile Include="Domain\AppendObjectRequest.cs" />
@@ -121,11 +127,13 @@
     <Compile Include="Model\GenericResult.cs" />
     <Compile Include="Model\Tagging.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
+    <Compile Include="Transform\GetBucketEncryptionResultDeserializer.cs" />
     <Compile Include="Transform\GetBucketPolicyDeserializer.cs" />
     <Compile Include="Transform\GetBucketRequestPaymentResultDeserializer.cs" />
 	<Compile Include="Transform\GetBucketStorageCapacityResultDeserializer.cs" />
 	<Compile Include="Transform\GetBucketTaggingResultDeserializer.cs" />
 	<Compile Include="Transform\GetObjectTaggingResultDeserializer.cs" />
+	<Compile Include="Transform\SetBucketEncryptionRequestSerializer.cs" />
 	<Compile Include="Transform\SetBucketRequestPaymentRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketStorageCapacityRequestSerializer.cs" />
     <Compile Include="Transform\GetBucketMetadataResponseDeserializer.cs" />

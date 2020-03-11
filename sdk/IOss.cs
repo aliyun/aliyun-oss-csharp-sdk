@@ -304,6 +304,25 @@ namespace Aliyun.OSS
         /// <returns><see cref="GetBucketRequestPaymentResult"/></returns>
         GetBucketRequestPaymentResult GetBucketRequestPayment(string bucketName);
 
+        /// <summary>
+        /// Sets <see cref="Bucket" /> bucket encryption rule
+        /// </summary>
+        /// <param name="setBucketEncryptionRequest"><see cref="SetBucketEncryptionRequest"/> instance</param>
+        void SetBucketEncryption(SetBucketEncryptionRequest setBucketEncryptionRequest);
+
+        /// <summary>
+        /// Deletes bucket encryption rule
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        void DeleteBucketEncryption(string bucketName);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> bucket encryption rule
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="GetBucketEncryptionResult"/> instance</returns>
+        BucketEncryptionResult GetBucketEncryption(string bucketName);
+
         #endregion
 
         #region Object Operations
