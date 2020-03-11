@@ -16,8 +16,7 @@ namespace Aliyun.OSS.Commands
 {
     internal class SetBucketWebsiteCommand : OssCommand
     {
-        private readonly string _bucketName;
-        private readonly SetBucketWebsiteRequest _setBucketWebsiteRequest;
+        private readonly SetBucketWebsiteRequest _request;
 
         protected override HttpMethod Method
         {
@@ -26,31 +25,29 @@ namespace Aliyun.OSS.Commands
 
         protected override string Bucket
         {
-            get { return _bucketName; }
+            get { return _request.BucketName; }
         }
 
         private SetBucketWebsiteCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                       string bucketName, SetBucketWebsiteRequest setBucketWebsiteRequest)
+                                       SetBucketWebsiteRequest request)
             : base(client, endpoint, context)
         {
-            OssUtils.CheckBucketName(bucketName);
-            if (string.IsNullOrEmpty(setBucketWebsiteRequest.IndexDocument))
-                throw new ArgumentException("index document must not be empty");
-            if (!OssUtils.IsWebpageValid(setBucketWebsiteRequest.IndexDocument))
+            OssUtils.CheckBucketName(request.BucketName);
+            if (!string.IsNullOrEmpty(request.IndexDocument)
+                && !OssUtils.IsWebpageValid(request.IndexDocument))
                 throw new ArgumentException("Invalid index document, must be end with .html");
-            if (!string.IsNullOrEmpty(setBucketWebsiteRequest.ErrorDocument) 
-                && !OssUtils.IsWebpageValid(setBucketWebsiteRequest.ErrorDocument))
+            if (!string.IsNullOrEmpty(request.ErrorDocument) 
+                && !OssUtils.IsWebpageValid(request.ErrorDocument))
                 throw new ArgumentException("Invalid error document, must be end with .html");
 
-            _bucketName = bucketName;
-            _setBucketWebsiteRequest = setBucketWebsiteRequest;
+            _request = request;
         }
 
         public static SetBucketWebsiteCommand Create(IServiceClient client, Uri endpoint, 
                                                     ExecutionContext context,
-                                                    string bucketName, SetBucketWebsiteRequest setBucketWebsiteRequest)
+                                                    string bucketName, SetBucketWebsiteRequest request)
         {
-            return new SetBucketWebsiteCommand(client, endpoint, context, bucketName, setBucketWebsiteRequest);
+            return new SetBucketWebsiteCommand(client, endpoint, context, request);
         }
         
         
@@ -68,8 +65,15 @@ namespace Aliyun.OSS.Commands
         {
             get
             {
-                return SerializerFactory.GetFactory().CreateSetBucketWebsiteRequestSerializer()
-                    .Serialize(_setBucketWebsiteRequest);
+                if (!string.IsNullOrEmpty(_request.Configuration))
+                {
+                    return new MemoryStream(System.Text.Encoding.UTF8.GetBytes(_request.Configuration));
+                }
+                else
+                {
+                    return SerializerFactory.GetFactory().CreateSetBucketWebsiteRequestSerializer()
+                        .Serialize(_request);
+                }
             }
         }
     }

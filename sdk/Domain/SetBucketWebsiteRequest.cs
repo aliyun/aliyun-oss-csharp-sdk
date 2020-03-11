@@ -27,6 +27,11 @@ namespace Aliyun.OSS
         public string ErrorDocument { get; private set; }
 
         /// <summary>
+        /// Website configuration in xml format
+        /// </summary>
+        public string Configuration { get; private set; }
+
+        /// <summary>
         /// Creates a new instance of <see cref="SetBucketWebsiteRequest" />.
         /// </summary>
         /// <param name="bucketName"><see cref="OssObject" />bucket name</param>
@@ -37,6 +42,17 @@ namespace Aliyun.OSS
             BucketName = bucketName;
             IndexDocument = indexDocument;
             ErrorDocument = errorDocument;
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="SetBucketWebsiteRequest" />.
+        /// </summary>
+        /// <param name="bucketName"><see cref="OssObject" />bucket name</param>
+        /// <param name="configuration">website configuration in xml format</param>
+        public SetBucketWebsiteRequest(string bucketName, string configuration)
+        {
+            BucketName = bucketName;
+            Configuration = configuration;
         }
     }
 }
