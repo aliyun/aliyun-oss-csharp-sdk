@@ -83,6 +83,11 @@ namespace Aliyun.OSS.Transform
         {
             return new SetBucketRequestPaymentRequestSerializer(CreateContentSerializer<RequestPaymentConfiguration>());
         }
+
+        public ISerializer<SetBucketEncryptionRequest, Stream> CreateSetBucketEncryptionRequestSerializer()
+        {
+            return new SetBucketEncryptionRequestSerializer(CreateContentSerializer<ServerSideEncryptionRule>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory
