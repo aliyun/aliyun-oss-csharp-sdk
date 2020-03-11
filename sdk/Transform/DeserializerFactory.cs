@@ -197,6 +197,11 @@ namespace Aliyun.OSS.Transform
         {
             return new GetBucketRequestPaymentResultDeserializer(CreateContentDeserializer<RequestPaymentConfiguration>());
         }
+
+        public IDeserializer<ServiceResponse, BucketEncryptionResult> CreateGetBucketEncryptionResultDeserializer()
+        {
+            return new GetBucketEncryptionResultDeserializer(CreateContentDeserializer<ServerSideEncryptionRule>());
+        }
     }
 
     internal class XmlDeserializerFactory : DeserializerFactory
