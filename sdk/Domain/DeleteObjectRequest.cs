@@ -21,7 +21,12 @@ namespace Aliyun.OSS
         /// <summary>
         /// Gets or sets the reqeust payer
         /// </summary>
-        public RequestPayer RequestPayer { get; set; } 
+        public RequestPayer RequestPayer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the version id
+        /// </summary>
+        public string VersionId { get; set; }
 
         /// <summary>
         /// Delete a new instance of <see cref="DeleteObjectRequest" />

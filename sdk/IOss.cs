@@ -323,6 +323,19 @@ namespace Aliyun.OSS
         /// <returns><see cref="GetBucketEncryptionResult"/> instance</returns>
         BucketEncryptionResult GetBucketEncryption(string bucketName);
 
+        /// <summary>
+        /// Sets <see cref="Bucket" /> bucket versioning
+        /// </summary>
+        /// <param name="setBucketVersioningRequest"><see cref="SetBucketEncryptionRequest"/> instance</param>
+        void SetBucketVersioning(SetBucketVersioningRequest setBucketVersioningRequest);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> bucket versioning
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="GetBucketVersioningResult"/> instance</returns>
+        GetBucketVersioningResult GetBucketVersioning(string bucketName);
+
         #endregion
 
         #region Object Operations
@@ -388,6 +401,13 @@ namespace Aliyun.OSS
         /// <returns><see cref="ObjectListing"/> instance</returns>
         ObjectListing EndListObjects(IAsyncResult asyncResult);
 
+        /// <summary>
+        /// Lists object vesions according to the ListObjectVersionsRequest.
+        /// The returned object is type of OssObjectSummary.
+        /// </summary>
+        /// <param name="listObjectVersionsRequest"><see cref="ListObjectVersionsRequest" /> instance</param>
+        /// <returns><see cref="OssObject" /> list</returns>
+        ObjectVersionList ListObjectVersions(ListObjectVersionsRequest listObjectVersionsRequest);
 
         /// <summary>
         /// Puts object to the specified bucket with specified object key.
@@ -636,13 +656,15 @@ namespace Aliyun.OSS
         /// <param name="bucketName">Bucket name.</param>
         /// <param name="symlink">Symlink.</param>
         /// <param name="target">Target.</param>
-        void CreateSymlink(string bucketName, string symlink, string target);
+        /// <returns><see cref="CreateSymlinkResult"/> instance</returns>
+        CreateSymlinkResult CreateSymlink(string bucketName, string symlink, string target);
 
         /// <summary>
         /// Creates the symlink of the target object
         /// </summary>
         /// <param name="createSymlinkRequest">Create symlink request.</param>
-        void CreateSymlink(CreateSymlinkRequest createSymlinkRequest);
+        /// <returns><see cref="CreateSymlinkResult"/> instance</returns>
+        CreateSymlinkResult CreateSymlink(CreateSymlinkRequest createSymlinkRequest);
 
         /// <summary>
         /// Gets the target file of the symlink.
@@ -651,6 +673,13 @@ namespace Aliyun.OSS
         /// <param name="symlink">Symlink </param>
         /// <returns>OssSymlink object</returns>
         OssSymlink GetSymlink(string bucketName, string symlink);
+
+        /// <summary>
+        /// Gets the target file of the symlink.
+        /// </summary>
+        /// <param name="getSymlinkRequest">Get symlink request.</param>
+        /// <returns>OssSymlink object</returns>
+        OssSymlink GetSymlink(GetSymlinkRequest getSymlinkRequest);
 
         /// <summary>
         /// Gets object
@@ -737,19 +766,21 @@ namespace Aliyun.OSS
         /// <param name="request">GetObjectMetadataRequest instance</param>
         /// <returns><see cref="OssObject" />metadata</returns>
         ObjectMetadata GetSimplifiedObjectMetadata(GetObjectMetadataRequest request);
-        
+
         /// <summary>
         /// Deletes <see cref="OssObject" />
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <param name="key"><see cref="OssObject.Key" /></param>
-        void DeleteObject(string bucketName, string key);
+        /// <returns><see cref="DeleteObjectResult" />instance</returns>
+        DeleteObjectResult DeleteObject(string bucketName, string key);
 
         /// <summary>
         /// Deletes <see cref="OssObject" />
         /// </summary>
         /// <param name="deleteObjectRequest">the request parameter</param>
-        void DeleteObject(DeleteObjectRequest deleteObjectRequest);
+        /// <returns><see cref="DeleteObjectResult" />instance</returns>
+        DeleteObjectResult DeleteObject(DeleteObjectRequest deleteObjectRequest);
 
         /// <summary>
         /// Deletes multiple objects
@@ -757,7 +788,14 @@ namespace Aliyun.OSS
         /// <param name="deleteObjectsRequest">the request parameter</param>
         /// <returns>delete object result</returns>
         DeleteObjectsResult DeleteObjects(DeleteObjectsRequest deleteObjectsRequest);
-        
+
+        /// <summary>
+        /// Deletes multiple objects with version id
+        /// </summary>
+        /// <param name="deleteObjectVersionsRequest">the request parameter</param>
+        /// <returns>delete object result</returns>
+        DeleteObjectVersionsResult DeleteObjectVersions(DeleteObjectVersionsRequest deleteObjectVersionsRequest);
+
         /// <summary>
         /// copy an object to another one in OSS.
         /// </summary>
@@ -867,12 +905,11 @@ namespace Aliyun.OSS
         /// <param name="RestoreObjectRequest"></param>
         RestoreObjectResult RestoreObject(RestoreObjectRequest restoreObjectRequest);
 
-
         /// <summary>
         /// Sets the object tagging
         /// </summary>
-        /// <param name="SetObjectTaggingRequest"></param>
-        void SetObjectTagging(SetObjectTaggingRequest setObjectTaggingRequest);
+        /// <param name="request"><see cref="SetObjectTaggingRequest" /> instance</param>
+        void SetObjectTagging(SetObjectTaggingRequest request);
 
         /// <summary>
         /// Gets the object tagging 
@@ -883,16 +920,29 @@ namespace Aliyun.OSS
         GetObjectTaggingResult GetObjectTagging(string bucketName, string key);
 
         /// <summary>
+        /// Gets the object tagging
+        /// </summary>
+        /// <param name="request"><see cref="GetObjectTaggingRequest" /> instance</param>
+        /// <returns><see cref="GetObjectTaggingResult" /> instance</returns>
+        GetObjectTaggingResult GetObjectTagging(GetObjectTaggingRequest request);
+
+        /// <summary>
         /// Deletes object tagging
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <param name="key"><see cref="OssObject.Key" /></param>
         void DeleteObjectTagging(string bucketName, string key);
 
+        /// <summary>
+        /// Deletes the object tagging
+        /// </summary>
+        /// <param name="request"><see cref="DeleteObjectTaggingRequest" /> instance</param>
+        void DeleteObjectTagging(DeleteObjectTaggingRequest request);
+
         #endregion
-        
+
         #region Generate URL
-        
+
         /// <summary>
         /// Generates a signed url
         /// </summary>

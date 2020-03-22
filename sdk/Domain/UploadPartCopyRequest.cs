@@ -106,6 +106,11 @@ namespace Aliyun.OSS
         /// </summary>
         public long TrafficLimit { get; set; }
 
+        /// <summary>
+        /// Gets or sets the version id
+        /// </summary>
+        public string VersionId { get; set; }
+
         public UploadPartCopyRequest(string targetBucket, string targetKey, string sourceBucket, 
             string sourceKey, string uploadId)
         {

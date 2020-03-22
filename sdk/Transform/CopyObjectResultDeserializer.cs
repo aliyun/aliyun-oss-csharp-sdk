@@ -20,16 +20,23 @@ namespace Aliyun.OSS.Transform
         
         public override CopyObjectResult Deserialize(ServiceResponse xmlStream)
         {
-            var result = ContentDeserializer.Deserialize(xmlStream.Content);
-            var copyObjectResult = new CopyObjectResult
+            var model = ContentDeserializer.Deserialize(xmlStream.Content);
+            var result = new CopyObjectResult
             {
-                ETag = OssUtils.TrimQuotes(result.ETag),
-                LastModified = result.LastModified
+                ETag = OssUtils.TrimQuotes(model.ETag),
+                LastModified = model.LastModified
             };
+            if (xmlStream.Headers.ContainsKey(HttpHeaders.VersionId))
+            {
+                result.VersionId = xmlStream.Headers[HttpHeaders.VersionId];
+            }
+            if (xmlStream.Headers.ContainsKey("x-oss-copy-source-version-id"))
+            {
+                result.CopySourceVersionId = xmlStream.Headers["x-oss-copy-source-version-id"];
+            }
+            DeserializeGeneric(xmlStream, result);
 
-            DeserializeGeneric(xmlStream, copyObjectResult);
-
-            return copyObjectResult;
+            return result;
         }
     }
 }

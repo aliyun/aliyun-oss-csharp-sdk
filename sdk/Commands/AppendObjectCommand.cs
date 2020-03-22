@@ -125,7 +125,7 @@ namespace Aliyun.OSS.Commands
             }
 
             return new AppendObjectCommand(client, endpoint, context,
-                                           DeserializerFactory.GetFactory().CreateAppendObjectReusltDeserializer(),
+                                           DeserializerFactory.GetFactory().CreateAppendObjectResultDeserializer(),
                                            request);
         }
     }

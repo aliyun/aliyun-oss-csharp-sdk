@@ -101,7 +101,7 @@ namespace Aliyun.OSS.Transform
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public IDeserializer<ServiceResponse, AppendObjectResult> CreateAppendObjectReusltDeserializer()
+        public IDeserializer<ServiceResponse, AppendObjectResult> CreateAppendObjectResultDeserializer()
         {
             return new AppendObjectResponseDeserializer();
         }
@@ -121,6 +121,11 @@ namespace Aliyun.OSS.Transform
         public IDeserializer<ServiceResponse, ObjectListing> CreateListObjectsResultDeserializer()
         {
             return new ListObjectsResponseDeserializer(CreateContentDeserializer<ListBucketResult>());
+        }
+
+        public IDeserializer<ServiceResponse, ObjectVersionList> CreateListObjectVersionsResultDeserializer()
+        {
+            return new ListObjectVersionsResponseDeserializer(CreateContentDeserializer<ListVersionsResult>());
         }
 
         public IDeserializer<ServiceResponse, MultipartUploadListing> CreateListMultipartUploadsResultDeserializer()
@@ -201,6 +206,26 @@ namespace Aliyun.OSS.Transform
         public IDeserializer<ServiceResponse, BucketEncryptionResult> CreateGetBucketEncryptionResultDeserializer()
         {
             return new GetBucketEncryptionResultDeserializer(CreateContentDeserializer<ServerSideEncryptionRule>());
+        }
+
+        public IDeserializer<ServiceResponse, GetBucketVersioningResult> CreateGetBucketVersioningResultDeserializer()
+        {
+            return new GetBucketVersioningResultDeserializer(CreateContentDeserializer<VersioningConfiguration>());
+        }
+
+        public IDeserializer<ServiceResponse, DeleteObjectVersionsResult> CreateDeleteObjectVersionsResultDeserializer()
+        {
+            return new DeleteObjectVersionsResultDeserializer(CreateContentDeserializer<DeleteObjectVersionsResultModel>());
+        }
+
+        public IDeserializer<ServiceResponse, CreateSymlinkResult> CreateCreateSymlinkResultDeserializer()
+        {
+            return new CreateSymlinkResultDeserializer(CreateContentDeserializer<Stream>());
+        }
+
+        public IDeserializer<ServiceResponse, DeleteObjectResult> CreateDeleteObjectResultDeserializer()
+        {
+            return new DeleteObjectResultDeserializer(CreateContentDeserializer<Stream>());
         }
     }
 

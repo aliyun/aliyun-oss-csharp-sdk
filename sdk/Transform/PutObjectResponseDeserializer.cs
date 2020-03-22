@@ -31,6 +31,10 @@ namespace Aliyun.OSS.Transform
             {
                 result.ResponseStream = xmlStream.Content;
             }
+            if (xmlStream.Headers.ContainsKey(HttpHeaders.VersionId))
+            {
+                result.VersionId = xmlStream.Headers[HttpHeaders.VersionId];
+            }
 
             DeserializeGeneric(xmlStream, result);
 

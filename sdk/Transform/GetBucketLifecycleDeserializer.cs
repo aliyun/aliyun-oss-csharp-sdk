@@ -38,12 +38,18 @@ namespace Aliyun.OSS.Transform
                 else
                     throw new InvalidEnumArgumentException(@"Unsupported rule status " + lcc.Status);
 
-                if (lcc.Expiration.IsSetDays())
-                    rule.ExpriationDays = lcc.Expiration.Days;
-                else if (lcc.Expiration.IsSetDate())
-                    rule.ExpirationTime = DateTime.Parse(lcc.Expiration.Date).ToUniversalTime();
-                else if (!String.IsNullOrEmpty(lcc.Expiration.CreatedBeforeDate))
-                    rule.CreatedBeforeDate = DateTime.Parse(lcc.Expiration.CreatedBeforeDate).ToUniversalTime();
+                if (lcc.Expiration != null) { 
+                    if (lcc.Expiration.IsSetDays())
+                        rule.ExpriationDays = lcc.Expiration.Days;
+                    else if (lcc.Expiration.IsSetDate())
+                        rule.ExpirationTime = DateTime.Parse(lcc.Expiration.Date).ToUniversalTime();
+                    else if (!String.IsNullOrEmpty(lcc.Expiration.CreatedBeforeDate))
+                        rule.CreatedBeforeDate = DateTime.Parse(lcc.Expiration.CreatedBeforeDate).ToUniversalTime();
+                    else if (lcc.Expiration.IsSetExpiredObjectDeleteMarker())
+                    {
+                        rule.ExpiredObjectDeleteMarker = lcc.Expiration.ExpiredObjectDeleteMarker;
+                    }
+                }
 
                 if (lcc.AbortMultipartUpload != null)
                 {
@@ -70,6 +76,27 @@ namespace Aliyun.OSS.Transform
                         {
                             Key = lcc.Tags[i].Key,
                             Value = lcc.Tags[i].Value
+                        };
+                    }
+                }
+
+                if (lcc.NoncurrentVersionExpiration != null)
+                {
+                    rule.NoncurrentVersionExpiration = new LifecycleRule.LifeCycleNoncurrentVersionExpiration
+                    {
+                        NoncurrentDays= lcc.NoncurrentVersionExpiration.NoncurrentDays
+                    };
+                }
+
+                if (lcc.NoncurrentVersionTransition != null)
+                {
+                    rule.NoncurrentVersionTransitions = new LifecycleRule.LifeCycleNoncurrentVersionTransition[lcc.NoncurrentVersionTransition.Length];
+                    for (int i = 0; i < rule.NoncurrentVersionTransitions.Length; i++)
+                    {
+                        rule.NoncurrentVersionTransitions[i] = new LifecycleRule.LifeCycleNoncurrentVersionTransition()
+                        {
+                            NoncurrentDays = lcc.NoncurrentVersionTransition[i].NoncurrentDays,
+                            StorageClass = lcc.NoncurrentVersionTransition[i].StorageClass
                         };
                     }
                 }
