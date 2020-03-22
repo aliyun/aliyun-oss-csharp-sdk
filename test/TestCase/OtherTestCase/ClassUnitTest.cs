@@ -9,6 +9,7 @@ using Aliyun.OSS.Common.Authentication;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Common.Internal;
 using Aliyun.OSS.Common.ThirdParty;
+using Aliyun.OSS.Test.Util;
 using Aliyun.OSS.Transform;
 using Aliyun.OSS.Util;
 using NUnit.Framework;
@@ -340,6 +341,10 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             Assert.AreEqual(headers.ContainsKey(OssHeaders.GetObjectIfMatch), true);
             Assert.AreEqual(headers.ContainsKey(OssHeaders.GetObjectIfNoneMatch), true);
 
+            headers = new Dictionary<string, string>();
+            request.RequestPayer = RequestPayer.Requester;
+            request.Populate(headers);
+            Assert.AreEqual(headers.ContainsKey(OssHeaders.OssRequestPayer), true);
         }
 
         [Test]
@@ -682,7 +687,12 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         [Test]
         public void ResumableContextTest()
         {
+            var bucketMd5 = FileUtils.ComputeContentMd5(new MemoryStream(Encoding.UTF8.GetBytes("bucket"))).ToUpperInvariant();
+            var keyMd5 = FileUtils.ComputeContentMd5(new MemoryStream(Encoding.UTF8.GetBytes("key"))).ToUpperInvariant();
+            var ckPath = "checkpointDir" + Path.DirectorySeparatorChar + bucketMd5 + "_" + keyMd5;
+
             var ctx = new ResumableContext("bucket", "key", "checkpointDir");
+            Assert.AreEqual(ctx.CheckpointFile, ckPath);
             ctx.Clear();
             ctx.Load();
             ctx.Dump();
@@ -723,11 +733,34 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         [Test]
         public void ResumableDownloadContextTest()
         {
-            var ctx = new ResumableDownloadContext("bucket", "key", "checkpointDir");
+            var bucketMd5 = FileUtils.ComputeContentMd5(new MemoryStream(Encoding.UTF8.GetBytes("bucket"))).ToUpperInvariant();
+            var keyMd5 = FileUtils.ComputeContentMd5(new MemoryStream(Encoding.UTF8.GetBytes("key"))).ToUpperInvariant();
+            var key_versionMd5 = FileUtils.ComputeContentMd5(new MemoryStream(Encoding.UTF8.GetBytes("key?versionId=version"))).ToUpperInvariant();
+            var ckPath = "checkpointDir" + Path.DirectorySeparatorChar + "Download_" + bucketMd5 + "_" + key_versionMd5;
+            var ctx = new ResumableDownloadContext("bucket", "key", "version", "checkpointDir");
+            Assert.AreEqual(ctx.BucketName, "bucket");
+            Assert.AreEqual(ctx.Key, "key");
+            Assert.AreEqual(ctx.VersionId, "version");
+            Assert.AreEqual(ctx.CheckpointDir, "checkpointDir");
+            Assert.AreEqual(ctx.CheckpointFile, ckPath);
             ctx.Clear();
             ctx.Load();
 
-            ctx = new ResumableDownloadContext("bucket", "key", "");
+            ckPath = "checkpointDir" + Path.DirectorySeparatorChar + "Download_" + bucketMd5 + "_" + keyMd5;
+            ctx = new ResumableDownloadContext("bucket", "key", null, "checkpointDir");
+            Assert.AreEqual(ctx.BucketName, "bucket");
+            Assert.AreEqual(ctx.Key, "key");
+            Assert.AreEqual(ctx.VersionId, null);
+            Assert.AreEqual(ctx.CheckpointDir, "checkpointDir");
+            Assert.AreEqual(ctx.CheckpointFile, ckPath);
+            ctx.Clear();
+            ctx.Load();
+
+            ctx = new ResumableDownloadContext("bucket", "key", null, "");
+            Assert.AreEqual(ctx.BucketName, "bucket");
+            Assert.AreEqual(ctx.Key, "key");
+            Assert.AreEqual(ctx.VersionId, null);
+            Assert.AreEqual(ctx.CheckpointDir, null);
             ctx.Clear();
             ctx.Load();
 
@@ -737,6 +770,45 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 
             ctx.PartContextList = new List<ResumablePartContext>();
             Assert.AreEqual(ctx.FromString("etag:MD5:1234:1_2_3_True___0,2_2_3_True___0"), true);
+        }
+
+        [Test]
+        public void ResumableCopyContextTest()
+        {
+            var srcMd5 = FileUtils.ComputeContentMd5(new MemoryStream(Encoding.UTF8.GetBytes("bucket-key"))).ToUpperInvariant();
+            var src_versionMd5 = FileUtils.ComputeContentMd5(new MemoryStream(Encoding.UTF8.GetBytes("bucket-key?versionId=version"))).ToUpperInvariant();
+            var dstMd5 = FileUtils.ComputeContentMd5(new MemoryStream(Encoding.UTF8.GetBytes("dst-bucket-dst-key"))).ToUpperInvariant();
+            var ckPath = "checkpointDir" + Path.DirectorySeparatorChar + "Copy_" + src_versionMd5 + "_" + dstMd5;
+            var ctx = new ResumableCopyContext("bucket", "key", "version", "dst-bucket", "dst-key", "checkpointDir");
+            Assert.AreEqual(ctx.BucketName, "dst-bucket");
+            Assert.AreEqual(ctx.Key, "dst-key");
+            Assert.AreEqual(ctx.SourceBucketName, "bucket");
+            Assert.AreEqual(ctx.SourceKey, "key");
+            Assert.AreEqual(ctx.SourceVersionId, "version");
+            Assert.AreEqual(ctx.CheckpointDir, "checkpointDir");
+            Assert.AreEqual(ctx.CheckpointFile, ckPath);
+            ctx.Clear();
+            ctx.Load();
+
+            ckPath = "checkpointDir" + Path.DirectorySeparatorChar + "Copy_" + srcMd5 + "_" + dstMd5;
+            ctx = new ResumableCopyContext("bucket", "key", null, "dst-bucket", "dst-key", "checkpointDir");
+            Assert.AreEqual(ctx.BucketName, "dst-bucket");
+            Assert.AreEqual(ctx.Key, "dst-key");
+            Assert.AreEqual(ctx.SourceBucketName, "bucket");
+            Assert.AreEqual(ctx.SourceKey, "key");
+            Assert.AreEqual(ctx.SourceVersionId, null);
+            Assert.AreEqual(ctx.CheckpointDir, "checkpointDir");
+            Assert.AreEqual(ctx.CheckpointFile, ckPath);
+            ctx.Clear();
+            ctx.Load();
+
+            ctx = new ResumableCopyContext("bucket", "key", null, "dst-bucket", "dst-key", null);
+            Assert.AreEqual(ctx.BucketName, "dst-bucket");
+            Assert.AreEqual(ctx.Key, "dst-key");
+            Assert.AreEqual(ctx.SourceBucketName, "bucket");
+            Assert.AreEqual(ctx.SourceKey, "key");
+            Assert.AreEqual(ctx.SourceVersionId, null);
+            Assert.AreEqual(ctx.CheckpointDir, null);
         }
 
         [Test]
@@ -943,6 +1015,113 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 
             rulet2.Tags = rulet1.Tags;
             Assert.AreEqual(rulet1, rulet2);
+
+            //ExpiredObjectDeleteMarker
+            LifecycleRule rulev1 = new LifecycleRule();
+            rulev1.ID = "StandardExpireRule";
+            rulev1.Prefix = "test";
+            rulev1.Status = RuleStatus.Enabled;
+            rulev1.ExpiredObjectDeleteMarker = false;
+
+            LifecycleRule rulev2 = new LifecycleRule();
+            rulev2.ID = "StandardExpireRule";
+            rulev2.Prefix = "test";
+            rulev2.Status = RuleStatus.Enabled;
+            rulev2.ExpiredObjectDeleteMarker = false;
+            Assert.AreEqual(rulev1, rulev2);
+
+            rulev2.ExpiredObjectDeleteMarker = true;
+            Assert.AreNotEqual(rulev1, rulev2);
+
+            rulev2.ExpiredObjectDeleteMarker = null;
+            Assert.AreNotEqual(rulev1, rulev2);
+
+            //NoncurrentVersionExpiration
+            LifecycleRule ruleve1 = new LifecycleRule();
+            ruleve1.ID = "StandardExpireRule";
+            ruleve1.Prefix = "test";
+            ruleve1.Status = RuleStatus.Enabled;
+            ruleve1.NoncurrentVersionExpiration = new LifecycleRule.LifeCycleNoncurrentVersionExpiration()
+            {
+                NoncurrentDays = 100
+            };
+
+            LifecycleRule ruleve2 = new LifecycleRule();
+            ruleve2.ID = "StandardExpireRule";
+            ruleve2.Prefix = "test";
+            ruleve2.Status = RuleStatus.Enabled;
+            ruleve2.NoncurrentVersionExpiration = new LifecycleRule.LifeCycleNoncurrentVersionExpiration()
+            {
+                NoncurrentDays = 100
+            };
+            Assert.AreEqual(ruleve1, ruleve2);
+
+            ruleve2.NoncurrentVersionExpiration.NoncurrentDays = 200;
+            Assert.AreNotEqual(ruleve1, ruleve2);
+
+            ruleve2.NoncurrentVersionExpiration = null;
+            Assert.AreNotEqual(ruleve1, ruleve2);
+
+            ruleve2.NoncurrentVersionExpiration = ruleve1.NoncurrentVersionExpiration;
+            Assert.AreEqual(ruleve1, ruleve2);
+
+            ruleve1.NoncurrentVersionExpiration = null;
+            Assert.AreNotEqual(ruleve1, ruleve2);
+
+            //NoncurrentVersionTransitions
+            LifecycleRule rulevt1 = new LifecycleRule();
+            rulevt1.ID = "StandardExpireRule";
+            rulevt1.Prefix = "test";
+            rulevt1.Status = RuleStatus.Enabled;
+            rulevt1.NoncurrentVersionTransitions = new LifecycleRule.LifeCycleNoncurrentVersionTransition[2]
+            {
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.IA,
+                    NoncurrentDays = 90
+                },
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.Archive,
+                    NoncurrentDays = 180
+                }
+            };
+
+            LifecycleRule rulevt2 = new LifecycleRule();
+            rulevt2.ID = "StandardExpireRule";
+            rulevt2.Prefix = "test";
+            rulevt2.Status = RuleStatus.Enabled;
+            rulevt2.NoncurrentVersionTransitions = new LifecycleRule.LifeCycleNoncurrentVersionTransition[2]
+            {
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.IA,
+                    NoncurrentDays = 90
+                },
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.Archive,
+                    NoncurrentDays = 180
+                }
+            };
+            Assert.AreEqual(rulevt1, rulevt2);
+
+            rulevt2.NoncurrentVersionTransitions[1].NoncurrentDays = 190;
+            Assert.AreNotEqual(ruleve1, rulevt2);
+
+            ruleve2.NoncurrentVersionTransitions = new LifecycleRule.LifeCycleNoncurrentVersionTransition[1]
+            {
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.IA,
+                    NoncurrentDays = 90
+                }
+            };
+            Assert.AreNotEqual(rulevt1, rulevt2);
+
+            rulevt2.NoncurrentVersionTransitions = null;
+            Assert.AreNotEqual(rulevt1, rulevt2);
+
+            rulevt2.NoncurrentVersionTransitions = rulevt1.NoncurrentVersionTransitions;
+            Assert.AreEqual(rulevt1, rulevt2);
+
+            rulevt1.NoncurrentVersionTransitions = null;
+            Assert.AreNotEqual(rulevt1, rulevt2);
         }
 
         [Test]
@@ -1220,7 +1399,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         public void AppendObjectResponseDeserializerTest()
         {
             var factory = DeserializerFactory.GetFactory("text/xml");
-            var deserializer = factory.CreateAppendObjectReusltDeserializer();
+            var deserializer = factory.CreateAppendObjectResultDeserializer();
             var headers = new Dictionary<string, string>();
             var content = new MemoryStream();
             //empty
@@ -1788,6 +1967,474 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             {
                 Assert.IsTrue(false, e.Message);
             }
+        }
+
+        [Test]
+        public void CreateGetBucketVersioningResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var request = new PutObjectRequest("bucket", "key", new MemoryStream());
+            var deserializer = factory.CreateGetBucketVersioningResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <VersioningConfiguration>
+                    <Status>Enabled</Status>
+                </VersioningConfiguration>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Status, VersioningStatus.Enabled);
+
+            data =
+                @" 
+                <VersioningConfiguration>
+                    <Status>Suspended</Status>
+                </VersioningConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Status, VersioningStatus.Suspended);
+
+            data =
+                @" 
+                <VersioningConfiguration>
+                    <Status>Unknown</Status>
+                </VersioningConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Status, VersioningStatus.Off);
+
+            data =
+                @" 
+                <VersioningConfiguration>
+                </VersioningConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Status, VersioningStatus.Off);
+
+            data = "<VersioningConfiguration xmlns=\"http://doc.oss-cn-hangzhou.aliyuncs.com\"/>";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Status, VersioningStatus.Off);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
+        public void CreateListObjectVersionsResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var request = new PutObjectRequest("bucket", "key", new MemoryStream());
+            var deserializer = factory.CreateListObjectVersionsResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <ListVersionsResult>
+                    <Name>oss-example</Name>
+                    <Prefix></Prefix>
+                    <KeyMarker>example</KeyMarker>
+                    <VersionIdMarker>CAEQMxiBgICbof2D0BYiIGRhZjgwMzJiMjA3MjQ0ODE5MWYxZDYwMzJlZjU1****</VersionIdMarker>
+                    <MaxKeys>200</MaxKeys>
+                    <Delimiter></Delimiter>
+                    <IsTruncated>false</IsTruncated>
+                    <DeleteMarker>
+                        <Key>example</Key>
+                        <VersionId>CAEQMxiBgICAof2D0BYiIDJhMGE3N2M1YTI1NDQzOGY5NTkyNTI3MGYyMzJm****</VersionId>
+                        <IsLatest>false</IsLatest>
+                        <LastModified>2019-04-09T07:27:28.000Z</LastModified>
+                        <Owner>
+                          <ID>1234512528586****</ID>
+                          <DisplayName>12345125285864390</DisplayName>
+                        </Owner>
+                    </DeleteMarker>
+                    <Version>
+                        <Key>example</Key>
+                        <VersionId>CAEQMxiBgMDNoP2D0BYiIDE3MWUxNzgxZDQxNTRiODI5OGYwZGMwNGY3MzZjN****</VersionId>
+                        <IsLatest>false</IsLatest>
+                        <LastModified>2019-04-09T07:27:28.000Z</LastModified>
+                        <ETag>250F8A0AE989679A22926A875F0A2****</ETag>
+                        <Type>Normal</Type>
+                        <Size>93731</Size>
+                        <StorageClass>Standard</StorageClass>
+                        <Owner>
+                          <ID>1234512528586****</ID>
+                          <DisplayName>12345125285864390</DisplayName>
+                        </Owner>
+                    </Version>
+                    <Version>
+                        <Key>pic.jpg</Key>
+                        <VersionId>CAEQMxiBgMCZov2D0BYiIDY4MDllOTc2YmY5MjQxMzdiOGI3OTlhNTU0ODIx****</VersionId>
+                        <IsLatest>true</IsLatest>
+                        <LastModified>2019-04-09T07:27:28.000Z</LastModified>
+                        <ETag>3663F7B0B9D3153F884C821E7CF4****</ETag>
+                        <Type>Normal</Type>
+                        <Size>574768</Size>
+                        <StorageClass>Standard</StorageClass>
+                        <Owner>
+                          <ID>1234512528586****</ID>
+                          <DisplayName>12345125285864390</DisplayName>
+                        </Owner>
+                    </Version>
+                </ListVersionsResult>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.BucketName, "oss-example");
+            Assert.AreEqual(result.Prefix, "");
+            Assert.AreEqual(result.KeyMarker, "example");
+            Assert.AreEqual(result.VersionIdMarker, "CAEQMxiBgICbof2D0BYiIGRhZjgwMzJiMjA3MjQ0ODE5MWYxZDYwMzJlZjU1****");
+            Assert.AreEqual(result.MaxKeys, 200);
+            Assert.AreEqual(result.Delimiter, "");
+            Assert.AreEqual(result.IsTruncated, false);
+            Assert.AreEqual(result.NextKeyMarker, null);
+            Assert.AreEqual(result.NextVersionIdMarker, null);
+            var allVersionSum = OssTestUtils.ToArray(result.ObjectVersionSummaries);
+            var allDeleteMarkerSum = OssTestUtils.ToArray(result.DeleteMarkerSummaries);
+            var allPrefixSum = OssTestUtils.ToArray(result.CommonPrefixes);
+            Assert.AreEqual(allVersionSum.Count, 2);
+            Assert.AreEqual(allVersionSum[0].BucketName, "oss-example");
+            Assert.AreEqual(allVersionSum[0].Key, "example");
+            Assert.AreEqual(allVersionSum[0].VersionId, "CAEQMxiBgMDNoP2D0BYiIDE3MWUxNzgxZDQxNTRiODI5OGYwZGMwNGY3MzZjN****");
+            Assert.AreEqual(allVersionSum[0].IsLatest, false);
+            Assert.AreEqual(allVersionSum[0].LastModified.ToUniversalTime(), DateTime.Parse("2019-04-09T07:27:28.000Z").ToUniversalTime());
+            Assert.AreEqual(allVersionSum[0].ETag, "250F8A0AE989679A22926A875F0A2****");
+            Assert.AreEqual(allVersionSum[0].Type, "Normal");
+            Assert.AreEqual(allVersionSum[0].Size, 93731);
+            Assert.AreEqual(allVersionSum[0].StorageClass, StorageClass.Standard.ToString());
+            Assert.AreEqual(allVersionSum[0].Owner.DisplayName, "12345125285864390");
+            Assert.AreEqual(allVersionSum[0].Owner.Id, "1234512528586****");
+
+            Assert.AreEqual(allVersionSum[1].BucketName, "oss-example");
+            Assert.AreEqual(allVersionSum[1].Key, "pic.jpg");
+            Assert.AreEqual(allVersionSum[1].VersionId, "CAEQMxiBgMCZov2D0BYiIDY4MDllOTc2YmY5MjQxMzdiOGI3OTlhNTU0ODIx****");
+            Assert.AreEqual(allVersionSum[1].IsLatest, true);
+
+
+            Assert.AreEqual(allDeleteMarkerSum.Count, 1);
+            Assert.AreEqual(allDeleteMarkerSum[0].BucketName, "oss-example");
+            Assert.AreEqual(allDeleteMarkerSum[0].Key, "example");
+            Assert.AreEqual(allDeleteMarkerSum[0].VersionId, "CAEQMxiBgICAof2D0BYiIDJhMGE3N2M1YTI1NDQzOGY5NTkyNTI3MGYyMzJm****");
+            Assert.AreEqual(allDeleteMarkerSum[0].IsLatest, false);
+            Assert.AreEqual(allDeleteMarkerSum[0].LastModified.ToUniversalTime(), DateTime.Parse("2019-04-09T07:27:28.000Z").ToUniversalTime());
+
+            Assert.AreEqual(allPrefixSum.Count, 0);
+
+
+            data =
+                @" 
+                <ListVersionsResult>
+                    <Name>oss-example</Name>
+                    <Prefix></Prefix>
+                    <KeyMarker>example</KeyMarker>
+                    <VersionIdMarker>CAEQMxiBgICbof2D0BYiIGRhZjgwMzJiMjA3MjQ0ODE5MWYxZDYwMzJlZjU1****</VersionIdMarker>
+                    <MaxKeys>200</MaxKeys>
+                    <Delimiter>/</Delimiter>
+                    <IsTruncated>false</IsTruncated>
+                    <CommonPrefixes>
+                        <Prefix>123</Prefix>
+                    </CommonPrefixes>
+                    <CommonPrefixes>
+                        <Prefix>abc</Prefix>
+                    </CommonPrefixes>
+                </ListVersionsResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.BucketName, "oss-example");
+            Assert.AreEqual(result.Prefix, "");
+            Assert.AreEqual(result.KeyMarker, "example");
+            Assert.AreEqual(result.VersionIdMarker, "CAEQMxiBgICbof2D0BYiIGRhZjgwMzJiMjA3MjQ0ODE5MWYxZDYwMzJlZjU1****");
+            Assert.AreEqual(result.MaxKeys, 200);
+            Assert.AreEqual(result.Delimiter, "/");
+            Assert.AreEqual(result.IsTruncated, false);
+            Assert.AreEqual(result.NextKeyMarker, null);
+            Assert.AreEqual(result.NextVersionIdMarker, null);
+            allVersionSum = OssTestUtils.ToArray(result.ObjectVersionSummaries);
+            allDeleteMarkerSum = OssTestUtils.ToArray(result.DeleteMarkerSummaries);
+            allPrefixSum = OssTestUtils.ToArray(result.CommonPrefixes);
+            Assert.AreEqual(allVersionSum.Count, 0);
+            Assert.AreEqual(allDeleteMarkerSum.Count, 0);
+
+            Assert.AreEqual(allPrefixSum.Count, 2);
+            Assert.AreEqual(allPrefixSum[0], "123");
+            Assert.AreEqual(allPrefixSum[1], "abc");
+
+
+            data =
+                @" 
+                <ListVersionsResult>
+                    <Name>oss-example</Name>
+                    <Prefix></Prefix>
+                    <KeyMarker>example</KeyMarker>
+                    <VersionIdMarker>CAEQMxiBgICbof2D0BYiIGRhZjgwMzJiMjA3MjQ0ODE5MWYxZDYwMzJlZjU1****</VersionIdMarker>
+                    <Delimiter>/</Delimiter>
+                    <CommonPrefixes>
+                    </CommonPrefixes>
+                    <Version>
+                        <Key>example</Key>
+                        <VersionId>CAEQMxiBgMDNoP2D0BYiIDE3MWUxNzgxZDQxNTRiODI5OGYwZGMwNGY3MzZjN****</VersionId>
+                        <IsLatest>false</IsLatest>
+                        <LastModified>2019-04-09T07:27:28.000Z</LastModified>
+                        <Type>Normal</Type>
+                        <Size>93731</Size>
+                        <StorageClass>Standard</StorageClass>
+                    </Version>
+                    <DeleteMarker>
+                        <Key>example</Key>
+                        <VersionId>CAEQMxiBgICAof2D0BYiIDJhMGE3N2M1YTI1NDQzOGY5NTkyNTI3MGYyMzJm****</VersionId>
+                        <IsLatest>false</IsLatest>
+                        <LastModified>2019-04-09T07:27:28.000Z</LastModified>
+                    </DeleteMarker>
+                </ListVersionsResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.BucketName, "oss-example");
+            Assert.AreEqual(result.Prefix, "");
+            Assert.AreEqual(result.KeyMarker, "example");
+            Assert.AreEqual(result.VersionIdMarker, "CAEQMxiBgICbof2D0BYiIGRhZjgwMzJiMjA3MjQ0ODE5MWYxZDYwMzJlZjU1****");
+            Assert.AreEqual(result.MaxKeys, 0);
+            Assert.AreEqual(result.Delimiter, "/");
+            Assert.AreEqual(result.IsTruncated, false);
+            Assert.AreEqual(result.NextKeyMarker, null);
+            Assert.AreEqual(result.NextVersionIdMarker, null);
+            allVersionSum = OssTestUtils.ToArray(result.ObjectVersionSummaries);
+            allDeleteMarkerSum = OssTestUtils.ToArray(result.DeleteMarkerSummaries);
+            allPrefixSum = OssTestUtils.ToArray(result.CommonPrefixes);
+            Assert.AreEqual(allVersionSum.Count, 1);
+            Assert.AreEqual(allDeleteMarkerSum.Count, 1);
+            Assert.AreEqual(allPrefixSum.Count, 0);
+            Assert.AreEqual(allVersionSum[0].ETag, "");
+            Assert.AreEqual(allVersionSum[0].Owner, null);
+
+            Assert.AreEqual(allDeleteMarkerSum[0].Owner, null);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
+        public void DeleteObjectVersionsResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var request = new PutObjectRequest("bucket", "key", new MemoryStream());
+            var deserializer = factory.CreateDeleteObjectVersionsResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <DeleteResult>
+                    <Deleted>
+                       <Key>multipart.data</Key>
+                       <DeleteMarker>true</DeleteMarker>
+                       <DeleteMarkerVersionId>CAEQMhiBgIDXiaaB0BYiIGQzYmRkZGUxMTM1ZDRjOTZhNjk4YjRjMTAyZjhl****</DeleteMarkerVersionId>
+                    </Deleted>
+                    <Deleted>
+                       <Key>test.jpg</Key>
+                       <DeleteMarker>true</DeleteMarker>
+                       <DeleteMarkerVersionId>CAEQMhiBgIDB3aWB0BYiIGUzYTA3YzliMzVmNzRkZGM5NjllYTVlMjYyYWEy****</DeleteMarkerVersionId>
+                    </Deleted>
+                </DeleteResult>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            var result = deserializer.Deserialize(xmlStream);
+            var deletedObjectSum = OssTestUtils.ToArray(result.DeletedObjectSummaries);
+            Assert.AreEqual(result.EncodingType, null);
+            Assert.AreEqual(deletedObjectSum.Count, 2);
+            Assert.AreEqual(deletedObjectSum[0].Key, "multipart.data");
+            Assert.AreEqual(deletedObjectSum[0].VersionId, null);
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarker, true);
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarkerVersionId, "CAEQMhiBgIDXiaaB0BYiIGQzYmRkZGUxMTM1ZDRjOTZhNjk4YjRjMTAyZjhl****");
+            Assert.AreEqual(deletedObjectSum[1].Key, "test.jpg");
+            Assert.AreEqual(deletedObjectSum[1].VersionId, null);
+            Assert.AreEqual(deletedObjectSum[1].DeleteMarker, true);
+            Assert.AreEqual(deletedObjectSum[1].DeleteMarkerVersionId, "CAEQMhiBgIDB3aWB0BYiIGUzYTA3YzliMzVmNzRkZGM5NjllYTVlMjYyYWEy****");
+
+            data =
+                @" 
+                <DeleteResult>
+                    <Deleted>
+                       <Key>multipart.data</Key>
+                    </Deleted>
+                    <Deleted>
+                       <Key>test.jpg</Key>
+                    </Deleted>
+                    <Deleted>
+                       <Key>demo.jpg</Key>
+                    </Deleted>
+                </DeleteResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            result = deserializer.Deserialize(xmlStream);
+            deletedObjectSum = OssTestUtils.ToArray(result.DeletedObjectSummaries);
+            Assert.AreEqual(deletedObjectSum.Count, 3);
+            Assert.AreEqual(deletedObjectSum[0].Key, "multipart.data");
+            Assert.AreEqual(deletedObjectSum[0].VersionId, null);
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarker, false);
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarkerVersionId, null);
+            Assert.AreEqual(deletedObjectSum[1].Key, "test.jpg");
+            Assert.AreEqual(deletedObjectSum[1].VersionId, null);
+            Assert.AreEqual(deletedObjectSum[1].DeleteMarker, false);
+            Assert.AreEqual(deletedObjectSum[1].DeleteMarkerVersionId, null);
+            Assert.AreEqual(deletedObjectSum[2].Key, "demo.jpg");
+            Assert.AreEqual(deletedObjectSum[2].VersionId, null);
+            Assert.AreEqual(deletedObjectSum[2].DeleteMarker, false);
+            Assert.AreEqual(deletedObjectSum[2].DeleteMarkerVersionId, null);
+
+            data =
+                @" 
+                <DeleteResult>
+                    <Deleted>
+                       <Key>multipart.data</Key>
+                       <VersionId>CAEQNRiBgIDyz.6C0BYiIGQ2NWEwNmVhNTA3ZTQ3MzM5ODliYjM1ZTdjYjA4****</VersionId>
+                    </Deleted>
+                </DeleteResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            result = deserializer.Deserialize(xmlStream);
+            deletedObjectSum = OssTestUtils.ToArray(result.DeletedObjectSummaries);
+            Assert.AreEqual(deletedObjectSum.Count, 1);
+            Assert.AreEqual(deletedObjectSum[0].Key, "multipart.data");
+            Assert.AreEqual(deletedObjectSum[0].VersionId, "CAEQNRiBgIDyz.6C0BYiIGQ2NWEwNmVhNTA3ZTQ3MzM5ODliYjM1ZTdjYjA4****");
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarker, false);
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarkerVersionId, null);
+
+            data =
+                @" 
+                <DeleteResult>
+                    <Deleted>
+                       <Key>demo.jpg</Key>
+                       <VersionId>CAEQNRiBgICEoPiC0BYiIGMxZWJmYmMzYjE0OTQ0ZmZhYjgzNzkzYjc2NjZk****</VersionId>
+                       <DeleteMarker>true</DeleteMarker>
+                       <DeleteMarkerVersionId>111111</DeleteMarkerVersionId>
+                    </Deleted>
+                </DeleteResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            result = deserializer.Deserialize(xmlStream);
+            deletedObjectSum = OssTestUtils.ToArray(result.DeletedObjectSummaries);
+            Assert.AreEqual(deletedObjectSum.Count, 1);
+            Assert.AreEqual(deletedObjectSum[0].Key, "demo.jpg");
+            Assert.AreEqual(deletedObjectSum[0].VersionId, "CAEQNRiBgICEoPiC0BYiIGMxZWJmYmMzYjE0OTQ0ZmZhYjgzNzkzYjc2NjZk****");
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarker, true);
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarkerVersionId, "111111");
+
+            data =
+                @" 
+                <DeleteResult>
+                    <EncodingType>url</EncodingType>
+                    <Deleted>
+                       <Key>demo%2Fjpg</Key>
+                       <VersionId>CAEQNRiBgICEoPiC0BYiIGMxZWJmYmMzYjE0OTQ0ZmZhYjgzNzkzYjc2NjZk****</VersionId>
+                       <DeleteMarker>true</DeleteMarker>
+                       <DeleteMarkerVersionId>111111</DeleteMarkerVersionId>
+                    </Deleted>
+                </DeleteResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            result = deserializer.Deserialize(xmlStream);
+            deletedObjectSum = OssTestUtils.ToArray(result.DeletedObjectSummaries);
+            Assert.AreEqual(result.EncodingType, "url");
+            Assert.AreEqual(deletedObjectSum.Count, 1);
+            Assert.AreEqual(deletedObjectSum[0].Key, "demo/jpg");
+            Assert.AreEqual(deletedObjectSum[0].VersionId, "CAEQNRiBgICEoPiC0BYiIGMxZWJmYmMzYjE0OTQ0ZmZhYjgzNzkzYjc2NjZk****");
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarker, true);
+            Assert.AreEqual(deletedObjectSum[0].DeleteMarkerVersionId, "111111");
+
+            data = "<DeleteResult></DeleteResult>";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            result = deserializer.Deserialize(xmlStream);
+            deletedObjectSum = OssTestUtils.ToArray(result.DeletedObjectSummaries);
+            Assert.AreEqual(result.EncodingType, null);
+            Assert.AreEqual(deletedObjectSum.Count, 0);
+
+            data = "";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            result = deserializer.Deserialize(xmlStream);
+            deletedObjectSum = OssTestUtils.ToArray(result.DeletedObjectSummaries);
+            Assert.AreEqual(result.EncodingType, null);
+            Assert.AreEqual(deletedObjectSum.Count, 0);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
+        public void CreateSymlinkResultDeserializerTest()
+        {
+            var clientService = new ServiceClientMock(new ClientConfiguration());
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var request = new GetObjectRequest("bucket", "key");
+            var deserializer = factory.CreateCreateSymlinkResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data = "";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
         }
 
         [Test]

@@ -39,6 +39,7 @@
     <Compile Include="TestCase\BucketTestCase\BucketRefersSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketSettingsTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketTaggingSettingTest.cs" />
+    <Compile Include="TestCase\BucketTestCase\BucketVersioningSettingTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketWebsiteSettingsTest.cs" />
 	<Compile Include="TestCase\BucketTestCase\BucketStorageCapacityTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectProgressTest.cs" />
@@ -53,11 +54,14 @@
     <Compile Include="TestCase\ObjectTestCase\ObjectSignedUriTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectTaggingTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectTrafficLimitTest.cs" />
+    <Compile Include="TestCase\ObjectTestCase\ObjectVersioningTest.cs" />
+    <Compile Include="TestCase\OtherTestCase\ClassUnitTest.cs" />
     <Compile Include="TestCase\OtherTestCase\HttpsTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ProxyTest.cs" />
     <Compile Include="TestCase\OtherTestCase\EpochTimeSettingTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ConcurrencyTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectEncodingTypeTest.cs" />
+    <Compile Include="TestCase\OtherTestCase\UtilsTest.cs" />
     <Compile Include="Util\AccountSettings.cs" />
     <Compile Include="Util\LogUtility.cs" />
     <Compile Include="Util\OssClientFactory.cs" />

@@ -42,15 +42,21 @@ namespace Aliyun.OSS.Transform
                         break;
                 }
 
-                lcc.LifecycleRules[i].Expiration = new Expiration();
-                if (rules[i].CreatedBeforeDate.HasValue)
-                    lcc.LifecycleRules[i].Expiration.CreatedBeforeDate = DateUtils.FormatIso8601Date(rules[i].CreatedBeforeDate.Value);
-                else if (rules[i].ExpriationDays.HasValue)
-                    lcc.LifecycleRules[i].Expiration.Days = rules[i].ExpriationDays.Value;
-                else if (rules[i].ExpirationTime.HasValue)
-                    lcc.LifecycleRules[i].Expiration.Date = DateUtils.FormatIso8601Date(rules[i].ExpirationTime.Value);
+                if (rules[i].HasExpriation())
+                {
+                    lcc.LifecycleRules[i].Expiration = new Expiration();
+                    if (rules[i].CreatedBeforeDate.HasValue)
+                        lcc.LifecycleRules[i].Expiration.CreatedBeforeDate = DateUtils.FormatIso8601Date(rules[i].CreatedBeforeDate.Value);
+                    else if (rules[i].ExpriationDays.HasValue)
+                        lcc.LifecycleRules[i].Expiration.Days = rules[i].ExpriationDays.Value;
+                    else if (rules[i].ExpirationTime.HasValue)
+                        lcc.LifecycleRules[i].Expiration.Date = DateUtils.FormatIso8601Date(rules[i].ExpirationTime.Value);
+                    else if (rules[i].ExpiredObjectDeleteMarker.HasValue)
+                        lcc.LifecycleRules[i].Expiration.ExpiredObjectDeleteMarker = rules[i].ExpiredObjectDeleteMarker;
+                }
 
-                if(rules[i].Transitions != null)
+
+                if (rules[i].Transitions != null)
                 {
                     lcc.LifecycleRules[i].Transition = new LifecycleRuleTransition[rules[i].Transitions.Length];
                     for (int j = 0; j < lcc.LifecycleRules[i].Transition.Length; j++)
@@ -74,6 +80,31 @@ namespace Aliyun.OSS.Transform
                             Key = rules[i].Tags[j].Key,
                             Value = rules[i].Tags[j].Value,
                         };
+                    }
+                }
+
+
+
+                if (rules[i].NoncurrentVersionExpiration != null)
+                {
+                    lcc.LifecycleRules[i].NoncurrentVersionExpiration = new LifecycleRuleNoncurrentVersionExpiration()
+                    {
+                        NoncurrentDays = rules[i].NoncurrentVersionExpiration.NoncurrentDays
+                    };
+                }
+
+                if (rules[i].NoncurrentVersionTransitions != null)
+                {
+                    lcc.LifecycleRules[i].NoncurrentVersionTransition = 
+                        new LifecycleRuleNoncurrentVersionTransition[rules[i].NoncurrentVersionTransitions.Length];
+                    for (int j = 0; j < lcc.LifecycleRules[i].NoncurrentVersionTransition.Length; j++)
+                    {
+                        lcc.LifecycleRules[i].NoncurrentVersionTransition[j] =
+                            new LifecycleRuleNoncurrentVersionTransition()
+                            {
+                                NoncurrentDays = rules[i].NoncurrentVersionTransitions[j].NoncurrentDays,
+                                StorageClass = rules[i].NoncurrentVersionTransitions[j].StorageClass
+                            };
                     }
                 }
             }

@@ -30,10 +30,15 @@ namespace Aliyun.OSS.Commands
         {
             get
             {
-                return new Dictionary<string, string>()
+                var parameters = new Dictionary<string, string>()
                 {
                     { RequestParameters.SUBRESOURCE_ACL, null }
                 };
+                if (!string.IsNullOrEmpty(_request.VersionId))
+                {
+                    parameters.Add(RequestParameters.SUBRESOURCE_VERSIONID, _request.VersionId);
+                }
+                return parameters;
             }
         }
 

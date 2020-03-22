@@ -18,6 +18,11 @@ namespace Aliyun.OSS
         /// </summary>
         public string ETag { get; internal set; }
 
+        /// <summary>
+        /// Gets or sets the version id.
+        /// </summary>
+        public string VersionId { get; internal set; }
+
         internal PutObjectResult()
         { }
     }

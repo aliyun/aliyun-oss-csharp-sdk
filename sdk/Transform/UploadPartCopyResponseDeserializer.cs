@@ -42,6 +42,11 @@ namespace Aliyun.OSS.Transform
                 result.Length = long.Parse(xmlStream.Headers[HttpHeaders.QuotaDeltaSize]);
             }
 
+            if (xmlStream.Headers.ContainsKey("x-oss-copy-source-version-id"))
+            {
+                result.CopySourceVersionId = xmlStream.Headers["x-oss-copy-source-version-id"];
+            }
+
             return result;
         }
     }

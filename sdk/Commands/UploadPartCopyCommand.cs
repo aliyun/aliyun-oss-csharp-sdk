@@ -51,9 +51,15 @@ namespace Aliyun.OSS.Commands
                 headers[HttpHeaders.ContentLength] = _uploadPartCopyRequest.PartSize.ToString();
                 if (!string.IsNullOrEmpty(_uploadPartCopyRequest.Md5Digest))
                     headers[HttpHeaders.ContentMd5] = _uploadPartCopyRequest.Md5Digest;
-                
-                headers[HttpHeaders.CopySource] = OssUtils.BuildPartCopySource(_uploadPartCopyRequest.SourceBucket,
+
+                var copyHeaderValue = OssUtils.BuildPartCopySource(_uploadPartCopyRequest.SourceBucket,
                     _uploadPartCopyRequest.SourceKey);
+                if (!string.IsNullOrEmpty(_uploadPartCopyRequest.VersionId))
+                {
+                    copyHeaderValue = copyHeaderValue + "?versionId=" + _uploadPartCopyRequest.VersionId;
+                }
+                headers[HttpHeaders.CopySource] = copyHeaderValue;
+
                 headers[HttpHeaders.CopySourceRange] = "bytes=" + _uploadPartCopyRequest.BeginIndex
                     + "-" + (_uploadPartCopyRequest.BeginIndex + _uploadPartCopyRequest.PartSize - 1);
 

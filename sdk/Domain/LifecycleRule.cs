@@ -62,6 +62,12 @@ namespace Aliyun.OSS
         public DateTime? CreatedBeforeDate { get; set;}
 
         /// <summary>
+        /// Gets or sets the expired object delete marker.
+        /// </summary>
+        /// <value>The expired object delete marker.</value>
+        public bool? ExpiredObjectDeleteMarker { get; set; }
+
+        /// <summary>
         /// Gets or sets the transition.
         /// </summary>
         /// <value>The transition.</value>
@@ -78,6 +84,18 @@ namespace Aliyun.OSS
         /// </summary>
         /// <value>The object tags.</value>
         public Tag[] Tags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the noncurrent version expiration.
+        /// </summary>
+        /// <value>The noncurrent version expiration.</value>
+        public LifeCycleNoncurrentVersionExpiration NoncurrentVersionExpiration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the noncurrent version transition.
+        /// </summary>
+        /// <value>The noncurrent version transition.</value>
+        public LifeCycleNoncurrentVersionTransition[] NoncurrentVersionTransitions { get; set; }
 
         /// <summary>
         /// Determines whether the specified <see cref="Aliyun.OSS.LifecycleRule"/> is equal to the current <see cref="T:Aliyun.OSS.LifecycleRule"/>.
@@ -100,6 +118,8 @@ namespace Aliyun.OSS
             if (this.ExpirationTime != obj.ExpirationTime) return false;
 
             if (this.CreatedBeforeDate != obj.CreatedBeforeDate) return false;
+
+            if (this.ExpiredObjectDeleteMarker != obj.ExpiredObjectDeleteMarker) return false;
 
             if (this.Status != obj.Status) return false;
 
@@ -149,6 +169,34 @@ namespace Aliyun.OSS
                 }
             }
 
+            //NoncurrentVersionExpiration
+            if (this.NoncurrentVersionExpiration == null && obj.NoncurrentVersionExpiration != null) return false;
+
+            if (this.NoncurrentVersionExpiration != null && !this.NoncurrentVersionExpiration.Equals(obj.NoncurrentVersionExpiration))
+            {
+                return false;
+            }
+
+            //NoncurrentVersionTransitions
+            if (this.NoncurrentVersionTransitions == null && obj.NoncurrentVersionTransitions != null
+                 || this.NoncurrentVersionTransitions != null && obj.NoncurrentVersionTransitions == null)
+            {
+                return false;
+            }
+
+            if (this.NoncurrentVersionTransitions != null && obj.NoncurrentVersionTransitions != null)
+            {
+                if (this.NoncurrentVersionTransitions.Length != obj.NoncurrentVersionTransitions.Length) return false;
+
+                for (int i = 0; i < this.NoncurrentVersionTransitions.Length; i++)
+                {
+                    if (!this.NoncurrentVersionTransitions[i].Equals(obj.NoncurrentVersionTransitions[i]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
             return true;
         }
 
@@ -175,9 +223,27 @@ namespace Aliyun.OSS
                 ret &= AbortMultipartUpload.Validate();
             }
 
-            ret &= (ExpriationDays != null && CreatedBeforeDate == null || ExpriationDays == null && CreatedBeforeDate != null);
+            int flag = 0;
+            if (ExpriationDays != null)
+            {
+                flag++;
+            }
+            if (CreatedBeforeDate != null)
+            {
+                flag++;
+            }
+            if (ExpiredObjectDeleteMarker != null)
+            {
+                flag++;
+            }
+            ret &= (flag <= 1);
 
             return ret;
+        }
+
+        internal bool HasExpriation()
+        {
+            return ExpriationDays.HasValue || CreatedBeforeDate.HasValue || ExpiredObjectDeleteMarker.HasValue;
         }
 
         /// <summary>
@@ -212,7 +278,7 @@ namespace Aliyun.OSS
 
                 if (obj == null) return false;
 
-                return this.Days == obj.Days && this.CreatedBeforeDate == obj.CreatedBeforeDate;
+                return this.Days == obj.Days &&  this.CreatedBeforeDate == obj.CreatedBeforeDate;
             }
         }
 
@@ -260,6 +326,54 @@ namespace Aliyun.OSS
                 }
 
                 return LifeCycleExpiration.Equals(transition.LifeCycleExpiration);
+            }
+        }
+
+        /// <summary>
+        /// Life cycle noncurrent version expiration.
+        /// </summary>
+        public class LifeCycleNoncurrentVersionExpiration : IEquatable<LifeCycleNoncurrentVersionExpiration>
+        {
+            /// <summary>
+            /// Gets or sets the noncurrent days.
+            /// </summary>
+            /// <value>The noncurrent days.</value>
+            public int NoncurrentDays { get; set; }
+
+            public bool Equals(LifeCycleNoncurrentVersionExpiration obj)
+            {
+                if (ReferenceEquals(this, obj)) return true;
+
+                if (obj == null) return false;
+
+                return this.NoncurrentDays == obj.NoncurrentDays;
+            }
+        }
+
+        /// <summary>
+        /// Life cycle noncurrent version transition.
+        /// </summary>
+        public class LifeCycleNoncurrentVersionTransition : IEquatable<LifeCycleNoncurrentVersionTransition>
+        {
+            /// <summary>
+            /// Gets or sets the noncurrent days.
+            /// </summary>
+            /// <value>The noncurrent days.</value>
+            public int NoncurrentDays { get; set; }
+
+            /// <summary>
+            /// Gets or sets the storage class.
+            /// </summary>
+            /// <value>The storage class.</value>
+            public StorageClass StorageClass { get; set; }
+
+            public bool Equals(LifeCycleNoncurrentVersionTransition obj)
+            {
+                if (ReferenceEquals(this, obj)) return true;
+
+                if (obj == null) return false;
+
+                return this.NoncurrentDays == obj.NoncurrentDays && this.StorageClass == obj.StorageClass;
             }
         }
     }

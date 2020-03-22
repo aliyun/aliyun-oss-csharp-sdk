@@ -47,6 +47,10 @@ namespace Aliyun.OSS.Commands
                 {
                     parameters[RequestParameters.OSS_PROCESS] = _getObjectRequest.Process;
                 }
+                if (!string.IsNullOrEmpty(_getObjectRequest.VersionId))
+                {
+                    parameters.Add(RequestParameters.SUBRESOURCE_VERSIONID, _getObjectRequest.VersionId);
+                }
                 return parameters;
             }
         }

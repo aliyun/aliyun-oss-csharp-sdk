@@ -22,6 +22,11 @@ namespace Aliyun.OSS
         public string Key { get; private set; }
 
         /// <summary>
+        /// Gets or sets the version id
+        /// </summary>
+        public string VersionId { get; set; }
+
+        /// <summary>
         /// Gets or sets the tagging.
         /// </summary>
         public IList<Tag> Tags

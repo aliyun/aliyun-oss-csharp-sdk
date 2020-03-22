@@ -24,7 +24,17 @@ namespace Aliyun.OSS
         /// New object's ETag
         /// </summary>
         public string ETag { get; internal set; }
-        
+
+        /// <summary>
+        /// Gets or sets the version id.
+        /// </summary>
+        public string VersionId { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the copy source version id.
+        /// </summary>
+        public string CopySourceVersionId { get; internal set; }
+
         internal CopyObjectResult()
         { }
     }
