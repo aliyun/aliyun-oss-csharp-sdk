@@ -34,7 +34,8 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         [OneTimeTearDown]
         public static void ClassCleanup()
         {
-            OssTestUtils.CleanBucket(_ossClient, _bucketName);
+            var client = OssClientFactory.CreateOssClient();
+            OssTestUtils.CleanBucket(client, _bucketName);
         }
 
         [Test]
@@ -59,6 +60,10 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
                 var allObjects = _ossClient.ListObjects(_bucketName, key);
                 var allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
                 Assert.AreEqual(1, allObjectsSumm.Count);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(false, e.Message);
             }
             finally
             {
@@ -107,6 +112,10 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
                 allObjectsSumm = OssTestUtils.ToArray<OssObjectSummary>(allObjects.ObjectSummaries);
                 Assert.AreEqual(1, allObjectsSumm.Count);
             }
+            catch (Exception e)
+            {
+                Assert.IsTrue(false, e.Message);
+            }
             finally
             {
                 _ossClient.DeleteObject(_bucketName, key);
@@ -132,6 +141,10 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             {
                 Assert.AreEqual(e.Status, WebExceptionStatus.ProtocolError);
             }
+            catch (Exception e)
+            {
+                Assert.IsTrue(false, e.Message);
+            }
         }
 
 #if TEST_DOTNETCORE
@@ -154,6 +167,10 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             catch (WebException e)
             {
                 Assert.AreEqual(e.Status, WebExceptionStatus.ProtocolError);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(false, e.Message);
             }
         }
     }

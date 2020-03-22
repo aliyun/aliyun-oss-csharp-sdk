@@ -107,6 +107,11 @@ namespace Aliyun.OSS
         public long TrafficLimit { get; set; }
 
         /// <summary>
+        /// Gets or sets the version id
+        /// </summary>
+        public string VersionId { get; set; }
+
+        /// <summary>
         /// Creates a new instance of <see cref="GetObjectRequest" />.
         /// </summary>
         /// <param name="bucketName">bucket name</param>

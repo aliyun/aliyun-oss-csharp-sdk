@@ -272,7 +272,7 @@ namespace Aliyun.OSS
 
         virtual protected string GenerateCheckpointFile()
         {
-            return GetCheckpointFilePath(CheckpointDir, Base64(BucketName) + "_" + Base64(Key));
+            return GetCheckpointFilePath(CheckpointDir, Md5Hex(BucketName) + "_" + Md5Hex(Key));
         }
 
         protected string GetCheckpointFilePath(string checkpointDir, string checkpointFileName)
@@ -296,6 +296,21 @@ namespace Aliyun.OSS
             var base64Str = Convert.ToBase64String(bytes);
             return base64Str.Replace("+", "_").Replace("/", "-");
         }
+
+        protected string Md5Hex(string str)
+        {
+            var sBuilder = new StringBuilder();
+            var bytes = Encoding.UTF8.GetBytes(str);
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                var data = md5.ComputeHash(new MemoryStream(bytes));
+                foreach (var t in data)
+                {
+                    sBuilder.Append(t.ToString("x2"));
+                }
+            }
+            return sBuilder.ToString().ToUpperInvariant();
+        }
     }
 
     internal class ResumableCopyContext : ResumableContext
@@ -304,32 +319,46 @@ namespace Aliyun.OSS
 
         public string SourceKey { get; private set; }
 
+        public string SourceVersionId { get; private set; }
+
         override protected string GenerateCheckpointFile()
         {
-            return GetCheckpointFilePath(CheckpointDir, Base64(SourceBucketName) + "_" + Base64(SourceKey) + "_"
-                   + Base64(BucketName) + "_" + Base64(Key));
+            var srcPath = SourceBucketName + "-" + SourceKey;
+            if (!string.IsNullOrEmpty(SourceVersionId))
+            {
+                srcPath = srcPath + "?versionId=" + SourceVersionId;
+            }
+
+            var dstPath = BucketName + "-" + Key;
+
+            return GetCheckpointFilePath(CheckpointDir, "Copy_" + Md5Hex(srcPath) + "_" + Md5Hex(dstPath));
         }
 
-        public ResumableCopyContext (string sourceBucketName, string sourceKey, string destBucketName, 
+        public ResumableCopyContext (string sourceBucketName, string sourceKey, string sourceVersionId, string destBucketName, 
                                      string destKey, string checkpointDir)
             : base(destBucketName,
             destKey, checkpointDir)
         {
             SourceBucketName = sourceBucketName;
-            SourceKey = sourceKey; 
+            SourceKey = sourceKey;
+            SourceVersionId = sourceVersionId;
         }
     }
 
     internal class ResumableDownloadContext : ResumableContext
     {
-        public ResumableDownloadContext(string bucketName, string key, string checkpointDir)
+        public string VersionId { get; private set; }
+
+        public ResumableDownloadContext(string bucketName, string key, string versionId, string checkpointDir)
             :base(bucketName, key, checkpointDir)
         {
+            VersionId = versionId;
         }
 
         override protected string GenerateCheckpointFile()
         {
-            return GetCheckpointFilePath(CheckpointDir, "_Download" + "_" + Base64(BucketName) + "_" + Base64(Key));
+            var key = string.IsNullOrEmpty(VersionId) ? Key : Key + "?versionId=" + VersionId;
+            return GetCheckpointFilePath(CheckpointDir, "Download_" + Md5Hex(BucketName) + "_" + Md5Hex(key));
         }
         public long GetDownloadedBytes()
         {

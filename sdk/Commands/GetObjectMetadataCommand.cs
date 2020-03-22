@@ -36,12 +36,16 @@ namespace Aliyun.OSS.Commands
         {
             get
             {
-                var paramters = base.Parameters;
+                var parameters = base.Parameters;
                 if (_simplifiedMetadata)
                 {
-                    paramters.Add(RequestParameters.SUBRESOURCE_OBJECTMETA, null);
+                    parameters.Add(RequestParameters.SUBRESOURCE_OBJECTMETA, null);
                 }
-                return paramters;
+                if (!string.IsNullOrEmpty(_request.VersionId))
+                {
+                    parameters.Add(RequestParameters.SUBRESOURCE_VERSIONID, _request.VersionId);
+                }
+                return parameters;
             }
         }
 

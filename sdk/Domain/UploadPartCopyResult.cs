@@ -43,6 +43,11 @@ namespace Aliyun.OSS
             get { return new PartETag(PartNumber, ETag, Crc64, Length); }
         }
 
+        /// <summary>
+        /// Gets or sets the copy source version id.
+        /// </summary>
+        public string CopySourceVersionId { get; internal set; }
+
         internal UploadPartCopyResult()
         { }
     }

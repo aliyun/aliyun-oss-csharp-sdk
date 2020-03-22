@@ -163,6 +163,11 @@ namespace Aliyun.OSS
         /// </summary>
         public long TrafficLimit { get; set; }
 
+        /// <summary>
+        /// Gets or sets the version id
+        /// </summary>
+        public string VersionId { get; set; }
+
         internal GetObjectRequest ToGetObjectRequest()
         {
             GetObjectRequest request = new GetObjectRequest(BucketName, Key);
@@ -183,6 +188,8 @@ namespace Aliyun.OSS
             request.RequestPayer = RequestPayer;
 
             request.TrafficLimit = TrafficLimit;
+
+            request.VersionId = VersionId;
 
             return request;
         }

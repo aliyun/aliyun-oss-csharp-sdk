@@ -18,17 +18,16 @@ namespace Aliyun.OSS.Commands
 {
     internal class GetSymlinkCommand : OssCommand<OssSymlink>
     {
-        private readonly string _bucketName;
-        private readonly string _symlink;
+        private readonly GetSymlinkRequest _request;
 
         protected override string Bucket
         {
-            get { return _bucketName; }
+            get { return _request.BucketName; }
         }
 
         protected override string Key
         {
-            get { return _symlink; }
+            get { return _request.Key; }
         }
 
         protected override HttpMethod Method
@@ -40,31 +39,47 @@ namespace Aliyun.OSS.Commands
         {
             get
             {
-                return new Dictionary<string, string>()
+                var parameters = new Dictionary<string, string>()
                 {
                     {RequestParameters.SUBRESOURCE_SYMLINK, null}
                 };
+                if (!string.IsNullOrEmpty(_request.VersionId))
+                {
+                    parameters.Add(RequestParameters.SUBRESOURCE_VERSIONID, _request.VersionId);
+                }
+                return parameters;
+            }
+        }
+
+        protected override IDictionary<string, string> Headers
+        {
+            get
+            {
+                var headers = base.Headers;
+                if (_request.RequestPayer == RequestPayer.Requester)
+                {
+                    headers.Add(OssHeaders.OssRequestPayer, RequestPayer.Requester.ToString().ToLowerInvariant());
+                }
+                return headers;
             }
         }
 
         private GetSymlinkCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
                                   IDeserializer<ServiceResponse, OssSymlink> deserializer,
-                                  string bucketName, string symlink)
+                                  GetSymlinkRequest request)
             : base(client, endpoint, context, deserializer)
         {
-            OssUtils.CheckBucketName(bucketName);
-            OssUtils.CheckObjectKey(symlink);
-           
-            _bucketName = bucketName;
-            _symlink = symlink;
+            OssUtils.CheckBucketName(request.BucketName);
+            OssUtils.CheckObjectKey(request.Key);
+            _request = request;
         }
 
         public static GetSymlinkCommand Create(IServiceClient client, Uri endpoint,
                                                  ExecutionContext context,
                                                  IDeserializer<ServiceResponse, OssSymlink> deserializer,
-                                                 string bucketName, string symlink)
+                                                 GetSymlinkRequest request)
         {
-            return new GetSymlinkCommand(client, endpoint, context, deserializer, bucketName, symlink);
+            return new GetSymlinkCommand(client, endpoint, context, deserializer, request);
         }
     }
 }

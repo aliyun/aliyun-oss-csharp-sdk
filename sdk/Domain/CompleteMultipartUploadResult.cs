@@ -25,7 +25,7 @@ namespace Aliyun.OSS
         /// The new object' URL
         /// </summary>
         public string Location { get; internal set; }
-        
+
         internal CompleteMultipartUploadResult()
         { }
     }

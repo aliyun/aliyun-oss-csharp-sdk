@@ -107,12 +107,19 @@ namespace Aliyun.OSS.Util
         public static string GetContentType(string key, string file)
         {
             string fileType = ""; 
-            if (file != null)
+            try
             {
-                fileType = System.IO.Path.GetExtension(file);
-            } else if (key != null)
+                if (file != null)
+                {
+                    fileType = System.IO.Path.GetExtension(file);
+                }
+                else if (key != null)
+                {
+                    fileType = System.IO.Path.GetExtension(key);
+                }
+            }
+            catch
             {
-                fileType = System.IO.Path.GetExtension(key);
             }
 
             fileType = fileType.Trim().TrimStart(new char[1] { '.' }).ToLower();

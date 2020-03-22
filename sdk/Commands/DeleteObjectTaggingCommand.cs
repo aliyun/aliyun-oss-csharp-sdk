@@ -16,14 +16,13 @@ namespace Aliyun.OSS.Commands
     /// </summary>
     internal class DeleteObjectTaggingCommand : OssCommand
     {
-        private string bucketName;
-        private string key;
+        private readonly DeleteObjectTaggingRequest _request;
 
         protected override string Bucket
         {
             get
             {
-                return bucketName;
+                return _request.BucketName;
             }
         }
 
@@ -31,7 +30,7 @@ namespace Aliyun.OSS.Commands
         {
             get
             {
-                return key;
+                return _request.Key;
             }
         }
 
@@ -40,32 +39,36 @@ namespace Aliyun.OSS.Commands
             get { return HttpMethod.Delete; }
         }
 
-        private DeleteObjectTaggingCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                       string BucketName, string Key)
-            : base(client, endpoint, context)
-        {
-            bucketName = BucketName;
-            key = Key;
-        }
-
-        public static DeleteObjectTaggingCommand Create(IServiceClient client, Uri endpoint,
-                                                    ExecutionContext context,
-                                                    string bucketName, string key)
-        {
-            OssUtils.CheckBucketName(bucketName);
-            OssUtils.CheckObjectKey(key);
-            return new DeleteObjectTaggingCommand(client, endpoint, context, bucketName, key);
-        }
-
         protected override IDictionary<string, string> Parameters
         {
             get
             {
-                return new Dictionary<string, string>()
+                var parameters = new Dictionary<string, string>()
                 {
                     { RequestParameters.SUBRESOURCE_TAGGING, null }
                 };
+                if (!string.IsNullOrEmpty(_request.VersionId))
+                {
+                    parameters.Add(RequestParameters.SUBRESOURCE_VERSIONID, _request.VersionId);
+                }
+                return parameters;
             }
+        }
+
+        private DeleteObjectTaggingCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
+                                       DeleteObjectTaggingRequest request)
+            : base(client, endpoint, context)
+        {
+            _request = request;
+        }
+
+        public static DeleteObjectTaggingCommand Create(IServiceClient client, Uri endpoint,
+                                                    ExecutionContext context,
+                                                    DeleteObjectTaggingRequest request)
+        {
+            OssUtils.CheckBucketName(request.BucketName);
+            OssUtils.CheckObjectKey(request.Key);
+            return new DeleteObjectTaggingCommand(client, endpoint, context, request);
         }
     }
 }

@@ -14,14 +14,13 @@ namespace Aliyun.OSS.Commands
 {
     internal class GetObjectTaggingCommand : OssCommand<GetObjectTaggingResult>
     {
-        private string bucketName;
-        private string key;
+        private readonly GetObjectTaggingRequest _request;
 
         protected override string Bucket
         {
             get
             {
-                return bucketName;
+                return _request.BucketName;
             }
         }
 
@@ -29,36 +28,42 @@ namespace Aliyun.OSS.Commands
         {
             get
             {
-                return key;
+                return _request.Key;
             }
         }
 
         private GetObjectTaggingCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                      string BucketName, string Key, IDeserializer<ServiceResponse, GetObjectTaggingResult> deserializer)
+                                      IDeserializer<ServiceResponse, GetObjectTaggingResult> deserializer,
+                                      GetObjectTaggingRequest request)
            : base(client, endpoint, context, deserializer)
         {
-            bucketName = BucketName;
-            key = Key;
+            _request = request;
         }
 
         public static GetObjectTaggingCommand Create(IServiceClient client, Uri endpoint,
                                                    ExecutionContext context,
-                                                   string bucketName,  string key)
+                                                   GetObjectTaggingRequest request)
         {
-            OssUtils.CheckBucketName(bucketName);
-            OssUtils.CheckObjectKey(key);
-            return new GetObjectTaggingCommand(client, endpoint, context, bucketName, key,
-                                           DeserializerFactory.GetFactory().CreateGetObjectTaggingResultDeserializer());
+            OssUtils.CheckBucketName(request.BucketName);
+            OssUtils.CheckObjectKey(request.Key);
+            return new GetObjectTaggingCommand(client, endpoint, context,
+                                           DeserializerFactory.GetFactory().CreateGetObjectTaggingResultDeserializer(),
+                                           request);
         }
 
         protected override IDictionary<string, string> Parameters
         {
             get
             {
-                return new Dictionary<string, string>()
+                var parameters =  new Dictionary<string, string>()
                 {
                     { RequestParameters.SUBRESOURCE_TAGGING, null }
                 };
+                if (!string.IsNullOrEmpty(_request.VersionId))
+                {
+                    parameters.Add(RequestParameters.SUBRESOURCE_VERSIONID, _request.VersionId);
+                }
+                return parameters;
             }
         }
     }

@@ -148,6 +148,59 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             _ossPayerClient.DeleteObject(delReqeust);
 
             Assert.IsFalse(_ossClient.DoesObjectExist(_bucketName, key));
+
+            //delete objects
+            var keys = new List<string>();
+            keys.Add(key);
+            var delsReqeust = new DeleteObjectsRequest(_bucketName, keys);
+            Assert.AreEqual(delsReqeust.RequestPayer, RequestPayer.BucketOwner);
+            try
+            {
+                _ossPayerClient.DeleteObjects(delsReqeust);
+                Assert.Fail("should not here.");
+            }
+            catch (OssException e)
+            {
+                Assert.AreEqual(e.ErrorCode, "AccessDenied");
+            }
+
+            delsReqeust.RequestPayer = RequestPayer.Requester;
+            _ossPayerClient.DeleteObjects(delsReqeust);
+
+            //delete object versions
+            var objects = new List<ObjectIdentifier>();
+            objects.Add(new ObjectIdentifier(key));
+            var delvsReqeust = new DeleteObjectVersionsRequest(_bucketName, objects);
+            Assert.AreEqual(delvsReqeust.RequestPayer, RequestPayer.BucketOwner);
+            try
+            {
+                _ossPayerClient.DeleteObjectVersions(delvsReqeust);
+                Assert.Fail("should not here.");
+            }
+            catch (OssException e)
+            {
+                Assert.AreEqual(e.ErrorCode, "AccessDenied");
+            }
+
+            delvsReqeust.RequestPayer = RequestPayer.Requester;
+            _ossPayerClient.DeleteObjectVersions(delvsReqeust);
+
+
+            //list objets
+            var lsRequest = new ListObjectsRequest(_bucketName);
+            Assert.AreEqual(lsRequest.RequestPayer, RequestPayer.BucketOwner);
+            try
+            {
+                _ossPayerClient.ListObjects(lsRequest);
+                Assert.Fail("should not here.");
+            }
+            catch (OssException e)
+            {
+                Assert.AreEqual(e.ErrorCode, "AccessDenied");
+            }
+
+            lsRequest.RequestPayer = RequestPayer.Requester;
+            _ossPayerClient.ListObjects(lsRequest);
         }
 
         [Test]
@@ -571,15 +624,21 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             Assert.IsTrue(_ossClient.DoesObjectExist(_bucketName, symlink));
 
             //
+            var gRequest = new GetSymlinkRequest(_bucketName, symlink);
+            Assert.AreEqual(gRequest.RequestPayer, RequestPayer.BucketOwner);
             try
             {
-                OssSymlink ossSymlink = _ossPayerClient.GetSymlink(_bucketName, symlink);
+                _ossPayerClient.GetSymlink(gRequest);
                 Assert.Fail("should not here.");
             }
             catch (OssException e)
             {
                 Assert.AreEqual(e.ErrorCode, "AccessDenied");
             }
+
+            gRequest.RequestPayer = RequestPayer.Requester;
+            OssSymlink ossSymlink = _ossPayerClient.GetSymlink(gRequest);
+            Assert.AreEqual(ossSymlink.Target, key);
         }
 
         [Test]
