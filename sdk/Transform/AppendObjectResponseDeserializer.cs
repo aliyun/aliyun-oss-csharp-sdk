@@ -31,6 +31,11 @@ namespace Aliyun.OSS.Transform
                 result.HashCrc64Ecma = ulong.Parse(xmlStream.Headers[HttpHeaders.HashCrc64Ecma]);
             }
 
+            if (xmlStream.Headers.ContainsKey(HttpHeaders.VersionId))
+            {
+                result.VersionId = xmlStream.Headers[HttpHeaders.VersionId];
+            }
+
             DeserializeGeneric(xmlStream, result);
 
             return result;

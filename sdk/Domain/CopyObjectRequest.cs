@@ -86,6 +86,11 @@ namespace Aliyun.OSS
         public long TrafficLimit { get; set; }
 
         /// <summary>
+        /// Gets or sets the source key version id
+        /// </summary>
+        public string SourceVersionId { get; set; }
+
+        /// <summary>
         /// Creates a new <see cref="CopyObjectRequest" /> instance
         /// </summary>
         /// <param name="sourceBucketName">source object's bucket name</param>
@@ -107,6 +112,10 @@ namespace Aliyun.OSS
         internal void Populate(IDictionary<string, string> headers)
         {
             var copyHeaderValue = OssUtils.BuildCopyObjectSource(SourceBucketName, SourceKey);
+            if (!string.IsNullOrEmpty(SourceVersionId))
+            {
+                copyHeaderValue = copyHeaderValue + "?versionId=" + SourceVersionId;
+            }
             headers.Add(OssHeaders.CopyObjectSource, copyHeaderValue);
 
             if (ModifiedSinceConstraint != null)

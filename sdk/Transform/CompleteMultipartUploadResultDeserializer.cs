@@ -43,6 +43,11 @@ namespace Aliyun.OSS.Transform
                 completeMultipartUploadResult.ETag = OssUtils.TrimQuotes(result.ETag);
             }
 
+            if (xmlStream.Headers.ContainsKey(HttpHeaders.VersionId))
+            {
+                completeMultipartUploadResult.VersionId = xmlStream.Headers[HttpHeaders.VersionId];
+            }
+
             DeserializeGeneric(xmlStream, completeMultipartUploadResult);
 
             return completeMultipartUploadResult;

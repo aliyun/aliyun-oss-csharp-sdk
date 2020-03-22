@@ -8,6 +8,7 @@ using System.IO;
 using System.Collections.Generic;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Model;
+using Aliyun.OSS.Util;
 
 namespace Aliyun.OSS.Transform
 {
@@ -20,7 +21,11 @@ namespace Aliyun.OSS.Transform
         public override RestoreObjectResult Deserialize(ServiceResponse xmlStream)
         {
             RestoreObjectResult result = new RestoreObjectResult();
-            this.DeserializeGeneric(xmlStream, result);
+            if (xmlStream.Headers.ContainsKey(HttpHeaders.VersionId))
+            {
+                result.VersionId = xmlStream.Headers[HttpHeaders.VersionId];
+            }
+            DeserializeGeneric(xmlStream, result);
             return result;
         }
     }

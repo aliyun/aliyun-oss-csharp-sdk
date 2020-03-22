@@ -28,6 +28,11 @@ namespace Aliyun.OSS
         /// </summary>
         public ulong HashCrc64Ecma { get; internal set; }
 
+        /// <summary>
+        /// Gets or sets the version id.
+        /// </summary>
+        public string VersionId { get; internal set; }
+
         internal AppendObjectResult()
         { }
     }

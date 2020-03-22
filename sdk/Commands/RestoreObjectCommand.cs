@@ -43,6 +43,10 @@ namespace Aliyun.OSS.Commands
             {
                 var parameters = new Dictionary<string, string>();
                 parameters[RequestParameters.SUBRESOURCE_RESTORE] = null;
+                if (!string.IsNullOrEmpty(_request.VersionId))
+                {
+                    parameters.Add(RequestParameters.SUBRESOURCE_VERSIONID, _request.VersionId);
+                }
                 return parameters;
             }
         }

@@ -16,7 +16,7 @@ using Aliyun.OSS.Transform;
 
 namespace Aliyun.OSS.Commands
 {
-    internal class CreateSymlinkCommand : OssCommand
+    internal class CreateSymlinkCommand : OssCommand <CreateSymlinkResult>
     {
         private readonly ObjectMetadata _objectMetadata;
         private readonly CreateSymlinkRequest _request;
@@ -66,8 +66,9 @@ namespace Aliyun.OSS.Commands
         }
 
         private CreateSymlinkCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
+                                     IDeserializer<ServiceResponse, CreateSymlinkResult> deserializer,
                                      CreateSymlinkRequest request)
-            : base(client, endpoint, context)
+            : base(client, endpoint, context, deserializer)
         {
             OssUtils.CheckBucketName(request.BucketName);
             OssUtils.CheckObjectKey(request.Symlink);
@@ -81,8 +82,9 @@ namespace Aliyun.OSS.Commands
         }
 
         private CreateSymlinkCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
+                                     IDeserializer<ServiceResponse, CreateSymlinkResult> deserializer,
                                      CreateSymlinkRequest request, ObjectMetadata metadata)
-            :this(client, endpoint, context, request)
+            :this(client, endpoint, context, deserializer, request)
         {
             _objectMetadata = metadata;
         }
@@ -90,7 +92,9 @@ namespace Aliyun.OSS.Commands
         public static CreateSymlinkCommand Create(IServiceClient client, Uri endpoint,
                                                  ExecutionContext context, CreateSymlinkRequest request)
         {
-            return new CreateSymlinkCommand(client, endpoint, context, request, request.ObjectMetadata);
+            return new CreateSymlinkCommand(client, endpoint, context,
+                DeserializerFactory.GetFactory().CreateCreateSymlinkResultDeserializer(), 
+                request, request.ObjectMetadata);
         }
     }
 }

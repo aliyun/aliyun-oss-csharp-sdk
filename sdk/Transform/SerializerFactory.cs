@@ -88,6 +88,16 @@ namespace Aliyun.OSS.Transform
         {
             return new SetBucketEncryptionRequestSerializer(CreateContentSerializer<ServerSideEncryptionRule>());
         }
+
+        public ISerializer<SetBucketVersioningRequest, Stream> CreateSetBucketVersioningRequestSerializer()
+        {
+            return new SetBucketVersioningRequestSerializer(CreateContentSerializer<VersioningConfiguration>());
+        }
+
+        public ISerializer<DeleteObjectVersionsRequest, Stream> CreateDeleteObjectVersionsRequestSerializer()
+        {
+            return new DeleteObjectVersionsRequestSerializer(CreateContentSerializer<DeleteObjectVersionsRequestModel>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory

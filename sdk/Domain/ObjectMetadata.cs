@@ -265,6 +265,18 @@ namespace Aliyun.OSS
         }
 
         /// <summary>
+        /// Gets the object version id
+        /// </summary>
+        public string VersionId
+        {
+            get
+            {
+                return _metadata.ContainsKey(HttpHeaders.VersionId)
+                    ? _metadata[HttpHeaders.VersionId] as string : null;
+            }
+        }
+
+        /// <summary>
         /// Creates a new instance of <see cref="ObjectMetadata" />.
         /// </summary>
         public ObjectMetadata()

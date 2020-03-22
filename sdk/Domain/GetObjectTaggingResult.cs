@@ -27,5 +27,10 @@ namespace Aliyun.OSS
         {
             get { return tags; }
         }
+
+        /// <summary>
+        /// Gets or sets the version id.
+        /// </summary>
+        public string VersionId { get; internal set; }
     }
 }

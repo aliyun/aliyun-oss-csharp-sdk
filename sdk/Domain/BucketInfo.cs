@@ -86,6 +86,12 @@ namespace Aliyun.OSS
         public BucketServerSideEncryptionRule ServerSideEncryptionRule { get; set; }
 
         /// <summary>
+        /// Gets or sets versioning status.
+        /// </summary>
+        /// <value>bucket versioning status.</value>
+        public VersioningStatus Versioning { get; set; }
+
+        /// <summary>
         /// Creats a new <see cref="Bucket" /> instance with the specified name.
         /// </summary>
         /// <param name="name">Bucket name</param>
