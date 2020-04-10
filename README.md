@@ -12,7 +12,7 @@
  - OSS C# SDK[Online Documentation](http://gosspublic.alicdn.com/AliyunNetSDK/international/apidocs/latest/index.html). 
 
 ## Version
- - Current version: 2.9.1.
+ - Current version: 2.10.0.
 
 ## Run environment
 
