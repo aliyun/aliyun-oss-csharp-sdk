@@ -1,4 +1,18 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
+## 版本号：2.10.0  日期：2020/04/10
+### 变更内容
+- 增加：Bucket Policy 接口
+- 增加：Bucket Tagging 接口
+- 增加：Bucket Encryption 接口
+- 增加：创建Bucket时，支持容灾类型 和 权限 参数
+- 增加：Object Tagging 接口
+- 增加：Request Payment 接口，支持访问者付费请求
+- 增加：单连接限速功能
+- 增加：GetSimplifiedObjectMetadata 接口
+- 增加：多版本功能
+- 优化：SetBucketWebsite 接口 支持设置xml配置
+
+
 ## 版本号：2.9.1  日期：2019/02/28
 ### 变更内容
 - 优化：适配.net core 2.1/2.2 平台 
