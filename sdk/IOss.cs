@@ -275,7 +275,7 @@ namespace Aliyun.OSS
         /// <summary>
         /// Sets <see cref="Bucket" /> bucket tagging
         /// </summary>
-        /// <param name="SetBucketTaggingRequest"><see cref="SetBucketTaggingRequest"/> instance</param>
+        /// <param name="setBucketTaggingRequest"><see cref="SetBucketTaggingRequest"/> instance</param>
         void SetBucketTagging(SetBucketTaggingRequest setBucketTaggingRequest);
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace Aliyun.OSS
         /// <summary>
         /// Sets <see cref="Bucket" /> bucket request payment
         /// </summary>
-        /// <param name="SetBucketRequestPaymentRequest"><see cref="SetBucketRequestPaymentRequest"/> instance</param>
+        /// <param name="setBucketRequestPaymentRequest"><see cref="SetBucketRequestPaymentRequest"/> instance</param>
         void SetBucketRequestPayment(SetBucketRequestPaymentRequest setBucketRequestPaymentRequest);
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace Aliyun.OSS
         /// Gets <see cref="Bucket" /> bucket encryption rule
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
-        /// <returns><see cref="GetBucketEncryptionResult"/> instance</returns>
+        /// <returns><see cref="BucketEncryptionResult"/> instance</returns>
         BucketEncryptionResult GetBucketEncryption(string bucketName);
 
         /// <summary>
@@ -902,7 +902,7 @@ namespace Aliyun.OSS
         /// Restores the object.
         /// </summary>
         /// <returns>The object.</returns>
-        /// <param name="RestoreObjectRequest"></param>
+        /// <param name="restoreObjectRequest"></param>
         RestoreObjectResult RestoreObject(RestoreObjectRequest restoreObjectRequest);
 
         /// <summary>
