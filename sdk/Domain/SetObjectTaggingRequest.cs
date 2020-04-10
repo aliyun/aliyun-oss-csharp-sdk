@@ -58,7 +58,7 @@ namespace Aliyun.OSS
         /// <summary>
         /// Adds a tag
         /// </summary>
-        /// <param name="Tag">tag</param>
+        /// <param name="tag">tag</param>
         public void AddTag(Tag tag)
         {
             if (tag == null)
