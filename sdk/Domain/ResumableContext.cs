@@ -134,7 +134,7 @@ namespace Aliyun.OSS
         {
             get
             {
-                return GenerateCheckpointFile();
+                return string.IsNullOrEmpty(CheckpointDir) ? "" : GenerateCheckpointFile();
             }
         }
 
