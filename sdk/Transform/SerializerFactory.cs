@@ -98,6 +98,11 @@ namespace Aliyun.OSS.Transform
         {
             return new DeleteObjectVersionsRequestSerializer(CreateContentSerializer<DeleteObjectVersionsRequestModel>());
         }
+		
+		public ISerializer<SetBucketInventoryConfigurationRequest, Stream> CreateSetBucketInventoryConfigurationRequestSerializer()
+        {
+            return new SetBucketInventoryConfigurationRequestSerializer(CreateContentSerializer<InventoryConfiguration>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory

@@ -370,6 +370,50 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
+        public void SetBucketInventoryConfiguration(SetBucketInventoryConfigurationRequest setBucketInventoryConfigurationRequest)
+        {
+            ThrowIfNullRequest(setBucketInventoryConfigurationRequest);
+            var cmd = SetBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Put, setBucketInventoryConfigurationRequest.BucketName, null),
+                                                    setBucketInventoryConfigurationRequest.BucketName,
+                                                    setBucketInventoryConfigurationRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DeleteBucketInventoryConfiguration(string bucketName,string id)
+        {
+            var cmd = DeleteBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Delete, bucketName, null),
+                                                    bucketName,id);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public BucketInventoryConfigurationResult GetBucketInventoryConfiguration(string bucketName,string id)
+        {
+            var cmd = GetBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Get, bucketName, null),
+                                                    bucketName,id);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public ListBucketInventoryConfigurationResult ListBucketInventoryConfiguration(string bucketName, string continuationToken)
+        {
+            var cmd = ListBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Get, bucketName, null),
+                                                    bucketName, continuationToken);
+            return cmd.Execute();
+        }
+		
+        /// <inheritdoc/>
         public BucketLoggingResult GetBucketLogging(string bucketName)
         {
             var cmd = GetBucketLoggingCommand.Create(_serviceClient, _endpoint,

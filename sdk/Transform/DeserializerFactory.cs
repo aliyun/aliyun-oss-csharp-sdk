@@ -227,6 +227,16 @@ namespace Aliyun.OSS.Transform
         {
             return new DeleteObjectResultDeserializer(CreateContentDeserializer<Stream>());
         }
+		
+		public IDeserializer<ServiceResponse, BucketInventoryConfigurationResult> CreateGetBucketInventoryConfigurationResultDeserializer()
+        {
+            return new GetBucketInventoryConfigurationResultDeserializer(CreateContentDeserializer<InventoryConfiguration>());
+        }
+
+        public IDeserializer<ServiceResponse, ListBucketInventoryConfigurationResult> CreateListBucketInventoryConfigurationResultDeserializer()
+        {
+            return new ListBucketInventoryConfigurationResultDeserializer(CreateContentDeserializer<ListInventoryConfigurationModel>());
+        }
     }
 
     internal class XmlDeserializerFactory : DeserializerFactory
