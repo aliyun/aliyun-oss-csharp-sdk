@@ -267,6 +267,7 @@
     <Compile Include="Domain\LiveRecord.cs" />
     <Compile Include="Domain\Tag.cs" />
     <Compile Include="Enums\DataRedundancyType.cs" />
+    <Compile Include="Enums\TierType.cs" />
     <Compile Include="Enums\VersioningStatus.cs" />
     <Compile Include="Enums\RequestPayer.cs" />
     <Compile Include="Model\DeleteObjectsResultModel.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Model\LiveChannelStat.cs" />
     <Compile Include="Model\LiveChannelConfiguration.cs" />
     <Compile Include="Model\CreateLiveChannelResultModel.cs" />
+    <Compile Include="Model\RestoreObjectRequestModel.cs" />
     <Compile Include="Model\VersioningConfiguration.cs" />
     <Compile Include="Model\ServerSideEncryptionRule.cs" />
     <Compile Include="Model\RequestPaymentConfiguration.cs" />
@@ -313,6 +315,7 @@
     <Compile Include="Transform\GetObjectTaggingResultDeserializer.cs" />
     <Compile Include="Transform\ListLiveChannelResultDeserializer.cs" />
     <Compile Include="Transform\ListObjectVersionsResponseDeserializer.cs" />
+    <Compile Include="Transform\RestoreObjectRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketEncryptionRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketVersioningRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketRequestPaymentRequestSerializer.cs" />

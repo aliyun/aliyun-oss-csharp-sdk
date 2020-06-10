@@ -2354,6 +2354,53 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 }
             }
         }
+
+        [Test]
+        public void RestoreObjectWithXmlTest()
+        {
+            var client = new OssClient("http://oss-ap-southeast-2.aliyuncs.com", Config.AccessKeyId, Config.AccessKeySecret);
+
+            //get a random bucketName
+            var bucketName = OssTestUtils.GetBucketName(_className);
+
+            //assert bucket does not exist
+            Assert.IsFalse(OssTestUtils.BucketExists(client, bucketName),
+                string.Format("Bucket {0} should not exist before creation", bucketName));
+
+            //create a new bucket
+            var request = new CreateBucketRequest(bucketName, StorageClass.ColdArchive, CannedAccessControlList.Private);
+            client.CreateBucket(request);
+
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                //upload the object
+                client.PutObject(bucketName, key, new MemoryStream());
+
+                var roRequest = new RestoreObjectRequest(bucketName, key);
+                roRequest.Days = 2;
+                roRequest.Tier = TierType.Expedited;
+                RestoreObjectResult result = client.RestoreObject(roRequest);
+                Assert.IsTrue(result.HttpStatusCode == HttpStatusCode.Accepted);
+
+                try
+                {
+                    result = client.RestoreObject(roRequest);
+                }
+                catch (OssException e)
+                {
+                    Assert.AreEqual(e.ErrorCode, "RestoreAlreadyInProgress");
+                }
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(client, bucketName, key))
+                {
+                    client.DeleteObject(bucketName, key);
+                }
+            }
+        }
         #endregion
 
         #region Symlink tests

@@ -159,6 +159,7 @@
     <Compile Include="Domain\Tag.cs" />
     <Compile Include="Enums\DataRedundancyType.cs" />
     <Compile Include="Enums\RequestPayer.cs" />
+    <Compile Include="Enums\TierType.cs" />
     <Compile Include="Enums\VersioningStatus.cs" />
     <Compile Include="Model\BucketStorageCapacityModel.cs" />
     <Compile Include="Model\CreateLiveChannelResultModel.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Model\LiveChannelHistory.cs" />
     <Compile Include="Model\LiveChannelStat.cs" />
     <Compile Include="Model\RequestPaymentConfiguration.cs" />
+    <Compile Include="Model\RestoreObjectRequestModel.cs" />
     <Compile Include="Model\ServerSideEncryptionRule.cs" />
     <Compile Include="Model\StreamUploadProgressArgs.cs" />
     <Compile Include="Common\Internal\WrapperStream.cs" />
@@ -201,6 +203,7 @@
 	<Compile Include="Transform\GetVodPlaylistResultDeserializer.cs" />
 	<Compile Include="Transform\ListLiveChannelResultDeserializer.cs" />
 	<Compile Include="Transform\ListObjectVersionsResponseDeserializer.cs" />
+	<Compile Include="Transform\RestoreObjectRequestSerializer.cs" />
 	<Compile Include="Transform\SetBucketEncryptionRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketRequestPaymentRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketStorageCapacityRequestSerializer.cs" />

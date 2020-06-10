@@ -103,6 +103,11 @@ namespace Aliyun.OSS.Transform
         {
             return new CreateLiveChannelRequestSerializer(CreateContentSerializer<LiveChannelConfiguration>());
         }
+
+        public ISerializer<RestoreObjectRequest, Stream> CreateRestoreObjectRequestSerializer()
+        {
+            return new RestoreObjectRequestSerializer(CreateContentSerializer<RestoreRequestModel>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory

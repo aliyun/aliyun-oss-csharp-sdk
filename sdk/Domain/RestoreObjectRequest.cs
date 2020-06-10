@@ -8,6 +8,10 @@ namespace Aliyun.OSS
     /// </summary>
     public class RestoreObjectRequest
     {
+        private int _day = 1;
+        private TierType _tierType = TierType.Standard;
+        private bool _defaultParameter = true;
+
         /// <summary>
         /// Gets or sets the bucket name
         /// </summary>
@@ -29,7 +33,25 @@ namespace Aliyun.OSS
         public string VersionId { get; set; }
 
         /// <summary>
-        /// Delete a new instance of <see cref="RestoreObjectRequest" />
+        /// Gets or sets the Days
+        /// </summary>
+        public int Days
+        {
+            get { return _day; }
+            set { _day = value; _defaultParameter = false; }
+        }
+
+        /// <summary>
+        /// Gets or sets the TierType
+        /// </summary>
+        public TierType Tier
+        {
+            get { return _tierType; }
+            set { _tierType = value; _defaultParameter = false; }
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="RestoreObjectRequest" />
         /// </summary>
         /// <param name="bucketName">bucket name</param>
         /// <param name="key">object key</param>
@@ -37,6 +59,14 @@ namespace Aliyun.OSS
         {
             BucketName = bucketName;
             Key = key;
+        }
+
+        /// <summary>
+        /// Flag of using default parameters.
+        /// </summary>
+        internal bool IsUseDefaultParameter()
+        {
+            return _defaultParameter;
         }
     }
 }

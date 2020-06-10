@@ -11,6 +11,7 @@ using Aliyun.OSS.Util;
 using Aliyun.OSS.Transform;
 using Aliyun.OSS.Properties;
 using Aliyun.OSS.Model;
+using System.IO;
 
 namespace Aliyun.OSS.Commands
 {
@@ -35,6 +36,15 @@ namespace Aliyun.OSS.Commands
         protected override HttpMethod Method
         {
             get { return HttpMethod.Post; }
+        }
+
+        protected override Stream Content
+        {
+            get
+            {
+                return _request.IsUseDefaultParameter() ? null : SerializerFactory.GetFactory().CreateRestoreObjectRequestSerializer()
+                    .Serialize(_request);
+            }
         }
 
         protected override IDictionary<string, string> Parameters
