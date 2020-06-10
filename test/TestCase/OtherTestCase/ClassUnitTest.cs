@@ -3026,6 +3026,55 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         }
 
         [Test]
+        public void RestoreObjectRequestSerializerTest()
+        {
+            var factory = SerializerFactory.GetFactory("text/xml");
+            var serializer = factory.CreateRestoreObjectRequestSerializer();
+
+            var request = new RestoreObjectRequest("bucket", "object");
+            var result = serializer.Serialize(request);
+            var reader = new StreamReader(result);
+            var str = reader.ReadToEnd();
+            Assert.AreEqual(request.IsUseDefaultParameter(), true);
+            Assert.AreEqual(str.Contains("<Days>1</Days>"), true);
+            Assert.AreEqual(str.Contains("<JobParameters>\r\n    <Tier>Standard</Tier>\r\n  </JobParameters>"), true);
+
+            request = new RestoreObjectRequest("bucket", "object")
+            {
+                Days = 10,
+                Tier = TierType.Bulk
+            };
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            str = reader.ReadToEnd();
+            Assert.AreEqual(request.IsUseDefaultParameter(), false);
+            Assert.AreEqual(str.Contains("<Days>10</Days>"), true);
+            Assert.AreEqual(str.Contains("<JobParameters>\r\n    <Tier>Bulk</Tier>\r\n  </JobParameters>"), true);
+
+            request = new RestoreObjectRequest("bucket", "object")
+            {
+                Days = 9,
+            };
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            str = reader.ReadToEnd();
+            Assert.AreEqual(request.IsUseDefaultParameter(), false);
+            Assert.AreEqual(str.Contains("<Days>9</Days>"), true);
+            Assert.AreEqual(str.Contains("<JobParameters>\r\n    <Tier>Standard</Tier>\r\n  </JobParameters>"), true);
+
+            request = new RestoreObjectRequest("bucket", "object")
+            {
+                Tier = TierType.Expedited
+            };
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            str = reader.ReadToEnd();
+            Assert.AreEqual(request.IsUseDefaultParameter(), false);
+            Assert.AreEqual(str.Contains("<Days>1</Days>"), true);
+            Assert.AreEqual(str.Contains("<JobParameters>\r\n    <Tier>Expedited</Tier>\r\n  </JobParameters>"), true);
+        }
+
+        [Test]
         public void XmlStreamSerializerTest()
         {
             var streamSerializer = new XmlStreamSerializer<ResponseMock>();
