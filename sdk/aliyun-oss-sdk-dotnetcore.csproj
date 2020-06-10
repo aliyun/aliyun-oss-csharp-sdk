@@ -136,6 +136,7 @@
     <Compile Include="Model\DeleteObjectsResultModel.cs" />
     <Compile Include="Model\ListVersionsResult.cs" />
     <Compile Include="Model\RequestPaymentConfiguration.cs" />
+    <Compile Include="Model\RestoreObjectRequestModel.cs" />
     <Compile Include="Model\ServerSideEncryptionRule.cs" />
     <Compile Include="Model\StreamUploadProgressArgs.cs" />
     <Compile Include="Common\Internal\WrapperStream.cs" />
@@ -162,6 +163,7 @@
 	<Compile Include="Transform\GetBucketVersioningResultDeserializer.cs" />
 	<Compile Include="Transform\GetObjectTaggingResultDeserializer.cs" />
 	<Compile Include="Transform\ListObjectVersionsResponseDeserializer.cs" />
+	<Compile Include="Transform\RestoreObjectRequestSerializer.cs" />
 	<Compile Include="Transform\SetBucketEncryptionRequestSerializer.cs" />
 	<Compile Include="Transform\SetBucketRequestPaymentRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketStorageCapacityRequestSerializer.cs" />

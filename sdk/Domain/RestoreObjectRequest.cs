@@ -1,5 +1,6 @@
 ﻿using Aliyun.OSS.Util;
 using System.Collections.Generic;
+using Aliyun.OSS.Model;
 
 namespace Aliyun.OSS
 {
@@ -27,6 +28,16 @@ namespace Aliyun.OSS
         /// Gets or sets the version id
         /// </summary>
         public string VersionId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Days
+        /// </summary>
+        public int? Days { get; set; }
+
+        /// <summary>
+        /// Gets or sets the TierType
+        /// </summary>
+        public TierType Tier { get; set; }
 
         /// <summary>
         /// Delete a new instance of <see cref="RestoreObjectRequest" />
