@@ -98,6 +98,10 @@ namespace Aliyun.OSS.Transform
         {
             return new DeleteObjectVersionsRequestSerializer(CreateContentSerializer<DeleteObjectVersionsRequestModel>());
         }
+        public ISerializer<RestoreObjectRequest, Stream> CreateRestoreObjectRequestSerializer()
+        {
+            return new RestoreObjectRequestSerializer(CreateContentSerializer<RestoreRequestModel>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory
