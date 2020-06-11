@@ -99,6 +99,7 @@
     <Compile Include="Domain\BucketLocationResult.cs" />
     <Compile Include="Domain\CreateBucketRequest.cs" />
     <Compile Include="Domain\CreateSymlinkResult.cs" />
+    <Compile Include="Domain\DeleteBucketTaggingRequest.cs" />
     <Compile Include="Domain\DeletedObjectSummary.cs" />
     <Compile Include="Domain\DeleteMarkerSummary.cs" />
     <Compile Include="Domain\DeleteObjectRequest.cs" />
