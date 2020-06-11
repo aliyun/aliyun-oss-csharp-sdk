@@ -204,6 +204,7 @@
     <Compile Include="Common\Internal\PartialWrapperStream.cs" />
     <Compile Include="Common\Internal\StreamReadTracker.cs" />
     <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
+    <Compile Include="Domain\DeleteBucketTaggingRequest.cs" />
     <Compile Include="Domain\DeleteObjectResult.cs" />
     <Compile Include="Domain\CreateSymlinkResult.cs" />
     <Compile Include="Domain\BucketEncryptionResult.cs" />

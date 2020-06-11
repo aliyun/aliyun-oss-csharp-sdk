@@ -206,5 +206,51 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
                 Assert.IsTrue(true, e.Message);
             }
         }
+
+        [Test]
+        public void DeleteBucketTaggingByKeyTest()
+        {
+            var setRequest = new SetBucketTaggingRequest(_bucketName);
+
+            var tag1 = new Tag
+            {
+                Key = "tag1",
+                Value = "value1"
+            };
+
+            var tag2 = new Tag
+            {
+                Key = "tag2",
+                Value = "value2"
+            };
+
+            var tags = new List<Tag>();
+            tags.Add(tag1);
+            tags.Add(tag2);
+
+            setRequest.Tags = tags;
+
+            _ossClient.SetBucketTagging(setRequest);
+
+            var tags1 = new List<Tag>();
+            tags1.Add(tag1);
+
+            var delRequest = new DeleteBucketTaggingRequest(_bucketName, tags1);
+            _ossClient.DeleteBucketTagging(delRequest);
+
+            var getResult = _ossClient.GetBucketTagging(_bucketName);
+
+            Assert.AreEqual(getResult.Tags.Count, 1);
+            Assert.AreEqual(getResult.Tags[0].Key, tag2.Key);
+            Assert.AreEqual(getResult.Tags[0].Value, tag2.Value);
+
+            var delRequest1 = new DeleteBucketTaggingRequest(_bucketName, tags);
+            _ossClient.DeleteBucketTagging(delRequest1);
+
+            getResult = _ossClient.GetBucketTagging(_bucketName);
+            Assert.AreEqual(getResult.Tags.Count, 0);
+
+        }
+
     }
-}
+    }

@@ -531,9 +531,22 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public void DeleteBucketTagging(string bucketName)
         {
+            var request = new DeleteBucketTaggingRequest(bucketName);
             var cmd = DeleteBucketTaggingCommand.Create(_serviceClient, _endpoint,
                                                    CreateContext(HttpMethod.Delete, bucketName, null),
-                                                   bucketName);
+                                                   request);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DeleteBucketTagging(DeleteBucketTaggingRequest deleteBucketTaggingRequest)
+        {
+            var cmd = DeleteBucketTaggingCommand.Create(_serviceClient, _endpoint,
+                                                   CreateContext(HttpMethod.Delete, deleteBucketTaggingRequest.BucketName, null),
+                                                   deleteBucketTaggingRequest);
             using (cmd.Execute())
             {
                 // Do nothing
