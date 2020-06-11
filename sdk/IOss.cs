@@ -285,6 +285,12 @@ namespace Aliyun.OSS
         void DeleteBucketTagging(string bucketName);
 
         /// <summary>
+        /// Deletes the bucket's tagging.
+        /// </summary>
+        /// <param name="deleteBucketTaggingRequest">DeleteBucketTaggingRequest.</param>
+        void DeleteBucketTagging(DeleteBucketTaggingRequest deleteBucketTaggingRequest);
+
+        /// <summary>
         /// Gets <see cref="Bucket" /> bucket tagging
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>

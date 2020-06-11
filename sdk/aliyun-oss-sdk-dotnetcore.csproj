@@ -109,6 +109,7 @@
     <Compile Include="Domain\CreateBucketRequest.cs" />
     <Compile Include="Domain\CreateLiveChannelResult.cs" />
     <Compile Include="Domain\CreateSymlinkResult.cs" />
+    <Compile Include="Domain\DeleteBucketTaggingRequest.cs" />
     <Compile Include="Domain\DeletedObjectSummary.cs" />
     <Compile Include="Domain\DeleteLiveChannelRequest.cs" />
     <Compile Include="Domain\DeleteMarkerSummary.cs" />

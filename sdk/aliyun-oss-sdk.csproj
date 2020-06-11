@@ -229,6 +229,7 @@
     <Compile Include="Domain\LiveChannel.cs" />
     <Compile Include="Domain\PostVodPlaylistRequest.cs" />
     <Compile Include="Domain\SetLiveChannelStatusRequest.cs" />
+    <Compile Include="Domain\DeleteBucketTaggingRequest.cs" />
     <Compile Include="Domain\DeleteObjectResult.cs" />
     <Compile Include="Domain\CreateSymlinkResult.cs" />
     <Compile Include="Domain\BucketEncryptionResult.cs" />
