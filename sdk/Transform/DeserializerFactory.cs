@@ -227,6 +227,16 @@ namespace Aliyun.OSS.Transform
         {
             return new DeleteObjectResultDeserializer(CreateContentDeserializer<Stream>());
         }
+
+        public IDeserializer<ServiceResponse, OssObject> CreateSelectObjectRequestDeserializer(SelectObjectRequest request)
+        {
+            return new SelectObjectRequestDeserializer(request);
+        }
+
+        public IDeserializer<ServiceResponse, CreateSelectObjectMetaResult> CreateSelectObjectMetaRequestDeserializer(CreateSelectObjectMetaRequest request)
+        {
+            return new SelectObjectMetaRequestDeserializer(request);
+        }
     }
 
     internal class XmlDeserializerFactory : DeserializerFactory

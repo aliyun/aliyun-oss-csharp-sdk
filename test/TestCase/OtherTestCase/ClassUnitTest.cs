@@ -2524,5 +2524,72 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         {
             var hash = new HashingWrapperCrc64();
         }
+
+        [Test]
+        public void SelectObjectRequestDeserializerTest()
+        {
+            SelectObjectOutputFormat OutputFormat = new SelectObjectOutputFormat();
+            OutputFormat.KeepAllColumns = false;
+            OutputFormat.OutputRawData = false;
+            var request = new SelectObjectRequest("bucket", "key");
+            request.OutputFormats = OutputFormat;
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateSelectObjectRequestDeserializer(request);
+            var headers = new Dictionary<string, string>();
+
+
+            var content = new MemoryStream(50);
+            //data frame
+            byte[] dataframe = new byte[20] { 1, 128, 0, 1, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 158 };
+
+            //end frame
+            byte[] endframe = new byte[12] { 1, 128, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            //data
+            string datastr = "abcdefghij";
+            byte[] data = Encoding.ASCII.GetBytes(datastr);
+
+            byte[] datacrc32 = new byte[4] { 54, 113, 13, 83 };
+
+            content.Write(dataframe, 0, dataframe.Length);
+
+            int count = 0;
+            while (count < data.Length)
+            {
+                content.WriteByte(data[count++]);
+            }
+
+            count = 0;
+            while (count < datacrc32.Length)
+            {
+                content.WriteByte(datacrc32[count++]);
+            }
+
+            count = 0;
+            while (count < endframe.Length)
+            {
+                content.WriteByte(endframe[count++]);
+            }
+
+            content.Seek(0, SeekOrigin.Begin);
+
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+
+            var result = deserializer.Deserialize(xmlStream);
+            var buf = new byte[15];
+
+            result.Content.Read(buf, 0, 5);
+            string str1 = System.Text.Encoding.Default.GetString(buf);
+            Assert.AreEqual(str1.Substring(0, 5), datastr.Substring(0, 5));
+
+            result.Content.Read(buf, 5, 5);
+            string str2 = System.Text.Encoding.Default.GetString(buf);
+            Assert.AreEqual(str2.Substring(0, 10), datastr);
+
+            int readcount = result.Content.Read(buf, 10, 5);
+            string str3 = System.Text.Encoding.Default.GetString(buf);
+            Assert.AreEqual(readcount, 0);
+            Assert.AreEqual(str3.Substring(0, 10), datastr);
+        }
     }
 }
