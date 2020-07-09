@@ -43,5 +43,25 @@ namespace Aliyun.OSS.Util
             return dtime.ToUniversalTime().ToString(Iso8601DateFormat,
                                CultureInfo.CurrentCulture);
         }
+
+        /// <summary>
+        /// Format a iso-8601 format string to an instance of <see cref="DateTime" />.
+        /// </summary>
+        /// <returns></returns>
+        public static DateTime ParseIso8601Date(String s)
+        {
+            return DateTime.SpecifyKind(
+                DateTime.ParseExact(s, Iso8601DateFormat, CultureInfo.InvariantCulture),
+                DateTimeKind.Utc);
+        }
+
+        /// <summary>
+        /// Format an instance of <see cref="DateTime" /> to string in unix time format.
+        /// </summary>
+        public static string FormatUnixTime(DateTime dtime)
+        {
+            const long ticksOf1970 = 621355968000000000;
+            return ((dtime.ToUniversalTime().Ticks - ticksOf1970) / 10000000L).ToString(CultureInfo.InvariantCulture);
+        }
     }
 }

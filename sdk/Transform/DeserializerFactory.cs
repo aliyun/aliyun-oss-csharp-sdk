@@ -227,6 +227,36 @@ namespace Aliyun.OSS.Transform
         {
             return new DeleteObjectResultDeserializer(CreateContentDeserializer<Stream>());
         }
+
+        public IDeserializer<ServiceResponse, CreateLiveChannelResult> CreateCreateLiveChannelResultDeserializer()
+        {
+            return new CreateLiveChannelResultDeserializer(CreateContentDeserializer<CreateLiveChannelResultModel>());
+        }
+
+        public IDeserializer<ServiceResponse, GetLiveChannelInfoResult> CreateGetLiveChannelInfoResultDeserializer()
+        {
+            return new GetLiveChannelInfoResultDeserializer(CreateContentDeserializer<LiveChannelConfiguration>());
+        }
+
+        public IDeserializer<ServiceResponse, GetLiveChannelStatResult> CreateGetLiveChannelStatResultDeserializer()
+        {
+            return new GetLiveChannelStatResultDeserializer(CreateContentDeserializer<LiveChannelStat>());
+        }
+
+        public IDeserializer<ServiceResponse, GetLiveChannelHistoryResult> CreateGetLiveChannelHistoryResultDeserializer()
+        {
+            return new GetLiveChannelHistoryResultDeserializer(CreateContentDeserializer<LiveChannelHistory>());
+        }
+
+        public IDeserializer<ServiceResponse, ListLiveChannelResult> CreateListLiveChannelResultDeserializer()
+        {
+            return new ListLiveChannelResultDeserializer(CreateContentDeserializer<ListLiveChannelResultModel>());
+        }
+
+        public IDeserializer<ServiceResponse, GetVodPlaylistResult> CreateGetVodPlaylistResultDeserializer()
+        {
+            return new GetVodPlaylistResultDeserializer(CreateContentDeserializer<GetVodPlaylistResult>());
+        }
     }
 
     internal class XmlDeserializerFactory : DeserializerFactory

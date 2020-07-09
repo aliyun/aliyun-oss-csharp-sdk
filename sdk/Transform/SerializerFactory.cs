@@ -98,6 +98,11 @@ namespace Aliyun.OSS.Transform
         {
             return new DeleteObjectVersionsRequestSerializer(CreateContentSerializer<DeleteObjectVersionsRequestModel>());
         }
+
+        public ISerializer<CreateLiveChannelRequest, Stream> CreateCreateLiveChannelRequestSerializer()
+        {
+            return new CreateLiveChannelRequestSerializer(CreateContentSerializer<LiveChannelConfiguration>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory

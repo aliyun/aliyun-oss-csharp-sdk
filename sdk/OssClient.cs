@@ -1899,10 +1899,180 @@ namespace Aliyun.OSS
                                                            completeMultipartUploadRequest);
             return cmd.Execute();
         }
-        
+
         #endregion
 
-        #region Private Methods
+        #region Live Channel
+
+        /// <inheritdoc/>                
+        public CreateLiveChannelResult CreateLiveChannel(CreateLiveChannelRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = CreateLiveChannelCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Put, request.BucketName, request.ChannelName),
+                                                 request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>                
+        public ListLiveChannelResult ListLiveChannel(ListLiveChannelRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = ListLiveChannelCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, null),
+                                     request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public void DeleteLiveChannel(DeleteLiveChannelRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = DeleteLiveChannelCommand.Create(_serviceClient, _endpoint,
+                                                   CreateContext(HttpMethod.Delete, request.BucketName, request.ChannelName),
+                                                   request);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void SetLiveChannelStatus(SetLiveChannelStatusRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = SetLiveChannelStatusCommand.Create(_serviceClient, _endpoint,
+                                       CreateContext(HttpMethod.Put, request.BucketName, request.ChannelName),
+                                       request);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetLiveChannelInfoResult GetLiveChannelInfo(GetLiveChannelInfoRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = GetLiveChannelInfoCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, request.ChannelName),
+                                     request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public GetLiveChannelStatResult GetLiveChannelStat(GetLiveChannelStatRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = GetLiveChannelStatCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, request.ChannelName),
+                                     request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public GetLiveChannelHistoryResult GetLiveChannelHistory(GetLiveChannelHistoryRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = GetLiveChannelHistoryCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, request.ChannelName),
+                                     request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public void PostVodPlaylist(PostVodPlaylistRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = PostVodPlaylistCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Post, request.BucketName, request.ChannelName + "/" + request.PlaylistName),
+                                     request);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetVodPlaylistResult GetVodPlaylist(GetVodPlaylistRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = GetVodPlaylistCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, request.ChannelName),
+                                     request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>        
+        public Uri GenerateRtmpPresignedUri(GenerateRtmpPresignedUriRequest request)
+        {
+            ThrowIfNullRequest(request);
+
+            var creds = _credsProvider.GetCredentials();
+            var accessKeyId = creds.AccessKeyId;
+            var accessKeySecret = creds.AccessKeySecret;
+            var securityToken = creds.SecurityToken;
+            var useToken = creds.UseToken;
+            var bucketName = request.BucketName;
+            var key = request.ChannelName;
+
+            var expires = DateUtils.FormatUnixTime(request.Expiration);
+            var resourcePath = OssUtils.MakeResourcePath(_endpoint, bucketName, "live/" + key);
+
+            var serviceRequest = new ServiceRequest();
+            var conf = OssUtils.GetClientConfiguration(_serviceClient);
+            serviceRequest.Endpoint = OssUtils.MakeBucketEndpoint(_endpoint, bucketName, conf);
+            serviceRequest.ResourcePath = resourcePath;
+
+            foreach (var param in request.QueryParams)
+            {
+                serviceRequest.Parameters.Add(param.Key, param.Value);
+            }
+            if (!string.IsNullOrEmpty(request.PlaylistName))
+            {
+                serviceRequest.Parameters.Add("playlistName", request.PlaylistName);
+            }
+
+            var canonicalResource = "/" + bucketName + "/" + key;
+            var canonicalParams = "";
+            if (serviceRequest.Parameters.Count > 0)
+            { 
+                var parameterNames = new List<string>(serviceRequest.Parameters.Keys);
+                parameterNames.Sort();
+                foreach (var paramName in parameterNames)
+                {
+                    canonicalParams += paramName + ":" + serviceRequest.Parameters[paramName] + "\n";
+                }
+            }
+
+            var canonicalString = expires + "\n" + canonicalParams + canonicalResource;
+
+            var signature = ServiceSignature.Create().ComputeSignature(accessKeySecret, canonicalString);
+
+            IDictionary<string, string> queryParams = new Dictionary<string, string>();
+            queryParams.Add(RequestParameters.EXPIRES, expires);
+            queryParams.Add(RequestParameters.OSS_ACCESS_KEY_ID, accessKeyId);
+            queryParams.Add(RequestParameters.SIGNATURE, signature);
+            if (useToken)
+            {
+                queryParams.Add(RequestParameters.SECURITY_TOKEN, securityToken);
+            }
+            foreach (var param in serviceRequest.Parameters) { 
+                queryParams.Add(param.Key, param.Value);
+            }
+
+            var queryString = HttpUtils.ConbineQueryString(queryParams);
+            var uriString = serviceRequest.Endpoint.Authority;
+            if (!uriString.EndsWith("/"))
+                uriString += "/";
+            uriString += resourcePath + "?" + queryString;
+ 
+            return new Uri("rtmp://" + uriString);
+        }
+
+#endregion
+
+#region Private Methods
         private ExecutionContext CreateContext(HttpMethod method, string bucket, string key)
         {
             var builder = new ExecutionContextBuilder
@@ -2109,6 +2279,6 @@ namespace Aliyun.OSS
             }
         }
 
-        #endregion
+#endregion
     }
 }

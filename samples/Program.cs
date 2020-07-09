@@ -12,11 +12,11 @@ namespace Aliyun.OSS.Samples
         {
             Console.WriteLine("Aliyun SDK for .NET Samples!");
 
-            const string bucketName = "skyranch-02";
+            const string bucketName = "<your bucket name>";
 
             try
             {
-                //CreateBucketSample.CreateBucket(bucketName);
+                CreateBucketSample.CreateBucket(bucketName);
 
                 //ListBucketsSample.ListBuckets();
 
@@ -52,7 +52,7 @@ namespace Aliyun.OSS.Samples
 
                 //DoesBucketExistSample.DoesBucketExist(bucketName);
 
-                PutObjectSample.PutObject(bucketName);
+                //PutObjectSample.PutObject(bucketName);
 
                 //ResumbaleSample.ResumableUploadObject(bucketName);
 
@@ -99,14 +99,16 @@ namespace Aliyun.OSS.Samples
                 //DeleteBucketSample.DeleteNoEmptyBucket(bucketName);
 
                 //SetObjectAclSample.SetObjectAcl(bucketName);
-                
+
                 //GetObjectAclSample.GetBucketAcl(bucketName);
-                
+
                 //ImageProcessSample.ImageProcess(bucketName);
 
                 //ProgressSample.Progress(bucketName);
 
                 //UploadCallbackSample.UploadCallback(bucketName);
+
+                //LiveChannelSample.LiveChannel(bucketName);
             }
             catch (OssException ex)
             {

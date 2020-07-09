@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Samples\LIveChannelSample.cs" />
     <Compile Include="Samples\UploadCallbackSample.cs" />
     <Compile Include="Samples\ProgressSample.cs" />
     <Compile Include="Samples\ImageProcessSample.cs" />
