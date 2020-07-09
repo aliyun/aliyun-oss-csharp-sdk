@@ -31,6 +31,13 @@ namespace Aliyun.OSS
         /// <summary>
         /// Gets or sets the bucket tag
         /// </summary>
-        public Tag Tag { get => _tag; set => _tag = value; }
+        public Tag Tag
+        {
+            get { return _tag; }
+            set
+            {
+                _tag = value;
+            }
+        }
     }
 }

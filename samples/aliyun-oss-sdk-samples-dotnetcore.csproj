@@ -19,6 +19,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Samples\LiveChannelSample.cs" />
     <Compile Include="Samples\UploadCallbackSample.cs" />
     <Compile Include="Samples\ProgressSample.cs" />
     <Compile Include="Samples\ImageProcessSample.cs" />

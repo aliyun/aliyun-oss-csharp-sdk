@@ -29,6 +29,10 @@ namespace Aliyun.OSS.Util
         public const string SUBRESOURCE_ENCRYPTION = "encryption";
         public const string SUBRESOURCE_VERSIONING = "versioning";
         public const string SUBRESOURCE_VERSIONID = "versionId";
+        public const string SUBRESOURCE_LIVE = "live";
+        public const string SUBRESOURCE_STATUS = "status";
+        public const string SUBRESOURCE_COMP = "comp";
+        public const string SUBRESOURCE_VOD = "vod";
         public const string PREFIX = "prefix";
         public const string DELIMITER = "delimiter";
         public const string MARKER = "marker";    

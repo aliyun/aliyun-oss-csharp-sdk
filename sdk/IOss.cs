@@ -1083,7 +1083,77 @@ namespace Aliyun.OSS
         /// <param name="completeMultipartUploadRequest">the request parameter</param>
         /// <returns><see cref="CompleteMultipartUploadResult" /> instance</returns>        
         CompleteMultipartUploadResult CompleteMultipartUpload(CompleteMultipartUploadRequest completeMultipartUploadRequest);
-        
+
+        #endregion
+
+        #region Live Channel
+        /// <summary>
+        /// Creates a live channel
+        /// </summary>
+        /// <param name="request"><see cref="CreateLiveChannelRequest" /> instance</param>
+        /// <returns><see cref="CreateLiveChannelResult" /> instance</returns>        
+        CreateLiveChannelResult CreateLiveChannel(CreateLiveChannelRequest request);
+
+        /// <summary>
+        /// Lists live channels
+        /// </summary>
+        /// <param name="request"><see cref="ListLiveChannelRequest" /> instance</param>
+        /// <returns><see cref="ListLiveChannelResult" /> instance</returns>        
+        ListLiveChannelResult ListLiveChannel(ListLiveChannelRequest request);
+
+        /// <summary>
+        /// Deletes a live channel
+        /// </summary>
+        /// <param name="request"><see cref="DeleteLiveChannelRequest" /> instance</param>
+        void DeleteLiveChannel(DeleteLiveChannelRequest request);
+
+        /// <summary>
+        /// Sets the live channel status
+        /// </summary>
+        /// <param name="request"><see cref="SetLiveChannelStatusRequest" /> instance</param>
+        void SetLiveChannelStatus(SetLiveChannelStatusRequest request);
+
+        /// <summary>
+        /// Gets the live channel information
+        /// </summary>
+        /// <param name="request"><see cref="GetLiveChannelInfoRequest" /> instance</param>
+        /// <returns><see cref="GetLiveChannelInfoResult" /> instance</returns>        
+        GetLiveChannelInfoResult GetLiveChannelInfo(GetLiveChannelInfoRequest request);
+
+        /// <summary>
+        /// Gets the live channel status
+        /// </summary>
+        /// <param name="request"><see cref="GetLiveChannelStatRequest" /> instance</param>
+        /// <returns><see cref="GetLiveChannelStatResult" /> instance</returns>        
+        GetLiveChannelStatResult GetLiveChannelStat(GetLiveChannelStatRequest request);
+
+        /// <summary>
+        /// Gets the live channel history
+        /// </summary>
+        /// <param name="request"><see cref="GetLiveChannelHistoryRequest" /> instance</param>
+        /// <returns><see cref="GetLiveChannelHistoryResult" /> instance</returns>        
+        GetLiveChannelHistoryResult GetLiveChannelHistory(GetLiveChannelHistoryRequest request);
+
+        /// <summary>
+        /// Creates a vod playlist
+        /// </summary>
+        /// <param name="request"><see cref="PostVodPlaylistRequest" /> instance</param>
+        void PostVodPlaylist(PostVodPlaylistRequest request);
+
+        /// <summary>
+        /// Gets a vod playlist
+        /// </summary>
+        /// <param name="request"><see cref="GetVodPlaylistRequest" /> instance</param>
+        /// <returns><see cref="GetVodPlaylistResult" /> instance</returns>        
+        GetVodPlaylistResult GetVodPlaylist(GetVodPlaylistRequest request);
+
+        /// <summary>
+        /// Generates a rtmp signed url
+        /// </summary>
+        /// <param name="request"><see cref="GenerateRtmpPresignedUriRequest" /> instance</param>
+        /// <returns>The signed url. The user could use this url to push stream directly</returns>
+        Uri GenerateRtmpPresignedUri(GenerateRtmpPresignedUriRequest request);
+
         #endregion
     }
 }

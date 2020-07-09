@@ -2438,6 +2438,522 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         }
 
         [Test]
+        public void ListLiveChannelResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateListLiveChannelResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <ListLiveChannelResult>
+                    <Prefix></Prefix>
+                    <Marker></Marker>
+                    <MaxKeys>1</MaxKeys>
+                    <IsTruncated>true</IsTruncated>
+                    <NextMarker>channel-0</NextMarker>
+                    <LiveChannel>
+                        <Name>channel-0</Name>
+                        <Description></Description>
+                        <Status>disabled</Status>
+                        <LastModified>2016-07-30T01:54:21.000Z</LastModified>
+                        <PublishUrls>
+                          <Url>rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/channel-0</Url>
+                        </PublishUrls>
+                        <PlayUrls>
+                          <Url>http://test-bucket.oss-cn-hangzhou.aliyuncs.com/channel-0/playlist.m3u8</Url>
+                        </PlayUrls>
+                    </LiveChannel>
+                </ListLiveChannelResult>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Prefix, "");
+            Assert.AreEqual(result.Marker, "");
+            Assert.AreEqual(result.MaxKeys, 1);
+            Assert.AreEqual(result.IsTruncated, true);
+            Assert.AreEqual(result.NextMarker, "channel-0");
+            var LiveChannels = OssTestUtils.ToArray(result.LiveChannels);
+            Assert.AreEqual(LiveChannels.Count, 1);
+            Assert.AreEqual(LiveChannels[0].Name, "channel-0");
+            Assert.AreEqual(LiveChannels[0].Description, "");
+            Assert.AreEqual(LiveChannels[0].Status, "disabled");
+            Assert.AreEqual(LiveChannels[0].LastModified, DateUtils.ParseIso8601Date("2016-07-30T01:54:21.000Z"));
+            Assert.AreEqual(LiveChannels[0].PublishUrl, "rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/channel-0");
+            Assert.AreEqual(LiveChannels[0].PlayUrl, "http://test-bucket.oss-cn-hangzhou.aliyuncs.com/channel-0/playlist.m3u8");
+
+            data =
+                @" 
+                <ListLiveChannelResult>
+                    <Prefix>channel</Prefix>
+                    <Marker>channel</Marker>
+                    <MaxKeys>10</MaxKeys>
+                    <IsTruncated>false</IsTruncated>
+                    <NextMarker>channel-1</NextMarker>
+                    <LiveChannel>
+                        <Name>channel-0</Name>
+                        <Description>discrption</Description>
+                        <Status>enable</Status>
+                        <LastModified>2016-07-30T01:54:21.000Z</LastModified>
+                        <PublishUrls>
+                          <Url>rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/channel-0</Url>
+                        </PublishUrls>
+                        <PlayUrls>
+                          <Url>http://test-bucket.oss-cn-hangzhou.aliyuncs.com/channel-0/playlist.m3u8</Url>
+                        </PlayUrls>
+                    </LiveChannel>
+                    <LiveChannel>
+                        <Name>channel-1</Name>
+                        <Description></Description>
+                        <Status>disabled</Status>
+                        <LastModified>2017-07-30T01:54:21.000Z</LastModified>
+                        <PublishUrls>
+                          <Url>rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/channel-1</Url>
+                        </PublishUrls>
+                        <PlayUrls>
+                          <Url>http://test-bucket.oss-cn-hangzhou.aliyuncs.com/channel-1/playlist.m3u8</Url>
+                        </PlayUrls>
+                    </LiveChannel>
+                </ListLiveChannelResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Prefix, "channel");
+            Assert.AreEqual(result.Marker, "channel");
+            Assert.AreEqual(result.MaxKeys, 10);
+            Assert.AreEqual(result.IsTruncated, false);
+            Assert.AreEqual(result.NextMarker, "channel-1");
+            LiveChannels = OssTestUtils.ToArray(result.LiveChannels);
+            Assert.AreEqual(LiveChannels.Count, 2);
+            Assert.AreEqual(LiveChannels[0].Name, "channel-0");
+            Assert.AreEqual(LiveChannels[0].Description, "discrption");
+            Assert.AreEqual(LiveChannels[0].Status, "enable");
+            Assert.AreEqual(LiveChannels[0].LastModified, DateUtils.ParseIso8601Date("2016-07-30T01:54:21.000Z"));
+            Assert.AreEqual(LiveChannels[0].PublishUrl, "rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/channel-0");
+            Assert.AreEqual(LiveChannels[0].PlayUrl, "http://test-bucket.oss-cn-hangzhou.aliyuncs.com/channel-0/playlist.m3u8");
+
+            Assert.AreEqual(LiveChannels[1].Name, "channel-1");
+            Assert.AreEqual(LiveChannels[1].Description, "");
+            Assert.AreEqual(LiveChannels[1].Status, "disabled");
+            Assert.AreEqual(LiveChannels[1].LastModified, DateUtils.ParseIso8601Date("2017-07-30T01:54:21.000Z"));
+            Assert.AreEqual(LiveChannels[1].PublishUrl, "rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/channel-1");
+            Assert.AreEqual(LiveChannels[1].PlayUrl, "http://test-bucket.oss-cn-hangzhou.aliyuncs.com/channel-1/playlist.m3u8");
+
+            data =
+                @" 
+                <ListLiveChannelResult>
+                    <Prefix>channel</Prefix>
+                    <Marker>channel</Marker>
+                    <NextMarker></NextMarker>
+                </ListLiveChannelResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Prefix, "channel");
+            Assert.AreEqual(result.Marker, "channel");
+            Assert.AreEqual(result.MaxKeys.HasValue, false);
+            Assert.AreEqual(result.IsTruncated.HasValue, false);
+            Assert.AreEqual(result.NextMarker, "");
+            LiveChannels = OssTestUtils.ToArray(result.LiveChannels);
+            Assert.AreEqual(LiveChannels.Count, 0);
+
+            data =
+                @" 
+                <ListLiveChannelResult>
+                </ListLiveChannelResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Prefix, null);
+            Assert.AreEqual(result.Marker, null);
+            Assert.AreEqual(result.MaxKeys.HasValue, false);
+            Assert.AreEqual(result.IsTruncated.HasValue, false);
+            Assert.AreEqual(result.NextMarker, null);
+            LiveChannels = OssTestUtils.ToArray(result.LiveChannels);
+            Assert.AreEqual(LiveChannels.Count, 0);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
+        public void GetLiveChannelHistoryResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateGetLiveChannelHistoryResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <LiveChannelHistory>
+                  <LiveRecord>
+                    <StartTime>2016-07-30T01:53:21.000Z</StartTime>
+                    <EndTime>2016-07-30T01:53:31.000Z</EndTime>
+                    <RemoteAddr>10.101.194.148:56861</RemoteAddr>
+                  </LiveRecord>
+                  <LiveRecord>
+                    <StartTime>2016-07-30T01:53:35.000Z</StartTime>
+                    <EndTime>2016-07-30T01:53:45.000Z</EndTime>
+                    <RemoteAddr>10.101.194.148:57126</RemoteAddr>
+                  </LiveRecord>
+                  <LiveRecord>
+                    <StartTime>2016-07-30T01:53:49.000Z</StartTime>
+                    <EndTime>2016-07-30T01:53:59.000Z</EndTime>
+                    <RemoteAddr>10.101.194.148:57577</RemoteAddr>
+                  </LiveRecord>
+                  <LiveRecord>
+                    <StartTime>2016-07-30T01:54:04.000Z</StartTime>
+                    <EndTime>2016-07-30T01:54:14.000Z</EndTime>
+                    <RemoteAddr>10.101.194.148:57632</RemoteAddr>
+                  </LiveRecord>
+                </LiveChannelHistory>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            var LiveRecords = OssTestUtils.ToArray(result.LiveRecords);
+            Assert.AreEqual(LiveRecords.Count, 4);
+            Assert.AreEqual(LiveRecords[0].StartTime, DateUtils.ParseIso8601Date("2016-07-30T01:53:21.000Z"));
+            Assert.AreEqual(LiveRecords[0].EndTime, DateUtils.ParseIso8601Date("2016-07-30T01:53:31.000Z"));
+            Assert.AreEqual(LiveRecords[0].RemoteAddr, "10.101.194.148:56861");
+            Assert.AreEqual(LiveRecords[3].StartTime, DateUtils.ParseIso8601Date("2016-07-30T01:54:04.000Z"));
+            Assert.AreEqual(LiveRecords[3].EndTime, DateUtils.ParseIso8601Date("2016-07-30T01:54:14.000Z"));
+            Assert.AreEqual(LiveRecords[3].RemoteAddr, "10.101.194.148:57632");
+
+            data =
+                @" 
+                <LiveChannelHistory>
+                  <LiveRecord>
+                    <StartTime>2016-07-30T01:53:35.000Z</StartTime>
+                    <EndTime>2016-07-30T01:53:45.000Z</EndTime>
+                    <RemoteAddr>10.101.194.148:57126</RemoteAddr>
+                  </LiveRecord>
+                  <LiveRecord>
+                    <StartTime>2016-07-30T01:53:49.000Z</StartTime>
+                    <EndTime>2016-07-30T01:53:59.000Z</EndTime>
+                    <RemoteAddr>10.101.194.148:57577</RemoteAddr>
+                  </LiveRecord>
+                </LiveChannelHistory>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            LiveRecords = OssTestUtils.ToArray(result.LiveRecords);
+            Assert.AreEqual(LiveRecords.Count, 2);
+            Assert.AreEqual(LiveRecords[0].StartTime, DateUtils.ParseIso8601Date("2016-07-30T01:53:35.000Z"));
+            Assert.AreEqual(LiveRecords[0].EndTime, DateUtils.ParseIso8601Date("2016-07-30T01:53:45.000Z"));
+            Assert.AreEqual(LiveRecords[0].RemoteAddr, "10.101.194.148:57126");
+            Assert.AreEqual(LiveRecords[1].StartTime, DateUtils.ParseIso8601Date("2016-07-30T01:53:49.000Z"));
+            Assert.AreEqual(LiveRecords[1].EndTime, DateUtils.ParseIso8601Date("2016-07-30T01:53:59.000Z"));
+            Assert.AreEqual(LiveRecords[1].RemoteAddr, "10.101.194.148:57577");
+
+            data =
+                @" 
+                <LiveChannelHistory>
+                </LiveChannelHistory>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            LiveRecords = OssTestUtils.ToArray(result.LiveRecords);
+            Assert.AreEqual(LiveRecords.Count, 0);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
+        public void GetLiveChannelStatResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateGetLiveChannelStatResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <LiveChannelStat>
+                  <Status>Live</Status>
+                  <ConnectedTime>2016-08-25T06:25:15.000Z</ConnectedTime>
+                  <RemoteAddr>10.1.2.3:47745</RemoteAddr>
+                  <Video>
+                    <Width>1280</Width>
+                    <Height>536</Height>
+                    <FrameRate>24</FrameRate>
+                    <Bandwidth>101</Bandwidth>
+                    <Codec>H264</Codec>
+                  </Video>
+                  <Audio>
+                    <Bandwidth>10</Bandwidth>
+                    <SampleRate>44100</SampleRate>
+                    <Codec>ADPCM</Codec>
+                  </Audio>
+                </LiveChannelStat>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Status, "Live");
+            Assert.AreEqual(result.ConnectedTime, DateUtils.ParseIso8601Date("2016-08-25T06:25:15.000Z"));
+            Assert.AreEqual(result.RemoteAddr, "10.1.2.3:47745");
+            Assert.AreEqual(result.Width, 1280);
+            Assert.AreEqual(result.Height, 536);
+            Assert.AreEqual(result.FrameRate, 24);
+            Assert.AreEqual(result.VideoBandwidth, 101);
+            Assert.AreEqual(result.VideoCodec, "H264");
+            Assert.AreEqual(result.SampleRate, 44100);
+            Assert.AreEqual(result.AudioBandwidth, 10);
+            Assert.AreEqual(result.AudioCodec, "ADPCM");
+
+
+            data =
+                @" 
+                <LiveChannelStat>
+                  <Status>Idle</Status>
+                </LiveChannelStat>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Status, "Idle");
+
+            data =
+                @" 
+                <LiveChannelStat>
+                </LiveChannelStat>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
+        public void GetLiveChannelInfoResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateGetLiveChannelInfoResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <LiveChannelConfiguration>
+                  <Description>description</Description>
+                  <Status>enabled</Status>
+                  <Target>
+                    <Type>HLS</Type>
+                    <FragDuration>2</FragDuration>
+                    <FragCount>3</FragCount>
+                    <PlaylistName>playlist.m3u8</PlaylistName>
+                  </Target>
+                </LiveChannelConfiguration>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Description, "description");
+            Assert.AreEqual(result.Status, "enabled");
+            Assert.AreEqual(result.Type, "HLS");
+            Assert.AreEqual(result.FragDuration, 2);
+            Assert.AreEqual(result.FragCount, 3);
+            Assert.AreEqual(result.PlaylistName, "playlist.m3u8");
+
+            data =
+                @" 
+                <LiveChannelConfiguration>
+                  <Description></Description>
+                  <Status>disabled</Status>
+                </LiveChannelConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Description, "");
+            Assert.AreEqual(result.Status, "disabled");
+
+            data =
+                @" 
+                <LiveChannelConfiguration>
+                </LiveChannelConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
+        public void CreateLiveChannelResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateCreateLiveChannelResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <CreateLiveChannelResult>
+                  <PublishUrls>
+                    <Url>rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/test-channel</Url>
+                  </PublishUrls>
+                  <PlayUrls>
+                    <Url>http://test-bucket.oss-cn-hangzhou.aliyuncs.com/test-channel/playlist.m3u8</Url>
+                  </PlayUrls>
+                </CreateLiveChannelResult>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.PublishUrl, "rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/test-channel");
+            Assert.AreEqual(result.PlayUrl, "http://test-bucket.oss-cn-hangzhou.aliyuncs.com/test-channel/playlist.m3u8");
+
+            data =
+                @" 
+                <CreateLiveChannelResult>
+                  <PublishUrls>
+                    <Url>rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/test-channel</Url>
+                  </PublishUrls>
+                </CreateLiveChannelResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.PublishUrl, "rtmp://test-bucket.oss-cn-hangzhou.aliyuncs.com/live/test-channel");
+            Assert.AreEqual(result.PlayUrl, null);
+
+            data =
+                @" 
+                <CreateLiveChannelResult>
+                  <PublishUrls>
+                  </PublishUrls>
+                </CreateLiveChannelResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.PublishUrl, null);
+            Assert.AreEqual(result.PlayUrl, null);
+
+            data =
+                @" 
+                <CreateLiveChannelResult>
+                  <PlayUrls>
+                  </PlayUrls>
+                </CreateLiveChannelResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.PublishUrl, null);
+            Assert.AreEqual(result.PlayUrl, null);
+
+            data =
+                @" 
+                <CreateLiveChannelResult>
+                </CreateLiveChannelResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.PublishUrl, null);
+            Assert.AreEqual(result.PlayUrl, null);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
+        public void GetVodPlaylistResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateGetVodPlaylistResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                #EXTM3U
+                #EXT-X-VERSION:3
+                #EXT-X-MEDIA-SEQUENCE:0
+                #EXT-X-TARGETDURATION:13
+                #EXTINF:7.120,
+                1543895706266.ts
+                #EXTINF:5.840,
+                1543895706323.ts
+                #EXT-X-ENDLIST
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Playlist, data);
+
+            data = "";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Playlist, data);
+        }
+
+        [Test]
         public void SerializerFactoryTest()
         {
             var factory = SerializerFactory.GetFactory("text/xml");
@@ -2477,6 +2993,36 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 
             var request = new SetBucketLifecycleRequest("bucket");
             var result = serializer.Serialize(request);
+        }
+
+        [Test]
+        public void CreateLiveChannelRequestSerializerTest()
+        {
+            var factory = SerializerFactory.GetFactory("text/xml");
+            var serializer = factory.CreateCreateLiveChannelRequestSerializer();
+
+            var request = new CreateLiveChannelRequest("bucket", "channel");
+            var result = serializer.Serialize(request);
+            var reader = new StreamReader(result);
+            var str = reader.ReadToEnd();
+            Assert.AreEqual(str.Contains("<Snapshot>"), false);
+
+            request = new CreateLiveChannelRequest("bucket", "channel")
+            {
+                RoleName = "my role name",
+                DestBucket = "my bucket",
+                NotifyTopic = "topic",
+                Interval = 10
+            };
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            str = reader.ReadToEnd();
+            Assert.AreEqual(str.Contains("<Snapshot>"), true);
+            Assert.AreEqual(str.Contains("<RoleName>my role name</RoleName>"), true);
+            Assert.AreEqual(str.Contains("<DestBucket>my bucket</DestBucket>"), true);
+            Assert.AreEqual(str.Contains("<NotifyTopic>topic</NotifyTopic>"), true);
+            Assert.AreEqual(str.Contains("<Interval>10</Interval>"), true);
+            Assert.AreEqual(str.Contains("</Snapshot>"), true);
         }
 
         [Test]
