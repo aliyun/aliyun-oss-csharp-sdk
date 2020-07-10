@@ -31,6 +31,7 @@ namespace Aliyun.OSS.Util
             "location", "qos", "policy", "tagging", "requestPayment", "x-oss-traffic-limit",
             "objectMeta", "encryption", "versioning", "versionId", "versions",
             "live", "status", "comp", "vod", "startTime", "endTime",
+            "inventory","continuation-token","inventoryId",
             ResponseHeaderOverrides.ResponseCacheControl,
             ResponseHeaderOverrides.ResponseContentDisposition,
             ResponseHeaderOverrides.ResponseContentEncoding,

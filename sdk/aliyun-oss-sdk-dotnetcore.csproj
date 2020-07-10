@@ -72,6 +72,10 @@
     <Compile Include="Commands\SetBucketLifecycleCommand.cs" />
     <Compile Include="Commands\GetBucketRefererCommand.cs" />
     <Compile Include="Commands\UploadPartCopyCommand.cs" />
+    <Compile Include="Commands\DeleteBucketInventoryConfigurationCommand.cs" />
+    <Compile Include="Commands\GetBucketInventoryConfigurationCommand.cs" />
+    <Compile Include="Commands\ListBucketInventoryConfigurationCommand.cs" />
+    <Compile Include="Commands\SetBucketInventoryConfigurationCommand.cs" />
     <Compile Include="Common\Authentication\DefaultCredentials.cs" />
     <Compile Include="Common\Authentication\DefaultCredentialsProvider.cs" />
     <Compile Include="Common\Authentication\ICredentialsProvider.cs" />
@@ -109,6 +113,7 @@
     <Compile Include="Domain\CreateBucketRequest.cs" />
     <Compile Include="Domain\CreateLiveChannelResult.cs" />
     <Compile Include="Domain\CreateSymlinkResult.cs" />
+    <Compile Include="Domain\DeleteBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\DeleteBucketTaggingRequest.cs" />
     <Compile Include="Domain\DeletedObjectSummary.cs" />
     <Compile Include="Domain\DeleteLiveChannelRequest.cs" />
@@ -119,6 +124,7 @@
     <Compile Include="Domain\DeleteObjectVersionsRequest.cs" />
     <Compile Include="Domain\DeleteObjectVersionsResult.cs" />
     <Compile Include="Domain\GenerateRtmpPresignedUriRequest.cs" />
+    <Compile Include="Domain\GetBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\GetBucketPolicyResult.cs" />
     <Compile Include="Domain\GetBucketRequestPaymentResult.cs" />
     <Compile Include="Domain\GetBucketStorageCapacityResult.cs" />
@@ -137,6 +143,8 @@
     <Compile Include="Domain\GetSymlinkRequest.cs" />
     <Compile Include="Domain\GetVodPlaylistRequest.cs" />
     <Compile Include="Domain\GetVodPlaylistResult.cs" />
+    <Compile Include="Domain\InventoryConfiguration.cs" />
+    <Compile Include="Domain\ListBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\ListLiveChannelRequest.cs" />
     <Compile Include="Domain\ListLiveChannelResult.cs" />
     <Compile Include="Domain\ListObjectVersionsRequest.cs" />
@@ -156,7 +164,11 @@
     <Compile Include="Domain\CreateLiveChannelRequest.cs" />
     <Compile Include="Domain\SetLiveChannelStatusRequest.cs" />
     <Compile Include="Domain\SetObjectTaggingRequest.cs" />
+    <Compile Include="Domain\GetBucketInventoryConfigurationResult.cs" />
+    <Compile Include="Domain\ListBucketInventoryConfigurationResult.cs" />
+    <Compile Include="Domain\SetBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\Tag.cs" />
+    <Compile Include="Enums\InventoryType.cs" />
     <Compile Include="Enums\DataRedundancyType.cs" />
     <Compile Include="Enums\RequestPayer.cs" />
     <Compile Include="Enums\TierType.cs" />
@@ -184,6 +196,8 @@
     <Compile Include="Model\GenericResult.cs" />
     <Compile Include="Model\Tagging.cs" />
     <Compile Include="Model\VersioningConfiguration.cs" />
+    <Compile Include="Model\ListInventoryConfigurationModel.cs" />
+    <Compile Include="Model\InventoryConfigurationModel.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\CreateLiveChannelResultDeserializer.cs" />
     <Compile Include="Transform\CreateSymlinkResultDeserializer.cs" />
@@ -219,6 +233,9 @@
     <Compile Include="Transform\SetObjectTaggingRequestSerializer.cs" />
     <Compile Include="Transform\XmlStreamSerializer.cs" />
     <Compile Include="Transform\XmlStreamDeserializer.cs" />
+    <Compile Include="Transform\GetBucketInventoryConfigurationResultDeserializer.cs" />
+    <Compile Include="Transform\ListBucketInventoryConfigurationResultDeserializer.cs" />
+    <Compile Include="Transform\SetBucketInventoryConfigurationRequestSerializer.cs" />
     <Compile Include="Util\AsyncResult.cs" />
     <Compile Include="Util\CallbackHeaderBuilder.cs" />
     <Compile Include="Util\DateUtils.cs" />

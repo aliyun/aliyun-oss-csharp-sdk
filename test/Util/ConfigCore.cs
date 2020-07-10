@@ -24,5 +24,7 @@ namespace Aliyun.OSS.Test.Util
         public static readonly string PayerAccessKeyId = "";  // payer access key id
         public static readonly string PayerAccessKeySecret = ""; // payer access key secret
         public static readonly string PayerUid = ""; // payer uid
+        public static readonly string RamRoleArn = "";
+        public static readonly string RamUID = "";
     }
 }

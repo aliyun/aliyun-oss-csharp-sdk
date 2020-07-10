@@ -108,6 +108,11 @@ namespace Aliyun.OSS.Transform
         {
             return new RestoreObjectRequestSerializer(CreateContentSerializer<RestoreRequestModel>());
         }
+
+        public ISerializer<SetBucketInventoryConfigurationRequest, Stream> CreateSetBucketInventoryConfigurationRequestSerializer()
+        {
+            return new SetBucketInventoryConfigurationRequestSerializer(CreateContentSerializer<InventoryConfigurationModel>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory

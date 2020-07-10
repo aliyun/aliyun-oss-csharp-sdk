@@ -693,6 +693,50 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        /// <inheritdoc/>
+        public void SetBucketInventoryConfiguration(SetBucketInventoryConfigurationRequest request)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = SetBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Put, request.BucketName, null),
+                                                    request);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DeleteBucketInventoryConfiguration(DeleteBucketInventoryConfigurationRequest request)
+        {
+            var cmd = DeleteBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Delete, request.BucketName, null),
+                                                    request);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetBucketInventoryConfigurationResult GetBucketInventoryConfiguration(GetBucketInventoryConfigurationRequest request)
+        {
+            var cmd = GetBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Get, request.BucketName, null),
+                                                    request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public ListBucketInventoryConfigurationResult ListBucketInventoryConfiguration(ListBucketInventoryConfigurationRequest request)
+        {
+            var cmd = ListBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Get, request.BucketName, null),
+                                                    request);
+            return cmd.Execute();
+        }
+
+
         #endregion
 
         #region Object Operations
