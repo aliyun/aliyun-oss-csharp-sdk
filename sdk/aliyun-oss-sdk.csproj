@@ -208,6 +208,7 @@
     <Compile Include="Common\Internal\PartialWrapperStream.cs" />
     <Compile Include="Common\Internal\StreamReadTracker.cs" />
     <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
+    <Compile Include="Domain\DeleteBucketTaggingRequest.cs" />
     <Compile Include="Domain\DeleteObjectResult.cs" />
     <Compile Include="Domain\CreateSymlinkResult.cs" />
     <Compile Include="Domain\BucketEncryptionResult.cs" />
@@ -251,6 +252,7 @@
     <Compile Include="Enums\RequestPayer.cs" />
     <Compile Include="Model\DeleteObjectsResultModel.cs" />
     <Compile Include="Model\ListVersionsResult.cs" />
+    <Compile Include="Model\RestoreObjectRequestModel.cs" />
     <Compile Include="Model\VersioningConfiguration.cs" />
     <Compile Include="Model\ServerSideEncryptionRule.cs" />
     <Compile Include="Model\RequestPaymentConfiguration.cs" />
@@ -284,6 +286,7 @@
     <Compile Include="Transform\GetBucketTaggingResultDeserializer.cs" />
     <Compile Include="Transform\GetObjectTaggingResultDeserializer.cs" />
     <Compile Include="Transform\ListObjectVersionsResponseDeserializer.cs" />
+    <Compile Include="Transform\RestoreObjectRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketEncryptionRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketVersioningRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketRequestPaymentRequestSerializer.cs" />

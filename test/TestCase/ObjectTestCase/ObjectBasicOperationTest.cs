@@ -2354,6 +2354,59 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 }
             }
         }
+
+        [Test]
+        public void RestoreObjectWithXmlTest()
+        {
+            var key = OssTestUtils.GetObjectKey(_className);
+
+            try
+            {
+                //upload the object
+                OssTestUtils.UploadObject(_ossClient, _archiveBucketName, key,
+                    Config.UploadTestFile, new ObjectMetadata());
+                Assert.IsTrue(OssTestUtils.ObjectExists(_ossClient, _archiveBucketName, key));
+
+                var request = new RestoreObjectRequest(_archiveBucketName, key);
+                request.Days = 2;
+                request.Tier = TierType.Expedited;
+                RestoreObjectResult result = _ossClient.RestoreObject(request);
+                Assert.IsTrue(result.HttpStatusCode == HttpStatusCode.Accepted);
+
+                try
+                {
+                    result = _ossClient.RestoreObject(request);
+                }
+                catch (OssException e)
+                {
+                    Assert.AreEqual(e.ErrorCode, "RestoreAlreadyInProgress");
+                }
+
+                int wait = 60;
+                while (wait > 0)
+                {
+                    var meta = _ossClient.GetObjectMetadata(_archiveBucketName, key);
+                    string restoreStatus = meta.HttpMetadata["x-oss-restore"] as string;
+                    if (restoreStatus != null && restoreStatus.StartsWith("ongoing-request=\"false\"", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        break;
+                    }
+
+                    Thread.Sleep(1000 * 30);
+                    wait--;
+                }
+
+                result = _ossClient.RestoreObject(request);
+                Assert.IsTrue(result.HttpStatusCode == HttpStatusCode.OK);
+            }
+            finally
+            {
+                if (OssTestUtils.ObjectExists(_ossClient, _archiveBucketName, key))
+                {
+                    _ossClient.DeleteObject(_archiveBucketName, key);
+                }
+            }
+        }
         #endregion
 
         #region Symlink tests

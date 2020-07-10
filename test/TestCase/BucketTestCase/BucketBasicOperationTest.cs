@@ -344,6 +344,31 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 
             _ossClient.DeleteBucket(bucketName);
         }
+
+        [Test]
+        public void CreateBucketWithColdArchiveStorageClassTest()
+        {
+            //get a random bucketName
+            var bucketName = OssTestUtils.GetBucketName(_className);
+
+            //assert bucket does not exist
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist before creation", bucketName));
+
+            //create a new bucket
+            var request = new CreateBucketRequest(bucketName, StorageClass.ColdArchive, CannedAccessControlList.PublicReadWrite);
+            request.DataRedundancyType = DataRedundancyType.ZRS;
+            _ossClient.CreateBucket(request);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsTrue(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should exist after creation", bucketName));
+
+            //delete the new created bucket
+            _ossClient.DeleteBucket(bucketName);
+            OssTestUtils.WaitForCacheExpire();
+            Assert.IsFalse(OssTestUtils.BucketExists(_ossClient, bucketName),
+                string.Format("Bucket {0} should not exist after deletion", bucketName));
+        }
         #endregion
 
         #region Delete Bucket Cases
