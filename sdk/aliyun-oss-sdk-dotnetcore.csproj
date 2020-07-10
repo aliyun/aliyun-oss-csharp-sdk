@@ -63,6 +63,10 @@
     <Compile Include="Commands\SetBucketLifecycleCommand.cs" />
     <Compile Include="Commands\GetBucketRefererCommand.cs" />
     <Compile Include="Commands\UploadPartCopyCommand.cs" />
+    <Compile Include="Commands\DeleteBucketInventoryConfigurationCommand.cs" />
+    <Compile Include="Commands\GetBucketInventoryConfigurationCommand.cs" />
+    <Compile Include="Commands\ListBucketInventoryConfigurationCommand.cs" />
+    <Compile Include="Commands\SetBucketInventoryConfigurationCommand.cs" />
     <Compile Include="Common\Authentication\DefaultCredentials.cs" />
     <Compile Include="Common\Authentication\DefaultCredentialsProvider.cs" />
     <Compile Include="Common\Authentication\ICredentialsProvider.cs" />
@@ -129,7 +133,11 @@
     <Compile Include="Domain\SetBucketTaggingRequest.cs" />
     <Compile Include="Domain\SetBucketVersioningRequest.cs" />
     <Compile Include="Domain\SetObjectTaggingRequest.cs" />
+    <Compile Include="Domain\BucketInventoryConfigurationResult.cs" />
+    <Compile Include="Domain\ListBucketInventoryConfigurationResult.cs" />
+    <Compile Include="Domain\SetBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\Tag.cs" />
+    <Compile Include="Enums\BucketInventory.cs" />
     <Compile Include="Enums\DataRedundancyType.cs" />
     <Compile Include="Enums\RequestPayer.cs" />
     <Compile Include="Enums\VersioningStatus.cs" />
@@ -151,6 +159,8 @@
     <Compile Include="Model\GenericResult.cs" />
     <Compile Include="Model\Tagging.cs" />
     <Compile Include="Model\VersioningConfiguration.cs" />
+    <Compile Include="Model\ListInventoryConfigurationModel.cs" />
+    <Compile Include="Model\SetBucketInventoryConfigurationRequestModel.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\CreateSymlinkResultDeserializer.cs" />
     <Compile Include="Transform\DeleteObjectResultDeserializer.cs" />
@@ -179,6 +189,9 @@
     <Compile Include="Transform\SetObjectTaggingRequestSerializer.cs" />
     <Compile Include="Transform\XmlStreamSerializer.cs" />
     <Compile Include="Transform\XmlStreamDeserializer.cs" />
+    <Compile Include="Transform\GetBucketInventoryConfigurationResultDeserializer.cs" />
+    <Compile Include="Transform\ListBucketInventoryConfigurationResultDeserializer.cs" />
+    <Compile Include="Transform\SetBucketInventoryConfigurationRequestSerializer.cs" />
     <Compile Include="Util\AsyncResult.cs" />
     <Compile Include="Util\CallbackHeaderBuilder.cs" />
     <Compile Include="Util\DateUtils.cs" />

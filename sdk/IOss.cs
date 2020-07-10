@@ -341,7 +341,35 @@ namespace Aliyun.OSS
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <returns><see cref="GetBucketVersioningResult"/> instance</returns>
         GetBucketVersioningResult GetBucketVersioning(string bucketName);
+		
+		/// <summary>
+        /// Sets <see cref="Bucket" /> Bucket InventoryConfiguration
+        /// </summary>
+        /// <param name="SetBucketInventoryConfigurationRequest"><see cref="SetBucketInventoryConfigurationRequest"/> instance</param>
+        void SetBucketInventoryConfiguration(SetBucketInventoryConfigurationRequest setBucketInventoryConfigurationRequest);
 
+        /// <summary>
+        /// Deletes the bucket's InventoryConfiguration.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="id">id.</param>
+        void DeleteBucketInventoryConfiguration(string bucketName, string id);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> Bucket InventoryConfiguration
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="id">id.</param>
+        /// <returns><see cref="BucketInventoryConfigurationResult"/> instance</returns>
+        BucketInventoryConfigurationResult GetBucketInventoryConfiguration(string bucketName, string id);
+		
+		/// <summary>
+        /// Gets <see cref="Bucket" /> Bucket InventoryConfiguration
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="continuationToken">continuationToken.</param>
+        /// <returns><see cref="ListBucketInventoryConfigurationResult"/> instance</returns>
+        ListBucketInventoryConfigurationResult ListBucketInventoryConfiguration(string bucketName, string continuationToken);
         #endregion
 
         #region Object Operations
