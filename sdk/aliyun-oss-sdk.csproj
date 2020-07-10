@@ -176,6 +176,10 @@
     <Compile Include="Commands\SetObjectAclCommand.cs" />
     <Compile Include="Commands\SetObjectTaggingCommand.cs" />
     <Compile Include="Common\ClientConfiguration.cs" />
+    <Compile Include="Commands\DeleteBucketInventoryConfigurationCommand.cs" />
+    <Compile Include="Commands\GetBucketInventoryConfigurationCommand.cs" />
+    <Compile Include="Commands\ListBucketInventoryConfigurationCommand.cs" />
+    <Compile Include="Commands\SetBucketInventoryConfigurationCommand.cs" />
     <Compile Include="Commands\HeadObjectCommand.cs" />
     <Compile Include="Commands\DeleteObjectsCommand.cs" />
     <Compile Include="Commands\GetBucketLifecycleCommand.cs" />
@@ -215,7 +219,10 @@
     <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
     <Compile Include="Domain\CreateLiveChannelRequest.cs" />
     <Compile Include="Domain\CreateLiveChannelResult.cs" />
+    <Compile Include="Domain\ListBucketInventoryConfigurationRequest.cs" />
+    <Compile Include="Domain\DeleteBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\GenerateRtmpPresignedUriRequest.cs" />
+    <Compile Include="Domain\GetBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\GetVodPlaylistResult.cs" />
     <Compile Include="Domain\GetLiveChannelHistoryRequest.cs" />
     <Compile Include="Domain\GetLiveChannelHistoryResult.cs" />
@@ -265,7 +272,12 @@
     <Compile Include="Domain\SetBucketTaggingRequest.cs" />
     <Compile Include="Domain\SetObjectTaggingRequest.cs" />
     <Compile Include="Domain\LiveRecord.cs" />
+    <Compile Include="Domain\InventoryConfiguration.cs" />
     <Compile Include="Domain\Tag.cs" />
+    <Compile Include="Domain\GetBucketInventoryConfigurationResult.cs" />
+    <Compile Include="Domain\ListBucketInventoryConfigurationResult.cs" />
+    <Compile Include="Domain\SetBucketInventoryConfigurationRequest.cs" />
+    <Compile Include="Enums\InventoryType.cs" />
     <Compile Include="Enums\DataRedundancyType.cs" />
     <Compile Include="Enums\TierType.cs" />
     <Compile Include="Enums\VersioningStatus.cs" />
@@ -282,6 +294,8 @@
     <Compile Include="Model\ServerSideEncryptionRule.cs" />
     <Compile Include="Model\RequestPaymentConfiguration.cs" />
     <Compile Include="Model\Tagging.cs" />
+    <Compile Include="Model\ListInventoryConfigurationModel.cs" />
+    <Compile Include="Model\InventoryConfigurationModel.cs" />
     <Compile Include="Transform\GetVodPlaylistResultDeserializer.cs" />
     <Compile Include="Transform\GetLiveChannelHistoryResultDeserializer.cs" />
     <Compile Include="Transform\GetLiveChannelStatResultDeserializer.cs" />
@@ -329,6 +343,9 @@
     <Compile Include="Transform\SetBucketTaggingRequestSerializer.cs" />
     <Compile Include="Transform\CreateLiveChannelRequestSerializer.cs" />
     <Compile Include="Transform\SetObjectTaggingRequestSerializer.cs" />
+    <Compile Include="Transform\GetBucketInventoryConfigurationResultDeserializer.cs" />
+    <Compile Include="Transform\ListBucketInventoryConfigurationResultDeserializer.cs" />
+    <Compile Include="Transform\SetBucketInventoryConfigurationRequestSerializer.cs" />
     <Compile Include="Transform\XmlStreamSerializer.cs" />
     <Compile Include="Transform\XmlStreamDeserializer.cs" />
     <Compile Include="Util\AsyncResult.cs" />

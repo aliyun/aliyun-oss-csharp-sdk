@@ -22,5 +22,7 @@ namespace Aliyun.OSS.Test.Util
         public static readonly string PayerAccessKeyId = ConfigurationManager.AppSettings["PayerAccessKeyId"];
         public static readonly string PayerAccessKeySecret = ConfigurationManager.AppSettings["PayerAccessKeySecret"];
         public static readonly string PayerUid = ConfigurationManager.AppSettings["PayerUid"];
+        public static readonly string RamRoleArn = ConfigurationManager.AppSettings["RamRoleArn"];
+        public static readonly string RamUID = ConfigurationManager.AppSettings["RamUID"];
     }
 }

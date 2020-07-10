@@ -2954,6 +2954,379 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         }
 
         [Test]
+        public void GetBucketInventoryConfigurationResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateGetBucketInventoryConfigurationResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <InventoryConfiguration>
+                     <Id>report1</Id>
+                     <IsEnabled>true</IsEnabled>
+                     <Destination>
+                        <OSSBucketDestination>
+                           <Format>CSV</Format>
+                           <AccountId>1000000000000000</AccountId>
+                           <RoleArn>acs:ram::1000000000000000:role/bucket-inventory-role</RoleArn>
+                           <Bucket>acs:oss:::bucket_0001</Bucket>
+                           <Prefix>prefix1</Prefix>
+                           <Encryption>
+                              <SSE-OSS/>
+                           </Encryption>
+                        </OSSBucketDestination>
+                     </Destination>
+                     <Schedule>
+                        <Frequency>Daily</Frequency>
+                     </Schedule>
+                     <Filter>
+                       <Prefix>myprefix/</Prefix>
+                     </Filter>
+                     <IncludedObjectVersions>All</IncludedObjectVersions>
+                     <OptionalFields>
+                        <Field>Size</Field>
+                        <Field>LastModifiedDate</Field>
+                        <Field>StorageClass</Field>
+                        <Field>IsMultipartUploaded</Field>
+                        <Field>EncryptionStatus</Field>
+                        <Field>ETag</Field>
+                     </OptionalFields>
+                  </InventoryConfiguration>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            var config = result.Configuration;
+            Assert.AreEqual(config.Id, "report1");
+            Assert.AreEqual(config.IsEnabled, true);
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Format, InventoryFormat.CSV);
+            Assert.AreEqual(config.Destination.OSSBucketDestination.AccountId, "1000000000000000");
+            Assert.AreEqual(config.Destination.OSSBucketDestination.RoleArn, "acs:ram::1000000000000000:role/bucket-inventory-role");
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Bucket, "bucket_0001");
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Prefix, "prefix1");
+            Assert.AreNotEqual(config.Destination.OSSBucketDestination.Encryption.SSEOSS, null);
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Encryption.SSEKMS, null);
+            Assert.AreEqual(config.Schedule.Frequency, InventoryFrequency.Daily);
+            Assert.AreEqual(config.Filter.Prefix, "myprefix/");
+            Assert.AreEqual(config.IncludedObjectVersions, InventoryIncludedObjectVersions.All);
+            Assert.AreEqual(config.OptionalFields[0],  InventoryOptionalField.Size);
+            Assert.AreEqual(config.OptionalFields[1], InventoryOptionalField.LastModifiedDate);
+            Assert.AreEqual(config.OptionalFields[2], InventoryOptionalField.StorageClass);
+            Assert.AreEqual(config.OptionalFields[3], InventoryOptionalField.IsMultipartUploaded);
+            Assert.AreEqual(config.OptionalFields[4], InventoryOptionalField.EncryptionStatus);
+            Assert.AreEqual(config.OptionalFields[5], InventoryOptionalField.ETag);
+
+            data =
+                @" 
+                <InventoryConfiguration>
+                     <Id>report1</Id>
+                     <IsEnabled>false</IsEnabled>
+                     <Destination>
+                        <OSSBucketDestination>
+                           <Format>CSV</Format>
+                           <AccountId>1000000000000000</AccountId>
+                           <RoleArn>acs:ram::1000000000000000:role/bucket-inventory-role</RoleArn>
+                           <Bucket>acs:oss:::bucket_0001</Bucket>
+                           <Prefix>prefix1</Prefix>
+                           <Encryption>
+                              <SSE-KMS/>
+                           </Encryption>
+                        </OSSBucketDestination>
+                     </Destination>
+                     <Schedule>
+                        <Frequency>Weekly</Frequency>
+                     </Schedule>
+                     <IncludedObjectVersions>Current</IncludedObjectVersions>
+                     <OptionalFields>
+                     </OptionalFields>
+                  </InventoryConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            config = result.Configuration;
+            Assert.AreEqual(config.IsEnabled, false);
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Encryption.SSEOSS, null);
+            Assert.AreNotEqual(config.Destination.OSSBucketDestination.Encryption.SSEKMS, null);
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Encryption.SSEKMS.KeyId, null);
+            Assert.AreEqual(config.Filter, null);
+            Assert.AreEqual(config.Schedule.Frequency, InventoryFrequency.Weekly);
+            Assert.AreEqual(config.IncludedObjectVersions, InventoryIncludedObjectVersions.Current);
+            Assert.AreEqual(config.OptionalFields.Count, 0);
+
+            data =
+                @" 
+                <InventoryConfiguration>
+                     <Id>report1</Id>
+                     <IsEnabled>false</IsEnabled>
+                     <Destination>
+                        <OSSBucketDestination>
+                           <Format>CSV</Format>
+                           <AccountId>1000000000000000</AccountId>
+                           <RoleArn>acs:ram::1000000000000000:role/bucket-inventory-role</RoleArn>
+                           <Bucket>acs:oss:::bucket_0001</Bucket>
+                           <Prefix>prefix1</Prefix>
+                           <Encryption>
+                             <SSE-KMS>
+                               <KeyId>keyId</KeyId>
+                             </SSE-KMS>
+                           </Encryption>
+                        </OSSBucketDestination>
+                     </Destination>
+                     <Schedule>
+                        <Frequency>Weekly</Frequency>
+                     </Schedule>
+                     <IncludedObjectVersions>Current</IncludedObjectVersions>
+                     <OptionalFields>
+                     </OptionalFields>
+                  </InventoryConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            config = result.Configuration;
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Encryption.SSEOSS, null);
+            Assert.AreNotEqual(config.Destination.OSSBucketDestination.Encryption.SSEKMS, null);
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Encryption.SSEKMS.KeyId, "keyId");
+
+            data =
+                @" 
+                <InventoryConfiguration>
+                     <Id>report1</Id>
+                     <IsEnabled>true</IsEnabled>
+                     <Destination>
+                        <OSSBucketDestination>
+                           <Format>CSV</Format>
+                           <AccountId>1000000000000000</AccountId>
+                           <RoleArn>acs:ram::1000000000000000:role/bucket-inventory-role</RoleArn>
+                           <Bucket>acs:oss:::bucket_0001</Bucket>
+                           <Prefix>prefix1</Prefix>
+                           <Encryption>
+                           </Encryption>
+                        </OSSBucketDestination>
+                     </Destination>
+                     <Schedule>
+                        <Frequency>Daily</Frequency>
+                     </Schedule>
+                     <IncludedObjectVersions>All</IncludedObjectVersions>
+                  </InventoryConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            config = result.Configuration;
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Encryption.SSEOSS, null);
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Encryption.SSEKMS, null);
+
+            data =
+                @" 
+                <InventoryConfiguration>
+                    <Destination>
+                        <OSSBucketDestination>
+                        </OSSBucketDestination>
+                    </Destination>
+                </InventoryConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            config = result.Configuration;
+            Assert.AreNotEqual(config.Destination.OSSBucketDestination, null);
+            Assert.AreEqual(config.Filter, null);
+            Assert.AreEqual(config.Schedule, null);
+            Assert.AreEqual(config.IncludedObjectVersions, InventoryIncludedObjectVersions.All);
+            Assert.AreEqual(config.OptionalFields.Count, 0);
+
+            data =
+                @" 
+                <InventoryConfiguration>
+                </InventoryConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
+        public void ListBucketInventoryConfigurationResultDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateListBucketInventoryConfigurationResultDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <ListInventoryConfigurationsResult>
+                    <InventoryConfiguration>
+                        <Id>report1</Id>
+                        <IsEnabled>true</IsEnabled>
+                        <Destination>
+                            <OSSBucketDestination>
+                                <Format>CSV</Format>
+                                <AccountId>1000000000000000</AccountId>
+                                <RoleArn>acs:ram::1000000000000000:role/bucket-inventory-role</RoleArn>
+                                <Bucket>acs:oss:::destination-bucket</Bucket>
+                                <Prefix>prefix1</Prefix>
+                            </OSSBucketDestination>
+                        </Destination>
+                        <Schedule>
+                            <Frequency>Daily</Frequency>
+                        </Schedule>
+                        <Filter>
+                            <Prefix>prefix/One</Prefix>
+                        </Filter>
+                        <IncludedObjectVersions>All</IncludedObjectVersions>
+                        <OptionalFields>
+                            <Field>Size</Field>
+                            <Field>LastModifiedDate</Field>
+                            <Field>StorageClass</Field>
+                            <Field>IsMultipartUploaded</Field>
+                            <Field>EncryptionStatus</Field>
+                            <Field>ETag</Field>
+                        </OptionalFields>
+                    </InventoryConfiguration>
+                    <InventoryConfiguration>
+                        <Id>report2</Id>
+                        <IsEnabled>true</IsEnabled>
+                        <Destination>
+                            <OSSBucketDestination>
+                                <Format>CSV</Format>
+                                <AccountId>1000000000000000</AccountId>
+                                <RoleArn>acs:ram::1000000000000000:role/bucket-inventory-role</RoleArn>
+                                <Bucket>acs:oss:::destination-bucket</Bucket>
+                                <Prefix>prefix2</Prefix>
+                            </OSSBucketDestination>
+                        </Destination>
+                        <Schedule>
+                            <Frequency>Daily</Frequency>
+                        </Schedule>
+                        <Filter>
+                            <Prefix>prefix/Two</Prefix>
+                        </Filter>
+                        <IncludedObjectVersions>All</IncludedObjectVersions>
+                        <OptionalFields>
+                            <Field>Size</Field>
+                            <Field>LastModifiedDate</Field>
+                            <Field>ETag</Field>
+                            <Field>StorageClass</Field>
+                            <Field>IsMultipartUploaded</Field>
+                            <Field>EncryptionStatus</Field>
+                        </OptionalFields>
+                     </InventoryConfiguration>
+                     <InventoryConfiguration>
+                        <Id>report3</Id>
+                        <IsEnabled>false</IsEnabled>
+                        <Destination>
+                            <OSSBucketDestination>
+                                <Format>CSV</Format>
+                                <AccountId>1000000000000000</AccountId>
+                                <RoleArn>acs:ram::1000000000000000:role/bucket-inventory-role</RoleArn>
+                                <Bucket>acs:oss:::destination-bucket</Bucket>
+                                <Prefix>prefix3</Prefix>
+                            </OSSBucketDestination>
+                        </Destination>
+                        <Schedule>
+                            <Frequency>Daily</Frequency>
+                        </Schedule>
+                        <Filter>
+                            <Prefix>prefix/Three</Prefix>
+                        </Filter>
+                        <IncludedObjectVersions>All</IncludedObjectVersions>
+                    </InventoryConfiguration>
+                    <IsTruncated>true</IsTruncated>
+                    <NextContinuationToken>report2</NextContinuationToken> 
+                </ListInventoryConfigurationsResult>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            var configs = OssTestUtils.ToArray(result.Configurations);
+            Assert.AreEqual(configs.Count, 3);
+            Assert.AreEqual(result.IsTruncated, true);
+            Assert.AreEqual(result.NextContinuationToken, "report2");
+            var config = configs[0];
+            Assert.AreEqual(config.Id, "report1");
+            Assert.AreEqual(config.IsEnabled, true);
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Format, InventoryFormat.CSV);
+            Assert.AreEqual(config.Destination.OSSBucketDestination.AccountId, "1000000000000000");
+            Assert.AreEqual(config.Destination.OSSBucketDestination.RoleArn, "acs:ram::1000000000000000:role/bucket-inventory-role");
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Bucket, "destination-bucket");
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Prefix, "prefix1");
+            Assert.AreEqual(config.Destination.OSSBucketDestination.Encryption, null);
+            Assert.AreEqual(config.Schedule.Frequency, InventoryFrequency.Daily);
+            Assert.AreEqual(config.Filter.Prefix, "prefix/One");
+            Assert.AreEqual(config.IncludedObjectVersions, InventoryIncludedObjectVersions.All);
+            Assert.AreEqual(config.OptionalFields[0], InventoryOptionalField.Size);
+            Assert.AreEqual(config.OptionalFields[1], InventoryOptionalField.LastModifiedDate);
+            Assert.AreEqual(config.OptionalFields[2], InventoryOptionalField.StorageClass);
+            Assert.AreEqual(config.OptionalFields[3], InventoryOptionalField.IsMultipartUploaded);
+            Assert.AreEqual(config.OptionalFields[4], InventoryOptionalField.EncryptionStatus);
+            Assert.AreEqual(config.OptionalFields[5], InventoryOptionalField.ETag);
+
+            config = configs[2];
+            Assert.AreEqual(config.Id, "report3");
+            Assert.AreEqual(config.IsEnabled, false);
+            Assert.AreEqual(config.Filter.Prefix, "prefix/Three");
+
+            data =
+                @" 
+                <ListInventoryConfigurationsResult>
+                    <IsTruncated>false</IsTruncated>
+                    <NextContinuationToken></NextContinuationToken> 
+                </ListInventoryConfigurationsResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            configs = OssTestUtils.ToArray(result.Configurations);
+            Assert.AreEqual(configs.Count, 0);
+            Assert.AreEqual(result.IsTruncated, false);
+            Assert.AreEqual(result.NextContinuationToken, "");
+
+            data =
+                @" 
+                <ListInventoryConfigurationsResult>
+                </ListInventoryConfigurationsResult>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            configs = OssTestUtils.ToArray(result.Configurations);
+            Assert.AreEqual(configs.Count, 0);
+            Assert.AreEqual(result.IsTruncated, false);
+            Assert.AreEqual(result.NextContinuationToken,null);
+
+            data = "invalid xml";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            xmlStream.Headers.Remove(HttpHeaders.ContentLength);
+            xmlStream.Headers.Add(HttpHeaders.ContentLength, data.Length.ToString());
+            try
+            {
+                result = deserializer.Deserialize(xmlStream);
+                Assert.IsTrue(false);
+            }
+            catch (ResponseDeserializationException e)
+            {
+                Assert.IsTrue(true, e.Message);
+            }
+        }
+
+        [Test]
         public void SerializerFactoryTest()
         {
             var factory = SerializerFactory.GetFactory("text/xml");
