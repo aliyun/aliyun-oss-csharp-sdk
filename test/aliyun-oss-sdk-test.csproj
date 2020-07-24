@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\coverlet.msbuild.2.9.0\build\coverlet.msbuild.props" Condition="Exists('..\packages\coverlet.msbuild.2.9.0\build\coverlet.msbuild.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -14,6 +15,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectAssetsFile>notexistfile</ProjectAssetsFile>
     <IsTestProject>true</IsTestProject>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +52,10 @@
     <Reference Include="System.Configuration" />
     <Reference Include="nunit.framework">
       <HintPath>..\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="NUnit3.TestAdapter">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\NUnit3.TestAdapter.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -103,15 +110,16 @@
     <Compile Include="TestCase\OtherTestCase\ResumableContextTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="aliyun_sdk_net.snk" />
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Remove="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ConcurrencyTestConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </Content>
+    <Content Include="example.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -121,4 +129,12 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\coverlet.msbuild.2.9.0\build\coverlet.msbuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\coverlet.msbuild.2.9.0\build\coverlet.msbuild.props'))" />
+    <Error Condition="!Exists('..\packages\coverlet.msbuild.2.9.0\build\coverlet.msbuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\coverlet.msbuild.2.9.0\build\coverlet.msbuild.targets'))" />
+  </Target>
+  <Import Project="..\packages\coverlet.msbuild.2.9.0\build\coverlet.msbuild.targets" Condition="Exists('..\packages\coverlet.msbuild.2.9.0\build\coverlet.msbuild.targets')" />
 </Project>

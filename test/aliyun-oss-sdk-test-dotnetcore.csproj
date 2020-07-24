@@ -23,6 +23,10 @@
     <DefineConstants>TRACE;TEST_DOTNETCORE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="2.9.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="NUnit" Version="3.9.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
@@ -64,6 +68,7 @@
     <Compile Include="TestCase\ObjectTestCase\ObjectEncodingTypeTest.cs" />
     <Compile Include="TestCase\OtherTestCase\UtilsTest.cs" />
     <Compile Include="Util\AccountSettings.cs" />
+    <Compile Include="Util\Config.cs" />
     <Compile Include="Util\LogUtility.cs" />
     <Compile Include="Util\OssClientFactory.cs" />
     <Compile Include="Util\OssTestUtils.cs" />
@@ -73,7 +78,6 @@
     <Compile Include="TestCase\ObjectTestCase\ObjectResumableOperationTest.cs" />
 	<Compile Include="TestCase\ObjectTestCase\OssCrcTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ResumableContextTest.cs" />
-    <Compile Include="Util\ConfigCore.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="app.config" />
@@ -87,5 +91,10 @@
   <ItemGroup>
     <ProjectReference Include="..\sdk\aliyun-oss-sdk-dotnetcore.csproj">
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="example.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

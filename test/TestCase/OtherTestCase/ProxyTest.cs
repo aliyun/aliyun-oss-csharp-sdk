@@ -130,7 +130,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             try
             {
                 IOss ossClient = OssClientFactory.CreateOssClientWithProxy(Config.Endpoint, 
-                    Config.DisabledAccessKeyId, Config.DisabledAccessKeySecret,
+                    "DisabledAccessKeyId", "DisabledAccessKeySecret",
                     Config.ProxyHost, Int32.Parse(Config.ProxyPort), null, null);
 
                 OssTestUtils.ObjectExists(ossClient, _bucketName, key);
@@ -157,7 +157,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             try
             {
                 IOss ossClient = OssClientFactory.CreateOssClientWithProxy(Config.Endpoint,
-                    Config.DisabledAccessKeyId, Config.DisabledAccessKeySecret,
+                    "DisabledAccessKeyId", "DisabledAccessKeySecret",
                     Config.ProxyHost, Int32.Parse(Config.ProxyPort) + 2, null, null);
 
                 OssTestUtils.ObjectExists(ossClient, _bucketName, key);

@@ -47,7 +47,7 @@ namespace Aliyun.OSS.Test.TestClass.AccessKeyTestClass
             try
             {
                 //Key id/secret is valid but disabled
-                var ossClient = new OssClient(Config.Endpoint, Config.DisabledAccessKeyId, Config.DisabledAccessKeySecret);
+                var ossClient = new OssClient(Config.Endpoint, "DisabledAccessKeyId", "DisabledAccessKeySecret");
                 ossClient.ListBuckets();
                 Assert.Fail("Disabled access key should not initialize OssClient successfully");
             }

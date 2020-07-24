@@ -140,7 +140,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         {
             var settings = AccountSettings.Load();
             //point to region (Beijing) other than Hangzhou
-            settings.OssEndpoint = Config.SecondEndpoint;
+            settings.OssEndpoint = Config.Endpoint;
             var ossClient = OssClientFactory.CreateOssClient(settings);
 
             //get a random bucketName
@@ -214,7 +214,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 
             var settings = AccountSettings.Load();
             //point to location (Beijing) other than Hangzhou
-            settings.OssEndpoint = Config.SecondEndpoint;
+            settings.OssEndpoint = Config.Endpoint;
             var ossSecondClient = OssClientFactory.CreateOssClient(settings);
             //create the bucket
             _ossClient.CreateBucket(bucketName);
