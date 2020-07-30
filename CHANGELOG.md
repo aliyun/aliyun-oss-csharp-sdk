@@ -1,4 +1,13 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
+## 版本号：2.11.0  日期：2020/07/30
+### 变更内容
+- 增加：Live Channel  接口
+- 增加：Bucket Inventory 接口
+- 增加：冷归档 接口
+- 增加：按照key删除 Bucket 标签
+- 增加：上传回调 和 访问者付费 子资源到签名列表里 
+- 修复: 当CheckPointDir 为空时，仍然生成checkpoint文件的问题
+
 ## 版本号：2.10.0  日期：2020/04/10
 ### 变更内容
 - 增加：Bucket Policy 接口

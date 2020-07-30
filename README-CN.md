@@ -12,7 +12,7 @@
  - OSS C# SDK[在线文档](http://gosspublic.alicdn.com/AliyunNetSDK/apidocs/latest/index.html)。
 
 ## 版本
- - 当前版本：2.10.0
+ - 当前版本：2.11.0
 
 ## 运行环境
 
