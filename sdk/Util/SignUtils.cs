@@ -32,6 +32,7 @@ namespace Aliyun.OSS.Util
             "objectMeta", "encryption", "versioning", "versionId", "versions",
             "live", "status", "comp", "vod", "startTime", "endTime",
             "inventory","continuation-token","inventoryId",
+            "callback", "callback-var","x-oss-request-payer",
             ResponseHeaderOverrides.ResponseCacheControl,
             ResponseHeaderOverrides.ResponseContentDisposition,
             ResponseHeaderOverrides.ResponseContentEncoding,
