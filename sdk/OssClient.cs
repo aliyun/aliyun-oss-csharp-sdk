@@ -744,6 +744,65 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        /// <inheritdoc/>
+        public void InitiateBucketWorm(InitiateBucketWormRequest initiateBucketWormRequest)
+        {
+
+            var cmd = InitiateBucketWormCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, initiateBucketWormRequest.BucketName, null),
+                                                      initiateBucketWormRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void AbortBucketWorm(string bucketName)
+        {
+            var cmd = AbortBucketWormCommand.Create(_serviceClient, _endpoint,
+                                       CreateContext(HttpMethod.Delete, bucketName, null),
+                                       bucketName);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void CompleteBucketWorm(CompleteBucketWormRequest completeBucketWormRequest)
+        {
+            var cmd = CompleteBucketWormCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, completeBucketWormRequest.BucketName, null),
+                                                      completeBucketWormRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void ExtendBucketWorm(ExtendBucketWormRequest extendBucketWormRequest)
+        {
+
+            var cmd = ExtendBucketWormCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, extendBucketWormRequest.BucketName, null),
+                                                      extendBucketWormRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetBucketWormResult GetBucketWorm(string bucketName)
+        {
+            var cmd = GetBucketWormCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, bucketName, null),
+                                     bucketName);
+            return cmd.Execute();
+        }
+
         #endregion
 
         #region Object Operations

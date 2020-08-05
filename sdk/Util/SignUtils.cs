@@ -30,6 +30,7 @@ namespace Aliyun.OSS.Util
             "position", "x-oss-process", "restore", "bucketInfo", "stat", "symlink", 
             "location", "qos", "policy", "tagging", "requestPayment", "x-oss-traffic-limit",
             "objectMeta", "encryption", "versioning", "versionId", "versions", "inventory","continuation-token","inventoryId",
+            "worm","wormId","wormExtend",
             ResponseHeaderOverrides.ResponseCacheControl,
             ResponseHeaderOverrides.ResponseContentDisposition,
             ResponseHeaderOverrides.ResponseContentEncoding,

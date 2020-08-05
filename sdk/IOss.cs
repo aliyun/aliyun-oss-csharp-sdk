@@ -370,6 +370,37 @@ namespace Aliyun.OSS
         /// <param name="continuationToken">continuationToken.</param>
         /// <returns><see cref="ListBucketInventoryConfigurationResult"/> instance</returns>
         ListBucketInventoryConfigurationResult ListBucketInventoryConfiguration(string bucketName, string continuationToken);
+
+        /// <summary>
+        /// InitiateBucketWorm
+        /// </summary>
+        /// <param name="InitiateBucketWormRequest"><see cref="InitiateBucketWormRequest"/> instance</param>
+        void InitiateBucketWorm(InitiateBucketWormRequest initiateBucketWormRequest);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> AbortBucketWorm
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        void AbortBucketWorm(string bucketName);
+
+        /// <summary>
+        /// CompleteBucketWorm
+        /// </summary>
+        /// <param name="CompleteBucketWormRequest"><see cref="CompleteBucketWormRequest"/> instance</param>
+        void CompleteBucketWorm(CompleteBucketWormRequest completeBucketWormRequest);
+
+        /// <summary>
+        /// ExtendBucketWorm
+        /// </summary>
+        /// <param name="ExtendBucketWormRequest"><see cref="ExtendBucketWormRequest"/> instance</param>
+        void ExtendBucketWorm(ExtendBucketWormRequest extendBucketWormRequest);
+
+        /// <summary>
+        /// GetBucketWormResult
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <returns><see cref="GetBucketWormResult"/> instance</returns>
+        GetBucketWormResult GetBucketWorm(string bucketName);
         #endregion
 
         #region Object Operations
