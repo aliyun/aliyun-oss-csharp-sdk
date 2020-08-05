@@ -144,17 +144,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\AbortBucketWormCommand.cs" />
     <Compile Include="Commands\AppendObjectCommand.cs" />
+    <Compile Include="Commands\CompleteBucketWormCommand.cs" />
     <Compile Include="Commands\DeleteBucketEncryptionCommand.cs" />
     <Compile Include="Commands\DeleteBucketTaggingCommand.cs" />
     <Compile Include="Commands\DeleteObjectVersionsCommand.cs" />
     <Compile Include="Commands\DeleteObjectTaggingCommand.cs" />
+    <Compile Include="Commands\ExtendBucketWormCommand.cs" />
     <Compile Include="Commands\GetBucketEncryptionCommand.cs" />
     <Compile Include="Commands\GetBucketVersioningCommand.cs" />
     <Compile Include="Commands\GetBucketRequestPaymentCommand.cs" />
     <Compile Include="Commands\GetBucketStorageCapacityCommand.cs" />
     <Compile Include="Commands\GetBucketTaggingCommand.cs" />
+    <Compile Include="Commands\GetBucketWormCommand.cs" />
     <Compile Include="Commands\GetObjectTaggingCommand.cs" />
+    <Compile Include="Commands\InitiateBucketWormCommand.cs" />
     <Compile Include="Commands\ListObjectVersionsCommand.cs" />
     <Compile Include="Commands\SetBucketEncryptionCommand.cs" />
     <Compile Include="Commands\SetBucketVersioningCommand.cs" />
@@ -208,6 +213,7 @@
     <Compile Include="Common\Internal\PartialWrapperStream.cs" />
     <Compile Include="Common\Internal\StreamReadTracker.cs" />
     <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
+    <Compile Include="Domain\CompleteBucketWormRequest.cs" />
     <Compile Include="Domain\DeleteBucketTaggingRequest.cs" />
     <Compile Include="Domain\DeleteObjectResult.cs" />
     <Compile Include="Domain\CreateSymlinkResult.cs" />
@@ -218,12 +224,15 @@
     <Compile Include="Domain\DeletedObjectSummary.cs" />
     <Compile Include="Domain\DeleteObjectVersionsRequest.cs" />
     <Compile Include="Domain\DeleteObjectVersionsResult.cs" />
+    <Compile Include="Domain\ExtendBucketWormRequest.cs" />
     <Compile Include="Domain\GetBucketVersioningResult.cs" />
     <Compile Include="Domain\DeleteObjectTaggingRequest.cs" />
+    <Compile Include="Domain\GetBucketWormResult.cs" />
     <Compile Include="Domain\GetObjectTaggingRequest.cs" />
     <Compile Include="Domain\GetSymlinkRequest.cs" />
     <Compile Include="Domain\GetObjectMetadataRequest.cs" />
     <Compile Include="Domain\GetObjectAclRequest.cs" />
+    <Compile Include="Domain\InitiateBucketWormRequest.cs" />
     <Compile Include="Domain\ObjectVersionList.cs" />
     <Compile Include="Domain\ListObjectVersionsRequest.cs" />
     <Compile Include="Domain\DeleteMarkerSummary.cs" />
@@ -250,6 +259,7 @@
     <Compile Include="Enums\DataRedundancyType.cs" />
     <Compile Include="Enums\VersioningStatus.cs" />
     <Compile Include="Enums\RequestPayer.cs" />
+    <Compile Include="Model\BucketWorm.cs" />
     <Compile Include="Model\DeleteObjectsResultModel.cs" />
     <Compile Include="Model\ListVersionsResult.cs" />
     <Compile Include="Model\RestoreObjectRequestModel.cs" />
@@ -263,6 +273,7 @@
     <Compile Include="Transform\CreateSymlinkResultDeserializer.cs" />
     <Compile Include="Transform\DeleteObjectVersionsRequestSerializer.cs" />
     <Compile Include="Transform\DeleteObjectVersionsResultDeserializer.cs" />
+    <Compile Include="Transform\ExtendBucketWormRequestSerializer.cs" />
     <Compile Include="Transform\GetBucketEncryptionResultDeserializer.cs" />
     <Compile Include="Transform\GetBucketPolicyDeserializer.cs" />
     <Compile Include="Domain\GetBucketPolicyResult.cs" />
@@ -284,7 +295,9 @@
     <Compile Include="Transform\GetBucketRequestPaymentResultDeserializer.cs" />
     <Compile Include="Transform\GetBucketStorageCapacityResultDeserializer.cs" />
     <Compile Include="Transform\GetBucketTaggingResultDeserializer.cs" />
+    <Compile Include="Transform\GetBucketWormResultDeserializer.cs" />
     <Compile Include="Transform\GetObjectTaggingResultDeserializer.cs" />
+    <Compile Include="Transform\InitiateBucketWormRequestSerializer.cs" />
     <Compile Include="Transform\ListObjectVersionsResponseDeserializer.cs" />
     <Compile Include="Transform\RestoreObjectRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketEncryptionRequestSerializer.cs" />

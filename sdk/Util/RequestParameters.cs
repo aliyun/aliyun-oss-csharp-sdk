@@ -32,6 +32,9 @@ namespace Aliyun.OSS.Util
         public const string SUBRESOURCE_INVENTORY = "inventory";
         public const string SUBRESOURCE_ID = "inventoryId";
         public const string SUBRESOURCE_CONTINUATIONTOKEN = "continuation-token";
+        public const string SUBRESOURCE_WORM = "worm";
+        public const string SUBRESOURCE_WORMID = "wormId";
+        public const string SUBRESOURCE_WORMExtend = "wormExtend";
         public const string PREFIX = "prefix";
         public const string DELIMITER = "delimiter";
         public const string MARKER = "marker";    

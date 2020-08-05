@@ -108,6 +108,14 @@ namespace Aliyun.OSS.Transform
         {
             return new RestoreObjectRequestSerializer(CreateContentSerializer<RestoreRequestModel>());
         }
+        public ISerializer<InitiateBucketWormRequest, Stream> CreateInitiateBucketWormSerializer()
+        {
+            return new InitiateBucketWormRequestSerializer(CreateContentSerializer<InitiateBucketWormModel>());
+        }
+        public ISerializer<ExtendBucketWormRequest, Stream> CreateExtendBucketWormSerializer()
+        {
+            return new ExtendBucketWormRequestSerializer(CreateContentSerializer<ExtendBucketWormModel>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory
