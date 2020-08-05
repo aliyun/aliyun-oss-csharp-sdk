@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>False</EnableDefaultEmbeddedResourceItems>
@@ -30,23 +30,28 @@
    <None Remove="Common\Communication\netcore\StreamWeakReferece.cs" />
  </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\AbortBucketWormCommand.cs" />
     <Compile Include="Commands\AppendObjectCommand.cs" />
+    <Compile Include="Commands\CompleteBucketWormCommand.cs" />
     <Compile Include="Commands\DeleteBucketEncryptionCommand.cs" />
     <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
     <Compile Include="Commands\DeleteBucketTaggingCommand.cs" />
     <Compile Include="Commands\DeleteLiveChannelCommand.cs" />
     <Compile Include="Commands\DeleteObjectTaggingCommand.cs" />
     <Compile Include="Commands\DeleteObjectVersionsCommand.cs" />
+    <Compile Include="Commands\ExtendBucketWormCommand.cs" />
     <Compile Include="Commands\GetBucketEncryptionCommand.cs" />
     <Compile Include="Commands\GetBucketPolicyCommand.cs" />
     <Compile Include="Commands\GetBucketRequestPaymentCommand.cs" />
     <Compile Include="Commands\GetBucketStorageCapacityCommand.cs" />
     <Compile Include="Commands\GetBucketTaggingCommand.cs" />
     <Compile Include="Commands\GetBucketVersioningCommand.cs" />
+    <Compile Include="Commands\GetBucketWormCommand.cs" />
     <Compile Include="Commands\GetLiveChannelHistoryCommand.cs" />
     <Compile Include="Commands\GetLiveChannelInfoCommand.cs" />
     <Compile Include="Commands\GetLiveChannelStatCommand.cs" />
     <Compile Include="Commands\GetObjectTaggingCommand.cs" />
+    <Compile Include="Commands\InitiateBucketWormCommand.cs" />
     <Compile Include="Commands\ListLiveChannelCommand.cs" />
     <Compile Include="Commands\ListObjectVersionsCommand.cs" />
     <Compile Include="Commands\GetVodPlaylistCommand.cs" />
@@ -110,6 +115,7 @@
     <Compile Include="Domain\BucketEncryptionResult.cs" />
     <Compile Include="Domain\BucketMetadata.cs" />
     <Compile Include="Domain\BucketLocationResult.cs" />
+    <Compile Include="Domain\CompleteBucketWormRequest.cs" />
     <Compile Include="Domain\CreateBucketRequest.cs" />
     <Compile Include="Domain\CreateLiveChannelResult.cs" />
     <Compile Include="Domain\CreateSymlinkResult.cs" />
@@ -123,6 +129,7 @@
     <Compile Include="Domain\DeleteObjectTaggingRequest.cs" />
     <Compile Include="Domain\DeleteObjectVersionsRequest.cs" />
     <Compile Include="Domain\DeleteObjectVersionsResult.cs" />
+    <Compile Include="Domain\ExtendBucketWormRequest.cs" />
     <Compile Include="Domain\GenerateRtmpPresignedUriRequest.cs" />
     <Compile Include="Domain\GetBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\GetBucketPolicyResult.cs" />
@@ -130,6 +137,7 @@
     <Compile Include="Domain\GetBucketStorageCapacityResult.cs" />
     <Compile Include="Domain\GetBucketTaggingResult.cs" />
     <Compile Include="Domain\GetBucketVersioningResult.cs" />
+    <Compile Include="Domain\GetBucketWormResult.cs" />
     <Compile Include="Domain\GetLiveChannelHistoryRequest.cs" />
     <Compile Include="Domain\GetLiveChannelHistoryResult.cs" />
     <Compile Include="Domain\GetLiveChannelInfoRequest.cs" />
@@ -143,7 +151,9 @@
     <Compile Include="Domain\GetSymlinkRequest.cs" />
     <Compile Include="Domain\GetVodPlaylistRequest.cs" />
     <Compile Include="Domain\GetVodPlaylistResult.cs" />
+    <Compile Include="Domain\InitiateBucketWormResult.cs" />
     <Compile Include="Domain\InventoryConfiguration.cs" />
+    <Compile Include="Domain\InitiateBucketWormRequest.cs" />
     <Compile Include="Domain\ListBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\ListLiveChannelRequest.cs" />
     <Compile Include="Domain\ListLiveChannelResult.cs" />
@@ -168,12 +178,14 @@
     <Compile Include="Domain\ListBucketInventoryConfigurationResult.cs" />
     <Compile Include="Domain\SetBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\Tag.cs" />
+    <Compile Include="Enums\BucketWormState.cs" />
     <Compile Include="Enums\InventoryType.cs" />
     <Compile Include="Enums\DataRedundancyType.cs" />
     <Compile Include="Enums\RequestPayer.cs" />
     <Compile Include="Enums\TierType.cs" />
     <Compile Include="Enums\VersioningStatus.cs" />
     <Compile Include="Model\BucketStorageCapacityModel.cs" />
+    <Compile Include="Model\BucketWorm.cs" />
     <Compile Include="Model\CreateLiveChannelResultModel.cs" />
     <Compile Include="Model\DeleteObjectsResultModel.cs" />
     <Compile Include="Model\ListLiveChannelResultModel.cs" />
@@ -200,25 +212,29 @@
     <Compile Include="Model\InventoryConfigurationModel.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\CreateLiveChannelResultDeserializer.cs" />
+    <Compile Include="Transform\InitiateBucketWormResultDeserializer.cs" />
     <Compile Include="Transform\CreateSymlinkResultDeserializer.cs" />
     <Compile Include="Transform\DeleteObjectResultDeserializer.cs" />
     <Compile Include="Transform\DeleteObjectVersionsRequestSerializer.cs" />
     <Compile Include="Transform\DeleteObjectVersionsResultDeserializer.cs" />
+    <Compile Include="Transform\ExtendBucketWormRequestSerializer.cs" />
     <Compile Include="Transform\GetBucketEncryptionResultDeserializer.cs" />
     <Compile Include="Transform\GetBucketPolicyDeserializer.cs" />
     <Compile Include="Transform\GetBucketRequestPaymentResultDeserializer.cs" />
-	<Compile Include="Transform\GetBucketStorageCapacityResultDeserializer.cs" />
-	<Compile Include="Transform\GetBucketTaggingResultDeserializer.cs" />
-	<Compile Include="Transform\GetBucketVersioningResultDeserializer.cs" />
-	<Compile Include="Transform\GetLiveChannelHistoryResultDeserializer.cs" />
-	<Compile Include="Transform\GetLiveChannelInfoResultDeserializer.cs" />
-	<Compile Include="Transform\GetLiveChannelStatResultDeserializer.cs" />
-	<Compile Include="Transform\GetObjectTaggingResultDeserializer.cs" />
-	<Compile Include="Transform\GetVodPlaylistResultDeserializer.cs" />
-	<Compile Include="Transform\ListLiveChannelResultDeserializer.cs" />
-	<Compile Include="Transform\ListObjectVersionsResponseDeserializer.cs" />
-	<Compile Include="Transform\RestoreObjectRequestSerializer.cs" />
-	<Compile Include="Transform\SetBucketEncryptionRequestSerializer.cs" />
+    <Compile Include="Transform\GetBucketStorageCapacityResultDeserializer.cs" />
+    <Compile Include="Transform\GetBucketTaggingResultDeserializer.cs" />
+    <Compile Include="Transform\GetBucketVersioningResultDeserializer.cs" />
+    <Compile Include="Transform\GetLiveChannelHistoryResultDeserializer.cs" />
+    <Compile Include="Transform\GetLiveChannelInfoResultDeserializer.cs" />
+    <Compile Include="Transform\GetLiveChannelStatResultDeserializer.cs" />
+    <Compile Include="Transform\GetBucketWormResultDeserializer.cs" />
+    <Compile Include="Transform\GetObjectTaggingResultDeserializer.cs" />
+    <Compile Include="Transform\InitiateBucketWormRequestSerializer.cs" />
+    <Compile Include="Transform\GetVodPlaylistResultDeserializer.cs" />
+    <Compile Include="Transform\ListLiveChannelResultDeserializer.cs" />
+    <Compile Include="Transform\ListObjectVersionsResponseDeserializer.cs" />
+    <Compile Include="Transform\RestoreObjectRequestSerializer.cs" />
+    <Compile Include="Transform\SetBucketEncryptionRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketRequestPaymentRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketStorageCapacityRequestSerializer.cs" />
     <Compile Include="Transform\GetBucketMetadataResponseDeserializer.cs" />

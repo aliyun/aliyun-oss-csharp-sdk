@@ -47,6 +47,7 @@
     <Compile Include="TestCase\BucketTestCase\BucketWebsiteSettingsTest.cs" />
 	<Compile Include="TestCase\BucketTestCase\BucketStorageCapacityTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketInventoryConfigurationSettings.cs" />
+    <Compile Include="TestCase\BucketTestCase\BucketWormSettingTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectProgressTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectHashCheckTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectCallbackTest.cs" />

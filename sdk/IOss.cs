@@ -11,7 +11,7 @@ using Aliyun.OSS.Common.Authentication;
 using Aliyun.OSS.Common.Internal;
 using Aliyun.OSS.Model;
 
-namespace Aliyun.OSS 
+namespace Aliyun.OSS
 {
     /// <summary>
     /// The Object Storage Service (OSS) entry point interface.
@@ -169,7 +169,7 @@ namespace Aliyun.OSS
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <returns>The logging config result</returns>
         BucketLoggingResult GetBucketLogging(string bucketName);
-        
+
         /// <summary>
         /// Deletes the <see cref="Bucket" /> logging config
         /// </summary>
@@ -181,7 +181,7 @@ namespace Aliyun.OSS
         /// </summary>
         /// <param name="setBucketWebSiteRequest"><see cref="SetBucketWebsiteRequest"/> instance</param>
         void SetBucketWebsite(SetBucketWebsiteRequest setBucketWebSiteRequest);
-        
+
 
         /// <summary>
         /// Gets <see cref="Bucket" /> static website config
@@ -341,8 +341,8 @@ namespace Aliyun.OSS
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <returns><see cref="GetBucketVersioningResult"/> instance</returns>
         GetBucketVersioningResult GetBucketVersioning(string bucketName);
-		
-		/// <summary>
+
+        /// <summary>
         /// Sets <see cref="Bucket" /> bucket inventory configuration
         /// </summary>
         /// <param name="request"><see cref="SetBucketInventoryConfigurationRequest"/> instance</param>
@@ -367,6 +367,38 @@ namespace Aliyun.OSS
         /// <param name="request"><see cref="ListBucketInventoryConfigurationRequest"/> instance</param>
         /// <returns><see cref="ListBucketInventoryConfigurationResult"/> instance</returns>
         ListBucketInventoryConfigurationResult ListBucketInventoryConfiguration(ListBucketInventoryConfigurationRequest request);
+
+        /// <summary>
+        /// InitiateBucketWorm
+        /// </summary>
+        /// <returns><see cref="InitiateBucketWormResult"/> instance</returns>
+        /// <param name="request"><see cref="InitiateBucketWormRequest"/> instance</param>
+        InitiateBucketWormResult InitiateBucketWorm(InitiateBucketWormRequest request);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> AbortBucketWorm
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        void AbortBucketWorm(string bucketName);
+
+        /// <summary>
+        /// CompleteBucketWorm
+        /// </summary>
+        /// <param name="request"><see cref="CompleteBucketWormRequest"/> instance</param>
+        void CompleteBucketWorm(CompleteBucketWormRequest request);
+
+        /// <summary>
+        /// ExtendBucketWorm
+        /// </summary>
+        /// <param name="request"><see cref="ExtendBucketWormRequest"/> instance</param>
+        void ExtendBucketWorm(ExtendBucketWormRequest request);
+
+        /// <summary>
+        /// GetBucketWormResult
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <returns><see cref="GetBucketWormResult"/> instance</returns>
+        GetBucketWormResult GetBucketWorm(string bucketName);
         #endregion
 
         #region Object Operations
@@ -584,7 +616,7 @@ namespace Aliyun.OSS
         /// </param>
         /// <returns><see cref="PutObjectResult" /> instance</returns>
         [Obsolete("PutBigObject is deprecated, please use ResumableUploadObject instead")]
-        PutObjectResult PutBigObject(string bucketName, string key, Stream content, ObjectMetadata metadata, long? partSize = null); 
+        PutObjectResult PutBigObject(string bucketName, string key, Stream content, ObjectMetadata metadata, long? partSize = null);
 
         /// <summary>
         /// Uploads the file via the signed url.
@@ -980,7 +1012,7 @@ namespace Aliyun.OSS
         /// <param name="generatePresignedUriRequest">request parameter</param>
         /// <returns>The signed url. The user could use this url to access the object directly</returns>
         Uri GeneratePresignedUri(GeneratePresignedUriRequest generatePresignedUriRequest);
-        
+
         /// <summary>
         /// Generates the signed url with default expiration time (15 min) that supports HTTP GET method.
         /// </summary>
@@ -997,8 +1029,8 @@ namespace Aliyun.OSS
         /// <param name="expiration">Uri expiration time</param>
         /// <returns>signed url</returns>
         Uri GeneratePresignedUri(string bucketName, string key, DateTime expiration);
-        
-        
+
+
         /// <summary>
         /// Generates the pre-signed url with specified expiration time that supports the specified HTTP method
         /// </summary>
@@ -1017,7 +1049,7 @@ namespace Aliyun.OSS
         /// <param name="method">HTTP method</param>
         /// <returns>signed url</returns>
         Uri GeneratePresignedUri(string bucketName, string key, DateTime expiration, SignHttpMethod method);
-        
+
         #endregion
 
         #region Generate Post Policy
@@ -1039,20 +1071,20 @@ namespace Aliyun.OSS
         /// <param name="listMultipartUploadsRequest">request parameter</param>
         /// <returns><see cref="MultipartUploadListing" /> instance</returns>
         MultipartUploadListing ListMultipartUploads(ListMultipartUploadsRequest listMultipartUploadsRequest);
-        
+
         /// <summary>
         /// Initiate a multipart upload
         /// </summary>
         /// <param name="initiateMultipartUploadRequest">request parameter</param>
         /// <returns><see cref="InitiateMultipartUploadResult"/> instance</returns>
         InitiateMultipartUploadResult InitiateMultipartUpload(InitiateMultipartUploadRequest initiateMultipartUploadRequest);
-        
+
         /// <summary>
         /// Aborts a multipart upload
         /// </summary>
         /// <param name="abortMultipartUploadRequest">request parameter</param>
         void AbortMultipartUpload(AbortMultipartUploadRequest abortMultipartUploadRequest);
-        
+
         /// <summary>
         /// Uploads a part
         /// </summary>
@@ -1107,7 +1139,7 @@ namespace Aliyun.OSS
         /// <param name="listPartsRequest">request parameter</param>
         /// <returns><see cref="PartListing" /> instance</returns>
         PartListing ListParts(ListPartsRequest listPartsRequest);
- 
+
         /// <summary>
         /// Completes a multipart upload. 
         /// </summary>

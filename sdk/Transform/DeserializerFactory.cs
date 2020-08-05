@@ -257,8 +257,8 @@ namespace Aliyun.OSS.Transform
         {
             return new GetVodPlaylistResultDeserializer(CreateContentDeserializer<GetVodPlaylistResult>());
         }
-		
-		public IDeserializer<ServiceResponse, GetBucketInventoryConfigurationResult> CreateGetBucketInventoryConfigurationResultDeserializer()
+
+        public IDeserializer<ServiceResponse, GetBucketInventoryConfigurationResult> CreateGetBucketInventoryConfigurationResultDeserializer()
         {
             return new GetBucketInventoryConfigurationResultDeserializer(CreateContentDeserializer<InventoryConfigurationModel>());
         }
@@ -266,6 +266,16 @@ namespace Aliyun.OSS.Transform
         public IDeserializer<ServiceResponse, ListBucketInventoryConfigurationResult> CreateListBucketInventoryConfigurationResultDeserializer()
         {
             return new ListBucketInventoryConfigurationResultDeserializer(CreateContentDeserializer<ListInventoryConfigurationModel>());
+        }
+
+        public IDeserializer<ServiceResponse, InitiateBucketWormResult> CreateInitiateBucketWormResultDeserializer()
+        {
+            return new InitiateBucketWormResultDeserializer(CreateContentDeserializer<Stream>());
+        }
+
+        public IDeserializer<ServiceResponse, GetBucketWormResult> CreateGetBucketWormResultDeserializer()
+        {
+            return new GetBucketWormResultDeserializer(CreateContentDeserializer<WormConfigurationModel>());
         }
     }
 

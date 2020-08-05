@@ -736,6 +736,61 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        /// <inheritdoc/>
+        public InitiateBucketWormResult InitiateBucketWorm(InitiateBucketWormRequest request)
+        {
+
+            var cmd = InitiateBucketWormCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, request.BucketName, null),
+                                                      request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public void AbortBucketWorm(string bucketName)
+        {
+            var cmd = AbortBucketWormCommand.Create(_serviceClient, _endpoint,
+                                       CreateContext(HttpMethod.Delete, bucketName, null),
+                                       bucketName);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void CompleteBucketWorm(CompleteBucketWormRequest request)
+        {
+            var cmd = CompleteBucketWormCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, request.BucketName, null),
+                                                      request);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void ExtendBucketWorm(ExtendBucketWormRequest request)
+        {
+
+            var cmd = ExtendBucketWormCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, request.BucketName, null),
+                                                      request);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetBucketWormResult GetBucketWorm(string bucketName)
+        {
+            var cmd = GetBucketWormCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, bucketName, null),
+                                     bucketName);
+            return cmd.Execute();
+        }
 
         #endregion
 
@@ -957,7 +1012,7 @@ namespace Aliyun.OSS
                 request.Parameters.Add(param.Key, param.Value);
             }
             request.Content = content;
-  
+
             // populate headers
             if (metadata != null)
             {
@@ -1294,7 +1349,7 @@ namespace Aliyun.OSS
         public ObjectMetadata GetObject(GetObjectRequest getObjectRequest, Stream output)
         {
             var ossObject = GetObject(getObjectRequest);
-            using(ossObject.Content)
+            using (ossObject.Content)
             {
                 IoUtils.WriteTo(ossObject.Content, output);
             }
@@ -1326,8 +1381,8 @@ namespace Aliyun.OSS
         }
 
 
-    /// <inheritdoc/>
-    public ObjectMetadata ResumableDownloadObject(DownloadObjectRequest request)
+        /// <inheritdoc/>
+        public ObjectMetadata ResumableDownloadObject(DownloadObjectRequest request)
         {
             ThrowIfNullRequest(request);
             ThrowIfNullRequest(request.BucketName);
@@ -1336,7 +1391,7 @@ namespace Aliyun.OSS
 
             if (!Directory.GetParent(request.DownloadFile).Exists)
             {
-               throw new ArgumentException(String.Format("Invalid file path {0}. The parent folder does not exist.", request.DownloadFile)); 
+                throw new ArgumentException(String.Format("Invalid file path {0}. The parent folder does not exist.", request.DownloadFile));
             }
 
             var metaRequest = new GetObjectMetadataRequest(request.BucketName, request.Key)
@@ -1354,7 +1409,7 @@ namespace Aliyun.OSS
             {
                 using (Stream fs = File.Open(request.DownloadFile, FileMode.Create))
                 {
-                    using(var ossObject = GetObject(request.ToGetObjectRequest()))
+                    using (var ossObject = GetObject(request.ToGetObjectRequest()))
                     {
                         var streamWrapper = ossObject.Content;
                         try
@@ -1369,7 +1424,7 @@ namespace Aliyun.OSS
                                 ulong crcVal = 0;
                                 if (UInt64.TryParse(objectMeta.Crc64, out crcVal))
                                 {
-                                    byte[] expectedHashDigest = BitConverter.GetBytes(crcVal); 
+                                    byte[] expectedHashDigest = BitConverter.GetBytes(crcVal);
                                     streamWrapper = new Crc64Stream(ossObject.Content, expectedHashDigest, fileSize);
                                 }
                             }
@@ -1386,7 +1441,7 @@ namespace Aliyun.OSS
                         }
                         finally
                         {
-                            if(!Object.Equals(streamWrapper, fs))
+                            if (!Object.Equals(streamWrapper, fs))
                             {
                                 streamWrapper.Dispose();
                             }
@@ -1510,7 +1565,7 @@ namespace Aliyun.OSS
                 var initResult = InitiateMultipartUpload(initRequest);
                 resumableCopyContext.UploadId = initResult.UploadId;
             }
-            
+
             // Executes the copy
             ResumableCopyWithRetry(copyObjectRequest, resumableCopyContext);
 
@@ -1611,7 +1666,7 @@ namespace Aliyun.OSS
         {
             ThrowIfNullRequest(setObjectAclRequest);
 
-            var cmd = SetObjectAclCommand.Create(_serviceClient, 
+            var cmd = SetObjectAclCommand.Create(_serviceClient,
                                                  _endpoint,
                                                  CreateContext(HttpMethod.Put, setObjectAclRequest.BucketName, setObjectAclRequest.Key),
                                                  setObjectAclRequest);
@@ -1636,8 +1691,8 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
-    /// <inheritdoc/>
-    public RestoreObjectResult RestoreObject(string bucketName, string key)
+        /// <inheritdoc/>
+        public RestoreObjectResult RestoreObject(string bucketName, string key)
         {
             return RestoreObject(new RestoreObjectRequest(bucketName, key));
         }
@@ -1721,16 +1776,16 @@ namespace Aliyun.OSS
             };
             return GeneratePresignedUri(request);
         }
-        
+
         /// <inheritdoc/>        
         public Uri GeneratePresignedUri(string bucketName, string key, SignHttpMethod method)
         {
             var request = new GeneratePresignedUriRequest(bucketName, key, method);
-            return GeneratePresignedUri(request);            
+            return GeneratePresignedUri(request);
         }
 
         /// <inheritdoc/>  
-        public Uri GeneratePresignedUri(string bucketName, string key, DateTime expiration, 
+        public Uri GeneratePresignedUri(string bucketName, string key, DateTime expiration,
             SignHttpMethod method)
         {
             var request = new GeneratePresignedUriRequest(bucketName, key, method)
@@ -1739,7 +1794,7 @@ namespace Aliyun.OSS
             };
             return GeneratePresignedUri(request);
         }
-        
+
         /// <inheritdoc/>        
         public Uri GeneratePresignedUri(GeneratePresignedUriRequest generatePresignedUriRequest)
         {
@@ -1752,12 +1807,12 @@ namespace Aliyun.OSS
             var useToken = creds.UseToken;
             var bucketName = generatePresignedUriRequest.BucketName;
             var key = generatePresignedUriRequest.Key;
-            
+
             const long ticksOf1970 = 621355968000000000;
             var expires = ((generatePresignedUriRequest.Expiration.ToUniversalTime().Ticks - ticksOf1970) / 10000000L)
                 .ToString(CultureInfo.InvariantCulture);
             var resourcePath = OssUtils.MakeResourcePath(_endpoint, bucketName, key);
-                
+
             var request = new ServiceRequest();
             var conf = OssUtils.GetClientConfiguration(_serviceClient);
             request.Endpoint = OssUtils.MakeBucketEndpoint(_endpoint, bucketName, conf);
@@ -1774,7 +1829,7 @@ namespace Aliyun.OSS
                 default:
                     throw new ArgumentException("Unsupported http method.");
             }
-            
+
             request.Headers.Add(HttpHeaders.Date, expires);
             if (!string.IsNullOrEmpty(generatePresignedUriRequest.ContentType))
                 request.Headers.Add(HttpHeaders.ContentType, generatePresignedUriRequest.ContentType);
@@ -1787,7 +1842,7 @@ namespace Aliyun.OSS
 
             foreach (var pair in generatePresignedUriRequest.UserMetadata)
                 request.Headers.Add(OssHeaders.OssUserMetaPrefix + pair.Key, pair.Value);
-            
+
             if (generatePresignedUriRequest.ResponseHeaders != null)
                 generatePresignedUriRequest.ResponseHeaders.Populate(request.Parameters);
 
@@ -1796,10 +1851,10 @@ namespace Aliyun.OSS
 
             if (useToken)
                 request.Parameters.Add(RequestParameters.SECURITY_TOKEN, securityToken);
-            
+
             var canonicalResource = "/" + (bucketName ?? "") + ((key != null ? "/" + key : ""));
             var httpMethod = generatePresignedUriRequest.Method.ToString().ToUpperInvariant();
-            
+
             var canonicalString =
                 SignUtils.BuildCanonicalString(httpMethod, canonicalResource, request/*, expires*/);
             var signature = ServiceSignature.Create().ComputeSignature(accessKeySecret, canonicalString);
@@ -1816,10 +1871,10 @@ namespace Aliyun.OSS
             if (!uriString.EndsWith("/"))
                 uriString += "/";
             uriString += resourcePath + "?" + queryString;
-            
+
             return new Uri(uriString);
         }
-        
+
         #endregion
 
         #region Generate Post Policy
@@ -1860,7 +1915,7 @@ namespace Aliyun.OSS
                                                            initiateMultipartUploadRequest);
             return cmd.Execute();
         }
-        
+
         /// <inheritdoc/>
         public void AbortMultipartUpload(AbortMultipartUploadRequest abortMultipartUploadRequest)
         {
@@ -1868,7 +1923,7 @@ namespace Aliyun.OSS
             var cmd = AbortMultipartUploadCommand.Create(_serviceClient, _endpoint,
                                                         CreateContext(HttpMethod.Delete, abortMultipartUploadRequest.BucketName, abortMultipartUploadRequest.Key),
                                                         abortMultipartUploadRequest);
-            using(cmd.Execute())
+            using (cmd.Execute())
             {
                 // Do nothing
             }
@@ -1936,10 +1991,10 @@ namespace Aliyun.OSS
             ThrowIfNullRequest(listPartsRequest);
             var cmd = ListPartsCommand.Create(_serviceClient, _endpoint,
                                              CreateContext(HttpMethod.Get, listPartsRequest.BucketName, listPartsRequest.Key),
-                                             listPartsRequest);   
-            return cmd.Execute();            
+                                             listPartsRequest);
+            return cmd.Execute();
         }
-        
+
         /// <inheritdoc/>                
         public CompleteMultipartUploadResult CompleteMultipartUpload(CompleteMultipartUploadRequest completeMultipartUploadRequest)
         {
@@ -2086,7 +2141,7 @@ namespace Aliyun.OSS
             var canonicalResource = "/" + bucketName + "/" + key;
             var canonicalParams = "";
             if (serviceRequest.Parameters.Count > 0)
-            { 
+            {
                 var parameterNames = new List<string>(serviceRequest.Parameters.Keys);
                 parameterNames.Sort();
                 foreach (var paramName in parameterNames)
@@ -2107,7 +2162,8 @@ namespace Aliyun.OSS
             {
                 queryParams.Add(RequestParameters.SECURITY_TOKEN, securityToken);
             }
-            foreach (var param in serviceRequest.Parameters) { 
+            foreach (var param in serviceRequest.Parameters)
+            {
                 queryParams.Add(param.Key, param.Value);
             }
 
@@ -2116,13 +2172,13 @@ namespace Aliyun.OSS
             if (!uriString.EndsWith("/"))
                 uriString += "/";
             uriString += resourcePath + "?" + queryString;
- 
+
             return new Uri("rtmp://" + uriString);
         }
 
-#endregion
+        #endregion
 
-#region Private Methods
+        #region Private Methods
         private ExecutionContext CreateContext(HttpMethod method, string bucket, string key)
         {
             var builder = new ExecutionContextBuilder
@@ -2136,7 +2192,7 @@ namespace Aliyun.OSS
             return builder.Build();
         }
 
-        virtual protected void ThrowIfNullRequest<TRequestType> (TRequestType request)
+        virtual protected void ThrowIfNullRequest<TRequestType>(TRequestType request)
         {
             if (request == null)
                 throw new ArgumentNullException("request");
@@ -2196,7 +2252,7 @@ namespace Aliyun.OSS
                 {
                     return resumableContext;
                 }
-            } 
+            }
 
             NewResumableContext(metadata.ContentLength, partSize, resumableContext);
             resumableContext.ContentMd5 = metadata.ContentMd5;
@@ -2256,7 +2312,7 @@ namespace Aliyun.OSS
                                                         long progressUpdateInterval,
                                                         EventHandler<StreamTransferProgressArgs> callback)
         {
-           return OssUtils.SetupDownloadProgressListeners(originalStream, contentLength, totalBytesWritten, progressUpdateInterval, _serviceClient, callback); 
+            return OssUtils.SetupDownloadProgressListeners(originalStream, contentLength, totalBytesWritten, progressUpdateInterval, _serviceClient, callback);
         }
 
         private void ResumableCopyWithRetry(CopyObjectRequest request, ResumableContext context)
@@ -2307,7 +2363,7 @@ namespace Aliyun.OSS
                     VersionId = request.SourceVersionId
                 };
                 var copyResult = UploadPartCopy(copyRequest);
- 
+
                 part.PartETag = copyResult.PartETag;
                 part.IsCompleted = true;
                 resumableContext.Dump();
@@ -2329,6 +2385,6 @@ namespace Aliyun.OSS
             }
         }
 
-#endregion
+        #endregion
     }
 }
