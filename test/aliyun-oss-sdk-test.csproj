@@ -77,6 +77,7 @@
     <Compile Include="TestCase\BucketTestCase\BucketStorageCapacityTest.cs" />
     <Compile Include="TestCase\LiveChannel\LiveChannelTest.cs" />
     <Compile Include="TestCase\BucketTestCase\BucketInventoryConfigurationSettings.cs" />
+    <Compile Include="TestCase\BucketTestCase\BucketWormSettingTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectVersioningTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectTrafficLimitTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\ObjectRequestPaymentTest.cs" />

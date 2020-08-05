@@ -33,6 +33,7 @@ namespace Aliyun.OSS.Util
             "live", "status", "comp", "vod", "startTime", "endTime",
             "inventory","continuation-token","inventoryId",
             "callback", "callback-var","x-oss-request-payer",
+            "worm","wormId","wormExtend",
             ResponseHeaderOverrides.ResponseCacheControl,
             ResponseHeaderOverrides.ResponseContentDisposition,
             ResponseHeaderOverrides.ResponseContentEncoding,
