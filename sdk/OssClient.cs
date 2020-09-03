@@ -1756,6 +1756,27 @@ namespace Aliyun.OSS
             return cmd.Execute();
         }
 
+        /// <inheritdoc/>
+        public OssObject SelectObject(SelectObjectRequest request)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = SelectObjectCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Put, request.BucketName, request.Key),
+                                                      request);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public CreateSelectObjectMetaResult CreateSelectObjectMeta(CreateSelectObjectMetaRequest request)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = CreateSelectObjectMetaCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Put, request.BucketName, request.Key),
+                                                      request);
+            return cmd.Execute();
+        }
         #endregion
 
         #region Generate URL

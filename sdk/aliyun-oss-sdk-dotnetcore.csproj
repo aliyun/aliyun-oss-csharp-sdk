@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Include="Commands\AbortBucketWormCommand.cs" />
     <Compile Include="Commands\AppendObjectCommand.cs" />
+    <Compile Include="Commands\CreateSelectObjectMetaCommand.cs" />
     <Compile Include="Commands\CompleteBucketWormCommand.cs" />
     <Compile Include="Commands\DeleteBucketEncryptionCommand.cs" />
     <Compile Include="Commands\DeleteBucketPolicyCommand.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Commands\ListObjectVersionsCommand.cs" />
     <Compile Include="Commands\GetVodPlaylistCommand.cs" />
     <Compile Include="Commands\PostVodPlaylistCommand.cs" />
+    <Compile Include="Commands\SelectObjectCommand.cs" />
     <Compile Include="Commands\SetBucketEncryptionCommand.cs" />
     <Compile Include="Commands\SetBucketPolicyCommand.cs" />
     <Compile Include="Commands\SetBucketRequestPaymentCommand.cs" />
@@ -118,6 +120,8 @@
     <Compile Include="Domain\CompleteBucketWormRequest.cs" />
     <Compile Include="Domain\CreateBucketRequest.cs" />
     <Compile Include="Domain\CreateLiveChannelResult.cs" />
+    <Compile Include="Domain\CreateSelectObjectMetaRequest.cs" />
+    <Compile Include="Domain\CreateSelectObjectMetaResult.cs" />
     <Compile Include="Domain\CreateSymlinkResult.cs" />
     <Compile Include="Domain\DeleteBucketInventoryConfigurationRequest.cs" />
     <Compile Include="Domain\DeleteBucketTaggingRequest.cs" />
@@ -165,6 +169,8 @@
     <Compile Include="Domain\ObjectVersionSummary.cs" />
     <Compile Include="Domain\PostVodPlaylistRequest.cs" />
     <Compile Include="Domain\RestoreObjectRequest.cs" />
+    <Compile Include="Domain\SelectObjectRequest.cs" />
+    <Compile Include="Domain\SelectObjectStream.cs" />
     <Compile Include="Domain\SetBucketEncryptionRequest.cs" />
     <Compile Include="Domain\SetBucketPolicyRequest.cs" />
     <Compile Include="Domain\SetBucketRequestPaymentRequest.cs" />
@@ -182,9 +188,11 @@
     <Compile Include="Enums\InventoryType.cs" />
     <Compile Include="Enums\DataRedundancyType.cs" />
     <Compile Include="Enums\RequestPayer.cs" />
+    <Compile Include="Enums\SelectObjectType.cs" />
     <Compile Include="Enums\TierType.cs" />
     <Compile Include="Enums\VersioningStatus.cs" />
     <Compile Include="Model\BucketStorageCapacityModel.cs" />
+    <Compile Include="Model\CreateSelectObjectMetaRequestModel.cs" />
     <Compile Include="Model\BucketWorm.cs" />
     <Compile Include="Model\CreateLiveChannelResultModel.cs" />
     <Compile Include="Model\DeleteObjectsResultModel.cs" />
@@ -195,6 +203,7 @@
     <Compile Include="Model\LiveChannelStat.cs" />
     <Compile Include="Model\RequestPaymentConfiguration.cs" />
     <Compile Include="Model\RestoreObjectRequestModel.cs" />
+    <Compile Include="Model\SelectObjectRequestModel.cs" />
     <Compile Include="Model\ServerSideEncryptionRule.cs" />
     <Compile Include="Model\StreamUploadProgressArgs.cs" />
     <Compile Include="Common\Internal\WrapperStream.cs" />
@@ -233,6 +242,11 @@
     <Compile Include="Transform\GetVodPlaylistResultDeserializer.cs" />
     <Compile Include="Transform\ListLiveChannelResultDeserializer.cs" />
     <Compile Include="Transform\ListObjectVersionsResponseDeserializer.cs" />
+    <Compile Include="Transform\SelectObjectJsonMetaRequestSerializer.cs" />
+    <Compile Include="Transform\SelectObjectMetaRequestDeserializer.cs" />
+    <Compile Include="Transform\SelectObjectCsvMetaRequestSerializer.cs" />
+    <Compile Include="Transform\SelectObjectRequestDeserializer.cs" />
+    <Compile Include="Transform\SelectObjectRequestSerializer.cs" />
     <Compile Include="Transform\RestoreObjectRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketEncryptionRequestSerializer.cs" />
     <Compile Include="Transform\SetBucketRequestPaymentRequestSerializer.cs" />
@@ -254,6 +268,7 @@
     <Compile Include="Transform\SetBucketInventoryConfigurationRequestSerializer.cs" />
     <Compile Include="Util\AsyncResult.cs" />
     <Compile Include="Util\CallbackHeaderBuilder.cs" />
+    <Compile Include="Util\Crc32.cs" />
     <Compile Include="Util\DateUtils.cs" />
     <Compile Include="Util\EnumUtils.cs" />
     <Compile Include="Util\HttpHeaders.cs" />
