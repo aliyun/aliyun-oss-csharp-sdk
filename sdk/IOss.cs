@@ -285,6 +285,12 @@ namespace Aliyun.OSS
         void DeleteBucketTagging(string bucketName);
 
         /// <summary>
+        /// Deletes the bucket's tagging.
+        /// </summary>
+        /// <param name="deleteBucketTaggingRequest">DeleteBucketTaggingRequest.</param>
+        void DeleteBucketTagging(DeleteBucketTaggingRequest deleteBucketTaggingRequest);
+
+        /// <summary>
         /// Gets <see cref="Bucket" /> bucket tagging
         /// </summary>
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
@@ -335,7 +341,66 @@ namespace Aliyun.OSS
         /// <param name="bucketName"><see cref="Bucket" /> name</param>
         /// <returns><see cref="GetBucketVersioningResult"/> instance</returns>
         GetBucketVersioningResult GetBucketVersioning(string bucketName);
+		
+		/// <summary>
+        /// Sets <see cref="Bucket" /> Bucket InventoryConfiguration
+        /// </summary>
+        /// <param name="SetBucketInventoryConfigurationRequest"><see cref="SetBucketInventoryConfigurationRequest"/> instance</param>
+        void SetBucketInventoryConfiguration(SetBucketInventoryConfigurationRequest setBucketInventoryConfigurationRequest);
 
+        /// <summary>
+        /// Deletes the bucket's InventoryConfiguration.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="id">id.</param>
+        void DeleteBucketInventoryConfiguration(string bucketName, string id);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> Bucket InventoryConfiguration
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="id">id.</param>
+        /// <returns><see cref="BucketInventoryConfigurationResult"/> instance</returns>
+        BucketInventoryConfigurationResult GetBucketInventoryConfiguration(string bucketName, string id);
+		
+		/// <summary>
+        /// Gets <see cref="Bucket" /> Bucket InventoryConfiguration
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="continuationToken">continuationToken.</param>
+        /// <returns><see cref="ListBucketInventoryConfigurationResult"/> instance</returns>
+        ListBucketInventoryConfigurationResult ListBucketInventoryConfiguration(string bucketName, string continuationToken);
+
+        /// <summary>
+        /// InitiateBucketWorm
+        /// </summary>
+        /// <param name="InitiateBucketWormRequest"><see cref="InitiateBucketWormRequest"/> instance</param>
+        void InitiateBucketWorm(InitiateBucketWormRequest initiateBucketWormRequest);
+
+        /// <summary>
+        /// Gets <see cref="Bucket" /> AbortBucketWorm
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        void AbortBucketWorm(string bucketName);
+
+        /// <summary>
+        /// CompleteBucketWorm
+        /// </summary>
+        /// <param name="CompleteBucketWormRequest"><see cref="CompleteBucketWormRequest"/> instance</param>
+        void CompleteBucketWorm(CompleteBucketWormRequest completeBucketWormRequest);
+
+        /// <summary>
+        /// ExtendBucketWorm
+        /// </summary>
+        /// <param name="ExtendBucketWormRequest"><see cref="ExtendBucketWormRequest"/> instance</param>
+        void ExtendBucketWorm(ExtendBucketWormRequest extendBucketWormRequest);
+
+        /// <summary>
+        /// GetBucketWormResult
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <returns><see cref="GetBucketWormResult"/> instance</returns>
+        GetBucketWormResult GetBucketWorm(string bucketName);
         #endregion
 
         #region Object Operations

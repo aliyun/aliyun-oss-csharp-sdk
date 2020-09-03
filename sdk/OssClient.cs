@@ -370,6 +370,50 @@ namespace Aliyun.OSS
         }
 
         /// <inheritdoc/>
+        public void SetBucketInventoryConfiguration(SetBucketInventoryConfigurationRequest setBucketInventoryConfigurationRequest)
+        {
+            ThrowIfNullRequest(setBucketInventoryConfigurationRequest);
+            var cmd = SetBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Put, setBucketInventoryConfigurationRequest.BucketName, null),
+                                                    setBucketInventoryConfigurationRequest.BucketName,
+                                                    setBucketInventoryConfigurationRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DeleteBucketInventoryConfiguration(string bucketName,string id)
+        {
+            var cmd = DeleteBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Delete, bucketName, null),
+                                                    bucketName,id);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public BucketInventoryConfigurationResult GetBucketInventoryConfiguration(string bucketName,string id)
+        {
+            var cmd = GetBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Get, bucketName, null),
+                                                    bucketName,id);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public ListBucketInventoryConfigurationResult ListBucketInventoryConfiguration(string bucketName, string continuationToken)
+        {
+            var cmd = ListBucketInventoryConfigurationCommand.Create(_serviceClient, _endpoint,
+                                                    CreateContext(HttpMethod.Get, bucketName, null),
+                                                    bucketName, continuationToken);
+            return cmd.Execute();
+        }
+		
+        /// <inheritdoc/>
         public BucketLoggingResult GetBucketLogging(string bucketName)
         {
             var cmd = GetBucketLoggingCommand.Create(_serviceClient, _endpoint,
@@ -531,9 +575,22 @@ namespace Aliyun.OSS
         /// <inheritdoc/>
         public void DeleteBucketTagging(string bucketName)
         {
+            var request = new DeleteBucketTaggingRequest(bucketName);
             var cmd = DeleteBucketTaggingCommand.Create(_serviceClient, _endpoint,
                                                    CreateContext(HttpMethod.Delete, bucketName, null),
-                                                   bucketName);
+                                                   request);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DeleteBucketTagging(DeleteBucketTaggingRequest deleteBucketTaggingRequest)
+        {
+            var cmd = DeleteBucketTaggingCommand.Create(_serviceClient, _endpoint,
+                                                   CreateContext(HttpMethod.Delete, deleteBucketTaggingRequest.BucketName, null),
+                                                   deleteBucketTaggingRequest);
             using (cmd.Execute())
             {
                 // Do nothing
@@ -682,6 +739,65 @@ namespace Aliyun.OSS
         public GetBucketVersioningResult GetBucketVersioning(string bucketName)
         {
             var cmd = GetBucketVersioningCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, bucketName, null),
+                                     bucketName);
+            return cmd.Execute();
+        }
+
+        /// <inheritdoc/>
+        public void InitiateBucketWorm(InitiateBucketWormRequest initiateBucketWormRequest)
+        {
+
+            var cmd = InitiateBucketWormCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, initiateBucketWormRequest.BucketName, null),
+                                                      initiateBucketWormRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void AbortBucketWorm(string bucketName)
+        {
+            var cmd = AbortBucketWormCommand.Create(_serviceClient, _endpoint,
+                                       CreateContext(HttpMethod.Delete, bucketName, null),
+                                       bucketName);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void CompleteBucketWorm(CompleteBucketWormRequest completeBucketWormRequest)
+        {
+            var cmd = CompleteBucketWormCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, completeBucketWormRequest.BucketName, null),
+                                                      completeBucketWormRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public void ExtendBucketWorm(ExtendBucketWormRequest extendBucketWormRequest)
+        {
+
+            var cmd = ExtendBucketWormCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, extendBucketWormRequest.BucketName, null),
+                                                      extendBucketWormRequest);
+            using (cmd.Execute())
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public GetBucketWormResult GetBucketWorm(string bucketName)
+        {
+            var cmd = GetBucketWormCommand.Create(_serviceClient, _endpoint,
                                      CreateContext(HttpMethod.Get, bucketName, null),
                                      bucketName);
             return cmd.Execute();

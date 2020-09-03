@@ -17,6 +17,7 @@ namespace Aliyun.OSS.Commands
     internal class DeleteBucketTaggingCommand : OssCommand
     {
         private readonly string _bucketName;
+        private readonly DeleteBucketTaggingRequest _deleteBucketTaggingRequest;
 
         protected override HttpMethod Method
         {
@@ -29,27 +30,35 @@ namespace Aliyun.OSS.Commands
         }
 
         private DeleteBucketTaggingCommand(IServiceClient client, Uri endpoint, ExecutionContext context,
-                                       string bucketName)
+                                       DeleteBucketTaggingRequest request)
             : base(client, endpoint, context)
         {
-            OssUtils.CheckBucketName(bucketName);
-            _bucketName = bucketName;
+            OssUtils.CheckBucketName(request.BucketName);
+            _bucketName = request.BucketName;
+            _deleteBucketTaggingRequest = request;
         }
 
         public static DeleteBucketTaggingCommand Create(IServiceClient client, Uri endpoint,
                                                     ExecutionContext context,
-                                                    string bucketName)
+                                                    DeleteBucketTaggingRequest request)
         {
-            return new DeleteBucketTaggingCommand(client, endpoint, context, bucketName);
+            return new DeleteBucketTaggingCommand(client, endpoint, context, request);
         }
 
         protected override IDictionary<string, string> Parameters
         {
             get
             {
+                string str = null;
+                for (var i = 0; i < _deleteBucketTaggingRequest.Tags.Count; i++)
+                {
+                    if (i != 0)
+                        str += ",";
+                    str += _deleteBucketTaggingRequest.Tags[i].Key;
+                }
                 return new Dictionary<string, string>()
                 {
-                    { RequestParameters.SUBRESOURCE_TAGGING, null }
+                    { RequestParameters.SUBRESOURCE_TAGGING, str }
                 };
             }
         }
