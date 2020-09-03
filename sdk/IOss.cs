@@ -1004,6 +1004,18 @@ namespace Aliyun.OSS
         /// <param name="request"><see cref="DeleteObjectTaggingRequest" /> instance</param>
         void DeleteObjectTagging(DeleteObjectTaggingRequest request);
 
+        /// <summary>
+        /// select the object 
+        /// </summary>
+        /// <param name="selectObjectRequest"><see cref="SelectObjectRequest" /> instance</param>
+        OssObject SelectObject(SelectObjectRequest selectObjectRequest);
+
+        /// <summary>
+        /// CreateSelectObjectMeta
+        /// </summary>
+        /// <param name="createSelectObjectMetaRequest"><see cref="CreateSelectObjectMetaRequest" /> instance</param>
+        CreateSelectObjectMetaResult CreateSelectObjectMeta(CreateSelectObjectMetaRequest createSelectObjectMetaRequest);
+
         #endregion
 
         #region Generate URL

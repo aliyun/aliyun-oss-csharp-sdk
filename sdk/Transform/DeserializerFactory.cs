@@ -227,8 +227,18 @@ namespace Aliyun.OSS.Transform
         {
             return new DeleteObjectResultDeserializer(CreateContentDeserializer<Stream>());
         }
+
+        public IDeserializer<ServiceResponse, OssObject> CreateSelectObjectRequestDeserializer(SelectObjectRequest request)
+        {
+            return new SelectObjectRequestDeserializer(request);
+        }
+
+        public IDeserializer<ServiceResponse, CreateSelectObjectMetaResult> CreateSelectObjectMetaRequestDeserializer(CreateSelectObjectMetaRequest request)
+        {
+            return new SelectObjectMetaRequestDeserializer(request);
+        }
 		
-		public IDeserializer<ServiceResponse, BucketInventoryConfigurationResult> CreateGetBucketInventoryConfigurationResultDeserializer()
+		    public IDeserializer<ServiceResponse, BucketInventoryConfigurationResult> CreateGetBucketInventoryConfigurationResultDeserializer()
         {
             return new GetBucketInventoryConfigurationResultDeserializer(CreateContentDeserializer<InventoryConfiguration>());
         }
