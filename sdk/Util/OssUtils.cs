@@ -553,5 +553,44 @@ namespace Aliyun.OSS.Util
             }
             return parameters;
         }
+
+        internal static int ConvertBytesToInt(byte[] data, int start = 0, int size = 4)
+        {
+            int ret = 0;
+            int len = data.Length - start;
+            len = Math.Min(len, size);
+            for (int i = 0; i < len; i++)
+            {
+                ret <<= 8;
+                ret |= data[start + i] & 0xFF;
+            }
+            return ret;
+        }
+
+        internal static uint ConvertBytesToUint(byte[] data, int start = 0, int size = 4)
+        {
+            uint ret = 0;
+            int len = data.Length - start;
+            len = Math.Min(len, size);
+            for (int i = 0; i < len; i++)
+            {
+                ret <<= 8;
+                ret |= data[start + i] & 0xFFU;
+            }
+            return ret;
+        }
+
+        internal static long ConvertBytesToLong(byte[] data, int start = 0, int size = 8)
+        {
+            long ret = 0;
+            int len = data.Length - start;
+            len = Math.Min(len, size);
+            for (int i = 0; i < len; i++)
+            {
+                ret <<= 8;
+                ret |= (long)(data[start + i] & 0xFF);
+            }
+            return ret;
+        }
     }
 }

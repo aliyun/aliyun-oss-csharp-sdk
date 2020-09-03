@@ -123,6 +123,21 @@ namespace Aliyun.OSS.Transform
         {
             return new ExtendBucketWormRequestSerializer(CreateContentSerializer<ExtendBucketWormModel>());
         }
+
+        public ISerializer<SelectObjectRequest, Stream> CreateSelectObjectRequestSerializer()
+        {
+            return new SelectObjectRequestSerializer(CreateContentSerializer<SelectObjectRequestModel>());
+        }
+
+        public ISerializer<CreateSelectObjectMetaRequest, Stream> CreateSelectObjectCsvMetaRequestSerializer()
+        {
+            return new SelectObjectCsvMetaRequestSerializer(CreateContentSerializer<CsvMetaRequestModel>());
+        }
+
+        public ISerializer<CreateSelectObjectMetaRequest, Stream> CreateSelectObjectJsonMetaRequestSerializer()
+        {
+            return new SelectObjectJsonMetaRequestSerializer(CreateContentSerializer<JsonMetaRequestModel>());
+        }
     }
 
     internal class XmlSerializerFactory : SerializerFactory

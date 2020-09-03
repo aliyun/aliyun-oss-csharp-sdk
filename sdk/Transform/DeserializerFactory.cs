@@ -277,6 +277,16 @@ namespace Aliyun.OSS.Transform
         {
             return new GetBucketWormResultDeserializer(CreateContentDeserializer<WormConfigurationModel>());
         }
+
+        public IDeserializer<ServiceResponse, OssObject> CreateSelectObjectRequestDeserializer(SelectObjectRequest request)
+        {
+            return new SelectObjectRequestDeserializer(request);
+        }
+
+        public IDeserializer<ServiceResponse, CreateSelectObjectMetaResult> CreateSelectObjectMetaRequestDeserializer()
+        {
+            return new SelectObjectMetaRequestDeserializer();
+        }
     }
 
     internal class XmlDeserializerFactory : DeserializerFactory
