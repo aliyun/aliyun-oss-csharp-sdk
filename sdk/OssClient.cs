@@ -910,6 +910,7 @@ namespace Aliyun.OSS
         {
             ObjectMetadata metadata = putObjectRequest.Metadata ?? new ObjectMetadata();
             SetContentTypeIfNull(putObjectRequest.Key, null, ref metadata);
+            putObjectRequest.Metadata = metadata;
 
             var cmd = PutObjectCommand.Create(_serviceClient, _endpoint,
                                              CreateContext(HttpMethod.Put, putObjectRequest.BucketName, putObjectRequest.Key),
