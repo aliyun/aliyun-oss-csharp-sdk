@@ -1,4 +1,10 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
+## 版本号：2.12.0  日期：2020/09/29
+### 变更内容
+- 增加：select object 接口
+- 增加：bucket worm 接口
+- 修复: BeginPutObject 接口存在未自动视频content-type 的问题
+
 ## 版本号：2.11.0  日期：2020/07/30
 ### 变更内容
 - 增加：Live Channel  接口
