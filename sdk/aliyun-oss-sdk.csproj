@@ -163,6 +163,7 @@
     <Compile Include="Commands\GetLiveChannelStatCommand.cs" />
     <Compile Include="Commands\GetLiveChannelInfoCommand.cs" />
     <Compile Include="Commands\GetBucketWormCommand.cs" />
+    <Compile Include="Commands\ProcessObjectCommand.cs" />
     <Compile Include="Commands\GetObjectTaggingCommand.cs" />
     <Compile Include="Commands\GetVodPlaylistCommand.cs" />
     <Compile Include="Commands\ListLiveChannelCommand.cs" />
@@ -219,6 +220,8 @@
     <Compile Include="Common\Internal\HashingWrapper.cs" />
     <Compile Include="Common\Internal\HashStream.cs" />
     <Compile Include="Common\Internal\IHashingWrapper.cs" />
+    <Compile Include="Domain\ProcessObjectResult.cs" />
+    <Compile Include="Domain\ProcessObjectRequest.cs" />
     <Compile Include="Domain\SelectObjectStream.cs" />
     <Compile Include="Common\ThirdParty\MD5Core.cs" />
     <Compile Include="Common\ThirdParty\MD5Managed.cs" />
@@ -317,6 +320,7 @@
     <Compile Include="Model\Tagging.cs" />
     <Compile Include="Model\ListInventoryConfigurationModel.cs" />
     <Compile Include="Model\InventoryConfigurationModel.cs" />
+    <Compile Include="Transform\ProcessObjectResultDeserializer.cs" />
     <Compile Include="Transform\GetVodPlaylistResultDeserializer.cs" />
     <Compile Include="Transform\GetLiveChannelHistoryResultDeserializer.cs" />
     <Compile Include="Transform\GetLiveChannelStatResultDeserializer.cs" />

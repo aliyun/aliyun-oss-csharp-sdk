@@ -16,7 +16,7 @@ namespace Aliyun.OSS
     /// </summary>
     /// <remarks>
     /// <para>
-    /// In OSS, every file is an object, which should be less than 5G. 在 OSS 中，用户的每个文件都是一个 Object，每个文件需小于 5G。
+    /// In OSS, every file is an object.
     /// Object consists of key, data and metadata. Key is the object name which must be unique under the bucket.
     /// Data is the object's content. And user metadata is the key-value pair collection that has the object's additional description.
     /// </para>

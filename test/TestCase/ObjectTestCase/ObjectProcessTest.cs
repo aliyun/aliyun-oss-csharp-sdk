@@ -155,6 +155,127 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        [Test]
+        public void ProcessObjectTest()
+        {
+            string keyName = "process/key.jpeg";
+            string targetImage = "process/key-target.jpeg";
+
+            try
+            {
+                // put example image
+                _ossClient.PutObject(_bucketName, keyName, _localImageFile);
+
+                string styleType = _process;
+
+                string process = 
+                    string.Format("{0}|sys/saveas,o_{1},b_{2}",
+                    styleType,
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes(targetImage)).Replace('+', '-').Replace('/', '_'),
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes(_bucketName)).Replace('+', '-').Replace('/', '_'));
+
+                var request = new ProcessObjectRequest(_bucketName, keyName);
+                request.Process = process;
+
+                var result = _ossClient.ProcessObject(request);
+
+                var value = result.Content;
+
+                Assert.AreEqual(value.IndexOf("\"fileSize\": 3267") > 0, true);
+                Assert.AreEqual(value.IndexOf("\"object\": \"process/key-target.jpeg\"") > 0, true);
+                Assert.AreEqual(value.IndexOf("\"status\": \"OK\"") > 0, true);
+
+                // get info of processed image
+                var imgInfo = GetOssImageObjectInfo(_bucketName, targetImage);
+
+                Assert.AreEqual(imgInfo, _imageInfo);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(false, e.Message);
+            }
+            finally
+            {
+                _ossClient.DeleteObject(_bucketName, targetImage);
+            }
+
+
+            targetImage = "process/key-target-1.jpeg";
+
+            try
+            {
+                string styleType = _process;
+
+                string process =
+                    string.Format("{0}|sys/saveas,o_{1}",
+                    styleType,
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes(targetImage)).Replace('+', '-').Replace('/', '_'));
+
+                var request = new ProcessObjectRequest(_bucketName, keyName);
+                request.Process = process;
+
+                var result = _ossClient.ProcessObject(request);
+
+                var value = result.Content;
+
+                Assert.AreEqual(value.IndexOf("\"fileSize\": 3267") > 0, true);
+                Assert.AreEqual(value.IndexOf("\"object\": \"process/key-target-1.jpeg\"") > 0, true);
+                Assert.AreEqual(value.IndexOf("\"status\": \"OK\"") > 0, true);
+
+                // get info of processed image
+                var imgInfo = GetOssImageObjectInfo(_bucketName, targetImage);
+
+                Assert.AreEqual(imgInfo, _imageInfo);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(false, e.Message);
+            }
+            finally
+            {
+                _ossClient.DeleteObject(_bucketName, keyName);
+                _ossClient.DeleteObject(_bucketName, targetImage);
+            }
+        }
+
+
+        [Test]
+        public void ProcessObjecNGtTest()
+        {
+            string keyName = "process/key-ng.jpeg";
+            string targetImage = "process/key-ng-target.jpeg";
+
+            try
+            {
+                // put example image
+                _ossClient.PutObject(_bucketName, keyName, _localImageFile);
+
+                string styleType = _process;
+
+                string process =
+                    string.Format("{0}|sys/saveas,o_{1},b_{2}",
+                    styleType,
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes(targetImage)).Replace('+', '-').Replace('/', '_'),
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes("no-exist-bucket")).Replace('+', '-').Replace('/', '_'));
+
+                var request = new ProcessObjectRequest(_bucketName, keyName);
+                request.Process = process;
+
+                var result = _ossClient.ProcessObject(request);
+
+                Assert.IsTrue(false, "should not here");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("The specified bucket does not exist.", e.Message);
+            }
+            finally
+            {
+                _ossClient.DeleteObject(_bucketName, keyName);
+                _ossClient.DeleteObject(_bucketName, targetImage);
+            }
+        }
+
         #region private
         private static Stream ConvertStreamToSeekable(Stream stream)
         {
@@ -166,7 +287,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
 
         private static string GetOssImageObjectInfo(string bucket, string key)
         {
-            GetObjectRequest request = new GetObjectRequest(_bucketName, _processedKey, "image/info");
+            GetObjectRequest request = new GetObjectRequest(bucket, key, "image/info");
             OssObject ossObject = _ossClient.GetObject(request);
 
             StringBuilder builder = new StringBuilder();
