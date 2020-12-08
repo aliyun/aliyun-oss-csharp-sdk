@@ -1778,6 +1778,17 @@ namespace Aliyun.OSS
                                                       request);
             return cmd.Execute();
         }
+
+        /// <inheritdoc/>
+        public ProcessObjectResult ProcessObject(ProcessObjectRequest request)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = ProcessObjectCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, request.BucketName, request.Key),
+                                                      request);
+            return cmd.Execute();
+        }
         #endregion
 
         #region Generate URL

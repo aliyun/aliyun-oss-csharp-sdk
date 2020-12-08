@@ -1014,6 +1014,13 @@ namespace Aliyun.OSS
         /// <param name="request"><see cref="CreateSelectObjectMetaRequest" /> instance</param>
         CreateSelectObjectMetaResult CreateSelectObjectMeta(CreateSelectObjectMetaRequest request);
 
+        /// <summary>
+        /// Processes the object
+        /// </summary>
+        /// <param name="request"><see cref="ProcessObjectRequest" /> instance</param>
+        /// <returns><see cref="ProcessObjectRequest" /> instance</returns>
+        ProcessObjectResult ProcessObject(ProcessObjectRequest request);
+
         #endregion
 
         #region Generate URL
