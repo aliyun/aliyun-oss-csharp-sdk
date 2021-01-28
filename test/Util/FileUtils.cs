@@ -58,6 +58,12 @@ namespace Aliyun.OSS.Test.Util
         public static void PrepareSampleFile(string filePath, int numberOfKbs)
         {
             if (File.Exists(filePath)) return;
+
+            if (Directory.Exists(Path.GetDirectoryName(filePath)) == false)
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            }
+
             using (var file = new StreamWriter(filePath))
             {
                 for (var i = 0; i < numberOfKbs; i++)

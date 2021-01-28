@@ -417,7 +417,8 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         [Test]
         public void DoesBucketExistTestWithBucketExist()
         {
-            const string bucketName = "exist-bucket";
+            var bucketName = OssTestUtils.GetBucketName(_className);
+            //const string bucketName = "exist-bucket";
             try
             {
                 var result = _ossClient.CreateBucket(bucketName);
