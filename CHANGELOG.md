@@ -1,4 +1,8 @@
 ﻿# ChangeLog - Aliyun OSS SDK for C# 
+## 版本号：2.13.0  日期：2021/02/07
+### 变更内容
+- 增加：process object 接口, 支持图片持久化功能
+
 ## 版本号：2.12.0  日期：2020/09/29
 ### 变更内容
 - 增加：select object 接口
