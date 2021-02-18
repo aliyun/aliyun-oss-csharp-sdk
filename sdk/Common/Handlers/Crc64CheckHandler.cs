@@ -31,7 +31,7 @@ namespace Aliyun.OSS.Common.Handlers
                 {
                     stream.CalculateHash();
                 }
-                if (response.Headers.ContainsKey(HttpHeaders.HashCrc64Ecma) && stream.CalculatedHash != null)
+                if (response.Headers.ContainsKey(HttpHeaders.HashCrc64Ecma) && stream.CalculatedHash != null && stream.CalculatedHash.Length!=0)
                 {
                     var sdkCalculatedHash = BitConverter.ToUInt64(stream.CalculatedHash, 0);
                     var ossCalculatedHashStr = response.Headers[HttpHeaders.HashCrc64Ecma];
