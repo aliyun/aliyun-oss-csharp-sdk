@@ -166,16 +166,23 @@ namespace Aliyun.OSS.Common.Communication
         {
             var data = serviceRequest.BuildRequestContent();
 
-            if (data == null ||
-                (serviceRequest.Method != HttpMethod.Put &&
-                 serviceRequest.Method != HttpMethod.Post))
+            if (serviceRequest.Method != HttpMethod.Put &&
+                 serviceRequest.Method != HttpMethod.Post)
             {
-                requestMsg.Content = new System.Net.Http.ByteArrayContent(new byte[0]);
+                requestMsg.Content = null;
                 return;
             }
-
-            // Write data to the request stream.
-            requestMsg.Content = new StreamContent(new StreamWeakReferece(data));
+            else
+            {
+                if (data == null)
+                {
+                    requestMsg.Content = new System.Net.Http.ByteArrayContent(new byte[0]);
+                }
+                else
+                {
+                    requestMsg.Content = new StreamContent(new StreamWeakReferece(data));
+                }
+            }
         }
 
         void SetHeaders(HttpRequestMessage req, ServiceRequest request)
