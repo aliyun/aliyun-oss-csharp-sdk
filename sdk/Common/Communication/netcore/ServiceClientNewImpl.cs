@@ -248,6 +248,8 @@ namespace Aliyun.OSS.Common.Communication
             ServiceClientImpl.HttpAsyncResult result = new ServiceClientImpl.HttpAsyncResult(callback, state);
             task.ContinueWith((resp) =>
             {
+                // Exception can't be caught outside because it happens in Task.ContinueWith
+                // Exception won't be rethrow here
                 if (resp.IsFaulted)
                     result.Complete(resp.Exception);
                 else
