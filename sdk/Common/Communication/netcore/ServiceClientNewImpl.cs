@@ -63,7 +63,8 @@ namespace Aliyun.OSS.Common.Communication
                     _stream = (_response.Content != null) ? _response.Content.ReadAsStreamAsync().Result : null;
                     if (!_response.IsSuccessStatusCode)
                     {
-                        if (_response.Content != null) { // after the EnsureSuccessStatusCode(), the _strema will be closed if the status code is non-successful one.
+                        if (_response.Content != null)
+                        { // after the EnsureSuccessStatusCode(), the _strema will be closed if the status code is non-successful one.
                             var tmpStream = new MemoryStream();
                             _stream.CopyToAsync(tmpStream).Wait();
                             _stream.Dispose();
@@ -74,7 +75,7 @@ namespace Aliyun.OSS.Common.Communication
                     }
                     _response.EnsureSuccessStatusCode();
                 }
-                catch(HttpRequestException e)
+                catch (HttpRequestException e)
                 {
                     _failure = e;
                 }
@@ -85,17 +86,17 @@ namespace Aliyun.OSS.Common.Communication
                 var headers = response.Headers;
                 var result = new Dictionary<string, string>();
 
-                foreach(var header in headers)
+                foreach (var header in headers)
                 {
                     System.Text.StringBuilder sb = new System.Text.StringBuilder();
                     string s = "";
-                    foreach(var val in header.Value)
+                    foreach (var val in header.Value)
                     {
                         sb.Append(s);
                         sb.Append(val);
                         s = "\r\n";
                     }
-                    
+
                     result.Add(header.Key, sb.ToString());
                 }
 
@@ -152,7 +153,7 @@ namespace Aliyun.OSS.Common.Communication
         }
 
         protected override ServiceResponse SendCore(ServiceRequest request, ExecutionContext context)
-        { 
+        {
             var req = new HttpRequestMessage(Convert(request.Method), request.BuildRequestUri());
             this.SetRequestContent(req, request);
             this.SetHeaders(req, request);
@@ -187,7 +188,7 @@ namespace Aliyun.OSS.Common.Communication
                     req.Content.Headers.ContentDisposition = System.Net.Http.Headers.ContentDispositionHeaderValue.Parse(request.Headers[HttpHeaders.ContentDisposition]);
                 }
 
-                if (request.Headers.ContainsKey(HttpHeaders.ContentEncoding) &&!string.IsNullOrEmpty(request.Headers[HttpHeaders.ContentEncoding]))
+                if (request.Headers.ContainsKey(HttpHeaders.ContentEncoding) && !string.IsNullOrEmpty(request.Headers[HttpHeaders.ContentEncoding]))
                 {
                     req.Content.Headers.ContentEncoding.Add(request.Headers[HttpHeaders.ContentEncoding]);
                 }
@@ -201,7 +202,7 @@ namespace Aliyun.OSS.Common.Communication
                     req.Content.Headers.ContentMD5 = System.Convert.FromBase64String(request.Headers[HttpHeaders.ContentMd5]);
                 }
             }
-            
+
             foreach (var item in request.Headers)
             {
                 if (!item.Key.StartsWith("Content"))
@@ -247,8 +248,13 @@ namespace Aliyun.OSS.Common.Communication
             ServiceClientImpl.HttpAsyncResult result = new ServiceClientImpl.HttpAsyncResult(callback, state);
             task.ContinueWith((resp) =>
             {
-                ServiceResponse serviceResponse = new ResponseImpl(resp.Result);
-                result.Complete(serviceResponse);
+                if (resp.IsFaulted)
+                    result.Complete(resp.Exception);
+                else
+                {
+                    ServiceResponse serviceResponse = new ResponseImpl(resp.Result);
+                    result.Complete(serviceResponse);
+                }
             });
 
             return result;
@@ -296,7 +302,7 @@ namespace Aliyun.OSS.Common.Communication
                             _httpClientNoProxy = Create(false);
                         }
                     }
-                } 
+                }
             }
             else
             {
@@ -310,7 +316,7 @@ namespace Aliyun.OSS.Common.Communication
                             _httpClient = Create(true);
                         }
                     }
-                } 
+                }
             }
 
             if (notUseProxy)
@@ -358,9 +364,9 @@ namespace Aliyun.OSS.Common.Communication
 
         private bool CanReuseHttpClient(ClientConfiguration dst, ClientConfiguration src)
         {
-            if (dst == null 
+            if (dst == null
                 || src == null
-                || (dst.ConnectionTimeout == src.ConnectionTimeout && 
+                || (dst.ConnectionTimeout == src.ConnectionTimeout &&
                     dst.ProxyHost == src.ProxyHost &&
                     dst.ProxyPort == src.ProxyPort &&
                     dst.ProxyUserName == src.ProxyUserName &&
