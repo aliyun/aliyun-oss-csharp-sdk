@@ -11,6 +11,9 @@ using System.Collections.Generic;
 using Aliyun.OSS.Common.Communication;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Transform;
+using System.Threading.Tasks;
+using System.Threading;
+using ExecutionContext = Aliyun.OSS.Common.Communication.ExecutionContext;
 
 namespace Aliyun.OSS.Commands
 {
@@ -96,6 +99,20 @@ namespace Aliyun.OSS.Commands
             }
         }
 
+        public async Task<ServiceResponse> ExecuteAsync(CancellationToken cancellationToken=default)
+        {
+            var request = BuildRequest();
+            try
+            {
+                return await Client.SendAsync(request, Context, cancellationToken);
+            }
+            finally
+            {
+                if (!LeaveRequestOpen)
+                    request.Dispose();
+            }
+        }
+
         public IAsyncResult AsyncExecute(AsyncCallback callback, Object state)
         {
             var request = BuildRequest();
@@ -158,6 +175,12 @@ namespace Aliyun.OSS.Commands
         public new T Execute()
         {
             var response = base.Execute();
+            return DeserializeResponse(response);
+        }
+
+        public new async Task<T> ExecuteAsync(CancellationToken cancellationToken= default)
+        {
+            var response = await base.ExecuteAsync(cancellationToken);
             return DeserializeResponse(response);
         }
 

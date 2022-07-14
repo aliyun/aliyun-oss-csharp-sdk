@@ -15,6 +15,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 
 using Aliyun.OSS.Util;
+using System.Threading.Tasks;
 
 namespace Aliyun.OSS.Common.Communication
 {
@@ -361,6 +362,69 @@ namespace Aliyun.OSS.Common.Communication
                 throw ex;
             else
                 return new ResponseImpl(ex);
+        }
+
+        protected override async Task<ServiceResponse> SendCoreAsync(ServiceRequest serviceRequest, ExecutionContext context, System.Threading.CancellationToken cancellationToken = default)
+        {
+            var request = HttpFactory.CreateWebRequest(serviceRequest, Configuration);
+            await SetRequestContentAsync(request, serviceRequest, Configuration);
+            try
+            {
+                var response = (await request.GetResponseAsync()) as HttpWebResponse;
+                return new ResponseImpl(response);
+            }
+            catch (WebException ex)
+            {
+                return HandleException(ex);
+            }
+        }
+
+
+        private static async Task SetRequestContentAsync(HttpWebRequest webRequest,
+                                              ServiceRequest serviceRequest,
+                                              ClientConfiguration clientConfiguration)
+        {
+            var data = serviceRequest.BuildRequestContent();
+
+            if (data == null ||
+                (serviceRequest.Method != HttpMethod.Put &&
+                 serviceRequest.Method != HttpMethod.Post))
+            {
+                return;
+            }
+
+            // Write data to the request stream.
+            long userSetContentLength = -1;
+            if (serviceRequest.Headers.ContainsKey(HttpHeaders.ContentLength))
+                userSetContentLength = long.Parse(serviceRequest.Headers[HttpHeaders.ContentLength]);
+
+            if (serviceRequest.UseChunkedEncoding || !data.CanSeek) // when data cannot seek, we have to use chunked encoding as there's no way to set the length
+            {
+                webRequest.SendChunked = true;
+                webRequest.AllowWriteStreamBuffering = false; // when using chunked encoding, the data is likely big and thus not use write buffer;
+            }
+            else
+            {
+                long streamLength = data.Length - data.Position;
+                webRequest.ContentLength = (userSetContentLength >= 0 &&
+                    userSetContentLength <= streamLength) ? userSetContentLength : streamLength;
+                if (webRequest.ContentLength > clientConfiguration.DirectWriteStreamThreshold)
+                {
+                    webRequest.AllowWriteStreamBuffering = false;
+                }
+            }
+
+            using (var requestStream = webRequest.GetRequestStream())
+            {
+                if (!webRequest.SendChunked)
+                {
+                    await IoUtils.WriteToAsync(data, requestStream, webRequest.ContentLength);
+                }
+                else
+                {
+                    await IoUtils.WriteToAsync(data, requestStream);
+                }
+            }
         }
 
         #endregion

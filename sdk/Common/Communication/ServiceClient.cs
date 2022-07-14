@@ -10,6 +10,8 @@ using System.Diagnostics;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Common.Handlers;
 using Aliyun.OSS.Properties;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Aliyun.OSS.Common.Communication
 {
@@ -56,7 +58,7 @@ namespace Aliyun.OSS.Common.Communication
 
 #endregion
         
-#region IServiceClient Members
+        #region IServiceClient Members
 
         public ServiceResponse Send(ServiceRequest request, ExecutionContext context)
         {
@@ -96,10 +98,11 @@ namespace Aliyun.OSS.Common.Communication
             }
         }
 
-#endregion
+        #endregion
 
         protected abstract ServiceResponse SendCore(ServiceRequest request, ExecutionContext context);
-        
+        protected abstract Task<ServiceResponse> SendCoreAsync(ServiceRequest request, ExecutionContext context, CancellationToken cancellationToken=default);
+
         protected abstract IAsyncResult BeginSendCore(ServiceRequest request, ExecutionContext context, 
             AsyncCallback callback, Object state);
         
@@ -113,6 +116,14 @@ namespace Aliyun.OSS.Common.Communication
         {
             foreach (var handler in handlers)
                 handler.Handle(response);
+        }
+
+        public async Task<ServiceResponse> SendAsync(ServiceRequest request, ExecutionContext context, System.Threading.CancellationToken cancellationToken = default)
+        {
+            SignRequest(request, context);
+            var response = await SendCoreAsync(request, context);
+            HandleResponse(response, context.ResponseHandlers);
+            return response;
         }
     }
 }

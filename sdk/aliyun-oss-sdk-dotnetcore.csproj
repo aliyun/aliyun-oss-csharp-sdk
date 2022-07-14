@@ -194,6 +194,7 @@
     <Compile Include="Enums\SelectObjectType.cs" />
     <Compile Include="Enums\TierType.cs" />
     <Compile Include="Enums\VersioningStatus.cs" />
+    <Compile Include="IOss.Async.cs" />
     <Compile Include="Model\BucketStorageCapacityModel.cs" />
     <Compile Include="Model\CreateSelectObjectMetaRequestModel.cs" />
     <Compile Include="Model\BucketWorm.cs" />
@@ -222,6 +223,7 @@
     <Compile Include="Model\VersioningConfiguration.cs" />
     <Compile Include="Model\ListInventoryConfigurationModel.cs" />
     <Compile Include="Model\InventoryConfigurationModel.cs" />
+    <Compile Include="OssClient.Async.cs" />
     <Compile Include="Transform\AppendObjectResponseDeserializer.cs" />
     <Compile Include="Transform\CreateLiveChannelResultDeserializer.cs" />
     <Compile Include="Transform\InitiateBucketWormResultDeserializer.cs" />
