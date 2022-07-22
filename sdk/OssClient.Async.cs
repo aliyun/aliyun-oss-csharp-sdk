@@ -2,15 +2,21 @@
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Common.Authentication;
 using Aliyun.OSS.Common.Communication;
+using Aliyun.OSS.Common.Handlers;
+using Aliyun.OSS.Common.Internal;
 using Aliyun.OSS.Domain;
 using Aliyun.OSS.Model;
 using Aliyun.OSS.Properties;
+using Aliyun.OSS.Transform;
 using Aliyun.OSS.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ExecutionContext = Aliyun.OSS.Common.Communication.ExecutionContext;
 
 namespace Aliyun.OSS
 {
@@ -615,5 +621,731 @@ namespace Aliyun.OSS
         }
 
         #endregion
+
+        #region Object Operations
+        public async Task<AppendObjectResult> AppendObjectAsync(AppendObjectRequest request, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = AppendObjectCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Post, request.BucketName, request.Key),
+                                                 request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<CopyObjectResult> CopyBigObjectAsync(CopyObjectRequest copyObjectRequest, long? partSize = null, string checkpointDir = null, CancellationToken cancellation = default)
+        {
+            return await ResumableCopyObjectAsync(copyObjectRequest, checkpointDir, partSize, cancellation);
+        }
+        public async Task<CopyObjectResult> CopyObjectAsync(CopyObjectRequest copyObjectRequst, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(copyObjectRequst);
+            var cmd = CopyObjectCommand.Create(_serviceClient, _endpoint,
+                                               CreateContext(HttpMethod.Put, copyObjectRequst.DestinationBucketName, copyObjectRequst.DestinationKey),
+                                               copyObjectRequst);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<CreateSelectObjectMetaResult> CreateSelectObjectMetaAsync(CreateSelectObjectMetaRequest request, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = CreateSelectObjectMetaCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Put, request.BucketName, request.Key),
+                                                      request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<CreateSymlinkResult> CreateSymlinkAsync(string bucketName, string symlink, string target, CancellationToken cancellation)
+        {
+            var cmd = CreateSymlinkCommand.Create(_serviceClient, _endpoint,
+                                                  CreateContext(HttpMethod.Put, bucketName, symlink),
+                                                  new CreateSymlinkRequest(bucketName, symlink, target));
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<CreateSymlinkResult> CreateSymlinkAsync(CreateSymlinkRequest createSymlinkRequest, CancellationToken cancellation)
+        {
+            var cmd = CreateSymlinkCommand.Create(_serviceClient, _endpoint,
+                                                  CreateContext(HttpMethod.Put, createSymlinkRequest.BucketName, createSymlinkRequest.Symlink),
+                                                  createSymlinkRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<DeleteObjectResult> DeleteObjectAsync(string bucketName, string key, CancellationToken cancellation)
+        {
+            return await DeleteObjectAsync(new DeleteObjectRequest(bucketName, key), cancellation);
+        }
+
+        public async Task<DeleteObjectResult> DeleteObjectAsync(DeleteObjectRequest deleteObjectRequest, CancellationToken cancellation)
+        {
+            var cmd = DeleteObjectCommand.Create(_serviceClient, _endpoint,
+                                                CreateContext(HttpMethod.Delete, deleteObjectRequest.BucketName, deleteObjectRequest.Key),
+                                                deleteObjectRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<DeleteObjectsResult> DeleteObjectsAsync(DeleteObjectsRequest deleteObjectsRequest, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(deleteObjectsRequest);
+
+            var cmd = DeleteObjectsCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Post, deleteObjectsRequest.BucketName, null),
+                                                 deleteObjectsRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task DeleteObjectTaggingAsync(string bucketName, string key, CancellationToken cancellation)
+        {
+            await DeleteObjectTaggingAsync(new DeleteObjectTaggingRequest(bucketName, key), cancellation);
+        }
+
+        public async Task DeleteObjectTaggingAsync(DeleteObjectTaggingRequest request, CancellationToken cancellation)
+        {
+            var cmd = DeleteObjectTaggingCommand.Create(_serviceClient, _endpoint,
+                                                   CreateContext(HttpMethod.Delete, request.BucketName, request.Key),
+                                                   request);
+            using (await cmd.ExecuteAsync(cancellation))
+            {
+                // Do nothing
+            }
+        }
+
+        public async Task<DeleteObjectVersionsResult> DeleteObjectVersionsAsync(DeleteObjectVersionsRequest deleteObjectVersionsRequest, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(deleteObjectVersionsRequest);
+
+            var cmd = DeleteObjectVersionsCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Post, deleteObjectVersionsRequest.BucketName, null),
+                                                 deleteObjectVersionsRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<bool> DoesObjectExistAsync(string bucketName, string key, CancellationToken cancellation)
+        {
+            try
+            {
+                var cmd = HeadObjectCommand.Create(_serviceClient, _endpoint,
+                                                  CreateContext(HttpMethod.Head, bucketName, key),
+                                                  bucketName, key);
+
+                using (await cmd.ExecuteAsync(cancellation))
+                {
+                    // Do nothing
+                }
+            }
+            catch (OssException e)
+            {
+                if (e.ErrorCode == OssErrorCode.NoSuchBucket ||
+                    e.ErrorCode == OssErrorCode.NoSuchKey)
+                {
+                    return false;
+                }
+
+                // Rethrow
+                throw;
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse errorResponse = ex.Response as HttpWebResponse;
+                if (errorResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return false;
+                }
+
+                // Rethrow
+                throw;
+            }
+#if NETCOREAPP2_0
+            catch (System.Net.Http.HttpRequestException ex2)
+            {
+                if (ex2.Message.Contains("404"))
+                {
+                    return false;
+                }
+
+                throw;
+            }
+#endif
+            return true;
+        }
+
+        public async Task<AccessControlList> GetObjectAclAsync(string bucketName, string key, CancellationToken cancellation)
+        {
+            return await GetObjectAclAsync(new GetObjectAclRequest(bucketName, key), cancellation);
+        }
+
+        public async Task<AccessControlList> GetObjectAclAsync(GetObjectAclRequest getObjectAclRequest, CancellationToken cancellation)
+        {
+            var cmd = GetObjectAclCommand.Create(_serviceClient,
+                                                 _endpoint,
+                                                 CreateContext(HttpMethod.Get, getObjectAclRequest.BucketName, getObjectAclRequest.Key),
+                                                 getObjectAclRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<OssObject> GetObjectAsync(string bucketName, string key, CancellationToken cancellation)
+        {
+            return await GetObjectAsync(new GetObjectRequest(bucketName, key), cancellation);
+        }
+
+        public async Task<OssObject> GetObjectAsync(Uri signedUrl, CancellationToken cancellation)
+        {
+            // prepare request
+            var request = new ServiceRequest
+            {
+                Method = HttpMethod.Get,
+                Endpoint = OssUtils.GetEndpointFromSignedUrl(signedUrl),
+                ResourcePath = OssUtils.GetResourcePathFromSignedUrl(signedUrl),
+                ParametersInUri = true
+            };
+            var parameters = OssUtils.GetParametersFromSignedUrl(signedUrl);
+            foreach (var param in parameters)
+            {
+                request.Parameters.Add(param.Key, param.Value);
+            }
+
+            // prepare context
+            var context = new ExecutionContext();
+            context.Signer = null;
+            context.Credentials = null;
+            context.ResponseHandlers.Add(new ErrorResponseHandler());
+
+            // get response
+            var serviceResponse = await _serviceClient.SendAsync(request, context, cancellation);
+
+            // build result
+            var getObjectRequest = new GetObjectRequest(null, null);
+            var ResponseDeserializer = new GetObjectResponseDeserializer(getObjectRequest, _serviceClient);
+            return ResponseDeserializer.Deserialize(serviceResponse);
+        }
+
+        public async Task<OssObject> GetObjectAsync(GetObjectRequest getObjectRequest, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(getObjectRequest);
+
+            var cmd = GetObjectCommand.Create(_serviceClient, _endpoint,
+                                             CreateContext(HttpMethod.Get, getObjectRequest.BucketName, getObjectRequest.Key),
+                                             getObjectRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<ObjectMetadata> GetObjectAsync(GetObjectRequest getObjectRequest, Stream output, CancellationToken cancellation)
+        {
+            var ossObject = await GetObjectAsync(getObjectRequest, cancellation);
+            using (ossObject.Content)
+            {
+                await IoUtils.WriteToAsync(ossObject.Content, output);
+            }
+            return ossObject.Metadata;
+        }
+
+        public async Task<ObjectMetadata> GetObjectMetadataAsync(string bucketName, string key, CancellationToken cancellation)
+        {
+            return await GetObjectMetadataAsync(new GetObjectMetadataRequest(bucketName, key), cancellation);
+        }
+
+        public async Task<ObjectMetadata> GetObjectMetadataAsync(GetObjectMetadataRequest request, CancellationToken cancellation)
+        {
+            var cmd = GetObjectMetadataCommand.Create(_serviceClient, _endpoint,
+                                                     CreateContext(HttpMethod.Head, request.BucketName, request.Key),
+                                                     request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<GetObjectTaggingResult> GetObjectTaggingAsync(string bucketName, string key, CancellationToken cancellation)
+        {
+            return await GetObjectTaggingAsync(new GetObjectTaggingRequest(bucketName, key), cancellation);
+        }
+
+        public async Task<GetObjectTaggingResult> GetObjectTaggingAsync(GetObjectTaggingRequest request, CancellationToken cancellation)
+        {
+            var cmd = GetObjectTaggingCommand.Create(_serviceClient, _endpoint,
+                                                             CreateContext(HttpMethod.Get, request.BucketName, request.Key),
+                                                             request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<ObjectMetadata> GetSimplifiedObjectMetadataAsync(GetObjectMetadataRequest request, CancellationToken cancellation)
+        {
+            var cmd = GetObjectMetadataCommand.Create(_serviceClient, _endpoint,
+                                                     CreateContext(HttpMethod.Head, request.BucketName, request.Key),
+                                                     request, true);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<OssSymlink> GetSymlinkAsync(string bucketName, string symlink, CancellationToken cancellation)
+        {
+            var cmd = GetSymlinkCommand.Create(_serviceClient, _endpoint,
+                                               CreateContext(HttpMethod.Put, bucketName, symlink),
+                                               new GetSymlinkResultDeserializer(),
+                                               new GetSymlinkRequest(bucketName, symlink));
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<OssSymlink> GetSymlinkAsync(GetSymlinkRequest getSymlinkRequest, CancellationToken cancellation)
+        {
+            var cmd = GetSymlinkCommand.Create(_serviceClient, _endpoint,
+                                               CreateContext(HttpMethod.Put, getSymlinkRequest.BucketName, getSymlinkRequest.Key),
+                                               new GetSymlinkResultDeserializer(),
+                                               getSymlinkRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<ObjectListing> ListObjectsAsync(string bucketName, CancellationToken cancellation)
+        {
+            return await ListObjectsAsync(bucketName, null, cancellation);
+        }
+
+        public async Task<ObjectListing> ListObjectsAsync(string bucketName, string prefix, CancellationToken cancellation)
+        {
+            var listObjectsRequest = new ListObjectsRequest(bucketName)
+            {
+                Prefix = prefix
+            };
+            return await ListObjectsAsync(listObjectsRequest,cancellation);
+        }
+
+        public async Task<ObjectListing> ListObjectsAsync(ListObjectsRequest listObjectsRequest, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(listObjectsRequest);
+            var cmd = ListObjectsCommand.Create(_serviceClient, _endpoint,
+                                               CreateContext(HttpMethod.Get, listObjectsRequest.BucketName, null),
+                                               listObjectsRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<ObjectVersionList> ListObjectVersionsAsync(ListObjectVersionsRequest listObjectVersionsRequest, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(listObjectVersionsRequest);
+            var cmd = ListObjectVersionsCommand.Create(_serviceClient, _endpoint,
+                                               CreateContext(HttpMethod.Get, listObjectVersionsRequest.BucketName, null),
+                                               listObjectVersionsRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task ModifyObjectMetaAsync(string bucketName, string key, ObjectMetadata newMeta, long? partSize, string checkpointDir, CancellationToken cancellation)
+        {
+            var copyObjectRequest = new CopyObjectRequest(bucketName, key, bucketName, key)
+            {
+                NewObjectMetadata = newMeta
+            };
+            await CopyBigObjectAsync(copyObjectRequest, partSize, checkpointDir, cancellation);
+        }
+
+        public async Task<ProcessObjectResult> ProcessObjectAsync(ProcessObjectRequest request, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = ProcessObjectCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Post, request.BucketName, request.Key),
+                                                      request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<PutObjectResult> PutObjectAsync(string bucketName, string key, Stream content, CancellationToken cancellation)
+        {
+            return await PutObjectAsync(bucketName, key, content, null, cancellation);
+        }
+
+        public async Task<PutObjectResult> PutObjectAsync(string bucketName, string key, Stream content, ObjectMetadata metadata, CancellationToken cancellation)
+        {
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, content, metadata);
+            return await PutObjectAsync(putObjectRequest, cancellation);
+        }
+
+        public async Task<PutObjectResult> PutObjectAsync(PutObjectRequest putObjectRequest, CancellationToken cancellation)
+        {
+            ObjectMetadata metadata = putObjectRequest.Metadata ?? new ObjectMetadata();
+            SetContentTypeIfNull(putObjectRequest.Key, null, ref metadata);
+            putObjectRequest.Metadata = metadata;
+
+            var cmd = PutObjectCommand.Create(_serviceClient, _endpoint,
+                                              CreateContext(HttpMethod.Put, putObjectRequest.BucketName, putObjectRequest.Key),
+                                              putObjectRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<PutObjectResult> PutObjectAsync(string bucketName, string key, string fileToUpload, CancellationToken cancellation)
+        {
+            return await PutObjectAsync(bucketName, key, fileToUpload, null, cancellation);
+        }
+
+        public async Task<PutObjectResult> PutObjectAsync(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, CancellationToken cancellation)
+        {
+            if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
+                throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
+
+            metadata = metadata ?? new ObjectMetadata();
+            SetContentTypeIfNull(key, fileToUpload, ref metadata);
+
+            PutObjectResult result;
+            using (Stream content = File.OpenRead(fileToUpload))
+            {
+                result = await PutObjectAsync(bucketName, key, content, metadata, cancellation);
+            }
+            return result;
+        }
+
+        public async Task<PutObjectResult> PutObjectAsync(Uri signedUrl, string fileToUpload, CancellationToken cancellation)
+        {
+            return await PutObjectAsync(signedUrl, fileToUpload, null, cancellation);
+        }
+
+        public async Task<PutObjectResult> PutObjectAsync(Uri signedUrl, Stream content, CancellationToken cancellation)
+        {
+            return await PutObjectAsync(signedUrl, content, null, cancellation);
+        }
+
+        public async Task<PutObjectResult> PutObjectAsync(Uri signedUrl, string fileToUpload, ObjectMetadata metadata, CancellationToken cancellation)
+        {
+            if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
+                throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
+
+            PutObjectResult result;
+            using (Stream content = File.OpenRead(fileToUpload))
+            {
+                result = await PutObjectAsync(signedUrl, content, metadata, cancellation);
+            }
+            return result;
+        }
+
+        public async Task<PutObjectResult> PutObjectAsync(Uri signedUrl, Stream content, ObjectMetadata metadata, CancellationToken cancellation)
+        {
+            // prepare request
+            var request = new ServiceRequest
+            {
+                Method = HttpMethod.Put,
+                Endpoint = OssUtils.GetEndpointFromSignedUrl(signedUrl),
+                ResourcePath = OssUtils.GetResourcePathFromSignedUrl(signedUrl),
+                ParametersInUri = true
+            };
+            var parameters = OssUtils.GetParametersFromSignedUrl(signedUrl);
+            foreach (var param in parameters)
+            {
+                request.Parameters.Add(param.Key, param.Value);
+            }
+            request.Content = content;
+
+            // populate headers
+            if (metadata != null)
+            {
+                //prevent to be assigned default value in metadata.Populate
+                if (metadata.ContentType == null)
+                {
+                    request.Headers[HttpHeaders.ContentType] = "";
+                }
+                metadata.Populate(request.Headers);
+            }
+            if (!request.Headers.ContainsKey(HttpHeaders.ContentLength))
+            {
+                request.Headers[HttpHeaders.ContentLength] = content.Length.ToString();
+            }
+
+            // prepare context
+            var context = new ExecutionContext();
+            context.Signer = null;
+            context.Credentials = null;
+            if (ObjectMetadata.HasCallbackHeader(metadata))
+            {
+                context.ResponseHandlers.Add(new CallbackResponseHandler());
+            }
+            else
+            {
+                context.ResponseHandlers.Add(new ErrorResponseHandler());
+            }
+
+            ClientConfiguration config = OssUtils.GetClientConfiguration(_serviceClient);
+            if (config.EnableCrcCheck)
+            {
+                var hashStream = new Crc64Stream(request.Content, null, request.Content.Length);
+                request.Content = hashStream;
+                context.ResponseHandlers.Add(new Crc64CheckHandler(hashStream));
+            }
+
+            // get response
+            var serviceResponse = await _serviceClient.SendAsync(request, context, cancellation);
+
+            // build result
+            var putObjectRequest = new PutObjectRequest(null, null, null, metadata);
+            var ResponseDeserializer = new PutObjectResponseDeserializer(putObjectRequest);
+            return ResponseDeserializer.Deserialize(serviceResponse);
+        }
+
+        public async Task<RestoreObjectResult> RestoreObjectAsync(string bucketName, string key, CancellationToken cancellation)
+        {
+            return await RestoreObjectAsync(new RestoreObjectRequest(bucketName, key), cancellation);
+        }
+
+        public async Task<RestoreObjectResult> RestoreObjectAsync(RestoreObjectRequest restoreObjectRequest, CancellationToken cancellation)
+        {
+            ExecutionContext context = CreateContext(HttpMethod.Post, restoreObjectRequest.BucketName, restoreObjectRequest.Key);
+            var cmd = RestoreObjectCommand.Create(_serviceClient,
+                                                  _endpoint,
+                                                  context,
+                                                  restoreObjectRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task<CopyObjectResult> ResumableCopyObjectAsync(CopyObjectRequest copyObjectRequest, string checkpointDir, long? partSize, CancellationToken cancellation)
+        {
+            return await ResumableCopyObjectAsync(copyObjectRequest, checkpointDir, partSize, cancellation);
+        }
+
+        public async Task<ObjectMetadata> ResumableDownloadObjectAsync(DownloadObjectRequest request, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(request);
+            ThrowIfNullRequest(request.BucketName);
+            ThrowIfNullRequest(request.Key);
+            ThrowIfNullRequest(request.DownloadFile);
+
+            if (!Directory.GetParent(request.DownloadFile).Exists)
+            {
+                throw new ArgumentException(String.Format("Invalid file path {0}. The parent folder does not exist.", request.DownloadFile));
+            }
+
+            var metaRequest = new GetObjectMetadataRequest(request.BucketName, request.Key)
+            {
+                RequestPayer = request.RequestPayer,
+                VersionId = request.VersionId
+            };
+            ObjectMetadata objectMeta = await this.GetObjectMetadataAsync(metaRequest,cancellation);
+            var fileSize = objectMeta.ContentLength;
+
+            // Adjusts part size
+            long actualPartSize = AdjustPartSize(request.PartSize);
+            var config = OssUtils.GetClientConfiguration(_serviceClient);
+            if (fileSize <= actualPartSize)
+            {
+                using (Stream fs = File.Open(request.DownloadFile, FileMode.Create))
+                {
+                    using (var ossObject = await GetObjectAsync(request.ToGetObjectRequest(), cancellation))
+                    {
+                        var streamWrapper = ossObject.Content;
+                        try
+                        {
+                            if (config.EnalbeMD5Check && !string.IsNullOrEmpty(objectMeta.ContentMd5))
+                            {
+                                byte[] expectedHashDigest = Convert.FromBase64String(objectMeta.ContentMd5); ;
+                                streamWrapper = new MD5Stream(ossObject.Content, expectedHashDigest, fileSize);
+                            }
+                            else if (config.EnableCrcCheck && !string.IsNullOrEmpty(objectMeta.Crc64))
+                            {
+                                if (ulong.TryParse(objectMeta.Crc64, out var crcVal))
+                                {
+                                    byte[] expectedHashDigest = BitConverter.GetBytes(crcVal);
+                                    streamWrapper = new Crc64Stream(ossObject.Content, expectedHashDigest, fileSize);
+                                }
+                            }
+
+                            if (request.StreamTransferProgress != null)
+                            {
+                                streamWrapper = this.SetupProgressListeners(streamWrapper,
+                                                                            objectMeta.ContentLength,
+                                                                            0,
+                                                                            config.ProgressUpdateInterval,
+                                                                            request.StreamTransferProgress);
+                            }
+                            await ResumableDownloadManager.WriteToAsync(streamWrapper, fs,cancellation);
+                        }
+                        finally
+                        {
+                            if (!Object.Equals(streamWrapper, fs))
+                            {
+                                streamWrapper.Dispose();
+                            }
+                        }
+                    }
+                }
+
+                return objectMeta;
+            }
+
+            ResumableDownloadContext resumableContext = this.LoadResumableDownloadContext(request.BucketName, request.Key, request.VersionId, objectMeta, request.CheckpointDir, actualPartSize);
+            ResumableDownloadManager resumableDownloadManager = new ResumableDownloadManager(this, ((RetryableServiceClient)_serviceClient).MaxRetryTimes, config);
+            resumableDownloadManager.ResumableDownloadWithRetry(request, resumableContext);
+            resumableContext.Clear();
+            return objectMeta;
+        }
+
+        public async Task<PutObjectResult> ResumableUploadObjectAsync(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize, EventHandler<StreamTransferProgressArgs> streamTransferProgress, CancellationToken cancellation)
+        {
+            if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
+                throw new ArgumentException(String.Format("Invalid file path {0}.", fileToUpload));
+
+            // calculates content-type
+            metadata = metadata ?? new ObjectMetadata();
+            SetContentTypeIfNull(key, fileToUpload, ref metadata);
+
+            using (var fs = new FileStream(fileToUpload, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return await ResumableUploadObjectAsync(bucketName, key, fs, metadata, checkpointDir, partSize, streamTransferProgress,cancellation);
+            }
+        }
+
+        public async Task<PutObjectResult> ResumableUploadObjectAsync(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize, EventHandler<StreamTransferProgressArgs> streamTransferProgress, CancellationToken cancellation)
+        {
+            UploadObjectRequest request = new UploadObjectRequest(bucketName, key, content);
+            request.CheckpointDir = checkpointDir;
+            request.PartSize = partSize;
+            request.StreamTransferProgress = streamTransferProgress;
+            request.Metadata = metadata;
+
+            return await ResumableUploadObjectAsync(request,cancellation);
+        }
+
+        public async Task<PutObjectResult> ResumableUploadObjectAsync(UploadObjectRequest request, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(request);
+            ThrowIfNullRequest(request.BucketName);
+            ThrowIfNullRequest(request.Key);
+            if (string.IsNullOrEmpty(request.UploadFile) && request.UploadStream == null)
+            {
+                throw new ArgumentException("Parameter request.UploadFile or request.UploadStream must not be null.");
+            }
+
+            if (request.UploadStream != null && !request.UploadStream.CanSeek)
+            {
+                throw new ArgumentException("Parameter request.UploadStream must be seekable---for nonseekable stream, please call UploadObject instead.");
+            }
+
+            // calculates content-type
+            if (request.Metadata == null)
+            {
+                request.Metadata = new ObjectMetadata();
+            }
+
+            ObjectMetadata metadata = request.Metadata;
+            SetContentTypeIfNull(request.Key, null, ref metadata);
+
+            // Adjust part size
+            long actualPartSize = AdjustPartSize(request.PartSize);
+
+            // If the file size is less than the part size, upload it directly.
+            long fileSize = 0;
+            Stream uploadSteam = null;
+
+            if (request.UploadStream != null)
+            {
+                fileSize = request.UploadStream.Length;
+                uploadSteam = request.UploadStream;
+            }
+            else
+            {
+                fileSize = new System.IO.FileInfo(request.UploadFile).Length;
+                uploadSteam = new FileStream(request.UploadFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+
+            if (fileSize <= actualPartSize)
+            {
+                try
+                {
+                    var putObjectRequest = new PutObjectRequest(request.BucketName, request.Key, uploadSteam, metadata)
+                    {
+                        StreamTransferProgress = request.StreamTransferProgress,
+                        RequestPayer = request.RequestPayer,
+                        TrafficLimit = request.TrafficLimit
+                    };
+                    return await PutObjectAsync(putObjectRequest, cancellation);
+                }
+                finally
+                {
+                    uploadSteam.Dispose();
+                }
+            }
+
+            var resumableContext = LoadResumableUploadContext(request.BucketName, request.Key, uploadSteam,
+                                                              request.CheckpointDir, actualPartSize);
+
+            if (resumableContext.UploadId == null)
+            {
+                var initRequest = new InitiateMultipartUploadRequest(request.BucketName, request.Key, metadata)
+                {
+                    RequestPayer = request.RequestPayer
+                };
+
+                var initResult = InitiateMultipartUpload(initRequest);
+                resumableContext.UploadId = initResult.UploadId;
+            }
+
+            int maxRetry = ((RetryableServiceClient)_serviceClient).MaxRetryTimes;
+            ClientConfiguration config = OssUtils.GetClientConfiguration(_serviceClient);
+            ResumableUploadManager uploadManager = new ResumableUploadManager(this, maxRetry, config);
+            uploadManager.ResumableUploadWithRetry(request, resumableContext);
+
+            // Completes the upload
+            var completeRequest = new CompleteMultipartUploadRequest(request.BucketName, request.Key, resumableContext.UploadId)
+            {
+                RequestPayer = request.RequestPayer
+            };
+            if (metadata.HttpMetadata.ContainsKey(HttpHeaders.Callback))
+            {
+                var callbackMetadata = new ObjectMetadata();
+                callbackMetadata.AddHeader(HttpHeaders.Callback, metadata.HttpMetadata[HttpHeaders.Callback]);
+                completeRequest.Metadata = callbackMetadata;
+            }
+
+            foreach (var part in resumableContext.PartContextList)
+            {
+                if (part == null || !part.IsCompleted)
+                {
+                    throw new OssException("Not all parts are completed.");
+                }
+
+                completeRequest.PartETags.Add(part.PartETag);
+            }
+
+            PutObjectResult result = CompleteMultipartUpload(completeRequest);
+            resumableContext.Clear();
+
+            return result;
+        }
+
+        public async Task<OssObject> SelectObjectAsync(SelectObjectRequest request, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = SelectObjectCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Put, request.BucketName, request.Key),
+                                                      request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        public async Task SetObjectAclAsync(string bucketName, string key, CannedAccessControlList acl, CancellationToken cancellation)
+        {
+            var setObjectAclRequest = new SetObjectAclRequest(bucketName, key, acl);
+            await SetObjectAclAsync(setObjectAclRequest,cancellation);
+        }
+
+        public async Task SetObjectAclAsync(SetObjectAclRequest setObjectAclRequest, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(setObjectAclRequest);
+
+            var cmd = SetObjectAclCommand.Create(_serviceClient,
+                                                 _endpoint,
+                                                 CreateContext(HttpMethod.Put, setObjectAclRequest.BucketName, setObjectAclRequest.Key),
+                                                 setObjectAclRequest);
+            using (await cmd.ExecuteAsync(cancellation))
+            {
+                // Do nothing
+            }
+        }
+
+        public async Task SetObjectTaggingAsync(SetObjectTaggingRequest request, CancellationToken cancellation)
+        {
+            ThrowIfNullRequest(request);
+
+            var cmd = SetObjectTaggingCommand.Create(_serviceClient, _endpoint,
+                                                      CreateContext(HttpMethod.Put, request.BucketName, request.Key),
+                                                      request);
+            using (await cmd.ExecuteAsync(cancellation))
+            {
+                // Do nothing
+            }
+        }
+
+
+        #endregion
+
     }
 }

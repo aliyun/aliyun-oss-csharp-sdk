@@ -1,6 +1,7 @@
 ﻿using Aliyun.OSS.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -363,6 +364,442 @@ namespace Aliyun.OSS
         /// <param name="bucketName">Bucket name.</param>
         /// <returns><see cref="GetBucketWormResult"/> instance</returns>
         Task<GetBucketWormResult> GetBucketWormAsync(string bucketName, CancellationToken cancellation=default);
+        #endregion
+
+        #region Object Operations
+
+        /// <summary>
+        /// Lists all objects under the <see cref="Bucket" />
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <returns><see cref="OssObject" /> list</returns>
+        Task<ObjectListing> ListObjectsAsync(string bucketName, CancellationToken cancellation=default);
+
+
+        /// <summary>
+        /// Lists object with specified prefix
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="prefix"><see cref="OssObject.Key" /> prefix</param>
+        /// <returns><see cref="OssObject" /> instances list</returns>
+        Task<ObjectListing> ListObjectsAsync(string bucketName, string prefix, CancellationToken cancellation=default);
+
+
+        /// <summary>
+        /// Lists objects according to the ListObjectsRequest.
+        /// The returned object is type of OssObjectSummary.
+        /// </summary>
+        /// <param name="listObjectsRequest"><see cref="ListObjectsRequest" /> instance</param>
+        /// <returns><see cref="OssObject" /> list</returns>
+        Task<ObjectListing> ListObjectsAsync(ListObjectsRequest listObjectsRequest, CancellationToken cancellation=default);
+
+
+        /// <summary>
+        /// Lists object vesions according to the ListObjectVersionsRequest.
+        /// The returned object is type of OssObjectSummary.
+        /// </summary>
+        /// <param name="listObjectVersionsRequest"><see cref="ListObjectVersionsRequest" /> instance</param>
+        /// <returns><see cref="OssObject" /> list</returns>
+        Task<ObjectVersionList> ListObjectVersionsAsync(ListObjectVersionsRequest listObjectVersionsRequest, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Puts object to the specified bucket with specified object key.
+        /// </summary>
+        /// <param name="bucketName">specified bucket name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        Task<PutObjectResult> PutObjectAsync(string bucketName, string key, Stream content, CancellationToken cancellation=default);
+
+
+        /// <summary>
+        /// Uploads the content to object under the specified bucket and object key.
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="content"><see cref="OssObject.Content" /></param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        Task<PutObjectResult> PutObjectAsync(string bucketName, string key, Stream content, ObjectMetadata metadata, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Upload a <see cref="OssObject" /> according to <see cref="PutObjectRequest" />.
+        /// </summary>
+        /// <param name="putObjectRequest"><see cref="PutObjectRequest" />instance</param>
+        /// <returns><see cref="PutObjectResult" />instance</returns>
+        Task<PutObjectResult> PutObjectAsync(PutObjectRequest putObjectRequest, CancellationToken cancellation=default);
+
+
+        /// <summary>
+        /// Uploads a local file to OSS under the specified bucket
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="fileToUpload">local file path to upload</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        Task<PutObjectResult> PutObjectAsync(string bucketName, string key, string fileToUpload, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Uploads a local file with specified metadata to OSS.
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="fileToUpload">local file path</param>
+        /// <param name="metadata"><see cref="OssObject" />metadata</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        Task<PutObjectResult> PutObjectAsync(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, CancellationToken cancellation=default);
+
+
+
+        /// <summary>
+        /// Uploads the file via the signed url.
+        /// </summary>
+        /// <param name="signedUrl">Signed url</param>
+        /// <param name="fileToUpload">File to upload</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        Task<PutObjectResult> PutObjectAsync(Uri signedUrl, string fileToUpload, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Uploads the instream via the signed url.
+        /// </summary>
+        /// <param name="signedUrl">Signed url</param>
+        /// <param name="content">content stream</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        Task<PutObjectResult> PutObjectAsync(Uri signedUrl, Stream content, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Uploads the file via the signed url with the metadata.
+        /// </summary>
+        /// <param name="signedUrl">The signed url</param>
+        /// <param name="fileToUpload">Local file path</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        Task<PutObjectResult> PutObjectAsync(Uri signedUrl, string fileToUpload, ObjectMetadata metadata, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Uploads the stream via the signed url with the metadata.
+        /// </summary>
+        /// <param name="signedUrl">Signed url</param>
+        /// <param name="content">content stream</param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        Task<PutObjectResult> PutObjectAsync(Uri signedUrl, Stream content, ObjectMetadata metadata, CancellationToken cancellation=default);
+
+
+        /// <summary>
+        /// Deprecated. Use ResumableCopyObject instead.
+        /// Copy the specified file with optional checkpoint support.
+        /// </summary>
+        /// <param name="copyObjectRequest">the request parameter</param>
+        /// <param name="partSize">part size. If the part size is not specified, or less than <see cref="Util.OssUtils.DefaultPartSize"/>,
+        /// <see cref="Util.OssUtils.PartSizeLowerLimit"/> will be used instead.
+        /// </param>
+        /// <param name="checkpointDir">The checkpoint file folder. If it's not specified, checkpoint information is not stored and resumnable upload will not be supported in this case.</param>
+        /// <returns><see cref="CopyObjectResult" /> instance.</returns>
+        [Obsolete("CopyBigObject is deprecated, please use ResumableUploadObjectAsync instead")]
+        Task<CopyObjectResult> CopyBigObjectAsync(CopyObjectRequest copyObjectRequest, long? partSize = null, string checkpointDir = null, CancellationToken cancellation = default);
+
+        /// <summary>
+        /// Resumable file upload. It automaticlly uses multipart upload upon big file and also support resume upload after a failed upload.
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> instance</param>
+        /// <param name="key"><see cref="OssObject.Key" /> instance</param>
+        /// <param name="fileToUpload">file to upload</param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <param name="checkpointDir">Check point dir. If it's not specified, then no checkpoint file is saved and thus resumable file upload is not supported.</param>
+        /// <param name="partSize">Part size. If it's not specified, or the size is smaller than <see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// then <see cref="Util.OssUtils.DefaultPartSize"/> is used instead.
+        /// </param>
+        /// <returns><see cref="PutObjectResult" /> instance </returns>
+        Task<PutObjectResult> ResumableUploadObjectAsync(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
+                                              EventHandler<StreamTransferProgressArgs> streamTransferProgress = null, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Resumable file upload. It automaticlly uses multipart upload upon big file and also support resume upload after a failed upload.
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="content"><see cref="OssObject.Content" />. Content is disposed after the call finishes.</param>
+        /// <param name="metadata"><see cref="OssObject" /> metadata</param>
+        /// <param name="checkpointDir">Check point dir. If it's not specified, then no checkpoint file is saved and thus resumable file upload is not supported.</param>
+        /// <param name="partSize">Part size. If it's not specified, or the size is smaller than <see cref="Util.OssUtils.PartSizeLowerLimit"/>
+        /// then <see cref="Util.OssUtils.DefaultPartSize"/> is used instead.
+        /// </param>
+        /// <returns><see cref="PutObjectResult" /> instance</returns>
+        Task<PutObjectResult> ResumableUploadObjectAsync(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize = null,
+                                              EventHandler<StreamTransferProgressArgs> streamTransferProgress = null, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Resumables the upload object.
+        /// The request.UploadStream will be disposed once the call finishes.
+        /// </summary>
+        /// <returns>The upload object.</returns>
+        /// <param name="request">Upload Request.</param>
+        Task<PutObjectResult> ResumableUploadObjectAsync(UploadObjectRequest request, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Appends object to OSS according to the <see cref="AppendObjectRequest" />
+        /// </summary>
+        /// <param name="request"><see cref="AppendObjectRequest" /> instance</param>
+        /// <returns><see cref="AppendObjectResult" /> result</returns>
+        Task<AppendObjectResult> AppendObjectAsync(AppendObjectRequest request, CancellationToken cancellation=default);
+
+
+        /// <summary>
+        /// Creates the symlink of the target object
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="symlink">Symlink.</param>
+        /// <param name="target">Target.</param>
+        /// <returns><see cref="CreateSymlinkResult"/> instance</returns>
+        Task<CreateSymlinkResult> CreateSymlinkAsync(string bucketName, string symlink, string target, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Creates the symlink of the target object
+        /// </summary>
+        /// <param name="createSymlinkRequest">Create symlink request.</param>
+        /// <returns><see cref="CreateSymlinkResult"/> instance</returns>
+        Task<CreateSymlinkResult> CreateSymlinkAsync(CreateSymlinkRequest createSymlinkRequest, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets the target file of the symlink.
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="symlink">Symlink </param>
+        /// <returns>OssSymlink object</returns>
+        Task<OssSymlink> GetSymlinkAsync(string bucketName, string symlink, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets the target file of the symlink.
+        /// </summary>
+        /// <param name="getSymlinkRequest">Get symlink request.</param>
+        /// <returns>OssSymlink object</returns>
+        Task<OssSymlink> GetSymlinkAsync(GetSymlinkRequest getSymlinkRequest, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets object
+        /// </summary>
+        /// <param name="bucketName">bucket name</param>
+        /// <param name="key"><see cref="OssObject.Key"/></param>
+        /// <returns><see cref="OssObject" /> instance</returns>
+        Task<OssObject> GetObjectAsync(string bucketName, string key, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets object via signed url
+        /// </summary>
+        /// <param name="signedUrl">The signed url of HTTP GET method</param>
+        /// <returns><see cref="OssObject"/> instance</returns>
+        Task<OssObject> GetObjectAsync(Uri signedUrl, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets object via the bucket name and key name in the <see cref="GetObjectRequest" /> instance.
+        /// </summary>
+        /// <param name="getObjectRequest"> The request parameter</param>
+        /// <returns><see cref="OssObject" /> instance. The caller needs to dispose the object.</returns>
+        Task<OssObject> GetObjectAsync(GetObjectRequest getObjectRequest, CancellationToken cancellation=default);
+
+
+        /// <summary>
+        /// Gets the object and assign the data to the stream.
+        /// </summary>
+        /// <param name="getObjectRequest">request parameter</param>
+        /// <param name="output">output stream</param>
+        /// <returns><see cref="OssObject" /> metadata</returns>
+        Task<ObjectMetadata> GetObjectAsync(GetObjectRequest getObjectRequest, Stream output, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Download a file.
+        /// Internally it may use multipart download in case the file is big
+        /// </summary>
+        /// <returns>The metadata object</returns>
+        /// <param name="request">DownloadObjectRequest instance</param>
+        Task<ObjectMetadata> ResumableDownloadObjectAsync(DownloadObjectRequest request, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets <see cref="OssObject" /> metadata.
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <returns><see cref="OssObject" />metadata</returns>
+        Task<ObjectMetadata> GetObjectMetadataAsync(string bucketName, string key, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets <see cref="OssObject" /> metadata.
+        /// </summary>
+        /// <param name="request">GetObjectMetadataRequest instance</param>
+        /// <returns><see cref="OssObject" />metadata</returns>
+        Task<ObjectMetadata> GetObjectMetadataAsync(GetObjectMetadataRequest request, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets <see cref="OssObject" /> metadata.
+        /// </summary>
+        /// <param name="request">GetObjectMetadataRequest instance</param>
+        /// <returns><see cref="OssObject" />metadata</returns>
+        Task<ObjectMetadata> GetSimplifiedObjectMetadataAsync(GetObjectMetadataRequest request, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Deletes <see cref="OssObject" />
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <returns><see cref="DeleteObjectResult" />instance</returns>
+        Task<DeleteObjectResult> DeleteObjectAsync(string bucketName, string key, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Deletes <see cref="OssObject" />
+        /// </summary>
+        /// <param name="deleteObjectRequest">the request parameter</param>
+        /// <returns><see cref="DeleteObjectResult" />instance</returns>
+        Task<DeleteObjectResult> DeleteObjectAsync(DeleteObjectRequest deleteObjectRequest, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Deletes multiple objects
+        /// </summary>
+        /// <param name="deleteObjectsRequest">the request parameter</param>
+        /// <returns>delete object result</returns>
+        Task<DeleteObjectsResult> DeleteObjectsAsync(DeleteObjectsRequest deleteObjectsRequest, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Deletes multiple objects with version id
+        /// </summary>
+        /// <param name="deleteObjectVersionsRequest">the request parameter</param>
+        /// <returns>delete object result</returns>
+        Task<DeleteObjectVersionsResult> DeleteObjectVersionsAsync(DeleteObjectVersionsRequest deleteObjectVersionsRequest, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// copy an object to another one in OSS.
+        /// </summary>
+        /// <param name="copyObjectRequst">The request parameter</param>
+        /// <returns>copy object result</returns>
+        Task<CopyObjectResult> CopyObjectAsync(CopyObjectRequest copyObjectRequst, CancellationToken cancellation=default);
+
+
+        /// <summary>
+        /// Resumable object copy.
+        /// If the file size is less than part size, normal file upload is used; otherwise multipart upload is used.
+        /// </summary>
+        /// <param name="copyObjectRequest">request parameter</param>
+        /// <param name="checkpointDir">checkpoint file folder </param>
+        /// <param name="partSize">The part size. 
+        /// </param>
+        /// <returns><see cref="CopyObjectResult" /> instance</returns>
+        Task<CopyObjectResult> ResumableCopyObjectAsync(CopyObjectRequest copyObjectRequest, string checkpointDir, long? partSize = null, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Modify the object metadata. 
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <param name="newMeta">new metadata</param>
+        /// <param name="checkpointDir">check point folder. It must be specified to store the checkpoint information</param>
+        /// <param name="partSize">Part size, it's no less than <see cref="Util.OssUtils.DefaultPartSize"/>
+        /// </param>
+        Task ModifyObjectMetaAsync(string bucketName, string key, ObjectMetadata newMeta, long? partSize = null, string checkpointDir = null, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Checks if the object exists
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <returns>true:object exists;false:otherwise</returns>
+        Task<bool> DoesObjectExistAsync(string bucketName, string key, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Sets the object ACL
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /> key</param>
+        /// <param name="acl"><see cref="CannedAccessControlList" /> instance</param>
+        Task SetObjectAclAsync(string bucketName, string key, CannedAccessControlList acl, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Sets the object ACL
+        /// </summary>
+        /// <param name="setObjectAclRequest"></param>
+        Task SetObjectAclAsync(SetObjectAclRequest setObjectAclRequest, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets the object ACL 
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <returns><see cref="AccessControlList" /> instance</returns>
+        Task<AccessControlList> GetObjectAclAsync(string bucketName, string key, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets the object ACL
+        /// </summary>
+        /// <param name="getObjectAclRequest"></param>
+        Task<AccessControlList> GetObjectAclAsync(GetObjectAclRequest getObjectAclRequest, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Restores the object.
+        /// </summary>
+        /// <returns>The object.</returns>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="key">Key.</param>
+        Task<RestoreObjectResult> RestoreObjectAsync(string bucketName, string key, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Restores the object.
+        /// </summary>
+        /// <returns>The object.</returns>
+        /// <param name="restoreObjectRequest"></param>
+        Task<RestoreObjectResult> RestoreObjectAsync(RestoreObjectRequest restoreObjectRequest, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Sets the object tagging
+        /// </summary>
+        /// <param name="request"><see cref="SetObjectTaggingRequest" /> instance</param>
+        Task SetObjectTaggingAsync(SetObjectTaggingRequest request, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets the object tagging 
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        /// <returns><see cref="GetObjectTaggingResult" /> instance</returns>
+        Task<GetObjectTaggingResult> GetObjectTaggingAsync(string bucketName, string key, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets the object tagging
+        /// </summary>
+        /// <param name="request"><see cref="GetObjectTaggingRequest" /> instance</param>
+        /// <returns><see cref="GetObjectTaggingResult" /> instance</returns>
+        Task<GetObjectTaggingResult> GetObjectTaggingAsync(GetObjectTaggingRequest request, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Deletes object tagging
+        /// </summary>
+        /// <param name="bucketName"><see cref="Bucket" /> name</param>
+        /// <param name="key"><see cref="OssObject.Key" /></param>
+        Task DeleteObjectTaggingAsync(string bucketName, string key, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Deletes the object tagging
+        /// </summary>
+        /// <param name="request"><see cref="DeleteObjectTaggingRequest" /> instance</param>
+        Task DeleteObjectTaggingAsync(DeleteObjectTaggingRequest request, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Gets the contents of a object based on a SQL statement. 
+        /// </summary>
+        /// <param name="request"><see cref="SelectObjectRequest" /> instance</param>
+        Task<OssObject> SelectObjectAsync(SelectObjectRequest request, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Creates the meta of a select object
+        /// </summary>
+        /// <param name="request"><see cref="CreateSelectObjectMetaRequest" /> instance</param>
+        Task<CreateSelectObjectMetaResult> CreateSelectObjectMetaAsync(CreateSelectObjectMetaRequest request, CancellationToken cancellation=default);
+
+        /// <summary>
+        /// Processes the object
+        /// </summary>
+        /// <param name="request"><see cref="ProcessObjectRequest" /> instance</param>
+        /// <returns><see cref="ProcessObjectRequest" /> instance</returns>
+        Task<ProcessObjectResult> ProcessObjectAsync(ProcessObjectRequest request, CancellationToken cancellation=default);
+
         #endregion
     }
 }
