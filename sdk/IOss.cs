@@ -27,7 +27,7 @@ namespace Aliyun.OSS
     /// OSS website：http://www.aliyun.com/product/oss
     /// </para>
     /// </remarks>
-    public interface IOss
+    public partial interface IOss
     {
         #region Switch Credentials & Endpoint
 

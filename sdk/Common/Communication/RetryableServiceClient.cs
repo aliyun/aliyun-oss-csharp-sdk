@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading;
 using System.IO;
 using Aliyun.OSS.Util;
+using System.Threading.Tasks;
 
 namespace Aliyun.OSS.Common.Communication
 {
@@ -72,6 +73,32 @@ namespace Aliyun.OSS.Common.Communication
                     Pause(retryTimes);
                     
                     return SendImpl(request, context, ++retryTimes);
+                }
+
+                // Rethrow
+                throw;
+            }
+        }
+
+        private async Task<ServiceResponse> SendImplAsync(ServiceRequest request, ExecutionContext context, int retryTimes, CancellationToken cancellationToken = default)
+        {
+            long originalContentPosition = -1;
+            try
+            {
+                if (request.Content != null && request.Content.CanSeek)
+                    originalContentPosition = request.Content.Position;
+                return await _innerClient.SendAsync(request, context, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                if (ShouldRetry(request, ex, retryTimes))
+                {
+                    if (request.Content != null && (originalContentPosition >= 0 && request.Content.CanSeek))
+                        request.Content.Seek(originalContentPosition, SeekOrigin.Begin);
+
+                    Pause(retryTimes);
+
+                    return await SendImplAsync(request, context, ++retryTimes, cancellationToken);
                 }
 
                 // Rethrow
@@ -164,6 +191,11 @@ namespace Aliyun.OSS.Common.Communication
             // that the more times it retries, the less probability it succeeds.
             var delay = (int)Math.Pow(2, retryTimes) * DefaultRetryPauseScale;
             Thread.Sleep(delay);
+        }
+
+        public async Task<ServiceResponse> SendAsync(ServiceRequest request, ExecutionContext context, CancellationToken cancellationToken = default)
+        {
+            return await SendImplAsync(request, context, 0, cancellationToken);
         }
 
         #endregion

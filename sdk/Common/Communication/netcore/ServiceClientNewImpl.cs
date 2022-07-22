@@ -372,6 +372,16 @@ namespace Aliyun.OSS.Common.Communication
             return false;
         }
 
+        protected override async Task<ServiceResponse> SendCoreAsync(ServiceRequest request, ExecutionContext context, System.Threading.CancellationToken cancellationToken = default)
+        {
+            var req = new HttpRequestMessage(Convert(request.Method), request.BuildRequestUri());
+            this.SetRequestContent(req, request);
+            this.SetHeaders(req, request);
+            HttpClient client = GetClient();
+            HttpResponseMessage resp = await client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
+            return new ResponseImpl(resp);
+        }
+
         private static HttpClient _httpClient;
         private static HttpClient _httpClientNoProxy;
         private static object _clientLock = new object();

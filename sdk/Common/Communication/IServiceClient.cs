@@ -5,6 +5,8 @@
  */
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Aliyun.OSS.Common.Communication
 {
@@ -37,5 +39,14 @@ namespace Aliyun.OSS.Common.Communication
         /// <param name="asyncResult">An instance of <see cref="IAsyncResult"/>.</param>
         /// <returns>The response data.</returns>
         ServiceResponse EndSend(IAsyncResult asyncResult);
+
+        /// <summary>
+        /// Sends a request to the service.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<ServiceResponse> SendAsync(ServiceRequest request, ExecutionContext context, CancellationToken cancellationToken=default);
     }
 }

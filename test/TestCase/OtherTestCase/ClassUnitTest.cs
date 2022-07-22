@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Common.Authentication;
 using Aliyun.OSS.Common.Communication;
@@ -13,6 +15,7 @@ using Aliyun.OSS.Test.Util;
 using Aliyun.OSS.Transform;
 using Aliyun.OSS.Util;
 using NUnit.Framework;
+using ExecutionContext = Aliyun.OSS.Common.Communication.ExecutionContext;
 
 namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 {
@@ -1389,6 +1392,11 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             }
 
             protected override ServiceResponse SendCore(ServiceRequest request, ExecutionContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            protected override Task<ServiceResponse> SendCoreAsync(ServiceRequest request, Common.Communication.ExecutionContext context, CancellationToken cancellationToken = default)
             {
                 throw new NotImplementedException();
             }

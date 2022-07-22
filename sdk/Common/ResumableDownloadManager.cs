@@ -16,6 +16,7 @@ using Aliyun.OSS.Commands;
 using Aliyun.OSS.Util;
 using Aliyun.OSS.Common;
 using Aliyun.OSS.Common.Internal;
+using System.Threading.Tasks;
 
 namespace Aliyun.OSS
 {
@@ -154,6 +155,21 @@ namespace Aliyun.OSS
                 totalBytes += bytesRead;
             }
             dest.Flush();
+
+            return totalBytes;
+        }
+
+        internal static async Task<long> WriteToAsync(Stream src, Stream dest, CancellationToken cancellation)
+        {
+            var buffer = new byte[32 * 1024];
+            var bytesRead = 0;
+            var totalBytes = 0;
+            while ((bytesRead = await src.ReadAsync(buffer, 0, buffer.Length, cancellation)) > 0)
+            {
+                await dest.WriteAsync(buffer, 0, bytesRead, cancellation);
+                totalBytes += bytesRead;
+            }
+            await dest.FlushAsync();
 
             return totalBytes;
         }

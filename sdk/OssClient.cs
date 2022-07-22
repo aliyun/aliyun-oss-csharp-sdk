@@ -24,13 +24,14 @@ using Aliyun.OSS.Properties;
 using Aliyun.OSS.Transform;
 using ExecutionContext = Aliyun.OSS.Common.Communication.ExecutionContext;
 using ICredentials = Aliyun.OSS.Common.Authentication.ICredentials;
+using System.Threading.Tasks;
 
 namespace Aliyun.OSS
 {
     /// <summary>
     /// The OSS's access entry point interface's implementation.
     /// </summary>
-    public class OssClient : IOss
+    public partial class OssClient : IOss
     {
         #region Fields & Properties
 
