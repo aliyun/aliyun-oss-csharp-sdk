@@ -31,7 +31,7 @@ namespace Aliyun.OSS
     /// <summary>
     /// The OSS's access entry point interface's implementation.
     /// </summary>
-    public partial class OssClient
+    public partial class OssClient : IOss
     {
         #region Fields & Properties
 

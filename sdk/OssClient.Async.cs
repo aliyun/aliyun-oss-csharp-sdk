@@ -20,7 +20,7 @@ using ExecutionContext = Aliyun.OSS.Common.Communication.ExecutionContext;
 
 namespace Aliyun.OSS
 {
-    public partial class OssClient : IOss
+    public partial class OssClient
     {
         #region Bucket Operations
         /// <inheritdoc/>
