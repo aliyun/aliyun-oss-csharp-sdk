@@ -623,6 +623,7 @@ namespace Aliyun.OSS
         #endregion
 
         #region Object Operations
+        /// <inheritdoc/>    
         public async Task<AppendObjectResult> AppendObjectAsync(AppendObjectRequest request, CancellationToken cancellation)
         {
             ThrowIfNullRequest(request);
@@ -633,10 +634,13 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<CopyObjectResult> CopyBigObjectAsync(CopyObjectRequest copyObjectRequest, long? partSize = null, string checkpointDir = null, CancellationToken cancellation = default)
         {
             return await ResumableCopyObjectAsync(copyObjectRequest, checkpointDir, partSize, cancellation);
         }
+
+        /// <inheritdoc/>    
         public async Task<CopyObjectResult> CopyObjectAsync(CopyObjectRequest copyObjectRequst, CancellationToken cancellation)
         {
             ThrowIfNullRequest(copyObjectRequst);
@@ -646,6 +650,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<CreateSelectObjectMetaResult> CreateSelectObjectMetaAsync(CreateSelectObjectMetaRequest request, CancellationToken cancellation)
         {
             ThrowIfNullRequest(request);
@@ -656,6 +661,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<CreateSymlinkResult> CreateSymlinkAsync(string bucketName, string symlink, string target, CancellationToken cancellation)
         {
             var cmd = CreateSymlinkCommand.Create(_serviceClient, _endpoint,
@@ -664,6 +670,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<CreateSymlinkResult> CreateSymlinkAsync(CreateSymlinkRequest createSymlinkRequest, CancellationToken cancellation)
         {
             var cmd = CreateSymlinkCommand.Create(_serviceClient, _endpoint,
@@ -672,11 +679,13 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<DeleteObjectResult> DeleteObjectAsync(string bucketName, string key, CancellationToken cancellation)
         {
             return await DeleteObjectAsync(new DeleteObjectRequest(bucketName, key), cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<DeleteObjectResult> DeleteObjectAsync(DeleteObjectRequest deleteObjectRequest, CancellationToken cancellation)
         {
             var cmd = DeleteObjectCommand.Create(_serviceClient, _endpoint,
@@ -685,6 +694,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<DeleteObjectsResult> DeleteObjectsAsync(DeleteObjectsRequest deleteObjectsRequest, CancellationToken cancellation)
         {
             ThrowIfNullRequest(deleteObjectsRequest);
@@ -695,11 +705,13 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task DeleteObjectTaggingAsync(string bucketName, string key, CancellationToken cancellation)
         {
             await DeleteObjectTaggingAsync(new DeleteObjectTaggingRequest(bucketName, key), cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task DeleteObjectTaggingAsync(DeleteObjectTaggingRequest request, CancellationToken cancellation)
         {
             var cmd = DeleteObjectTaggingCommand.Create(_serviceClient, _endpoint,
@@ -711,6 +723,7 @@ namespace Aliyun.OSS
             }
         }
 
+        /// <inheritdoc/>    
         public async Task<DeleteObjectVersionsResult> DeleteObjectVersionsAsync(DeleteObjectVersionsRequest deleteObjectVersionsRequest, CancellationToken cancellation)
         {
             ThrowIfNullRequest(deleteObjectVersionsRequest);
@@ -721,6 +734,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<bool> DoesObjectExistAsync(string bucketName, string key, CancellationToken cancellation)
         {
             try
@@ -770,11 +784,13 @@ namespace Aliyun.OSS
             return true;
         }
 
+        /// <inheritdoc/>    
         public async Task<AccessControlList> GetObjectAclAsync(string bucketName, string key, CancellationToken cancellation)
         {
             return await GetObjectAclAsync(new GetObjectAclRequest(bucketName, key), cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<AccessControlList> GetObjectAclAsync(GetObjectAclRequest getObjectAclRequest, CancellationToken cancellation)
         {
             var cmd = GetObjectAclCommand.Create(_serviceClient,
@@ -784,11 +800,13 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<OssObject> GetObjectAsync(string bucketName, string key, CancellationToken cancellation)
         {
             return await GetObjectAsync(new GetObjectRequest(bucketName, key), cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<OssObject> GetObjectAsync(Uri signedUrl, CancellationToken cancellation)
         {
             // prepare request
@@ -820,6 +838,7 @@ namespace Aliyun.OSS
             return ResponseDeserializer.Deserialize(serviceResponse);
         }
 
+        /// <inheritdoc/>    
         public async Task<OssObject> GetObjectAsync(GetObjectRequest getObjectRequest, CancellationToken cancellation)
         {
             ThrowIfNullRequest(getObjectRequest);
@@ -830,6 +849,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<ObjectMetadata> GetObjectAsync(GetObjectRequest getObjectRequest, Stream output, CancellationToken cancellation)
         {
             var ossObject = await GetObjectAsync(getObjectRequest, cancellation);
@@ -840,11 +860,13 @@ namespace Aliyun.OSS
             return ossObject.Metadata;
         }
 
+        /// <inheritdoc/>    
         public async Task<ObjectMetadata> GetObjectMetadataAsync(string bucketName, string key, CancellationToken cancellation)
         {
             return await GetObjectMetadataAsync(new GetObjectMetadataRequest(bucketName, key), cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<ObjectMetadata> GetObjectMetadataAsync(GetObjectMetadataRequest request, CancellationToken cancellation)
         {
             var cmd = GetObjectMetadataCommand.Create(_serviceClient, _endpoint,
@@ -853,11 +875,13 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<GetObjectTaggingResult> GetObjectTaggingAsync(string bucketName, string key, CancellationToken cancellation)
         {
             return await GetObjectTaggingAsync(new GetObjectTaggingRequest(bucketName, key), cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<GetObjectTaggingResult> GetObjectTaggingAsync(GetObjectTaggingRequest request, CancellationToken cancellation)
         {
             var cmd = GetObjectTaggingCommand.Create(_serviceClient, _endpoint,
@@ -866,6 +890,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<ObjectMetadata> GetSimplifiedObjectMetadataAsync(GetObjectMetadataRequest request, CancellationToken cancellation)
         {
             var cmd = GetObjectMetadataCommand.Create(_serviceClient, _endpoint,
@@ -874,6 +899,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<OssSymlink> GetSymlinkAsync(string bucketName, string symlink, CancellationToken cancellation)
         {
             var cmd = GetSymlinkCommand.Create(_serviceClient, _endpoint,
@@ -883,6 +909,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<OssSymlink> GetSymlinkAsync(GetSymlinkRequest getSymlinkRequest, CancellationToken cancellation)
         {
             var cmd = GetSymlinkCommand.Create(_serviceClient, _endpoint,
@@ -892,11 +919,13 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<ObjectListing> ListObjectsAsync(string bucketName, CancellationToken cancellation)
         {
             return await ListObjectsAsync(bucketName, null, cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<ObjectListing> ListObjectsAsync(string bucketName, string prefix, CancellationToken cancellation)
         {
             var listObjectsRequest = new ListObjectsRequest(bucketName)
@@ -906,6 +935,7 @@ namespace Aliyun.OSS
             return await ListObjectsAsync(listObjectsRequest,cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<ObjectListing> ListObjectsAsync(ListObjectsRequest listObjectsRequest, CancellationToken cancellation)
         {
             ThrowIfNullRequest(listObjectsRequest);
@@ -915,6 +945,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<ObjectVersionList> ListObjectVersionsAsync(ListObjectVersionsRequest listObjectVersionsRequest, CancellationToken cancellation)
         {
             ThrowIfNullRequest(listObjectVersionsRequest);
@@ -924,6 +955,7 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task ModifyObjectMetaAsync(string bucketName, string key, ObjectMetadata newMeta, long? partSize, string checkpointDir, CancellationToken cancellation)
         {
             var copyObjectRequest = new CopyObjectRequest(bucketName, key, bucketName, key)
@@ -933,6 +965,7 @@ namespace Aliyun.OSS
             await CopyBigObjectAsync(copyObjectRequest, partSize, checkpointDir, cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<ProcessObjectResult> ProcessObjectAsync(ProcessObjectRequest request, CancellationToken cancellation)
         {
             ThrowIfNullRequest(request);
@@ -943,17 +976,20 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> PutObjectAsync(string bucketName, string key, Stream content, CancellationToken cancellation)
         {
             return await PutObjectAsync(bucketName, key, content, null, cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> PutObjectAsync(string bucketName, string key, Stream content, ObjectMetadata metadata, CancellationToken cancellation)
         {
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, content, metadata);
             return await PutObjectAsync(putObjectRequest, cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> PutObjectAsync(PutObjectRequest putObjectRequest, CancellationToken cancellation)
         {
             ObjectMetadata metadata = putObjectRequest.Metadata ?? new ObjectMetadata();
@@ -966,11 +1002,13 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> PutObjectAsync(string bucketName, string key, string fileToUpload, CancellationToken cancellation)
         {
             return await PutObjectAsync(bucketName, key, fileToUpload, null, cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> PutObjectAsync(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, CancellationToken cancellation)
         {
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
@@ -987,16 +1025,19 @@ namespace Aliyun.OSS
             return result;
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> PutObjectAsync(Uri signedUrl, string fileToUpload, CancellationToken cancellation)
         {
             return await PutObjectAsync(signedUrl, fileToUpload, null, cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> PutObjectAsync(Uri signedUrl, Stream content, CancellationToken cancellation)
         {
             return await PutObjectAsync(signedUrl, content, null, cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> PutObjectAsync(Uri signedUrl, string fileToUpload, ObjectMetadata metadata, CancellationToken cancellation)
         {
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
@@ -1010,6 +1051,7 @@ namespace Aliyun.OSS
             return result;
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> PutObjectAsync(Uri signedUrl, Stream content, ObjectMetadata metadata, CancellationToken cancellation)
         {
             // prepare request
@@ -1072,11 +1114,13 @@ namespace Aliyun.OSS
             return ResponseDeserializer.Deserialize(serviceResponse);
         }
 
+        /// <inheritdoc/>    
         public async Task<RestoreObjectResult> RestoreObjectAsync(string bucketName, string key, CancellationToken cancellation)
         {
             return await RestoreObjectAsync(new RestoreObjectRequest(bucketName, key), cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<RestoreObjectResult> RestoreObjectAsync(RestoreObjectRequest restoreObjectRequest, CancellationToken cancellation)
         {
             ExecutionContext context = CreateContext(HttpMethod.Post, restoreObjectRequest.BucketName, restoreObjectRequest.Key);
@@ -1087,11 +1131,13 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<CopyObjectResult> ResumableCopyObjectAsync(CopyObjectRequest copyObjectRequest, string checkpointDir, long? partSize, CancellationToken cancellation)
         {
             return await ResumableCopyObjectAsync(copyObjectRequest, checkpointDir, partSize, cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<ObjectMetadata> ResumableDownloadObjectAsync(DownloadObjectRequest request, CancellationToken cancellation)
         {
             ThrowIfNullRequest(request);
@@ -1168,6 +1214,7 @@ namespace Aliyun.OSS
             return objectMeta;
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> ResumableUploadObjectAsync(string bucketName, string key, string fileToUpload, ObjectMetadata metadata, string checkpointDir, long? partSize, EventHandler<StreamTransferProgressArgs> streamTransferProgress, CancellationToken cancellation)
         {
             if (!File.Exists(fileToUpload) || Directory.Exists(fileToUpload))
@@ -1183,6 +1230,7 @@ namespace Aliyun.OSS
             }
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> ResumableUploadObjectAsync(string bucketName, string key, Stream content, ObjectMetadata metadata, string checkpointDir, long? partSize, EventHandler<StreamTransferProgressArgs> streamTransferProgress, CancellationToken cancellation)
         {
             UploadObjectRequest request = new UploadObjectRequest(bucketName, key, content);
@@ -1194,6 +1242,7 @@ namespace Aliyun.OSS
             return await ResumableUploadObjectAsync(request,cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task<PutObjectResult> ResumableUploadObjectAsync(UploadObjectRequest request, CancellationToken cancellation)
         {
             ThrowIfNullRequest(request);
@@ -1301,6 +1350,7 @@ namespace Aliyun.OSS
             return result;
         }
 
+        /// <inheritdoc/>    
         public async Task<OssObject> SelectObjectAsync(SelectObjectRequest request, CancellationToken cancellation)
         {
             ThrowIfNullRequest(request);
@@ -1311,12 +1361,14 @@ namespace Aliyun.OSS
             return await cmd.ExecuteAsync(cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task SetObjectAclAsync(string bucketName, string key, CannedAccessControlList acl, CancellationToken cancellation)
         {
             var setObjectAclRequest = new SetObjectAclRequest(bucketName, key, acl);
             await SetObjectAclAsync(setObjectAclRequest,cancellation);
         }
 
+        /// <inheritdoc/>    
         public async Task SetObjectAclAsync(SetObjectAclRequest setObjectAclRequest, CancellationToken cancellation)
         {
             ThrowIfNullRequest(setObjectAclRequest);
@@ -1331,6 +1383,7 @@ namespace Aliyun.OSS
             }
         }
 
+        /// <inheritdoc/>    
         public async Task SetObjectTaggingAsync(SetObjectTaggingRequest request, CancellationToken cancellation)
         {
             ThrowIfNullRequest(request);
@@ -1347,5 +1400,184 @@ namespace Aliyun.OSS
 
         #endregion
 
+        #region Multipart Operations
+        /// <inheritdoc/>
+        public async Task<MultipartUploadListing> ListMultipartUploadsAsync(ListMultipartUploadsRequest listMultipartUploadsRequest, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(listMultipartUploadsRequest);
+            var cmd = ListMultipartUploadsCommand.Create(_serviceClient, _endpoint,
+                                                        CreateContext(HttpMethod.Get, listMultipartUploadsRequest.BucketName, null),
+                                                        listMultipartUploadsRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        /// <inheritdoc/>
+        public async Task<InitiateMultipartUploadResult> InitiateMultipartUploadAsync(InitiateMultipartUploadRequest initiateMultipartUploadRequest, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(initiateMultipartUploadRequest);
+            var cmd = InitiateMultipartUploadCommand.Create(_serviceClient, _endpoint,
+                                                           CreateContext(HttpMethod.Post, initiateMultipartUploadRequest.BucketName, initiateMultipartUploadRequest.Key),
+                                                           initiateMultipartUploadRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        /// <inheritdoc/>
+        public async Task AbortMultipartUploadAsync(AbortMultipartUploadRequest abortMultipartUploadRequest, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(abortMultipartUploadRequest);
+            var cmd = AbortMultipartUploadCommand.Create(_serviceClient, _endpoint,
+                                                        CreateContext(HttpMethod.Delete, abortMultipartUploadRequest.BucketName, abortMultipartUploadRequest.Key),
+                                                        abortMultipartUploadRequest);
+            using (await cmd.ExecuteAsync(cancellation))
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>        
+        public async Task<UploadPartResult> UploadPartAsync(UploadPartRequest uploadPartRequest, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(uploadPartRequest);
+            var cmd = UploadPartCommand.Create(_serviceClient, _endpoint,
+                                              CreateContext(HttpMethod.Put, uploadPartRequest.BucketName, uploadPartRequest.Key),
+                                              uploadPartRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+
+        /// <inheritdoc/>
+        public async Task<UploadPartCopyResult> UploadPartCopyAsync(UploadPartCopyRequest uploadPartCopyRequest, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(uploadPartCopyRequest);
+            var cmd = UploadPartCopyCommand.Create(_serviceClient, _endpoint,
+                                                  CreateContext(HttpMethod.Put, uploadPartCopyRequest.TargetBucket, uploadPartCopyRequest.TargetKey),
+                                                  uploadPartCopyRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        /// <inheritdoc/>                
+        public async Task<PartListing> ListPartsAsync(ListPartsRequest listPartsRequest, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(listPartsRequest);
+            var cmd = ListPartsCommand.Create(_serviceClient, _endpoint,
+                                             CreateContext(HttpMethod.Get, listPartsRequest.BucketName, listPartsRequest.Key),
+                                             listPartsRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        /// <inheritdoc/>                
+        public async Task<CompleteMultipartUploadResult> CompleteMultipartUploadAsync(CompleteMultipartUploadRequest completeMultipartUploadRequest, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(completeMultipartUploadRequest);
+            var cmd = CompleteMultipartUploadCommand.Create(_serviceClient, _endpoint,
+                                                           CreateContext(HttpMethod.Post, completeMultipartUploadRequest.BucketName, completeMultipartUploadRequest.Key),
+                                                           completeMultipartUploadRequest);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        #endregion
+
+        #region Live Channel
+
+        /// <inheritdoc/>                
+        public async Task<CreateLiveChannelResult> CreateLiveChannelAsync(CreateLiveChannelRequest request, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = CreateLiveChannelCommand.Create(_serviceClient, _endpoint,
+                                                 CreateContext(HttpMethod.Put, request.BucketName, request.ChannelName),
+                                                 request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        /// <inheritdoc/>                
+        public async Task<ListLiveChannelResult> ListLiveChannelAsync(ListLiveChannelRequest request, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = ListLiveChannelCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, null),
+                                     request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        /// <inheritdoc/>
+        public async Task DeleteLiveChannelAsync(DeleteLiveChannelRequest request, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = DeleteLiveChannelCommand.Create(_serviceClient, _endpoint,
+                                                   CreateContext(HttpMethod.Delete, request.BucketName, request.ChannelName),
+                                                   request);
+            using (await cmd.ExecuteAsync(cancellation))
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task SetLiveChannelStatusAsync(SetLiveChannelStatusRequest request, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = SetLiveChannelStatusCommand.Create(_serviceClient, _endpoint,
+                                       CreateContext(HttpMethod.Put, request.BucketName, request.ChannelName),
+                                       request);
+            using (await cmd.ExecuteAsync(cancellation))
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<GetLiveChannelInfoResult> GetLiveChannelInfoAsync(GetLiveChannelInfoRequest request, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = GetLiveChannelInfoCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, request.ChannelName),
+                                     request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        /// <inheritdoc/>
+        public async Task<GetLiveChannelStatResult> GetLiveChannelStatAsync(GetLiveChannelStatRequest request, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = GetLiveChannelStatCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, request.ChannelName),
+                                     request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        /// <inheritdoc/>
+        public async Task<GetLiveChannelHistoryResult> GetLiveChannelHistoryAsync(GetLiveChannelHistoryRequest request, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = GetLiveChannelHistoryCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, request.ChannelName),
+                                     request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        /// <inheritdoc/>
+        public async Task PostVodPlaylistAsync(PostVodPlaylistRequest request, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = PostVodPlaylistCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Post, request.BucketName, request.ChannelName + "/" + request.PlaylistName),
+                                     request);
+            using (await cmd.ExecuteAsync(cancellation))
+            {
+                // Do nothing
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<GetVodPlaylistResult> GetVodPlaylistAsync(GetVodPlaylistRequest request, CancellationToken cancellation = default)
+        {
+            ThrowIfNullRequest(request);
+            var cmd = GetVodPlaylistCommand.Create(_serviceClient, _endpoint,
+                                     CreateContext(HttpMethod.Get, request.BucketName, request.ChannelName),
+                                     request);
+            return await cmd.ExecuteAsync(cancellation);
+        }
+
+        #endregion
     }
 }
