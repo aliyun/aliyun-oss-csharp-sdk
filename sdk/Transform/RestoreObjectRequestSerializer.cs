@@ -20,8 +20,10 @@ namespace Aliyun.OSS.Transform
         {
             var model = new RestoreRequestModel();
             model.Days = request.Days;
-            model.JobParameter = new RestoreRequestModel.JobParameters();
-            model.JobParameter.Tier = request.Tier;
+            if (request.Tier != null) { 
+                model.JobParameter = new RestoreRequestModel.JobParameters();
+                model.JobParameter.Tier = request.Tier.Value;
+            }
             return ContentSerializer.Serialize(model);
         }
     }
