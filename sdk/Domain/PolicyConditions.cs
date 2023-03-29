@@ -89,10 +89,10 @@ namespace Aliyun.OSS
             switch (TupleType)
             {
                 case TupleType.Two:
-                    jsonizedCond = String.Format("{{\"{0}\":\"{1}\"}},", Name, Value);
+                    jsonizedCond = String.Format("{{\"{0}\":\"{1}\"}},", Util.HttpUtils.JsonEscapeString(Name), Util.HttpUtils.JsonEscapeString(Value));
                     break;
                 case TupleType.Three:
-                    jsonizedCond = String.Format("[\"eq\",\"${0}\",\"{1}\"],", Name, Value);
+                    jsonizedCond = String.Format("[\"eq\",\"${0}\",\"{1}\"],", Util.HttpUtils.JsonEscapeString(Name), Util.HttpUtils.JsonEscapeString(Value));
                     break;
                 default:
                     throw new InvalidEnumArgumentException("Invalid tuple type " + TupleType.ToString());
@@ -116,7 +116,7 @@ namespace Aliyun.OSS
 
         public override string Jsonize()
         {
-            return String.Format("[\"starts-with\",\"${0}\",\"{1}\"],", Name, Value);
+            return String.Format("[\"starts-with\",\"${0}\",\"{1}\"],", Util.HttpUtils.JsonEscapeString(Name), Util.HttpUtils.JsonEscapeString(Value));
         }
     }
 
