@@ -395,7 +395,8 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             };
 
             var aResult = _ossClient.AppendObject(aRequest);
-            Assert.AreEqual(aResult.VersionId, "null");
+            var versionId = aResult.VersionId;
+            Assert.AreEqual(aResult.VersionId.Length > 5, true);
 
             aRequest = new AppendObjectRequest(_bucketName, key)
             {
@@ -403,7 +404,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 Position = aResult.NextAppendPosition
             };
             aResult = _ossClient.AppendObject(aRequest);
-            Assert.AreEqual(aResult.VersionId, "null");
+            Assert.AreEqual(aResult.VersionId, versionId);
         }
 
         [Test]
