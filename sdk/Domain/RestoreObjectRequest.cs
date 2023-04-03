@@ -9,7 +9,7 @@ namespace Aliyun.OSS
     public class RestoreObjectRequest
     {
         private int _day = 1;
-        private TierType _tierType = TierType.Standard;
+        private TierType? _tierType = TierType.Standard;
         private bool _defaultParameter = true;
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Aliyun.OSS
         /// <summary>
         /// Gets or sets the TierType
         /// </summary>
-        public TierType Tier
+        public TierType? Tier
         {
             get { return _tierType; }
             set { _tierType = value; _defaultParameter = false; }
