@@ -38,6 +38,7 @@ namespace Aliyun.OSS.Common
 #if NETCOREAPP2_0
         private bool _enableNewServiceClient = true;
 #endif
+        private bool _verifyObjectStrict = true;
 
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
@@ -268,6 +269,20 @@ namespace Aliyun.OSS.Common
             }
         }
 #endif
+        /// <summary>
+        /// A flag of verifying object name strictly. By default it's true.
+        /// </summary>
+        public bool VerifyObjectStrict
+        {
+            get
+            {
+                return _verifyObjectStrict;
+            }
+            set
+            {
+                _verifyObjectStrict = value;
+            }
+        }
 
         /// <summary>
         /// Gets the default user agent
