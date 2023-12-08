@@ -1832,6 +1832,8 @@ namespace Aliyun.OSS
         public Uri GeneratePresignedUri(GeneratePresignedUriRequest generatePresignedUriRequest)
         {
             ThrowIfNullRequest(generatePresignedUriRequest);
+            var conf = OssUtils.GetClientConfiguration(_serviceClient);
+            OssUtils.CheckObjectKey(generatePresignedUriRequest.Key, conf.VerifyObjectStrict);
 
             var creds = _credsProvider.GetCredentials();
             var accessKeyId = creds.AccessKeyId;
@@ -1847,7 +1849,6 @@ namespace Aliyun.OSS
             var resourcePath = OssUtils.MakeResourcePath(_endpoint, bucketName, key);
 
             var request = new ServiceRequest();
-            var conf = OssUtils.GetClientConfiguration(_serviceClient);
             request.Endpoint = OssUtils.MakeBucketEndpoint(_endpoint, bucketName, conf);
             request.ResourcePath = resourcePath;
 

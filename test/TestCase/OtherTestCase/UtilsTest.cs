@@ -107,6 +107,18 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         }
 
         [Test]
+        public void IsObjectKeyValidTest()
+        {
+            Assert.AreEqual(OssUtils.IsObjectKeyValid("", true), false);
+            Assert.AreEqual(OssUtils.IsObjectKeyValid("?", true), false);
+            Assert.AreEqual(OssUtils.IsObjectKeyValid("?123", true), false);
+
+            Assert.AreEqual(OssUtils.IsObjectKeyValid("", false), false);
+            Assert.AreEqual(OssUtils.IsObjectKeyValid("?", false), true);
+            Assert.AreEqual(OssUtils.IsObjectKeyValid("?123", false), true);
+        }
+
+        [Test]
         public void OssRequestSignerTest()
         {
             var request = new ServiceRequest();
