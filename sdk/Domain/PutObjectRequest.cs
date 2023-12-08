@@ -74,6 +74,11 @@ namespace Aliyun.OSS
         public long TrafficLimit { get; set; }
 
         /// <summary>
+        /// Gets or sets the storage class for object
+        /// </summary>
+        public StorageClass? StorageClass { get; set; }
+
+        /// <summary>
         /// Creates a new instance of <see cref="PutObjectRequest" />
         /// </summary>
         /// <param name="bucketName">bucket name</param>
@@ -122,6 +127,10 @@ namespace Aliyun.OSS
             if (TrafficLimit > 0)
             {
                 headers.Add(OssHeaders.OssTrafficLimit, TrafficLimit.ToString());
+            }
+            if (StorageClass != null)
+            {
+                headers.Add(OssHeaders.StorageClass, StorageClass.ToString());
             }
         }
 
