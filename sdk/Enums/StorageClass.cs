@@ -14,6 +14,7 @@ namespace Aliyun.OSS
         Standard, // Standard bucket
         IA,       // Infrequent Access bucket
         Archive,   // Archive bucket
-        ColdArchive     // Cold Archive bucket
+        ColdArchive,     // Cold Archive bucket
+        DeepColdArchive // Deep Cold Archive
     }
 }
