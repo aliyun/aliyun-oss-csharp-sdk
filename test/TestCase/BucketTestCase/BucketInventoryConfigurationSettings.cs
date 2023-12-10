@@ -1,8 +1,7 @@
-﻿using System;
-using Aliyun.OSS.Test.Util;
-using System.Collections.Generic;
+﻿using Aliyun.OSS.Test.Util;
 using NUnit.Framework;
 using Aliyun.OSS.Common;
+using System.IO;
 
 namespace Aliyun.OSS.Test.TestClass.BucketTestClass
 {
@@ -11,6 +10,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         private static IOss _ossClient;
         private static string _bucketName;
         private static string _bucketName2;
+        private static string _kmsId;
 
         [OneTimeSetUp]
         public static void ClassInitialize()
@@ -23,6 +23,12 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             _ossClient.CreateBucket(_bucketName);
             _ossClient.CreateBucket(_bucketName2);
 
+            var key = OssTestUtils.GetObjectKey("bucket-inventory");
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.HttpMetadata.Add("x-oss-server-side-encryption", "KMS");
+            _ossClient.PutObject(_bucketName, key, new MemoryStream(System.Text.Encoding.ASCII.GetBytes("hello")), metadata);
+            var result = _ossClient.GetObjectMetadata(new GetObjectMetadataRequest(_bucketName, key));
+            _kmsId = result.HttpMetadata["x-oss-server-side-encryption-key-id"] as string;
         }
 
         [OneTimeTearDown]
@@ -47,7 +53,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             config.Destination.OSSBucketDestination.RoleArn = Config.RamRoleArn;
             config.Destination.OSSBucketDestination.Bucket = _bucketName2;
             config.Destination.OSSBucketDestination.Prefix = "prefix1";
-            config.Destination.OSSBucketDestination.Encryption = new InventoryEncryption(new InventorySSEKMS("keyId"));
+            config.Destination.OSSBucketDestination.Encryption = new InventoryEncryption(new InventorySSEKMS(_kmsId));
             config.Schedule = new InventorySchedule(InventoryFrequency.Daily);
             config.IncludedObjectVersions = InventoryIncludedObjectVersions.All;
             config.OptionalFields.Add(InventoryOptionalField.Size);
@@ -70,7 +76,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
             Assert.AreEqual(result.Configuration.Destination.OSSBucketDestination.Prefix, "prefix1");
             Assert.AreEqual(result.Configuration.Destination.OSSBucketDestination.Encryption.SSEOSS, null);
             Assert.AreNotEqual(result.Configuration.Destination.OSSBucketDestination.Encryption.SSEKMS, null);
-            Assert.AreEqual(result.Configuration.Destination.OSSBucketDestination.Encryption.SSEKMS.KeyId, "keyId");
+            Assert.AreEqual(result.Configuration.Destination.OSSBucketDestination.Encryption.SSEKMS.KeyId, _kmsId);
             Assert.AreEqual(result.Configuration.Schedule.Frequency, InventoryFrequency.Daily);
             Assert.AreEqual(result.Configuration.Filter.Prefix, "filterPrefix");
             Assert.AreEqual(result.Configuration.IncludedObjectVersions, InventoryIncludedObjectVersions.All);
