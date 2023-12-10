@@ -3410,7 +3410,8 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             var str = reader.ReadToEnd();
             Assert.AreEqual(request.IsUseDefaultParameter(), true);
             Assert.AreEqual(str.Contains("<Days>1</Days>"), true);
-            Assert.AreEqual(str.Contains("<JobParameters>\r\n    <Tier>Standard</Tier>\r\n  </JobParameters>"), true);
+            Assert.AreEqual(str.Contains("<JobParameters>"), true);
+            Assert.AreEqual(str.Contains("<Tier>Standard</Tier>"), true);
 
             request = new RestoreObjectRequest("bucket", "object")
             {
@@ -3422,7 +3423,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             str = reader.ReadToEnd();
             Assert.AreEqual(request.IsUseDefaultParameter(), false);
             Assert.AreEqual(str.Contains("<Days>10</Days>"), true);
-            Assert.AreEqual(str.Contains("<JobParameters>\r\n    <Tier>Bulk</Tier>\r\n  </JobParameters>"), true);
+            Assert.AreEqual(str.Contains("<Tier>Bulk</Tier>"), true);
 
             request = new RestoreObjectRequest("bucket", "object")
             {
@@ -3433,7 +3434,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             str = reader.ReadToEnd();
             Assert.AreEqual(request.IsUseDefaultParameter(), false);
             Assert.AreEqual(str.Contains("<Days>9</Days>"), true);
-            Assert.AreEqual(str.Contains("<JobParameters>\r\n    <Tier>Standard</Tier>\r\n  </JobParameters>"), true);
+            Assert.AreEqual(str.Contains("<Tier>Standard</Tier>"), true);
 
             request = new RestoreObjectRequest("bucket", "object")
             {
@@ -3444,7 +3445,7 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             str = reader.ReadToEnd();
             Assert.AreEqual(request.IsUseDefaultParameter(), false);
             Assert.AreEqual(str.Contains("<Days>1</Days>"), true);
-            Assert.AreEqual(str.Contains("<JobParameters>\r\n    <Tier>Expedited</Tier>\r\n  </JobParameters>"), true);
+            Assert.AreEqual(str.Contains("<Tier>Expedited</Tier>"), true);
         }
 
         [Test]

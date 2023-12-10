@@ -144,11 +144,14 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             var targetFile = OssTestUtils.GetTargetFileName(_className);
             targetFile = Path.Combine(Config.DownloadFolder, targetFile);
             var objectKeyName = "test-object-disable-crc";
-
+            var uploadTestFile = Path.Combine(Config.DownloadFolder, OssTestUtils.GetTargetFileName(""));
+            FileUtils.PrepareSampleFile(uploadTestFile, 110);
+            var multiUploadTestFile = Path.Combine(Config.DownloadFolder, OssTestUtils.GetTargetFileName(""));
+            FileUtils.PrepareSampleFile(multiUploadTestFile, 25 * 1024);
             try
             {
                 // put & get
-                PutObjectResult putObjectResult = ossClient.PutObject(_bucketName, objectKeyName, Config.UploadTestFile);
+                PutObjectResult putObjectResult = ossClient.PutObject(_bucketName, objectKeyName, uploadTestFile);
                 var actualCrc = putObjectResult.ResponseMetadata[HttpHeaders.HashCrc64Ecma];
 
                 OssObject ossObject = ossClient.GetObject(_bucketName, objectKeyName);
@@ -177,7 +180,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 ossClient.DeleteObject(_bucketName, objectKeyName);
 
                 // upload & download
-                var uploadObjectResult = ossClient.ResumableUploadObject(_bucketName, objectKeyName, Config.MultiUploadTestFile, null,
+                var uploadObjectResult = ossClient.ResumableUploadObject(_bucketName, objectKeyName, multiUploadTestFile, null,
                                            Config.DownloadFolder);
                 actualCrc = uploadObjectResult.ResponseMetadata[HttpHeaders.HashCrc64Ecma];
 
@@ -188,7 +191,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 ossClient.DeleteObject(_bucketName, objectKeyName);
 
                 // append
-                using (var fs = File.Open(Config.UploadTestFile, FileMode.Open))
+                using (var fs = File.Open(uploadTestFile, FileMode.Open))
                 {
                     var fileLength = fs.Length;
                     var appendObjectRequest = new AppendObjectRequest(_bucketName, objectKeyName)

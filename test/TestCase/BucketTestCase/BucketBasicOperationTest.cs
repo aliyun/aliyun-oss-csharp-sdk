@@ -442,7 +442,7 @@ namespace Aliyun.OSS.Test.TestClass.BucketTestClass
         {
             try
             {
-                const string bucketName = "not-exist-bucket";
+                string bucketName = OssTestUtils.GetBucketName("not-exist-bucket");
                 try
                 {
                     _ossClient.DeleteBucket(bucketName);
