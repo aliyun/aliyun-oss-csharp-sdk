@@ -37,6 +37,9 @@ namespace Aliyun.OSS
         private volatile Uri _endpoint;
         private readonly ICredentialsProvider _credsProvider;
         private readonly IServiceClient _serviceClient;
+        private volatile string _region;
+        private volatile string _cloudBoxId;
+
 
         #endregion
 
@@ -186,6 +189,18 @@ namespace Aliyun.OSS
         public void SetEndpoint(Uri endpoint)
         {
             _endpoint = endpoint;
+        }
+
+        /// <inheritdoc/>
+        public void SetRegion(string region)
+        {
+            _region = region;
+        }
+
+        /// <inheritdoc/>
+        public void SetCloudBoxId(string cloudBoxId)
+        {
+            _cloudBoxId = cloudBoxId;
         }
 
         #endregion
@@ -1835,22 +1850,12 @@ namespace Aliyun.OSS
             var conf = OssUtils.GetClientConfiguration(_serviceClient);
             OssUtils.CheckObjectKey(generatePresignedUriRequest.Key, conf.VerifyObjectStrict);
 
-            var creds = _credsProvider.GetCredentials();
-            var accessKeyId = creds.AccessKeyId;
-            var accessKeySecret = creds.AccessKeySecret;
-            var securityToken = creds.SecurityToken;
-            var useToken = creds.UseToken;
             var bucketName = generatePresignedUriRequest.BucketName;
             var key = generatePresignedUriRequest.Key;
 
-            const long ticksOf1970 = 621355968000000000;
-            var expires = ((generatePresignedUriRequest.Expiration.ToUniversalTime().Ticks - ticksOf1970) / 10000000L)
-                .ToString(CultureInfo.InvariantCulture);
-            var resourcePath = OssUtils.MakeResourcePath(_endpoint, bucketName, key);
-
             var request = new ServiceRequest();
             request.Endpoint = OssUtils.MakeBucketEndpoint(_endpoint, bucketName, conf);
-            request.ResourcePath = resourcePath;
+            request.ResourcePath = OssUtils.MakeResourcePath(_endpoint, bucketName, key); ;
 
             switch (generatePresignedUriRequest.Method)
             {
@@ -1864,7 +1869,6 @@ namespace Aliyun.OSS
                     throw new ArgumentException("Unsupported http method.");
             }
 
-            request.Headers.Add(HttpHeaders.Date, expires);
             if (!string.IsNullOrEmpty(generatePresignedUriRequest.ContentType))
                 request.Headers.Add(HttpHeaders.ContentType, generatePresignedUriRequest.ContentType);
             if (!string.IsNullOrEmpty(generatePresignedUriRequest.ContentMd5))
@@ -1883,28 +1887,25 @@ namespace Aliyun.OSS
             foreach (var param in generatePresignedUriRequest.QueryParams)
                 request.Parameters.Add(param.Key, param.Value);
 
-            if (useToken)
-                request.Parameters.Add(RequestParameters.SECURITY_TOKEN, securityToken);
+            var singer = OssRequestSigner.Create(conf.SignatureVersion);
+            singer.Bucket = bucketName;
+            singer.Key = key;
+            singer.Region = getSignRegion();
+            singer.Product = getSignProduct();
 
-            var canonicalResource = "/" + (bucketName ?? "") + ((key != null ? "/" + key : ""));
-            var httpMethod = generatePresignedUriRequest.Method.ToString().ToUpperInvariant();
+            var signingContext = new SigningContext
+            {
+                Credentials = _credsProvider.GetCredentials(),
+                Expiration = generatePresignedUriRequest.Expiration,
+            };
 
-            var canonicalString =
-                SignUtils.BuildCanonicalString(httpMethod, canonicalResource, request/*, expires*/);
-            var signature = ServiceSignature.Create().ComputeSignature(accessKeySecret, canonicalString);
+            singer.PreSign(request, signingContext);
 
-            IDictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams.Add(RequestParameters.EXPIRES, expires);
-            queryParams.Add(RequestParameters.OSS_ACCESS_KEY_ID, accessKeyId);
-            queryParams.Add(RequestParameters.SIGNATURE, signature);
-            foreach (var param in request.Parameters)
-                queryParams.Add(param.Key, param.Value);
-
-            var queryString = HttpUtils.ConbineQueryString(queryParams);
+            var queryString = HttpUtils.ConbineQueryString(request.Parameters);
             var uriString = request.Endpoint.ToString();
             if (!uriString.EndsWith("/"))
                 uriString += "/";
-            uriString += resourcePath + "?" + queryString;
+            uriString += request.ResourcePath + "?" + queryString;
 
             return new Uri(uriString);
         }
@@ -2213,6 +2214,23 @@ namespace Aliyun.OSS
         #endregion
 
         #region Private Methods
+        private string getSignRegion()
+        {
+            if (!string.IsNullOrEmpty(_cloudBoxId))
+            {
+                return _cloudBoxId;
+            }
+            return _region;
+        }
+
+        private string getSignProduct()
+        {
+            if (!string.IsNullOrEmpty(_cloudBoxId))
+            {
+                return "oss-cloudbox";
+            }
+            return "oss";
+        }
         private ExecutionContext CreateContext(HttpMethod method, string bucket, string key)
         {
             var builder = new ExecutionContextBuilder
@@ -2220,7 +2238,10 @@ namespace Aliyun.OSS
                 Bucket = bucket,
                 Key = key,
                 Method = method,
-                Credentials = _credsProvider.GetCredentials()
+                Region = getSignRegion(),
+                Product = getSignProduct(),
+                Credentials = _credsProvider.GetCredentials(),
+                SignatureVersion = OssUtils.GetClientConfiguration(_serviceClient).SignatureVersion
             };
             builder.ResponseHandlers.Add(new ErrorResponseHandler());
             return builder.Build();

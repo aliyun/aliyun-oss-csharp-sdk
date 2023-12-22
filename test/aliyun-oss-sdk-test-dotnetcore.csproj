@@ -68,6 +68,7 @@
     <Compile Include="TestCase\ObjectTestCase\SelectObjectTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ClassUnitTest.cs" />
     <Compile Include="TestCase\OtherTestCase\HttpsTest.cs" />
+    <Compile Include="TestCase\OtherTestCase\SignerTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ProxyTest.cs" />
     <Compile Include="TestCase\OtherTestCase\EpochTimeSettingTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ConcurrencyTest.cs" />

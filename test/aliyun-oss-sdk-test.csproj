@@ -88,6 +88,7 @@
     <Compile Include="TestCase\ObjectTestCase\ObjectTaggingTest.cs" />
     <Compile Include="TestCase\ObjectTestCase\SelectObjectTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ClassUnitTest.cs" />
+    <Compile Include="TestCase\OtherTestCase\SignerTest.cs" />
     <Compile Include="TestCase\OtherTestCase\UtilsTest.cs" />
     <Compile Include="TestCase\OtherTestCase\HttpsTest.cs" />
     <Compile Include="TestCase\OtherTestCase\ProxyTest.cs" />

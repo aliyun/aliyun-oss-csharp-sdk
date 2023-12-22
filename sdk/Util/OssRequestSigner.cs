@@ -4,39 +4,58 @@
  * 
  */
 
-using System;
 using Aliyun.OSS.Common.Authentication;
 using Aliyun.OSS.Common.Communication;
-using Aliyun.OSS.Util;
+using System.Collections.Generic;
 
 namespace Aliyun.OSS.Util
 {
-    internal class OssRequestSigner : IRequestSigner
+    internal abstract class OssRequestSigner : IRequestSigner
     {
-        private readonly string _resourcePath;
+        public string Bucket { get; internal set; }
 
-        public OssRequestSigner(String resourcePath)
+        public string Key { get; internal set; }
+
+        public string Region { get; internal set; }
+
+        public string Product { get; internal set; }
+
+        public List<string> AdditionalHeaders { get; internal set; }
+
+        public abstract void Sign(ServiceRequest request, ICredentials credentials);
+
+        public abstract void PreSign(ServiceRequest request, SigningContext signingContext);
+
+        public static OssRequestSigner Create(SignatureVersion version)
         {
-            _resourcePath = resourcePath;
-        }
-        
-        public void Sign(ServiceRequest request, ICredentials credentials)
-        {
-            var accessKeyId = credentials.AccessKeyId;
-            var accessKeySecret = credentials.AccessKeySecret;
-            var httpMethod = request.Method.ToString().ToUpperInvariant();
-            // Because the resource path to is different from the one in the request uri,
-            // can't use ServiceRequest.ResourcePath here.
-            var resourcePath = _resourcePath;
-            if (!string.IsNullOrEmpty(accessKeySecret))
+            if (SignatureVersion.V4.Equals(version))
             {
-                var canonicalString = SignUtils.BuildCanonicalString(httpMethod, resourcePath, request);
-                var signature = ServiceSignature.Create().ComputeSignature(accessKeySecret, canonicalString);
-
-                // request could be retried and the Authorization header may exist already.
-                // Fix for #OSS-1579/11349300 
-                request.Headers[HttpHeaders.Authorization] =  "OSS " + accessKeyId + ":" + signature;
+                return new OssRequestSignerV4();
             }
+            return new OssRequestSignerV1();
+        }
+
+        protected string getResourcePath()
+        {
+            var resourcePath = "/" + (Bucket ?? string.Empty) + ((Key != null ? "/" + Key : ""));
+            if (Bucket != null && Key == null)
+            {
+                resourcePath = resourcePath + "/";
+            }
+
+            return resourcePath;
+        }
+
+        protected static bool IsAnonymousCredentials(ICredentials credentials)
+        {
+            if (credentials == null ||
+                string.IsNullOrEmpty(credentials.AccessKeyId) ||
+                string.IsNullOrEmpty(credentials.AccessKeySecret))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -40,6 +40,8 @@ namespace Aliyun.OSS.Common
 #endif
         private bool _verifyObjectStrict = true;
 
+        private SignatureVersion _signatureVersion = SignatureVersion.V1;
+
         /// <summary>
         /// Max Http connection connection count. By default it's 512.
         /// </summary>
@@ -281,6 +283,21 @@ namespace Aliyun.OSS.Common
             set
             {
                 _verifyObjectStrict = value;
+            }
+        }
+
+        /// <summary>
+        /// SignatureVersion used to sign the request to OSS
+        /// </summary>
+        public SignatureVersion SignatureVersion
+        {
+            get
+            {
+                return _signatureVersion;
+            }
+            set
+            {
+                _signatureVersion = value;
             }
         }
 

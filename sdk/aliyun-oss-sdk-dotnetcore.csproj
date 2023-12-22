@@ -91,6 +91,7 @@
     <Compile Include="Common\Authentication\HmacSHA1Signature.cs" />
     <Compile Include="Common\Authentication\IRequestSigner.cs" />
     <Compile Include="Common\Authentication\ServiceSignature.cs" />
+    <Compile Include="Common\Authentication\SigningContext.cs" />
     <Compile Include="Common\Communication\ExecutionContext.cs" />
     <Compile Include="Common\Communication\netcore\ServiceClientNewImpl.cs" />
     <Compile Include="Common\Communication\netcore\StreamWeakReferece.cs" />
@@ -192,6 +193,7 @@
     <Compile Include="Enums\DataRedundancyType.cs" />
     <Compile Include="Enums\RequestPayer.cs" />
     <Compile Include="Enums\SelectObjectType.cs" />
+    <Compile Include="Enums\SignatureVersion.cs" />
     <Compile Include="Enums\TierType.cs" />
     <Compile Include="Enums\VersioningStatus.cs" />
     <Compile Include="Model\BucketStorageCapacityModel.cs" />
@@ -417,6 +419,8 @@
     <Compile Include="Util\ExceptionFactory.cs" />
     <Compile Include="Util\ExecutionContextBuilder.cs" />
     <Compile Include="Util\OssHeaders.cs" />
+    <Compile Include="Util\OssRequestSignerV1.cs" />
+    <Compile Include="Util\OssRequestSignerV4.cs" />
     <Compile Include="Util\OssRequestSigner.cs" />
     <Compile Include="Util\OssUtils.cs" />
     <Compile Include="Util\RequestParameters.cs" />

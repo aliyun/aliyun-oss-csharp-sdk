@@ -125,9 +125,7 @@ namespace Aliyun.OSS.Commands
             
             foreach(var h in Headers)
                 request.Headers.Add(h.Key, h.Value);
-            if (Context.Credentials.UseToken)
-                request.Headers[HttpHeaders.SecurityToken] = Context.Credentials.SecurityToken;
-            
+
             request.Content = Content;
 
             return request;
