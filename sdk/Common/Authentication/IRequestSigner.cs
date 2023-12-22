@@ -11,5 +11,7 @@ namespace Aliyun.OSS.Common.Authentication
     internal interface IRequestSigner
     {
         void Sign(ServiceRequest request, ICredentials credentials);
+
+        void PreSign(ServiceRequest request, SigningContext signingContext);
     }
 }

@@ -20,6 +20,7 @@ namespace Aliyun.OSS.Util
         public const string HttpsProto = "https://";
         public const string DefaultContentType = "application/octet-stream";
         private const string UrlAllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+        private const string UrlAllowedCharsPath = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~/";
         private static IDictionary<string, string> _mimeDict = new Dictionary<string, string>();
 
         static HttpUtils()
@@ -83,6 +84,23 @@ namespace Aliyun.OSS.Util
             }
 
             return encodedUri.ToString();
+        }
+
+        public static string EncodePath(string uriToEncode)
+        {
+            if (string.IsNullOrEmpty(uriToEncode))
+                return string.Empty;
+
+            var encoded = new StringBuilder(uriToEncode.Length * 2);
+            foreach (char symbol in Encoding.UTF8.GetBytes(uriToEncode))
+            {
+                if (UrlAllowedCharsPath.IndexOf(symbol) != -1)
+                    encoded.Append(symbol);
+                else
+                    encoded.Append("%").Append(String.Format("{0:X2}", (int)symbol));
+            }
+
+            return encoded.ToString();
         }
 
         public static string DecodeUri(string uriToDecode)

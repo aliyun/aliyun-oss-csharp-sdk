@@ -618,5 +618,15 @@ namespace Aliyun.OSS.Util
             }
             return ret;
         }
+
+        internal static string ToHexString(byte[] data, bool lowercase)
+        {
+            var sb = new StringBuilder();
+            for (var i = 0; i < data.Length; i++)
+            {
+                sb.Append(data[i].ToString(lowercase ? "x2" : "X2"));
+            }
+            return sb.ToString();
+        }
     }
 }

@@ -22,7 +22,13 @@ namespace Aliyun.OSS.Util
         public string Bucket { get; set; }
         
         public string Key { get; set; }
-        
+
+        public string Region { get; set; }
+
+        public string Product { get; set; }
+
+        public SignatureVersion SignatureVersion { get; set; }
+
         public ExecutionContextBuilder()
         {
             ResponseHandlers = new List<IResponseHandler>();
@@ -32,7 +38,7 @@ namespace Aliyun.OSS.Util
         {
             var context = new ExecutionContext
             {
-                Signer = CreateSigner(Bucket, Key), 
+                Signer = CreateSigner(Bucket, Key, Region, Product, SignatureVersion), 
                 Credentials = Credentials
             };
             foreach(var h in ResponseHandlers)
@@ -42,19 +48,16 @@ namespace Aliyun.OSS.Util
             return context;
         }
         
-        private static IRequestSigner CreateSigner(string bucket, string key)
+        private static IRequestSigner CreateSigner(string bucket, string key, string region, string product, SignatureVersion version)
         {    
-            var resourcePath = "/" + (bucket ?? string.Empty) +
-                ((key != null ? "/" + key : ""));
-            
-            // Hacked. the sign path is /bucket/key for two-level-domain mode
-            // but /bucket/key/ for the three-level-domain mode.
-            if (bucket != null && key == null)
-            {
-                resourcePath = resourcePath + "/";
-            }
-            
-            return new OssRequestSigner(resourcePath);
+            var singer = OssRequestSigner.Create(version);
+
+            singer.Bucket = bucket;
+            singer.Key = key;
+            singer.Region = region;
+            singer.Product = product;
+
+            return singer;
         }
     }
 }
