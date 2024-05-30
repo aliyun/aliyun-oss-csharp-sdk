@@ -6,6 +6,7 @@ namespace Aliyun.OSS.Test.Util
     public static class Config
     {
         private static string _endpoint = null; // your endpoint
+        private static string _region = null; // your endpoint
         private static string _accessKeyId = null; // your access key id
         private static string _accessKeySecret = null; // your access key secret
         private static string _proxyHost = ""; // proxy host
@@ -22,6 +23,11 @@ namespace Aliyun.OSS.Test.Util
         public static string Endpoint
         {
            get {return _endpoint?? Environment.GetEnvironmentVariable("OSS_TEST_ENDPOINT");}
+        }
+
+        public static string Region
+        {
+           get {return _region?? Environment.GetEnvironmentVariable("OSS_TEST_REGION");}
         }
 
         public static string AccessKeyId
