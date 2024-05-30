@@ -166,6 +166,11 @@ namespace Aliyun.OSS.Common.Communication
         {
             var data = serviceRequest.BuildRequestContent();
 
+            if (serviceRequest.Method == HttpMethod.Get ||
+                serviceRequest.Method == HttpMethod.Head) {
+                return;
+            }
+
             if (data == null ||
                 (serviceRequest.Method != HttpMethod.Put &&
                  serviceRequest.Method != HttpMethod.Post))
