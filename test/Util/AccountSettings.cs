@@ -5,6 +5,7 @@ namespace Aliyun.OSS.Test.Util
     internal class AccountSettings
     {
         public string OssEndpoint { get; set; }
+        public string OssRegion { get; set; }
         public string OssAccessKeyId { get; set; }
         public string OssAccessKeySecret { get; set; }
 
@@ -24,7 +25,8 @@ namespace Aliyun.OSS.Test.Util
             {
                 OssEndpoint = Config.Endpoint,
                 OssAccessKeyId = Config.AccessKeyId,
-                OssAccessKeySecret = Config.AccessKeySecret
+                OssAccessKeySecret = Config.AccessKeySecret,
+                OssRegion = Config.Region
             };
             //check if proxyHost and proxyPort has been configured, if yes, set proxyHost and proxyPort values
             if (string.IsNullOrEmpty(Config.ProxyHost) || string.IsNullOrEmpty(Config.ProxyPort))

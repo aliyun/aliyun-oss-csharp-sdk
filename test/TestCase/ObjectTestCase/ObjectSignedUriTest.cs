@@ -104,7 +104,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             HttpWebRequest req = null;
             HttpWebResponse res = null;
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             //set expiration time to 5 seconds before
             var expireDate = now.AddSeconds(-5);
             var uri = _ossClient.GeneratePresignedUri(_bucketName, _objectKey, expireDate);
@@ -117,8 +117,15 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
             catch (WebException e)
             {
-                Assert.IsTrue(e.Message.Contains("403"), 
-                    string.Format("Unexpected exception: {0}", e.Message));
+                // sign v4 is 400
+                if (uri.ToString().Contains("x-oss-signature-version=OSS4-HMAC-SHA256"))
+                {
+                    Assert.IsTrue(e.Message.Contains("400"), string.Format("Unexpected exception: {0}", e.Message));
+                }
+                else
+                {
+                    Assert.IsTrue(e.Message.Contains("403"), string.Format("Unexpected exception: {0}", e.Message));
+                }
             }
             finally
             {
@@ -496,7 +503,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             HttpWebRequest req = null;
             HttpWebResponse res = null;
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             //set expiration time to 5 seconds before
             var expireDate = now.AddSeconds(-5);
             var targetObject = OssTestUtils.GetObjectKey(_className);
@@ -514,8 +521,15 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
             catch (WebException e)
             {
-                Assert.IsTrue(e.Message.Contains("403"),
-                    string.Format("Unexpected exception: {0}", e.Message));
+                // sign v4 is 400
+                if (uri.ToString().Contains("x-oss-signature-version=OSS4-HMAC-SHA256"))
+                {
+                    Assert.IsTrue(e.Message.Contains("400"), string.Format("Unexpected exception: {0}", e.Message));
+                }
+                else
+                {
+                    Assert.IsTrue(e.Message.Contains("403"), string.Format("Unexpected exception: {0}", e.Message));
+                }
             }
             finally
             {

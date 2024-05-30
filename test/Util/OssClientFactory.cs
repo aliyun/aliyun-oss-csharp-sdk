@@ -42,15 +42,19 @@ namespace Aliyun.OSS.Test.Util
 
         public static IOss CreateOssClient(AccountSettings settings)
         {
-            return CreateOssClient(settings, new ClientConfiguration());
+            var conf = new ClientConfiguration();
+            //conf.SignatureVersion = SignatureVersion.V4;
+            return CreateOssClient(settings, conf);
         }
 
         public static IOss CreateOssClient(AccountSettings settings, ClientConfiguration conf)
         {
-            return new OssClient(settings.OssEndpoint,
+            var c = new OssClient(settings.OssEndpoint,
                                  settings.OssAccessKeyId,
                                  settings.OssAccessKeySecret,
                                  conf);
+            c.SetRegion(settings.OssRegion);
+            return c;
         }
 
         public static IOss CreateOssClientUseHttps(AccountSettings settings)
@@ -70,7 +74,9 @@ namespace Aliyun.OSS.Test.Util
                 endpoint = HttpsProto + settings.OssEndpoint.Trim();
             }
 
-            return new OssClient(endpoint, settings.OssAccessKeyId, settings.OssAccessKeySecret);
+            var c = new OssClient(endpoint, settings.OssAccessKeyId, settings.OssAccessKeySecret);
+            c.SetRegion(settings.OssRegion);
+            return c;
         }
 
         public static IOss CreateOssClientWithProxy(AccountSettings settings)
@@ -88,10 +94,12 @@ namespace Aliyun.OSS.Test.Util
         {
             var clientConfiguration = new ClientConfiguration();
             clientConfiguration.EnalbeMD5Check = enableMD5Check;
-            return new OssClient(settings.OssEndpoint, 
+            var c = new OssClient(settings.OssEndpoint, 
                                  settings.OssAccessKeyId, 
                                  settings.OssAccessKeySecret, 
                                  clientConfiguration);
+            c.SetRegion(settings.OssRegion);
+            return c;                                 
         }
 
         public static IOss CreateOssClientWithProxy(string endpoint, 

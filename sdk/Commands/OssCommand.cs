@@ -120,8 +120,8 @@ namespace Aliyun.OSS.Commands
             var adjustedTime = DateTime.UtcNow.AddSeconds(conf.TickOffset);
             request.Headers[HttpHeaders.Date] = DateUtils.FormatRfc822Date(adjustedTime);
 
-            if (!Headers.ContainsKey(HttpHeaders.ContentType))
-                request.Headers[HttpHeaders.ContentType] = string.Empty;
+            //if (!Headers.ContainsKey(HttpHeaders.ContentType))
+            //    request.Headers[HttpHeaders.ContentType] = string.Empty;
             
             foreach(var h in Headers)
                 request.Headers.Add(h.Key, h.Value);

@@ -75,9 +75,9 @@ namespace Aliyun.OSS.Util
 
             request.Headers[HttpHeaders.Authorization] = sb.ToString();
 
-            Console.WriteLine("canonicalRequest:{0}\n", canonicalRequest);
-            Console.WriteLine("stringToSign:{0}\n", stringToSign);
-            Console.WriteLine("signature:{0}\n", signature);
+            //Console.WriteLine("canonicalRequest:{0}\n", canonicalRequest);
+            //Console.WriteLine("stringToSign:{0}\n", stringToSign);
+            //Console.WriteLine("signature:{0}\n", signature);
         }
 
         public override void PreSign(ServiceRequest request, SigningContext signingContext)
@@ -89,7 +89,7 @@ namespace Aliyun.OSS.Util
 
             // Date
             var signTime = DateTime.UtcNow;
-            if (signingContext.SignTime != null)
+            if (signingContext.SignTime.Ticks != 0)
             {
                 signTime = signingContext.SignTime;
             }
@@ -129,9 +129,9 @@ namespace Aliyun.OSS.Util
             // Credential
             request.Parameters.Add("x-oss-signature", signature);
 
-            Console.WriteLine("canonicalRequest:{0}\n", canonicalRequest);
-            Console.WriteLine("stringToSign:{0}\n", stringToSign);
-            Console.WriteLine("signature:{0}\n", signature);
+            //Console.WriteLine("canonicalRequest:{0}\n", canonicalRequest);
+            //Console.WriteLine("stringToSign:{0}\n", stringToSign);
+            //Console.WriteLine("signature:{0}\n", signature);
         }
 
         private static string FormatDateTime(DateTime dtime)
@@ -221,6 +221,10 @@ namespace Aliyun.OSS.Util
             var sortedHeaderMap = new SortedDictionary<string, string>();
             foreach (var header in headers)
             {
+                if (header.Value == null)
+                {
+                    continue;
+                }
                 var lowerKey = header.Key.ToLowerInvariant();
                 if (IsDefaultSignedHeader(lowerKey) ||
                     addHeadersMap.ContainsKey(lowerKey))
@@ -338,11 +342,11 @@ namespace Aliyun.OSS.Util
             kha.Key = signingKey;
             var signature = kha.ComputeHash(Encoding.UTF8.GetBytes(stringToSign));
 
-            Console.WriteLine("ksecret:{0}\n", OssUtils.ToHexString(ksecret, true));
-            Console.WriteLine("hashDate:{0}\n", OssUtils.ToHexString(hashDate, true));
-            Console.WriteLine("hashRegion:{0}\n", OssUtils.ToHexString(hashRegion, true));
-            Console.WriteLine("hashProduct:{0}\n", OssUtils.ToHexString(hashProduct, true));
-            Console.WriteLine("signature:{0}\n", OssUtils.ToHexString(signature, true));
+            //Console.WriteLine("ksecret:{0}\n", OssUtils.ToHexString(ksecret, true));
+            //Console.WriteLine("hashDate:{0}\n", OssUtils.ToHexString(hashDate, true));
+            //Console.WriteLine("hashRegion:{0}\n", OssUtils.ToHexString(hashRegion, true));
+            //Console.WriteLine("hashProduct:{0}\n", OssUtils.ToHexString(hashProduct, true));
+            //Console.WriteLine("signature:{0}\n", OssUtils.ToHexString(signature, true));
 
             return OssUtils.ToHexString(signature, true);
         }

@@ -63,9 +63,8 @@ namespace Aliyun.OSS.Util
                 SignUtils.BuildCanonicalString(httpMethod, canonicalResource, request/*, expires*/);
             var signature = ServiceSignature.Create().ComputeSignature(credentials.AccessKeySecret, canonicalString);
 
-            Console.WriteLine("canonicalString:{0}\n", canonicalString);
-            Console.WriteLine("signature:{0}\n", signature);
-
+            //Console.WriteLine("canonicalString:{0}\n", canonicalString);
+            //Console.WriteLine("signature:{0}\n", signature);
 
             request.Parameters[RequestParameters.EXPIRES] = expires;
             request.Parameters[RequestParameters.OSS_ACCESS_KEY_ID] = credentials.AccessKeyId;

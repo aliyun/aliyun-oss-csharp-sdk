@@ -2370,7 +2370,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         [Test]
         public void RestoreObjectWithXmlTest()
         {
-            var client = new OssClient("http://oss-ap-southeast-2.aliyuncs.com", Config.AccessKeyId, Config.AccessKeySecret);
+            var client = new OssClient(Config.Endpoint, Config.AccessKeyId, Config.AccessKeySecret);
 
             //get a random bucketName
             var bucketName = OssTestUtils.GetBucketName(_className);
