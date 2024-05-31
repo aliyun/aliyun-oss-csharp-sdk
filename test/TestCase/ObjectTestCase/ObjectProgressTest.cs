@@ -231,8 +231,8 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
         #region private
         private void uploadProgressCallback(object sender, StreamTransferProgressArgs args)
         {
-            System.Console.WriteLine("UploadProgressCallback - TotalBytes:{0}, TransferredBytes:{1}",
-                args.TotalBytes, args.TransferredBytes);
+            //System.Console.WriteLine("UploadProgressCallback - TotalBytes:{0}, TransferredBytes:{1}",
+            //    args.TotalBytes, args.TransferredBytes);
         }
         #endregion
     }

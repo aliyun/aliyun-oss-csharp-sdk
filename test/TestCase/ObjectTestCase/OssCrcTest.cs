@@ -106,7 +106,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             {
                 byte[] content = Encoding.ASCII.GetBytes(textVals[i]);
                 ulong crc = Crc64.Compute(content, 0, content.Length, 0);
-                System.Console.WriteLine("{0:X}", crc);
+                //System.Console.WriteLine("{0:X}", crc);
                 Assert.AreEqual(crc, crcVals[i]);
             }
         }
