@@ -218,7 +218,7 @@ namespace Aliyun.OSS.Util
                 addHeadersMap[header.ToLowerInvariant()] = string.Empty;
             }
 
-            var sortedHeaderMap = new SortedDictionary<string, string>();
+            var sortedHeaderMap = new SortedDictionary<string, string>(StringComparer.Ordinal);
             foreach (var header in headers)
             {
                 if (header.Value == null)

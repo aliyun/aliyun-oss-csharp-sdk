@@ -733,6 +733,63 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
             }
         }
 
+        [Test]
+        public void GeneratePresignedUriArgumentV4Test()
+        {
+            var conf = new ClientConfiguration();
+            conf.SignatureVersion = SignatureVersion.V4;
+            var client = new OssClient("oss-cn-hangzhou", "ak", "sk", conf);
+
+            try
+            {
+                var targetObject = "?";
+                var gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject);
+                var uri = client.GeneratePresignedUri(gpuRequest);
+                Assert.IsTrue(true);
+
+                targetObject = "?123";
+                gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject);
+                uri = client.GeneratePresignedUri(gpuRequest);
+                Assert.IsTrue(true);
+
+                targetObject = "123?123";
+                gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject);
+                uri = client.GeneratePresignedUri(gpuRequest);
+                Assert.IsTrue(true);
+            }
+            catch(Exception e)
+            {
+                Assert.IsTrue(false);
+
+            }
+
+            conf = new ClientConfiguration();
+            Assert.IsTrue(conf.VerifyObjectStrict);
+            conf.VerifyObjectStrict = false;
+            client = new OssClient("oss-cn-hangzhou", "ak", "sk", conf);
+            try
+            {
+                var targetObject = "?";
+                var gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject);
+                var uri = client.GeneratePresignedUri(gpuRequest);
+                Assert.IsTrue(true);
+
+                targetObject = "?123";
+                gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject);
+                uri = client.GeneratePresignedUri(gpuRequest);
+                Assert.IsTrue(true);
+
+                targetObject = "123?123";
+                gpuRequest = new GeneratePresignedUriRequest(_bucketName, targetObject);
+                uri = client.GeneratePresignedUri(gpuRequest);
+                Assert.IsTrue(true);
+            }
+            catch
+            {
+                Assert.IsTrue(false);
+            }
+        }
+
         #endregion
     }
 }

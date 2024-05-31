@@ -685,9 +685,9 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 long totalBytesDownloaded = 0;
                 request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e) => {
                     totalBytesDownloaded += e.TransferredBytes;
-                    Console.WriteLine("TotalBytes:" + e.TotalBytes);
-                    Console.WriteLine("TransferredBytes:" + e.TransferredBytes);
-                    Console.WriteLine("PercentageDone:" + e.PercentDone);
+                    //Console.WriteLine("TotalBytes:" + e.TotalBytes);
+                    //Console.WriteLine("TransferredBytes:" + e.TransferredBytes);
+                    //Console.WriteLine("PercentageDone:" + e.PercentDone);
                     progressUpdateCalled = true;
                     percentDone = e.PercentDone;
                 };
@@ -860,9 +860,9 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 request.ParallelThreadCount = 1;
                 request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e) => {
                     totalBytesDownloaded += e.TransferredBytes;
-                    Console.WriteLine("TotalBytes:" + e.TotalBytes);
-                    Console.WriteLine("TransferredBytes:" + e.TransferredBytes);
-                    Console.WriteLine("PercentageDone:" + e.PercentDone);
+                    //Console.WriteLine("TotalBytes:" + e.TotalBytes);
+                    //Console.WriteLine("TransferredBytes:" + e.TransferredBytes);
+                    //Console.WriteLine("PercentageDone:" + e.PercentDone);
                     progressUpdateCalled = true;
                     percentDone = e.PercentDone;
                 };
@@ -904,9 +904,9 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 DownloadObjectRequest request = new DownloadObjectRequest(_bucketName, key, targetFile);
                 request.StreamTransferProgress += (object sender, StreamTransferProgressArgs e) => {
                     totalBytesDownloaded += e.TransferredBytes;
-                    Console.WriteLine("TotalBytes:" + e.TotalBytes);
-                    Console.WriteLine("TransferredBytes:" + e.TransferredBytes);
-                    Console.WriteLine("PercentageDone:" + e.PercentDone);
+                    //Console.WriteLine("TotalBytes:" + e.TotalBytes);
+                    //Console.WriteLine("TransferredBytes:" + e.TransferredBytes);
+                    //Console.WriteLine("PercentageDone:" + e.PercentDone);
                     progressUpdateCalled = true;
                     percentDone = e.PercentDone;
                 };

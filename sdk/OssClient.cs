@@ -1038,6 +1038,11 @@ namespace Aliyun.OSS
                     request.Headers[HttpHeaders.ContentType] = "";
                 }
                 metadata.Populate(request.Headers);
+                
+                //remove empty content-type
+                if (request.Headers[HttpHeaders.ContentType] == "") {
+                    request.Headers.Remove(HttpHeaders.ContentType);
+                }
             }
             if (!request.Headers.ContainsKey(HttpHeaders.ContentLength))
             {
@@ -1848,7 +1853,12 @@ namespace Aliyun.OSS
         {
             ThrowIfNullRequest(generatePresignedUriRequest);
             var conf = OssUtils.GetClientConfiguration(_serviceClient);
-            OssUtils.CheckObjectKey(generatePresignedUriRequest.Key, conf.VerifyObjectStrict);
+            var verifyObjectStrict = false;
+            if (conf.SignatureVersion == SignatureVersion.V1)
+            {
+                verifyObjectStrict = conf.VerifyObjectStrict;
+            }
+            OssUtils.CheckObjectKey(generatePresignedUriRequest.Key, verifyObjectStrict);
 
             var bucketName = generatePresignedUriRequest.BucketName;
             var key = generatePresignedUriRequest.Key;
@@ -2220,7 +2230,7 @@ namespace Aliyun.OSS
             {
                 return _cloudBoxId;
             }
-            return _region;
+            return _region != null ? _region : "";
         }
 
         private string getSignProduct()
