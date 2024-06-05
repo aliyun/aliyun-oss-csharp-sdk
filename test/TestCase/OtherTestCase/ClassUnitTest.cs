@@ -1200,6 +1200,109 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             Assert.AreEqual(rulevt1, rulevt2);
         }
 
+        [Test]
+        public void LifecycleRuleFilter()
+        {
+            var rule1 = new LifecycleRule();
+            var rule2 = new LifecycleRule();
+            rule1.ID = "RuleID";
+            rule1.Prefix = "test";
+            rule2.ID = "RuleID";
+            rule2.Prefix = "test";
+            Assert.AreEqual(rule1.Equals(rule2), true);
+
+            // case 1
+            rule1.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                Not = new LifecycleRule.LifeCycleNot()
+                {
+                    Prefix = "prefix",
+                    Tag = new Tag()
+                    {
+                        Key = "key",
+                        Value = "value"
+                    }
+                },
+                ObjectSizeGreaterThan = 20,
+                ObjectSizeLessThan = 100
+            };
+            rule2.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                Not = new LifecycleRule.LifeCycleNot()
+                {
+                    Prefix = "prefix",
+                    Tag = new Tag()
+                    {
+                        Key = "key",
+                        Value = "value"
+                    }
+                },
+                ObjectSizeGreaterThan = 20,
+                ObjectSizeLessThan = 100
+            };
+            Assert.AreEqual(rule1.Equals(rule2), false);
+
+            // case 2
+            rule1.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                Not = new LifecycleRule.LifeCycleNot()
+                {
+                    Prefix = "prefix",
+                    Tag = new Tag()
+                    {
+                        Key = "key1",
+                        Value = "value"
+                    }
+                },
+                ObjectSizeGreaterThan = 20,
+                ObjectSizeLessThan = 100
+            };
+            rule2.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                Not = new LifecycleRule.LifeCycleNot()
+                {
+                    Prefix = "prefix",
+                    Tag = new Tag()
+                    {
+                        Key = "key1",
+                        Value = "value"
+                    }
+                },
+                ObjectSizeGreaterThan = 20,
+                ObjectSizeLessThan = 100
+            };
+            Assert.AreNotEqual(rule1, rule2);
+
+            // case 3
+            rule1.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                Not = new LifecycleRule.LifeCycleNot()
+                {
+                    Prefix = "prefix",
+                    Tag = new Tag()
+                    {
+                        Key = "key",
+                        Value = "value"
+                    }
+                },
+                ObjectSizeLessThan = 100
+            };
+            rule2.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                Not = new LifecycleRule.LifeCycleNot()
+                {
+                    Prefix = "prefix",
+                    Tag = new Tag()
+                    {
+                        Key = "key1",
+                        Value = "value"
+                    }
+                },
+                ObjectSizeGreaterThan = 20,
+                ObjectSizeLessThan = 100
+            };
+            Assert.AreNotEqual(rule1, rule2);
+        }
 
         [Test]
         public void OssClientTest()
@@ -1671,6 +1774,83 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             Assert.IsNull(result[0].NoncurrentVersionTransitions[0].IsAccessTime);
             Assert.IsNull(result[0].NoncurrentVersionTransitions[0].ReturnToStdWhenVisit);
             Assert.IsNull(result[0].NoncurrentVersionTransitions[0].AllowSmallFile);
+        }
+
+        [Test]
+        public void GetBucketLifecycleFilterDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateGetBucketLifecycleDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <LifecycleConfiguration>
+                  <Rule>
+                    <ID>delete after one day</ID>
+                    <Prefix>logs/</Prefix>
+                    <Status>Enabled</Status>
+                    <Filter>
+                      <Not>
+                        <Prefix>prefix</Prefix>
+                        <Tag>
+                          <Key>key</Key>
+                          <Value>value</Value>
+                        </Tag>
+                      </Not>
+                      <ObjectSizeGreaterThan>100</ObjectSizeGreaterThan>
+                      <ObjectSizeLessThan>200</ObjectSizeLessThan>
+                    </Filter>
+                  </Rule>
+                </LifecycleConfiguration>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Count, 1);
+            Assert.AreEqual(result[0].Filter.Not.Prefix, "prefix");
+            Assert.AreEqual(result[0].Filter.Not.Tag.Key, "key");
+            Assert.AreEqual(result[0].Filter.Not.Tag.Value, "value");
+            Assert.AreEqual(result[0].Filter.ObjectSizeGreaterThan, 100);
+            Assert.AreEqual(result[0].Filter.ObjectSizeLessThan, 200);
+
+            data =
+                @" 
+                <LifecycleConfiguration>
+                  <Rule>
+                    <ID>delete after one day</ID>
+                    <Prefix>logs/</Prefix>
+                    <Status>Enabled</Status>
+                    <Expiration>
+                      <Date>2017-01-01T00:00:00.000Z</Date>
+                    </Expiration>
+                  </Rule>
+                </LifecycleConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Count, 1);
+            Assert.IsNull(result[0].Filter);
+
+            data =
+                @" 
+                <LifecycleConfiguration>
+                  <Rule>
+                    <ID>delete after one day</ID>
+                    <Prefix>logs/</Prefix>
+                    <Status>Enabled</Status>
+                    <Filter>
+                    </Filter>
+                  </Rule>
+                </LifecycleConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Count, 1);
+            Assert.IsNull(result[0].Filter.Not);
+            Assert.IsNull(result[0].Filter.ObjectSizeGreaterThan);
+            Assert.IsNull(result[0].Filter.ObjectSizeLessThan);
         }
 
         [Test]
@@ -3614,6 +3794,154 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             Assert.IsTrue(xmlstr.Contains("<IsAccessTime>true"));
             Assert.IsTrue(xmlstr.Contains("<ReturnToStdWhenVisit>false"));
             Assert.IsTrue(xmlstr.Contains("<AllowSmallFile>true"));
+        }
+
+        [Test]
+        public void SetBucketLifecycleRequestFilterSerializerTest()
+        {
+            var factory = SerializerFactory.GetFactory("text/xml");
+            var serializer = factory.CreateSetBucketLifecycleRequestSerializer();
+
+            // Not Filter
+            var rule = new LifecycleRule();
+            rule.ID = "RuleID";
+            rule.Prefix = "test";
+            rule.Transitions = new LifecycleRule.LifeCycleTransition[1]
+            {
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.IA
+                }
+            };
+            rule.Transitions[0].LifeCycleExpiration.Days = 20;
+            var request = new SetBucketLifecycleRequest("bucket");
+            request.AddLifecycleRule(rule);
+            var result = serializer.Serialize(request);
+            var reader = new StreamReader(result);
+            var xmlstr = reader.ReadToEnd();
+            Assert.IsFalse(xmlstr.Contains("<Filter>"));
+
+            // Filter Size
+            rule = new LifecycleRule();
+            rule.ID = "RuleID";
+            rule.Prefix = "test";
+            rule.Transitions = new LifecycleRule.LifeCycleTransition[1]
+            {
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.IA
+                }
+            };
+            rule.Transitions[0].LifeCycleExpiration.Days = 20;
+            rule.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                ObjectSizeGreaterThan = 100,
+                ObjectSizeLessThan = 200
+            };
+            request = new SetBucketLifecycleRequest("bucket");
+            request.AddLifecycleRule(rule);
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            xmlstr = reader.ReadToEnd();
+            Assert.IsTrue(xmlstr.Contains("<Filter>"));
+            Assert.IsTrue(xmlstr.Contains("<ObjectSizeGreaterThan>100"));
+            Assert.IsTrue(xmlstr.Contains("<ObjectSizeLessThan>200"));
+            Assert.IsFalse(xmlstr.Contains("<Not>"));
+
+            // Filter Size + Not
+            rule = new LifecycleRule();
+            rule.ID = "RuleID";
+            rule.Prefix = "test";
+            rule.Transitions = new LifecycleRule.LifeCycleTransition[1]
+            {
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.IA
+                }
+            };
+            rule.Transitions[0].LifeCycleExpiration.Days = 20;
+            rule.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                Not = new LifecycleRule.LifeCycleNot() { 
+                    Prefix = "prefix",
+                    Tag = new Tag() { Key = "key", Value = "value"}
+                },
+                ObjectSizeGreaterThan = 100,
+                ObjectSizeLessThan = 200
+            };
+            request = new SetBucketLifecycleRequest("bucket");
+            request.AddLifecycleRule(rule);
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            xmlstr = reader.ReadToEnd();
+            Assert.IsTrue(xmlstr.Contains("<Filter>"));
+            Assert.IsTrue(xmlstr.Contains("<ObjectSizeGreaterThan>100"));
+            Assert.IsTrue(xmlstr.Contains("<ObjectSizeLessThan>200"));
+            Assert.IsTrue(xmlstr.Contains("<Not>"));
+            Assert.IsTrue(xmlstr.Contains("<Prefix>prefix"));
+            Assert.IsTrue(xmlstr.Contains("<Key>key"));
+            Assert.IsTrue(xmlstr.Contains("<Value>value"));
+
+            // Filter Size + Not
+            rule = new LifecycleRule();
+            rule.ID = "RuleID";
+            rule.Prefix = "test";
+            rule.Transitions = new LifecycleRule.LifeCycleTransition[1]
+            {
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.IA
+                }
+            };
+            rule.Transitions[0].LifeCycleExpiration.Days = 20;
+            rule.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                Not = new LifecycleRule.LifeCycleNot()
+                {
+                    Prefix = "prefix",
+                },
+                ObjectSizeGreaterThan = 100,
+                ObjectSizeLessThan = 200
+            };
+            request = new SetBucketLifecycleRequest("bucket");
+            request.AddLifecycleRule(rule);
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            xmlstr = reader.ReadToEnd();
+            Assert.IsTrue(xmlstr.Contains("<Filter>"));
+            Assert.IsTrue(xmlstr.Contains("<ObjectSizeGreaterThan>100"));
+            Assert.IsTrue(xmlstr.Contains("<ObjectSizeLessThan>200"));
+            Assert.IsTrue(xmlstr.Contains("<Not>"));
+            Assert.IsTrue(xmlstr.Contains("<Prefix>prefix"));
+            Assert.IsFalse(xmlstr.Contains("<Tag>"));
+
+            // Filter Size + Not
+            rule = new LifecycleRule();
+            rule.ID = "RuleID";
+            rule.Transitions = new LifecycleRule.LifeCycleTransition[1]
+            {
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.IA
+                }
+            };
+            rule.Transitions[0].LifeCycleExpiration.Days = 20;
+            rule.Filter = new LifecycleRule.LifeCycleFilter()
+            {
+                Not = new LifecycleRule.LifeCycleNot()
+                {
+                    Tag = new Tag() { Key = "key", Value = "value" }
+                },
+                ObjectSizeGreaterThan = 100,
+                ObjectSizeLessThan = 200
+            };
+            request = new SetBucketLifecycleRequest("bucket");
+            request.AddLifecycleRule(rule);
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            xmlstr = reader.ReadToEnd();
+            Assert.IsTrue(xmlstr.Contains("<Filter>"));
+            Assert.IsTrue(xmlstr.Contains("<ObjectSizeGreaterThan>100"));
+            Assert.IsTrue(xmlstr.Contains("<ObjectSizeLessThan>200"));
+            Assert.IsTrue(xmlstr.Contains("<Not>"));
+            Assert.IsFalse(xmlstr.Contains("<Prefix>"));
+            Assert.IsTrue(xmlstr.Contains("<Key>key"));
+            Assert.IsTrue(xmlstr.Contains("<Value>value"));
         }
 
         [Test]

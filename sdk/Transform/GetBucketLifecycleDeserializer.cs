@@ -104,6 +104,31 @@ namespace Aliyun.OSS.Transform
                     }
                 }
 
+                if (lcc.Filter != null)
+                {
+                    rule.Filter = new LifecycleRule.LifeCycleFilter()
+                    {
+                        ObjectSizeGreaterThan = lcc.Filter.ObjectSizeGreaterThan,
+                        ObjectSizeLessThan = lcc.Filter.ObjectSizeLessThan
+                    };
+                    if (lcc.Filter.Not != null)
+                    {
+                        rule.Filter.Not = new LifecycleRule.LifeCycleNot()
+                        {
+                            Prefix = lcc.Filter.Not.Prefix
+                        };
+
+                        if (lcc.Filter.Not.Tag != null)
+                        {
+                            rule.Filter.Not.Tag = new Tag()
+                            {
+                                Key = lcc.Filter.Not.Tag.Key,
+                                Value = lcc.Filter.Not.Tag.Value
+                            };
+                        }
+                    }
+                }
+
                 rules.Add(rule);
             }
             return rules;            
