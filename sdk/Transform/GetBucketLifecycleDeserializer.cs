@@ -96,7 +96,10 @@ namespace Aliyun.OSS.Transform
                         rule.NoncurrentVersionTransitions[i] = new LifecycleRule.LifeCycleNoncurrentVersionTransition()
                         {
                             NoncurrentDays = lcc.NoncurrentVersionTransition[i].NoncurrentDays,
-                            StorageClass = lcc.NoncurrentVersionTransition[i].StorageClass
+                            StorageClass = lcc.NoncurrentVersionTransition[i].StorageClass,
+                            IsAccessTime = lcc.NoncurrentVersionTransition[i].IsAccessTime,
+                            ReturnToStdWhenVisit = lcc.NoncurrentVersionTransition[i].ReturnToStdWhenVisit,
+                            AllowSmallFile = lcc.NoncurrentVersionTransition[i].AllowSmallFile
                         };
                     }
                 }
@@ -137,6 +140,9 @@ namespace Aliyun.OSS.Transform
         {
             ConvertExpiration(transition, lifeCycleTransition.LifeCycleExpiration);
             lifeCycleTransition.StorageClass = transition.StorageClass;
+            lifeCycleTransition.IsAccessTime = transition.IsAccessTime;
+            lifeCycleTransition.ReturnToStdWhenVisit = transition.ReturnToStdWhenVisit;
+            lifeCycleTransition.AllowSmallFile = transition.AllowSmallFile;
         }
     }
 }

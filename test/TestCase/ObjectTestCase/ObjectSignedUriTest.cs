@@ -757,7 +757,7 @@ namespace Aliyun.OSS.Test.TestClass.ObjectTestClass
                 uri = client.GeneratePresignedUri(gpuRequest);
                 Assert.IsTrue(true);
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 Assert.IsTrue(false);
 

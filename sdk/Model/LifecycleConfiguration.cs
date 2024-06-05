@@ -105,6 +105,41 @@ namespace Aliyun.OSS.Model
     {
         [XmlElement("StorageClass")]
         public StorageClass StorageClass { get; set; }
+
+        [XmlElement("IsAccessTime", IsNullable = true)]
+        public bool? IsAccessTime { get; set; }
+
+        public bool ShouldSerializeIsAccessTime()
+        {
+            return IsAccessTime != null;
+        }
+        public bool IsSetIsAccessTime()
+        {
+            return IsAccessTime != null;
+        }
+
+        [XmlElement("ReturnToStdWhenVisit", IsNullable = true)]
+        public bool? ReturnToStdWhenVisit { get; set; }
+        public bool ShouldSerializeReturnToStdWhenVisit()
+        {
+            return ReturnToStdWhenVisit != null;
+        }
+        public bool IsSetReturnToStdWhenVisit()
+        {
+            return ReturnToStdWhenVisit != null;
+        }
+
+        [XmlElement("AllowSmallFile", IsNullable = true)]
+        public bool? AllowSmallFile { get; set; }
+        public bool ShouldSerializeAllowSmallFile()
+        {
+            return AllowSmallFile != null;
+        }
+        public bool IsSetAllowSmallFile()
+        {
+            return AllowSmallFile != null;
+        }
+
     }
 
     public class LifecycleRuleTag
@@ -129,5 +164,40 @@ namespace Aliyun.OSS.Model
 
         [XmlElement("StorageClass")]
         public StorageClass StorageClass { get; set; }
+
+        [XmlElement("IsAccessTime", IsNullable = true)]
+        public bool? IsAccessTime { get; set; }
+
+        public bool ShouldSerializeIsAccessTime()
+        {
+            return IsAccessTime != null;
+        }
+        public bool IsSetIsAccessTime()
+        {
+            return IsAccessTime != null;
+        }
+
+        [XmlElement("ReturnToStdWhenVisit", IsNullable = true)]
+        public bool? ReturnToStdWhenVisit { get; set; }
+
+        public bool ShouldSerializeReturnToStdWhenVisit()
+        {
+            return ReturnToStdWhenVisit != null;
+        }
+        public bool IsSetReturnToStdWhenVisit()
+        {
+            return ReturnToStdWhenVisit != null;
+        }
+
+        [XmlElement("AllowSmallFile", IsNullable = true)]
+        public bool? AllowSmallFile { get; set; }
+        public bool ShouldSerializeAllowSmallFile()
+        {
+            return AllowSmallFile != null;
+        }
+        public bool IsSetAllowSmallFile()
+        {
+            return AllowSmallFile != null;
+        }
     }
 }
