@@ -308,6 +308,24 @@ namespace Aliyun.OSS
             public StorageClass StorageClass { get; set; }
 
             /// <summary>
+            /// Gets or sets the IsAccessTime.
+            /// </summary>
+            /// <value>IsAccessTime.</value>
+            public bool? IsAccessTime { get; set; }
+
+            /// <summary>
+            /// Gets or sets the ReturnToStdWhenVisit.
+            /// </summary>
+            /// <value>ReturnToStdWhenVisit.</value>
+            public bool? ReturnToStdWhenVisit { get; set; }
+
+            /// <summary>
+            /// Gets or sets the AllowSmallFile.
+            /// </summary>
+            /// <value>AllowSmallFile.</value>
+            public bool? AllowSmallFile { get; set; }
+
+            /// <summary>
             /// Determines whether the specified <see cref="Aliyun.OSS.LifecycleRule.LifeCycleTransition"/> is equal to
             /// the current <see cref="T:Aliyun.OSS.LifecycleRule.LifeCycleTransition"/>.
             /// </summary>
@@ -319,7 +337,13 @@ namespace Aliyun.OSS
                 if (transition == null) return false;
 
                 if (this.StorageClass != transition.StorageClass) return false;
-                    
+
+                if (this.IsAccessTime != transition.IsAccessTime) return false;
+
+                if (this.ReturnToStdWhenVisit != transition.ReturnToStdWhenVisit) return false;
+
+                if (this.AllowSmallFile != transition.AllowSmallFile) return false;
+
                 if (LifeCycleExpiration == null)
                 {
                     return transition.LifeCycleExpiration == null;
@@ -367,13 +391,35 @@ namespace Aliyun.OSS
             /// <value>The storage class.</value>
             public StorageClass StorageClass { get; set; }
 
+            /// <summary>
+            /// Gets or sets the IsAccessTime.
+            /// </summary>
+            /// <value>IsAccessTime.</value>
+            public bool? IsAccessTime { get; set; }
+
+            /// <summary>
+            /// Gets or sets the ReturnToStdWhenVisit.
+            /// </summary>
+            /// <value>ReturnToStdWhenVisit.</value>
+            public bool? ReturnToStdWhenVisit { get; set; }
+
+            /// <summary>
+            /// Gets or sets the AllowSmallFile.
+            /// </summary>
+            /// <value>AllowSmallFile.</value>
+            public bool? AllowSmallFile { get; set; }
+
             public bool Equals(LifeCycleNoncurrentVersionTransition obj)
             {
                 if (ReferenceEquals(this, obj)) return true;
 
                 if (obj == null) return false;
 
-                return this.NoncurrentDays == obj.NoncurrentDays && this.StorageClass == obj.StorageClass;
+                return this.NoncurrentDays == obj.NoncurrentDays &&
+                    this.StorageClass == obj.StorageClass &&
+                    this.IsAccessTime == obj.IsAccessTime &&
+                    this.ReturnToStdWhenVisit == obj.ReturnToStdWhenVisit &&
+                    this.AllowSmallFile == obj.AllowSmallFile;
             }
         }
     }

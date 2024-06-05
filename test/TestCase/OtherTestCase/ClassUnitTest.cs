@@ -1125,6 +1125,83 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
         }
 
         [Test]
+        public void LifecycleRuleAccessTimeTest()
+        {
+            var rule1 = new LifecycleRule();
+            var rule2 = new LifecycleRule();
+            rule1.ID = "RuleID";
+            rule1.Prefix = "test";
+            rule2.ID = "RuleID";
+            rule2.Prefix = "test";
+            Assert.AreEqual(rule1.Equals(rule2), true);
+
+            rule1.Transitions = new LifecycleRule.LifeCycleTransition[2]
+            {
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.IA
+                },
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.Archive,
+                    IsAccessTime = true,
+                    ReturnToStdWhenVisit = false,
+                    AllowSmallFile = true
+                }
+            };
+            rule2.Transitions = new LifecycleRule.LifeCycleTransition[2]
+            {
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.Archive
+                },
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.Archive,
+                    IsAccessTime = true,
+                    ReturnToStdWhenVisit = false,
+                    AllowSmallFile = true
+                }
+            };
+            Assert.AreEqual(rule1.Equals(rule2), false);
+
+            //NoncurrentVersionTransitions
+            LifecycleRule rulevt1 = new LifecycleRule();
+            rulevt1.ID = "StandardExpireRule";
+            rulevt1.Prefix = "test";
+            rulevt1.Status = RuleStatus.Enabled;
+            rulevt1.NoncurrentVersionTransitions = new LifecycleRule.LifeCycleNoncurrentVersionTransition[2]
+            {
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.IA,
+                    NoncurrentDays = 90,
+                    IsAccessTime = true,
+                    ReturnToStdWhenVisit = false
+                },
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.Archive,
+                    NoncurrentDays = 180
+                }
+            };
+
+            LifecycleRule rulevt2 = new LifecycleRule();
+            rulevt2.ID = "StandardExpireRule";
+            rulevt2.Prefix = "test";
+            rulevt2.Status = RuleStatus.Enabled;
+            rulevt2.NoncurrentVersionTransitions = new LifecycleRule.LifeCycleNoncurrentVersionTransition[2]
+            {
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.IA,
+                    NoncurrentDays = 90,
+                    IsAccessTime = true,
+                    ReturnToStdWhenVisit = false
+                },
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.Archive,
+                    NoncurrentDays = 180
+                }
+            };
+            Assert.AreEqual(rulevt1, rulevt2);
+        }
+
+
+        [Test]
         public void OssClientTest()
         {
             try
@@ -1517,6 +1594,83 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
             {
                 Assert.IsTrue(false, e.Message);
             }
+        }
+
+        [Test]
+        public void GetBucketLifecycleAccessTimeDeserializerTest()
+        {
+            var factory = DeserializerFactory.GetFactory("text/xml");
+            var deserializer = factory.CreateGetBucketLifecycleDeserializer();
+            var headers = new Dictionary<string, string>();
+            string data =
+                @" 
+                <LifecycleConfiguration>
+                  <Rule>
+                    <ID>delete after one day</ID>
+                    <Prefix>logs/</Prefix>
+                    <Status>Enabled</Status>
+                    <Expiration>
+                      <Date>2017-01-01T00:00:00.000Z</Date>
+                    </Expiration>
+                    <Transition>
+                      <Days>30</Days>
+                      <StorageClass>IA</StorageClass>
+                      <IsAccessTime>true</IsAccessTime>
+                      <ReturnToStdWhenVisit>true</ReturnToStdWhenVisit>
+                    </Transition>
+                    <NoncurrentVersionTransition>
+                      <Days>30</Days>
+                      <StorageClass>IA</StorageClass>
+                      <IsAccessTime>true</IsAccessTime>
+                      <ReturnToStdWhenVisit>false</ReturnToStdWhenVisit>
+                    </NoncurrentVersionTransition>
+                  </Rule>
+                </LifecycleConfiguration>
+                ";
+            var content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            var xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            var result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Count, 1);
+            Assert.AreEqual(result[0].Transitions[0].IsAccessTime, true);
+            Assert.AreEqual(result[0].Transitions[0].ReturnToStdWhenVisit, true);
+            Assert.IsNull(result[0].Transitions[0].AllowSmallFile);
+
+            Assert.AreEqual(result[0].NoncurrentVersionTransitions[0].IsAccessTime, true);
+            Assert.AreEqual(result[0].NoncurrentVersionTransitions[0].ReturnToStdWhenVisit, false);
+            Assert.IsNull(result[0].NoncurrentVersionTransitions[0].AllowSmallFile);
+
+            data =
+                @" 
+                <LifecycleConfiguration>
+                  <Rule>
+                    <ID>delete after one day</ID>
+                    <Prefix>logs/</Prefix>
+                    <Status>Enabled</Status>
+                    <Expiration>
+                      <Date>2017-01-01T00:00:00.000Z</Date>
+                    </Expiration>
+                    <Transition>
+                      <Days>30</Days>
+                      <StorageClass>IA</StorageClass>
+                    </Transition>
+                    <NoncurrentVersionTransition>
+                      <Days>30</Days>
+                      <StorageClass>IA</StorageClass>
+                    </NoncurrentVersionTransition>
+                  </Rule>
+                </LifecycleConfiguration>
+                ";
+            content = new MemoryStream(Encoding.ASCII.GetBytes(data));
+            xmlStream = new ResponseMock(HttpStatusCode.OK, headers, content);
+            result = deserializer.Deserialize(xmlStream);
+            Assert.AreEqual(result.Count, 1);
+            Assert.IsNull(result[0].Transitions[0].IsAccessTime);
+            Assert.IsNull(result[0].Transitions[0].ReturnToStdWhenVisit);
+            Assert.IsNull(result[0].Transitions[0].AllowSmallFile);
+
+            Assert.IsNull(result[0].NoncurrentVersionTransitions[0].IsAccessTime);
+            Assert.IsNull(result[0].NoncurrentVersionTransitions[0].ReturnToStdWhenVisit);
+            Assert.IsNull(result[0].NoncurrentVersionTransitions[0].AllowSmallFile);
         }
 
         [Test]
@@ -3366,6 +3520,100 @@ namespace Aliyun.OSS.Test.TestClass.OtherTestClass
 
             var request = new SetBucketLifecycleRequest("bucket");
             var result = serializer.Serialize(request);
+        }
+
+        [Test]
+        public void SetBucketLifecycleRequestAccessTimeSerializerTest()
+        {
+            var factory = SerializerFactory.GetFactory("text/xml");
+            var serializer = factory.CreateSetBucketLifecycleRequestSerializer();
+
+            // default Transition
+            var rule = new LifecycleRule();
+            rule.ID = "RuleID";
+            rule.Prefix = "test";
+            rule.Transitions = new LifecycleRule.LifeCycleTransition[1]
+            {
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.IA
+                }
+            };
+            rule.Transitions[0].LifeCycleExpiration.Days = 20;
+            var request = new SetBucketLifecycleRequest("bucket");
+            request.AddLifecycleRule(rule);
+            var result = serializer.Serialize(request);
+            var reader = new StreamReader(result);
+            var xmlstr = reader.ReadToEnd();
+            Assert.IsFalse(xmlstr.Contains("<IsAccessTime>"));
+            Assert.IsFalse(xmlstr.Contains("<ReturnToStdWhenVisit>"));
+            Assert.IsFalse(xmlstr.Contains("<AllowSmallFile>"));
+
+            // Transition IsAccessTime, ReturnToStdWhenVisit, AllowSmallFile
+            rule = new LifecycleRule();
+            rule.ID = "RuleID";
+            rule.Prefix = "test";
+            rule.Transitions = new LifecycleRule.LifeCycleTransition[1]
+            {
+                new LifecycleRule.LifeCycleTransition(){
+                    StorageClass = StorageClass.Archive,
+                    IsAccessTime = true,
+                    ReturnToStdWhenVisit = false,
+                    AllowSmallFile = true
+                }
+            };
+            rule.Transitions[0].LifeCycleExpiration.Days = 20;
+            request = new SetBucketLifecycleRequest("bucket");
+            request.AddLifecycleRule(rule);
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            xmlstr = reader.ReadToEnd();
+            Assert.IsTrue(xmlstr.Contains("<IsAccessTime>true"));
+            Assert.IsTrue(xmlstr.Contains("<ReturnToStdWhenVisit>false"));
+            Assert.IsTrue(xmlstr.Contains("<AllowSmallFile>true"));
+
+
+            // default NoncurrentVersionTransitions
+            rule = new LifecycleRule();
+            rule.ID = "RuleID";
+            rule.Prefix = "test";
+            rule.NoncurrentVersionTransitions = new LifecycleRule.LifeCycleNoncurrentVersionTransition[1]
+            {
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.IA
+                }
+            };
+            rule.NoncurrentVersionTransitions[0].NoncurrentDays = 20;
+            request = new SetBucketLifecycleRequest("bucket");
+            request.AddLifecycleRule(rule);
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            xmlstr = reader.ReadToEnd();
+            Assert.IsFalse(xmlstr.Contains("<IsAccessTime>"));
+            Assert.IsFalse(xmlstr.Contains("<ReturnToStdWhenVisit>"));
+            Assert.IsFalse(xmlstr.Contains("<AllowSmallFile>"));
+
+            // NoncurrentVersionTransitions IsAccessTime, ReturnToStdWhenVisit, AllowSmallFile
+            rule = new LifecycleRule();
+            rule.ID = "RuleID";
+            rule.Prefix = "test";
+            rule.NoncurrentVersionTransitions = new LifecycleRule.LifeCycleNoncurrentVersionTransition[1]
+            {
+                new LifecycleRule.LifeCycleNoncurrentVersionTransition(){
+                    StorageClass = StorageClass.Archive,
+                    IsAccessTime = true,
+                    ReturnToStdWhenVisit = false,
+                    AllowSmallFile = true
+                }
+            };
+            rule.NoncurrentVersionTransitions[0].NoncurrentDays = 20;
+            request = new SetBucketLifecycleRequest("bucket");
+            request.AddLifecycleRule(rule);
+            result = serializer.Serialize(request);
+            reader = new StreamReader(result);
+            xmlstr = reader.ReadToEnd();
+            Assert.IsTrue(xmlstr.Contains("<IsAccessTime>true"));
+            Assert.IsTrue(xmlstr.Contains("<ReturnToStdWhenVisit>false"));
+            Assert.IsTrue(xmlstr.Contains("<AllowSmallFile>true"));
         }
 
         [Test]
