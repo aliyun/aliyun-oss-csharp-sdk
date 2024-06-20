@@ -140,13 +140,19 @@ namespace Aliyun.OSS.Util
             {
             }
 
+#if !NETCOREAPP2_0
+            var contentType = System.Web.MimeMapping.GetMimeMapping(fileType);
+            if (!string.IsNullOrEmpty(contentType))
+            {
+                return contentType;
+            }
+#else
             fileType = fileType.Trim().TrimStart(new char[1] { '.' }).ToLower();
-            
             if (_mimeDict.ContainsKey(fileType))
             {
                 return _mimeDict[fileType];
             }
-
+#endif
             return DefaultContentType;
         }
 
