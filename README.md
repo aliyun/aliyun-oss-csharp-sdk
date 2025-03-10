@@ -6,6 +6,10 @@
 
 ## [README of Chinese](https://github.com/aliyun/aliyun-oss-csharp-sdk/blob/master/README-CN.md)
 
+## About OSS SDK for C# V2
+> - OSS SDK for C# V2([alibabacloud-oss-csharp-sdk-v2](https://github.com/aliyun/alibabacloud-oss-csharp-sdk-v2)) beta version has been released, it is a major rewrite of OSS SDK for C# V1 (aliyun-oss-csharp-sdk).
+> - V2 simplifies underlying operations such as identification authentication, automatic retry of failed requests, and error handling. It provides flexible parameter configuration methods and rich advanced operations, such as paginator, transmission managers. This comprehensively improves development efficiency and experience.
+
 ## About
  Alibaba Cloud Object Storage Service (OSS) is a cloud storage service provided by [Alibaba Cloud](https://www.aliyun.com), featuring massive capacity, security, a low cost, and high reliability.
  - The OSS C# SDK is built based on [OSS REST API](https://help.aliyun.com/document_detail/31948.html).
