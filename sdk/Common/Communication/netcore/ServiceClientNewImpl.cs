@@ -251,9 +251,16 @@ namespace Aliyun.OSS.Common.Communication
             var task = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
             ServiceClientImpl.HttpAsyncResult result = new ServiceClientImpl.HttpAsyncResult(callback, state);
             task.ContinueWith((resp) =>
-            {
-                ServiceResponse serviceResponse = new ResponseImpl(resp.Result);
-                result.Complete(serviceResponse);
+            {                
+                // Exception can't be caught outside because it happens in Task.ContinueWith
+                // Exception won't be rethrow here
+                if (resp.IsFaulted)
+                    result.Complete(resp.Exception);
+                else
+                {
+                    ServiceResponse serviceResponse = new ResponseImpl(resp.Result);
+                    result.Complete(serviceResponse);
+                }
             });
 
             return result;
